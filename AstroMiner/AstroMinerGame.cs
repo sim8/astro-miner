@@ -51,16 +51,13 @@ public class AstroMinerGame : Game
         if (Keyboard.GetState().IsKeyDown(Keys.W))
         {
             _miningState.AttemptMove(Direction.Top, gameTime.ElapsedGameTime.Milliseconds);
-        }
-        if (Keyboard.GetState().IsKeyDown(Keys.D))
+        } else if (Keyboard.GetState().IsKeyDown(Keys.D))
         {
             _miningState.AttemptMove(Direction.Right, gameTime.ElapsedGameTime.Milliseconds);
-        }
-        if (Keyboard.GetState().IsKeyDown(Keys.S))
+        } else if (Keyboard.GetState().IsKeyDown(Keys.S))
         {
             _miningState.AttemptMove(Direction.Bottom, gameTime.ElapsedGameTime.Milliseconds);
-        }
-        if (Keyboard.GetState().IsKeyDown(Keys.A))
+        } else if (Keyboard.GetState().IsKeyDown(Keys.A))
         {
             _miningState.AttemptMove(Direction.Left, gameTime.ElapsedGameTime.Milliseconds);
         }
