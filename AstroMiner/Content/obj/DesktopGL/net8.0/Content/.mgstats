@@ -1,0 +1,4 @@
+Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"/Users/slees/misc-code/AstroMiner/AstroMiner/Content/img/floor.png","/Users/slees/misc-code/AstroMiner/AstroMiner/Content/bin/DesktopGL/Content/img/floor.xnb","TextureProcessor","Texture2DContent",781,16469,0.001534
+"/Users/slees/misc-code/AstroMiner/AstroMiner/Content/img/miner.png","/Users/slees/misc-code/AstroMiner/AstroMiner/Content/bin/DesktopGL/Content/img/miner.xnb","TextureProcessor","Texture2DContent",1374,23189,0.002801
+"/Users/slees/misc-code/AstroMiner/AstroMiner/Content/img/rock.png","/Users/slees/misc-code/AstroMiner/AstroMiner/Content/bin/DesktopGL/Content/img/rock.xnb","TextureProcessor","Texture2DContent",907,16469,0.047463
