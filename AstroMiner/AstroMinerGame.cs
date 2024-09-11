@@ -82,8 +82,8 @@ public class AstroMinerGame : Game
                 _spriteBatch.Draw(isRock ? _rock : _floor, new Rectangle(row * CellSizePx, col * CellSizePx, CellSizePx, CellSizePx), Color.White);
             }
         }
-        int minerPosXPx = (int)_miningState.MinerPos.X * CellSizePx;
-        int minerPosYPx = (int)_miningState.MinerPos.Y * CellSizePx;
+        int minerPosXPx = getScreenPxFromGridCoordinate(_miningState.MinerPos.X);
+        int minerPosYPx = getScreenPxFromGridCoordinate(_miningState.MinerPos.Y);
         Rectangle sourceRectangle = new Rectangle(
             _miningState.MinerDirection == Direction.Top ||_miningState.MinerDirection == Direction.Left ? 0 : BaseMinerSizePx,
             _miningState.MinerDirection == Direction.Top ||_miningState.MinerDirection == Direction.Right ? 0 : BaseMinerSizePx,
@@ -94,5 +94,11 @@ public class AstroMinerGame : Game
         _spriteBatch.End();
         
         base.Draw(gameTime);
+    }
+
+    private int getScreenPxFromGridCoordinate(float gridCoordinate)
+    {
+        int basePxCoordinate = (int)(BaseCellSizePx * gridCoordinate);
+        return basePxCoordinate * SizeMultiplier;
     }
 }

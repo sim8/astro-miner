@@ -1,4 +1,5 @@
 using System;
+using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
 
@@ -20,10 +21,11 @@ public class MiningState
 {
     public const int Columns = 10;
     public const int Rows = 10;
+    private const float MinerMovementSpeed = 0.5f;
     private CellState[,] _grid;
-    private ObjectPosition _minerPos;
+    private Vector2 _minerPos;
 
-    public ObjectPosition MinerPos
+    public Vector2 MinerPos
     {
         get => _minerPos;
     }
@@ -41,7 +43,7 @@ public class MiningState
         _grid = new CellState[Rows, Columns];
         InitializeGrid();
         _minerDirection = Direction.Right;
-        _minerPos = new ObjectPosition(0, 0);
+        _minerPos = new Vector2(0, 0);
     }
 
     private void InitializeGrid()
@@ -63,5 +65,23 @@ public class MiningState
     public void AttemptMove(Direction direction, int ellapsedGameTimeMs)
     {
         MinerDirection = direction;
+        float distance = MinerMovementSpeed * (ellapsedGameTimeMs / 1000f);
+        if (direction == Direction.Top)
+        {
+            _minerPos += new Vector2(0, -distance);
+        }
+        if (direction == Direction.Right)
+        {
+            _minerPos += new Vector2(distance, 0);
+        }
+        if (direction == Direction.Bottom)
+        {
+            _minerPos += new Vector2(0, distance);
+        }
+        if (direction == Direction.Left)
+        {
+            _minerPos += new Vector2(-distance, 0);
+        }
+        Console.WriteLine(_minerPos.ToString());
     }
 }
