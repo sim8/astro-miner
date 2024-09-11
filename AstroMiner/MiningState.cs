@@ -59,4 +59,9 @@ public class MiningState
     {
         return _grid[row, column];
     }
+
+    public void AttemptMove(Direction direction, int ellapsedGameTimeMs)
+    {
+        MinerDirection = direction;
+    }
 }

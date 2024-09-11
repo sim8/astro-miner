@@ -48,6 +48,23 @@ public class AstroMinerGame : Game
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
+        if (Keyboard.GetState().IsKeyDown(Keys.W))
+        {
+            _miningState.AttemptMove(Direction.Top, gameTime.ElapsedGameTime.Milliseconds);
+        }
+        if (Keyboard.GetState().IsKeyDown(Keys.D))
+        {
+            _miningState.AttemptMove(Direction.Right, gameTime.ElapsedGameTime.Milliseconds);
+        }
+        if (Keyboard.GetState().IsKeyDown(Keys.S))
+        {
+            _miningState.AttemptMove(Direction.Bottom, gameTime.ElapsedGameTime.Milliseconds);
+        }
+        if (Keyboard.GetState().IsKeyDown(Keys.A))
+        {
+            _miningState.AttemptMove(Direction.Left, gameTime.ElapsedGameTime.Milliseconds);
+        }
+
         base.Update(gameTime);
     }
 
@@ -67,7 +84,11 @@ public class AstroMinerGame : Game
         }
         int minerPosXPx = (int)_miningState.MinerPos.X * CellSizePx;
         int minerPosYPx = (int)_miningState.MinerPos.Y * CellSizePx;
-        Rectangle sourceRectangle = new Rectangle(BaseMinerSizePx, BaseMinerSizePx, BaseMinerSizePx, BaseMinerSizePx);
+        Rectangle sourceRectangle = new Rectangle(
+            _miningState.MinerDirection == Direction.Top ||_miningState.MinerDirection == Direction.Left ? 0 : BaseMinerSizePx,
+            _miningState.MinerDirection == Direction.Top ||_miningState.MinerDirection == Direction.Right ? 0 : BaseMinerSizePx,
+            BaseMinerSizePx,
+            BaseMinerSizePx);
         Rectangle destinationRectangle = new Rectangle(minerPosXPx, minerPosYPx, MinerSizePx, MinerSizePx);
         _spriteBatch.Draw(_miner, destinationRectangle, sourceRectangle, Color.White);
         _spriteBatch.End();
