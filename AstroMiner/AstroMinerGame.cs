@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -10,15 +11,10 @@ public class AstroMinerGame : Game
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
     private MiningState _miningState;
-    private const int BaseCellSizePx = 64;
-    private const int BaseMinerSizePx = 38;
-    private const int SizeMultiplier = 4;
-    private const int CellSizePx = BaseCellSizePx * SizeMultiplier;
-    private const int MinerSizePx = BaseMinerSizePx * SizeMultiplier;
+    private Renderer _renderer;
     
-    private Texture2D _floor;
-    private Texture2D _rock;
-    private Texture2D _miner;
+    private Dictionary<string, Texture2D> _textures = new Dictionary<string, Texture2D>();
+
 
     public AstroMinerGame()
     {
@@ -30,16 +26,21 @@ public class AstroMinerGame : Game
     protected override void Initialize()
     {
         _miningState = new MiningState();
-
+        _renderer = new Renderer(_graphics, _textures);
         base.Initialize();
+    }
+
+    private void LoadTexture(string name)
+    {
+        _textures[name] = Content.Load<Texture2D>($"img/{name}");
     }
 
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        _floor = Content.Load<Texture2D>("img/floor");
-        _rock = Content.Load<Texture2D>("img/rock");
-        _miner = Content.Load<Texture2D>("img/miner");
+        LoadTexture("floor");
+        LoadTexture("rock");
+        LoadTexture("miner");
     }
 
     protected override void Update(GameTime gameTime)
@@ -71,31 +72,10 @@ public class AstroMinerGame : Game
         
         _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
 
-        for (int row = 0; row < MiningState.Rows; row++)
-        {
-            for (int col = 0; col < MiningState.Columns; col++)
-            {
-                bool isRock = _miningState.GetCellState(row, col) == CellState.Rock;
-                _spriteBatch.Draw(isRock ? _rock : _floor, new Rectangle(row * CellSizePx, col * CellSizePx, CellSizePx, CellSizePx), Color.White);
-            }
-        }
-        int minerPosXPx = getScreenPxFromGridCoordinate(_miningState.MinerPos.X);
-        int minerPosYPx = getScreenPxFromGridCoordinate(_miningState.MinerPos.Y);
-        Rectangle sourceRectangle = new Rectangle(
-            _miningState.MinerDirection == Direction.Top ||_miningState.MinerDirection == Direction.Left ? 0 : BaseMinerSizePx,
-            _miningState.MinerDirection == Direction.Top ||_miningState.MinerDirection == Direction.Right ? 0 : BaseMinerSizePx,
-            BaseMinerSizePx,
-            BaseMinerSizePx);
-        Rectangle destinationRectangle = new Rectangle(minerPosXPx, minerPosYPx, MinerSizePx, MinerSizePx);
-        _spriteBatch.Draw(_miner, destinationRectangle, sourceRectangle, Color.White);
+        _renderer.Render(_spriteBatch, _miningState);
+        
         _spriteBatch.End();
         
         base.Draw(gameTime);
-    }
-
-    private int getScreenPxFromGridCoordinate(float gridCoordinate)
-    {
-        int basePxCoordinate = (int)(BaseCellSizePx * gridCoordinate);
-        return basePxCoordinate * SizeMultiplier;
     }
 }
