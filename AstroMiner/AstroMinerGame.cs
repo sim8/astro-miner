@@ -8,11 +8,11 @@ namespace AstroMiner;
 public class AstroMinerGame : Game
 {
     private readonly GraphicsDeviceManager _graphics;
+
+    private readonly Dictionary<string, Texture2D> _textures = new();
     private MiningState _miningState;
     private Renderer _renderer;
     private SpriteBatch _spriteBatch;
-
-    private readonly Dictionary<string, Texture2D> _textures = new();
 
 
     public AstroMinerGame()
@@ -25,7 +25,7 @@ public class AstroMinerGame : Game
     protected override void Initialize()
     {
         _miningState = new MiningState();
-        _renderer = new Renderer(_graphics, _textures);
+        _renderer = new Renderer(_graphics, _textures, _miningState);
         base.Initialize();
     }
 
@@ -66,7 +66,7 @@ public class AstroMinerGame : Game
 
         _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
 
-        _renderer.Render(_spriteBatch, _miningState);
+        _renderer.Render(_spriteBatch);
 
         _spriteBatch.End();
 

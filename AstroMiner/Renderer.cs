@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace AstroMiner;
 
-public class Renderer(GraphicsDeviceManager graphics, Dictionary<string, Texture2D> textures)
+public class Renderer(GraphicsDeviceManager graphics, Dictionary<string, Texture2D> textures, MiningState miningState)
 {
     private const int CellTextureSizePx = 64;
     private const int MinerTextureSizePx = 38;
@@ -14,38 +14,39 @@ public class Renderer(GraphicsDeviceManager graphics, Dictionary<string, Texture
 
     private Rectangle GetVisibleRectForGridCell(int gridX, int gridY, int widthOnGrid = 1, int heightOnGrid = 1)
     {
-        return new Rectangle(gridX * CellDisplayedSizePx, gridY * CellDisplayedSizePx,
+        return AdjustRectForCamera(gridX * CellDisplayedSizePx, gridY * CellDisplayedSizePx,
             widthOnGrid * CellDisplayedSizePx,
             heightOnGrid * CellDisplayedSizePx);
     }
 
     private Rectangle GetVisibleRectForObject(float gridX, float gridY, int textureWidth, int textureHeight)
     {
-        int xPx = (int)(gridX * CellDisplayedSizePx);
-        int yPx = (int)(gridY * CellDisplayedSizePx);
-        return new Rectangle(xPx, yPx, textureWidth * ScaleMultiplier, textureHeight * ScaleMultiplier);
+        var xPx = (int)(gridX * CellDisplayedSizePx);
+        var yPx = (int)(gridY * CellDisplayedSizePx);
+        return AdjustRectForCamera(xPx, yPx, textureWidth * ScaleMultiplier, textureHeight * ScaleMultiplier);
     }
 
-    // private Vector2 GetGridCameraPosition()
-    // {
-    //     float viewportWidthOnGrid = PxToGridCoordinate(graphics.GraphicsDevice.Viewport.Width);
-    //     float viewportHeightOnGrid = PxToGridCoordinate(graphics.GraphicsDevice.Viewport.Height);
-    //     return new Vector2();
-    // }
-
-    public void Render(SpriteBatch spriteBatch, MiningState miningState)
+    private Rectangle AdjustRectForCamera(int x, int y, int width, int height)
     {
-        for (int row = 0; row < MiningState.Rows; row++)
+        var minerXPx = (int)(miningState.MinerPos.X * CellDisplayedSizePx);
+        var minerYPx = (int)(miningState.MinerPos.Y * CellDisplayedSizePx);
+        var minerVisibleRadius = MinerTextureSizePx * ScaleMultiplier / 2;
+        return new Rectangle(
+            x - minerXPx - minerVisibleRadius + graphics.GraphicsDevice.Viewport.Width / 2,
+            y - minerYPx - minerVisibleRadius + graphics.GraphicsDevice.Viewport.Height / 2, width, height);
+    }
+
+    public void Render(SpriteBatch spriteBatch)
+    {
+        for (var row = 0; row < MiningState.Rows; row++)
+        for (var col = 0; col < MiningState.Columns; col++)
         {
-            for (int col = 0; col < MiningState.Columns; col++)
-            {
-                bool isRock = miningState.GetCellState(row, col) == CellState.Rock;
-                spriteBatch.Draw(isRock ? textures["rock"] : textures["floor"], GetVisibleRectForGridCell(row, col),
-                    Color.White);
-            }
+            var isRock = miningState.GetCellState(row, col) == CellState.Rock;
+            spriteBatch.Draw(isRock ? textures["rock"] : textures["floor"], GetVisibleRectForGridCell(row, col),
+                Color.White);
         }
 
-        Rectangle sourceRectangle = new Rectangle(
+        var sourceRectangle = new Rectangle(
             miningState.MinerDirection == Direction.Top || miningState.MinerDirection == Direction.Left
                 ? 0
                 : MinerTextureSizePx,
@@ -54,7 +55,7 @@ public class Renderer(GraphicsDeviceManager graphics, Dictionary<string, Texture
                 : MinerTextureSizePx,
             MinerTextureSizePx,
             MinerTextureSizePx);
-        Rectangle destinationRectangle = GetVisibleRectForObject(miningState.MinerPos.X, miningState.MinerPos.Y,
+        var destinationRectangle = GetVisibleRectForObject(miningState.MinerPos.X, miningState.MinerPos.Y,
             MinerTextureSizePx, MinerTextureSizePx);
         spriteBatch.Draw(textures["miner"], destinationRectangle, sourceRectangle, Color.White);
     }
