@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -8,12 +7,12 @@ namespace AstroMiner;
 
 public class AstroMinerGame : Game
 {
-    private GraphicsDeviceManager _graphics;
-    private SpriteBatch _spriteBatch;
+    private readonly GraphicsDeviceManager _graphics;
     private MiningState _miningState;
     private Renderer _renderer;
-    
-    private Dictionary<string, Texture2D> _textures = new Dictionary<string, Texture2D>();
+    private SpriteBatch _spriteBatch;
+
+    private readonly Dictionary<string, Texture2D> _textures = new();
 
 
     public AstroMinerGame()
@@ -50,18 +49,13 @@ public class AstroMinerGame : Game
             Exit();
 
         if (Keyboard.GetState().IsKeyDown(Keys.W))
-        {
             _miningState.AttemptMove(Direction.Top, gameTime.ElapsedGameTime.Milliseconds);
-        } else if (Keyboard.GetState().IsKeyDown(Keys.D))
-        {
+        else if (Keyboard.GetState().IsKeyDown(Keys.D))
             _miningState.AttemptMove(Direction.Right, gameTime.ElapsedGameTime.Milliseconds);
-        } else if (Keyboard.GetState().IsKeyDown(Keys.S))
-        {
+        else if (Keyboard.GetState().IsKeyDown(Keys.S))
             _miningState.AttemptMove(Direction.Bottom, gameTime.ElapsedGameTime.Milliseconds);
-        } else if (Keyboard.GetState().IsKeyDown(Keys.A))
-        {
+        else if (Keyboard.GetState().IsKeyDown(Keys.A))
             _miningState.AttemptMove(Direction.Left, gameTime.ElapsedGameTime.Milliseconds);
-        }
 
         base.Update(gameTime);
     }
@@ -69,13 +63,13 @@ public class AstroMinerGame : Game
     protected override void Draw(GameTime gameTime)
     {
         GraphicsDevice.Clear(Color.CornflowerBlue);
-        
+
         _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
 
         _renderer.Render(_spriteBatch, _miningState);
-        
+
         _spriteBatch.End();
-        
+
         base.Draw(gameTime);
     }
 }

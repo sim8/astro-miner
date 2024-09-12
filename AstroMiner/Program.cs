@@ -1,2 +1,4 @@
-﻿using var game = new AstroMiner.AstroMinerGame();
+﻿using AstroMiner;
+
+using var game = new AstroMinerGame();
 game.Run();

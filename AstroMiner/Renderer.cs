@@ -14,10 +14,11 @@ public class Renderer(GraphicsDeviceManager graphics, Dictionary<string, Texture
 
     private Rectangle GetVisibleRectForGridCell(int gridX, int gridY, int widthOnGrid = 1, int heightOnGrid = 1)
     {
-        return new Rectangle(gridX * CellDisplayedSizePx, gridY * CellDisplayedSizePx, widthOnGrid * CellDisplayedSizePx,
+        return new Rectangle(gridX * CellDisplayedSizePx, gridY * CellDisplayedSizePx,
+            widthOnGrid * CellDisplayedSizePx,
             heightOnGrid * CellDisplayedSizePx);
     }
-    
+
     private Rectangle GetVisibleRectForObject(float gridX, float gridY, int textureWidth, int textureHeight)
     {
         int xPx = (int)(gridX * CellDisplayedSizePx);
@@ -31,7 +32,7 @@ public class Renderer(GraphicsDeviceManager graphics, Dictionary<string, Texture
     //     float viewportHeightOnGrid = PxToGridCoordinate(graphics.GraphicsDevice.Viewport.Height);
     //     return new Vector2();
     // }
-    
+
     public void Render(SpriteBatch spriteBatch, MiningState miningState)
     {
         for (int row = 0; row < MiningState.Rows; row++)
@@ -39,15 +40,22 @@ public class Renderer(GraphicsDeviceManager graphics, Dictionary<string, Texture
             for (int col = 0; col < MiningState.Columns; col++)
             {
                 bool isRock = miningState.GetCellState(row, col) == CellState.Rock;
-                spriteBatch.Draw(isRock ? textures["rock"] : textures["floor"], GetVisibleRectForGridCell(row, col), Color.White);
+                spriteBatch.Draw(isRock ? textures["rock"] : textures["floor"], GetVisibleRectForGridCell(row, col),
+                    Color.White);
             }
         }
+
         Rectangle sourceRectangle = new Rectangle(
-            miningState.MinerDirection == Direction.Top ||miningState.MinerDirection == Direction.Left ? 0 : MinerTextureSizePx,
-            miningState.MinerDirection == Direction.Top ||miningState.MinerDirection == Direction.Right ? 0 : MinerTextureSizePx,
+            miningState.MinerDirection == Direction.Top || miningState.MinerDirection == Direction.Left
+                ? 0
+                : MinerTextureSizePx,
+            miningState.MinerDirection == Direction.Top || miningState.MinerDirection == Direction.Right
+                ? 0
+                : MinerTextureSizePx,
             MinerTextureSizePx,
             MinerTextureSizePx);
-        Rectangle destinationRectangle = GetVisibleRectForObject(miningState.MinerPos.X, miningState.MinerPos.Y, MinerTextureSizePx, MinerTextureSizePx);
+        Rectangle destinationRectangle = GetVisibleRectForObject(miningState.MinerPos.X, miningState.MinerPos.Y,
+            MinerTextureSizePx, MinerTextureSizePx);
         spriteBatch.Draw(textures["miner"], destinationRectangle, sourceRectangle, Color.White);
     }
 }
