@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AstroMiner")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8bbceaa9d5aff6afe59bf1eead02e3d296b9d573")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3df2ec0b203d4f79c0c8c0719fec810426c30ea8")]
 [assembly: System.Reflection.AssemblyProductAttribute("AstroMiner")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AstroMiner")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

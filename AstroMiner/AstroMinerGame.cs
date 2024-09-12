@@ -7,6 +7,11 @@ namespace AstroMiner;
 
 public class AstroMinerGame : Game
 {
+    // TODO these should live elsewhere but needed by a few places
+    private const int MinerTextureSizePx = 38;
+    private const int ScaleMultiplier = 4;
+    private const int CellTextureSizePx = 64;
+
     private readonly GraphicsDeviceManager _graphics;
 
     private readonly Dictionary<string, Texture2D> _textures = new();
@@ -24,8 +29,9 @@ public class AstroMinerGame : Game
 
     protected override void Initialize()
     {
-        _miningState = new MiningState();
-        _renderer = new Renderer(_graphics, _textures, _miningState);
+        _miningState = new MiningState(ScaleMultiplier, MinerTextureSizePx, CellTextureSizePx);
+        _renderer = new Renderer(_graphics, _textures, _miningState, ScaleMultiplier, MinerTextureSizePx,
+            CellTextureSizePx);
         base.Initialize();
     }
 
@@ -49,13 +55,13 @@ public class AstroMinerGame : Game
             Exit();
 
         if (Keyboard.GetState().IsKeyDown(Keys.W))
-            _miningState.AttemptMove(Direction.Top, gameTime.ElapsedGameTime.Milliseconds);
+            _miningState.MoveMiner(Direction.Top, gameTime.ElapsedGameTime.Milliseconds);
         else if (Keyboard.GetState().IsKeyDown(Keys.D))
-            _miningState.AttemptMove(Direction.Right, gameTime.ElapsedGameTime.Milliseconds);
+            _miningState.MoveMiner(Direction.Right, gameTime.ElapsedGameTime.Milliseconds);
         else if (Keyboard.GetState().IsKeyDown(Keys.S))
-            _miningState.AttemptMove(Direction.Bottom, gameTime.ElapsedGameTime.Milliseconds);
+            _miningState.MoveMiner(Direction.Bottom, gameTime.ElapsedGameTime.Milliseconds);
         else if (Keyboard.GetState().IsKeyDown(Keys.A))
-            _miningState.AttemptMove(Direction.Left, gameTime.ElapsedGameTime.Milliseconds);
+            _miningState.MoveMiner(Direction.Left, gameTime.ElapsedGameTime.Milliseconds);
 
         base.Update(gameTime);
     }
