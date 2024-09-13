@@ -58,6 +58,10 @@ public class MiningState
             var gridX = (int)Math.Floor(newPosCorner.X);
             var gridY = (int)Math.Floor(newPosCorner.Y);
 
+            // Out of bounds
+            if (gridX < 0 || gridX >= Rows || gridY < 0 || gridY >= Columns) return false;
+
+            // Collision
             if (_grid[gridX, gridY] != CellState.Empty) return false;
         }
 
