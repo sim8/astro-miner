@@ -5,6 +5,13 @@ using Microsoft.Xna.Framework.Input;
 
 namespace AstroMiner;
 
+public enum CellState
+{
+    Empty,
+    Floor,
+    Rock
+}
+
 public class AstroMinerGame : Game
 {
     // TODO these should live elsewhere but needed by a few places
