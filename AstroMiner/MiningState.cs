@@ -11,29 +11,17 @@ public enum Direction
     Left
 }
 
-public class MiningState
+public class MiningState(int minerTextureSizePx, int cellTextureSizePx)
 {
     public const int GridSize = 40;
     private const float DrillDistance = 0.2f;
     private const float MinerMovementSpeed = 9f;
-    private readonly int _cellTextureSizePx;
-    private readonly CellState[,] _grid;
-    private readonly float _minerGridSize;
-    private readonly int _minerTextureSizePx;
+    private readonly CellState[,] _grid = AsteroidGen.InitializeGridAndStartingPos(GridSize);
+    private readonly float _minerGridSize = (float)minerTextureSizePx / cellTextureSizePx;
 
-    public MiningState(int minerTextureSizePx, int cellTextureSizePx)
-    {
-        _grid = AsteroidGen.InitializeGridAndStartingPos(GridSize);
-        MinerDirection = Direction.Right;
-        MinerPos = new Vector2(0, 0);
-        _minerTextureSizePx = minerTextureSizePx;
-        _cellTextureSizePx = cellTextureSizePx;
-        _minerGridSize = (float)_minerTextureSizePx / _cellTextureSizePx;
-    }
+    public Vector2 MinerPos { get; private set; } = new(0, 0);
 
-    public Vector2 MinerPos { get; private set; }
-
-    public Direction MinerDirection { get; private set; }
+    public Direction MinerDirection { get; private set; } = Direction.Right;
 
     private bool ApplyVectorToMinerPosIfNoCollisions(Vector2 vector)
     {

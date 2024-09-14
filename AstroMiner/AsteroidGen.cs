@@ -4,16 +4,16 @@ namespace AstroMiner;
 
 public static class AsteroidGen
 {
-    public static CellState[,] InitializeGridAndStartingPos(int GridSize)
+    public static CellState[,] InitializeGridAndStartingPos(int gridSize)
     {
-        return InitializeGrid(GridSize);
+        return InitializeGrid(gridSize);
     }
 
-    private static CellState[,] InitializeGrid(int GridSize)
+    private static CellState[,] InitializeGrid(int gridSize)
     {
-        var grid = new CellState[GridSize, GridSize];
-        var centerX = GridSize / 2;
-        var centerY = GridSize / 2;
+        var grid = new CellState[gridSize, gridSize];
+        var centerX = gridSize / 2;
+        var centerY = gridSize / 2;
         double averageRadius = 15;
         double maxDeviation = 3; // Adjusted for larger imperfections
         var maxDelta = 1; // Adjusted for smoother transitions
@@ -48,8 +48,8 @@ public static class AsteroidGen
         perimeterWidths = SmoothPerimeterWidths(perimeterWidths, 2);
 
         // Populate the grid
-        for (var x = 0; x < GridSize; x++)
-        for (var y = 0; y < GridSize; y++)
+        for (var x = 0; x < gridSize; x++)
+        for (var y = 0; y < gridSize; y++)
         {
             double dx = x - centerX;
             double dy = y - centerY;
