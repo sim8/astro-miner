@@ -40,8 +40,8 @@ public class Renderer(
 
     public void Render(SpriteBatch spriteBatch)
     {
-        for (var row = 0; row < MiningState.Rows; row++)
-        for (var col = 0; col < MiningState.Columns; col++)
+        for (var row = 0; row < MiningState.GridSize; row++)
+        for (var col = 0; col < MiningState.GridSize; col++)
         {
             var isRock = miningState.GetCellState(row, col) == CellState.Rock;
             spriteBatch.Draw(isRock ? textures["rock"] : textures["floor"], GetVisibleRectForGridCell(row, col),

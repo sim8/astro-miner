@@ -9,7 +9,7 @@ public class AstroMinerGame : Game
 {
     // TODO these should live elsewhere but needed by a few places
     private const int MinerTextureSizePx = 38;
-    private const int ScaleMultiplier = 2;
+    private const int ScaleMultiplier = 1;
     private const int CellTextureSizePx = 64;
 
     private readonly GraphicsDeviceManager _graphics;
@@ -31,7 +31,7 @@ public class AstroMinerGame : Game
 
     protected override void Initialize()
     {
-        _miningState = new MiningState(ScaleMultiplier, MinerTextureSizePx, CellTextureSizePx);
+        _miningState = new MiningState(MinerTextureSizePx, CellTextureSizePx);
         _renderer = new Renderer(_graphics, _textures, _miningState, ScaleMultiplier, MinerTextureSizePx,
             CellTextureSizePx);
         base.Initialize();
