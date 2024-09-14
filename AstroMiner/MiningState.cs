@@ -11,15 +11,22 @@ public enum Direction
     Left
 }
 
-public class MiningState(int minerTextureSizePx, int cellTextureSizePx)
+public class MiningState
 {
     public const int GridSize = 40;
     private const float DrillDistance = 0.2f;
     private const float MinerMovementSpeed = 9f;
-    private readonly CellState[,] _grid = AsteroidGen.InitializeGridAndStartingPos(GridSize);
-    private readonly float _minerGridSize = (float)minerTextureSizePx / cellTextureSizePx;
+    private readonly CellState[,] _grid;
+    private readonly float _minerGridSize;
 
-    public Vector2 MinerPos { get; private set; } = new(0, 0);
+    public MiningState(int minerTextureSizePx, int cellTextureSizePx)
+    {
+        (_grid, MinerPos) = AsteroidGen.InitializeGridAndStartingPos(GridSize);
+        _minerGridSize = (float)minerTextureSizePx / cellTextureSizePx;
+    }
+
+    public Vector2 MinerPos { get; private set; }
+
 
     public Direction MinerDirection { get; private set; } = Direction.Right;
 

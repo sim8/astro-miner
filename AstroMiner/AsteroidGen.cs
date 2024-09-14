@@ -1,13 +1,35 @@
 using System;
+using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
 
 public static class AsteroidGen
 {
-    public static CellState[,] InitializeGridAndStartingPos(int gridSize)
+    public static (CellState[,], Vector2) InitializeGridAndStartingPos(int gridSize)
     {
-        return InitializeGrid(gridSize);
+        var grid = InitializeGrid(gridSize);
+        ClearAndGetStartingPos(grid);
+        return (grid, Vector2.Zero);
     }
+
+    private static void ClearAndGetStartingPos(CellState[,] grid)
+    {
+        for (var i = grid.GetLength(0) - 1; i >= 0; i--)
+        {
+            var solidBlocksInARow = 0;
+            for (var j = 0; j < grid.GetLength(1); j++)
+                if (grid[i, j] != CellState.Empty)
+                {
+                    solidBlocksInARow++;
+                }
+                else if (solidBlocksInARow > 0)
+                {
+                    Console.WriteLine("WE GOT " + solidBlocksInARow);
+                    solidBlocksInARow = 0;
+                }
+        }
+    }
+
 
     private static CellState[,] InitializeGrid(int gridSize)
     {
@@ -74,7 +96,7 @@ public static class AsteroidGen
         return grid;
     }
 
-    // Function to smooth radius values
+// Function to smooth radius values
     private static double[] SmoothRadiusValues(double[] values, int smoothingFactor)
     {
         var length = values.Length;
@@ -98,7 +120,7 @@ public static class AsteroidGen
         return smoothedValues;
     }
 
-    // Function to smooth perimeter widths
+// Function to smooth perimeter widths
     private static int[] SmoothPerimeterWidths(int[] values, int smoothingFactor)
     {
         var length = values.Length;
