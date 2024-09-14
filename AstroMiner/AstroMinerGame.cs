@@ -9,7 +9,7 @@ public class AstroMinerGame : Game
 {
     // TODO these should live elsewhere but needed by a few places
     private const int MinerTextureSizePx = 38;
-    private const int ScaleMultiplier = 4;
+    private const int ScaleMultiplier = 2;
     private const int CellTextureSizePx = 64;
 
     private readonly GraphicsDeviceManager _graphics;
@@ -63,6 +63,9 @@ public class AstroMinerGame : Game
         else if (Keyboard.GetState().IsKeyDown(Keys.A))
             _miningState.MoveMiner(Direction.Left, gameTime.ElapsedGameTime.Milliseconds);
 
+        if (Keyboard.GetState().IsKeyDown(Keys.Space))
+            _miningState.UseDrill(gameTime.ElapsedGameTime.Milliseconds);
+ 
         base.Update(gameTime);
     }
 

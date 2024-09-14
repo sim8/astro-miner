@@ -12,7 +12,6 @@ public class Renderer(
     int minerTextureSizePx,
     int cellTextureSizePx)
 {
-    
     private readonly int _cellDisplayedSizePx = cellTextureSizePx * scaleMultiplier;
 
     private Rectangle GetVisibleRectForGridCell(int gridX, int gridY, int widthOnGrid = 1, int heightOnGrid = 1)
@@ -46,7 +45,7 @@ public class Renderer(
         {
             var isRock = miningState.GetCellState(row, col) == CellState.Rock;
             spriteBatch.Draw(isRock ? textures["rock"] : textures["floor"], GetVisibleRectForGridCell(row, col),
-                Color.White);
+                Color.DarkBlue);
         }
 
         var sourceRectangle = new Rectangle(

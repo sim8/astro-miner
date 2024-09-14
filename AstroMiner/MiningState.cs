@@ -21,9 +21,11 @@ public class MiningState
 {
     public const int Columns = 10;
     public const int Rows = 10;
-    private const float MinerMovementSpeed = 1.4f;
+    private const float DrillDistance = 0.2f;
+    private const float MinerMovementSpeed = 1.6f;
     private readonly int _cellTextureSizePx;
     private readonly CellState[,] _grid;
+    private readonly float _minerGridSize;
     private readonly int _minerTextureSizePx;
 
     private Vector2 _minerPos;
@@ -39,6 +41,7 @@ public class MiningState
         _scaleMultiplier = scaleMultiplier;
         _minerTextureSizePx = minerTextureSizePx;
         _cellTextureSizePx = cellTextureSizePx;
+        _minerGridSize = (float)_minerTextureSizePx / _cellTextureSizePx;
     }
 
     public Vector2 MinerPos => _minerPos;
@@ -47,26 +50,22 @@ public class MiningState
 
     private bool ApplyVectorToMinerPosIfNoCollisions(Vector2 vector)
     {
-        var minerGridSize = (float)_minerTextureSizePx / _cellTextureSizePx;
         var newTopLeft = _minerPos + vector;
-        var newTopRight = _minerPos + vector + new Vector2(minerGridSize, 0);
-        var newBottomLeft = _minerPos + vector + new Vector2(0, minerGridSize);
-        var newBottomRight = _minerPos + vector + new Vector2(minerGridSize, minerGridSize);
+        var newTopRight = _minerPos + vector + new Vector2(_minerGridSize, 0);
+        var newBottomLeft = _minerPos + vector + new Vector2(0, _minerGridSize);
+        var newBottomRight = _minerPos + vector + new Vector2(_minerGridSize, _minerGridSize);
 
         foreach (var newPosCorner in new[] { newTopLeft, newTopRight, newBottomRight, newBottomLeft })
-        {
-            var gridX = (int)Math.Floor(newPosCorner.X);
-            var gridY = (int)Math.Floor(newPosCorner.Y);
-
-            // Out of bounds
-            if (gridX < 0 || gridX >= Rows || gridY < 0 || gridY >= Columns) return false;
-
-            // Collision
-            if (_grid[gridX, gridY] != CellState.Empty) return false;
-        }
+            try
+            {
+                if (GetCellState(newPosCorner) != CellState.Empty) return false;
+            }
+            catch (Exception e)
+            {
+                return false; // out of bounds
+            }
 
         _minerPos = newTopLeft;
-
         return true;
     }
 
@@ -79,7 +78,22 @@ public class MiningState
 
     public CellState GetCellState(int row, int column)
     {
+        if (row < 0 || row >= Rows || column < 0 || column >= Columns) throw new IndexOutOfRangeException();
         return _grid[row, column];
+    }
+
+    public CellState GetCellState(Vector2 vector)
+    {
+        var gridX = (int)Math.Floor(vector.X);
+        var gridY = (int)Math.Floor(vector.Y);
+        return GetCellState(gridX, gridY);
+    }
+
+    public void SetCellState(Vector2 vector, CellState newState)
+    {
+        var gridX = (int)Math.Floor(vector.X);
+        var gridY = (int)Math.Floor(vector.Y);
+        _grid[gridX, gridY] = newState;
     }
 
     public void MoveMiner(Direction direction, int ellapsedGameTimeMs)
@@ -92,5 +106,18 @@ public class MiningState
         if (direction == Direction.Bottom) ApplyVectorToMinerPosIfNoCollisions(new Vector2(0, distance));
         if (direction == Direction.Left) ApplyVectorToMinerPosIfNoCollisions(new Vector2(-distance, 0));
         Console.WriteLine(_minerPos.ToString());
+    }
+
+    public void UseDrill(int ellapsedGameTimeMs)
+    {
+        Vector2 drillPos;
+        if (MinerDirection == Direction.Top) drillPos = _minerPos + new Vector2(_minerGridSize / 2, -DrillDistance);
+        else if (MinerDirection == Direction.Right)
+            drillPos = _minerPos + new Vector2(_minerGridSize + DrillDistance, _minerGridSize / 2);
+        else if (MinerDirection == Direction.Bottom)
+            drillPos = _minerPos + new Vector2(_minerGridSize / 2, _minerGridSize + DrillDistance);
+        else drillPos = _minerPos + new Vector2(-DrillDistance, _minerGridSize / 2);
+
+        if (GetCellState(drillPos) == CellState.Rock) SetCellState(drillPos, CellState.Empty);
     }
 }
