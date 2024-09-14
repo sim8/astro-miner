@@ -45,7 +45,7 @@ public class Renderer(
         {
             var isRock = miningState.GetCellState(row, col) == CellState.Rock;
             spriteBatch.Draw(isRock ? textures["rock"] : textures["floor"], GetVisibleRectForGridCell(row, col),
-                Color.DarkBlue);
+                Color.White);
         }
 
         var sourceRectangle = new Rectangle(

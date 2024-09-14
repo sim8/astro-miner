@@ -23,6 +23,8 @@ public class AstroMinerGame : Game
     public AstroMinerGame()
     {
         _graphics = new GraphicsDeviceManager(this);
+        _graphics.PreferredBackBufferWidth = 1280;
+        _graphics.PreferredBackBufferHeight = 1024;
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
@@ -65,7 +67,7 @@ public class AstroMinerGame : Game
 
         if (Keyboard.GetState().IsKeyDown(Keys.Space))
             _miningState.UseDrill(gameTime.ElapsedGameTime.Milliseconds);
- 
+
         base.Update(gameTime);
     }
 
