@@ -9,7 +9,8 @@ public enum CellState
 {
     Empty,
     Floor,
-    Rock
+    Rock,
+    SolidRock
 }
 
 public class AstroMinerGame : Game
@@ -55,6 +56,9 @@ public class AstroMinerGame : Game
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         LoadTexture("floor");
         LoadTexture("rock");
+        LoadTexture("solid-rock");
+        LoadTexture("ruby");
+        LoadTexture("diamond");
         LoadTexture("miner");
     }
 

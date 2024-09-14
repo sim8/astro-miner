@@ -34,9 +34,9 @@ public class Renderer(
         var minerYPx = (int)(miningState.MinerPos.Y * _cellDisplayedSizePx);
         var minerVisibleRadius = minerTextureSizePx * scaleMultiplier / 2;
         return new Rectangle(
-            x - minerXPx - minerVisibleRadius + graphics.GraphicsDevice.Viewport.Width / 2,
-            y - minerYPx - minerVisibleRadius + graphics.GraphicsDevice.Viewport.Height / 2, width,
-            height);
+            (x - minerXPx - minerVisibleRadius + graphics.GraphicsDevice.Viewport.Width / 2) / 4 + 500,
+            (y - minerYPx - minerVisibleRadius + graphics.GraphicsDevice.Viewport.Height / 2) / 4 + 500, width / 4,
+            height / 4);
     }
 
     public void Render(SpriteBatch spriteBatch)
@@ -45,6 +45,9 @@ public class Renderer(
         for (var col = 0; col < MiningState.GridSize; col++)
             if (miningState.GetCellState(col, row) == CellState.Rock)
                 spriteBatch.Draw(textures["rock"], GetVisibleRectForGridCell(col, row),
+                    Color.White);
+            else if (miningState.GetCellState(col, row) == CellState.SolidRock)
+                spriteBatch.Draw(textures["solid-rock"], GetVisibleRectForGridCell(col, row),
                     Color.White);
             else
                 spriteBatch.Draw(

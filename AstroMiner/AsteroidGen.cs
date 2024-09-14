@@ -5,9 +5,16 @@ namespace AstroMiner;
 
 public static class AsteroidGen
 {
+    private const float NoiseScale = 0.4f;
+    private const float InnerThreshold = 0.55f; // Adjust this value
+    private const float OuterThreshold = 0.65f; // Adjust this value
+
     public static (CellState[,], Vector2) InitializeGridAndStartingPos(int gridSize, float minerSize)
     {
-        var grid = InitializeGrid(gridSize);
+        var rnd = new Random();
+        var seed = rnd.Next(1, 999);
+        var perlinNoise = new PerlinNoiseGenerator(seed);
+        var grid = InitializeGrid(gridSize, perlinNoise);
         return (grid, ClearAndGetStartingPos(grid, minerSize));
     }
 
@@ -41,7 +48,7 @@ public static class AsteroidGen
     }
 
 
-    private static CellState[,] InitializeGrid(int gridSize)
+    private static CellState[,] InitializeGrid(int gridSize, PerlinNoiseGenerator perlinNoise)
     {
         var grid = new CellState[gridSize, gridSize];
         var centerX = gridSize / 2;
@@ -96,11 +103,21 @@ public static class AsteroidGen
             var perimeterWidth = perimeterWidths[index];
 
             if (distance <= radius)
-                grid[x, y] = CellState.Rock;
+            {
+                var xCoord = x * NoiseScale;
+                var yCoord = y * NoiseScale;
+                var noiseValue = perlinNoise.Noise(xCoord, yCoord);
+                var threshold = distance < radius * 0.7 ? InnerThreshold : OuterThreshold;
+                grid[x, y] = noiseValue > threshold ? CellState.SolidRock : CellState.Rock;
+            }
             else if (distance <= radius + perimeterWidth)
+            {
                 grid[x, y] = CellState.Floor;
+            }
             else
+            {
                 grid[x, y] = CellState.Empty;
+            }
         }
 
         return grid;
