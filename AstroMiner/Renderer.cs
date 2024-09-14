@@ -34,19 +34,23 @@ public class Renderer(
         var minerYPx = (int)(miningState.MinerPos.Y * _cellDisplayedSizePx);
         var minerVisibleRadius = minerTextureSizePx * scaleMultiplier / 2;
         return new Rectangle(
-            x - minerXPx - minerVisibleRadius + graphics.GraphicsDevice.Viewport.Width / 2,
-            y - minerYPx - minerVisibleRadius + graphics.GraphicsDevice.Viewport.Height / 2, width, height);
+            (x - minerXPx - minerVisibleRadius + graphics.GraphicsDevice.Viewport.Width / 2) / 4,
+            (y - minerYPx - minerVisibleRadius + graphics.GraphicsDevice.Viewport.Height / 2) / 4, width / 4,
+            height / 4);
     }
 
     public void Render(SpriteBatch spriteBatch)
     {
         for (var row = 0; row < MiningState.GridSize; row++)
         for (var col = 0; col < MiningState.GridSize; col++)
-        {
-            var isRock = miningState.GetCellState(row, col) == CellState.Rock;
-            spriteBatch.Draw(isRock ? textures["rock"] : textures["floor"], GetVisibleRectForGridCell(row, col),
-                Color.White);
-        }
+            if (miningState.GetCellState(row, col) == CellState.Rock)
+                spriteBatch.Draw(textures["rock"], GetVisibleRectForGridCell(row, col),
+                    Color.White);
+            else
+                spriteBatch.Draw(
+                    textures["floor"],
+                    GetVisibleRectForGridCell(row, col),
+                    miningState.GetCellState(row, col) == CellState.Floor ? Color.White : Color.DarkBlue);
 
         var sourceRectangle = new Rectangle(
             miningState.MinerDirection == Direction.Top || miningState.MinerDirection == Direction.Left
