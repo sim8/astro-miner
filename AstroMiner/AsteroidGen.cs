@@ -13,7 +13,6 @@ public static class AsteroidGen
 
     private static Vector2 ClearAndGetStartingPos(CellState[,] grid, float minerSize)
     {
-        var rand = new Random();
         for (var row = grid.GetLength(0) - 1; row >= 0; row--)
         {
             var solidBlocksInARow = 0;

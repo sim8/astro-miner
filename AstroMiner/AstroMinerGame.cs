@@ -38,7 +38,8 @@ public class AstroMinerGame : Game
 
     protected override void Initialize()
     {
-        _miningState = new MiningState(MinerTextureSizePx, CellTextureSizePx);
+        var minerSize = (float)MinerTextureSizePx / CellTextureSizePx;
+        _miningState = new MiningState(minerSize);
         _renderer = new Renderer(_graphics, _textures, _miningState, ScaleMultiplier, MinerTextureSizePx,
             CellTextureSizePx);
         base.Initialize();

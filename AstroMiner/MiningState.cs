@@ -17,12 +17,12 @@ public class MiningState
     private const float DrillDistance = 0.2f;
     private const float MinerMovementSpeed = 9f;
     private readonly CellState[,] _grid;
-    private readonly float _minerGridSize;
+    private readonly float _minerSize;
 
-    public MiningState(int minerTextureSizePx, int cellTextureSizePx)
+    public MiningState(float minerSize)
     {
-        _minerGridSize = (float)minerTextureSizePx / cellTextureSizePx;
-        (_grid, MinerPos) = AsteroidGen.InitializeGridAndStartingPos(GridSize, _minerGridSize);
+        _minerSize = minerSize;
+        (_grid, MinerPos) = AsteroidGen.InitializeGridAndStartingPos(GridSize, _minerSize);
     }
 
     public Vector2 MinerPos { get; private set; }
@@ -33,9 +33,9 @@ public class MiningState
     private bool ApplyVectorToMinerPosIfNoCollisions(Vector2 vector)
     {
         var newTopLeft = MinerPos + vector;
-        var newTopRight = MinerPos + vector + new Vector2(_minerGridSize, 0);
-        var newBottomLeft = MinerPos + vector + new Vector2(0, _minerGridSize);
-        var newBottomRight = MinerPos + vector + new Vector2(_minerGridSize, _minerGridSize);
+        var newTopRight = MinerPos + vector + new Vector2(_minerSize, 0);
+        var newBottomLeft = MinerPos + vector + new Vector2(0, _minerSize);
+        var newBottomRight = MinerPos + vector + new Vector2(_minerSize, _minerSize);
 
         foreach (var newPosCorner in new[] { newTopLeft, newTopRight, newBottomRight, newBottomLeft })
             try
@@ -85,12 +85,12 @@ public class MiningState
     public void UseDrill(int ellapsedGameTimeMs)
     {
         Vector2 drillPos;
-        if (MinerDirection == Direction.Top) drillPos = MinerPos + new Vector2(_minerGridSize / 2, -DrillDistance);
+        if (MinerDirection == Direction.Top) drillPos = MinerPos + new Vector2(_minerSize / 2, -DrillDistance);
         else if (MinerDirection == Direction.Right)
-            drillPos = MinerPos + new Vector2(_minerGridSize + DrillDistance, _minerGridSize / 2);
+            drillPos = MinerPos + new Vector2(_minerSize + DrillDistance, _minerSize / 2);
         else if (MinerDirection == Direction.Bottom)
-            drillPos = MinerPos + new Vector2(_minerGridSize / 2, _minerGridSize + DrillDistance);
-        else drillPos = MinerPos + new Vector2(-DrillDistance, _minerGridSize / 2);
+            drillPos = MinerPos + new Vector2(_minerSize / 2, _minerSize + DrillDistance);
+        else drillPos = MinerPos + new Vector2(-DrillDistance, _minerSize / 2);
 
         Console.WriteLine($"minerPos: {MinerPos}");
         Console.WriteLine($"drillPos: {drillPos}");
