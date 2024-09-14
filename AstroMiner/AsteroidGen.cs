@@ -5,29 +5,40 @@ namespace AstroMiner;
 
 public static class AsteroidGen
 {
-    public static (CellState[,], Vector2) InitializeGridAndStartingPos(int gridSize)
+    public static (CellState[,], Vector2) InitializeGridAndStartingPos(int gridSize, float minerSize)
     {
         var grid = InitializeGrid(gridSize);
-        ClearAndGetStartingPos(grid);
-        return (grid, Vector2.Zero);
+        return (grid, ClearAndGetStartingPos(grid, minerSize));
     }
 
-    private static void ClearAndGetStartingPos(CellState[,] grid)
+    private static Vector2 ClearAndGetStartingPos(CellState[,] grid, float minerSize)
     {
-        for (var i = grid.GetLength(0) - 1; i >= 0; i--)
+        var rand = new Random();
+        for (var row = grid.GetLength(0) - 1; row >= 0; row--)
         {
             var solidBlocksInARow = 0;
-            for (var j = 0; j < grid.GetLength(1); j++)
-                if (grid[i, j] != CellState.Empty)
+            for (var col = 0; col < grid.GetLength(1); col++)
+                if (grid[row, col] != CellState.Empty)
                 {
                     solidBlocksInARow++;
                 }
-                else if (solidBlocksInARow > 0)
+                // Find first row which has >= 3 contiguous solid blocks as starting pos
+                else if (solidBlocksInARow >= 3)
                 {
-                    Console.WriteLine("WE GOT " + solidBlocksInARow);
-                    solidBlocksInARow = 0;
+                    var minerCellOffset = 0.5f - minerSize / 2;
+                    var minerColIndex = col - solidBlocksInARow / 2;
+                    // Clear 2x3 landing area
+                    grid[row, minerColIndex - 1] = CellState.Floor;
+                    grid[row, minerColIndex] = CellState.Floor;
+                    grid[row, minerColIndex + 1] = CellState.Floor;
+                    grid[row - 1, minerColIndex - 1] = CellState.Floor;
+                    grid[row - 1, minerColIndex] = CellState.Floor;
+                    grid[row - 1, minerColIndex + 1] = CellState.Floor;
+                    return new Vector2(minerColIndex + minerCellOffset, row + minerCellOffset);
                 }
         }
+
+        throw new Exception("No 3x1 solid blocks in grid");
     }
 
 
@@ -96,7 +107,7 @@ public static class AsteroidGen
         return grid;
     }
 
-// Function to smooth radius values
+    // Function to smooth radius values
     private static double[] SmoothRadiusValues(double[] values, int smoothingFactor)
     {
         var length = values.Length;
@@ -120,7 +131,7 @@ public static class AsteroidGen
         return smoothedValues;
     }
 
-// Function to smooth perimeter widths
+    // Function to smooth perimeter widths
     private static int[] SmoothPerimeterWidths(int[] values, int smoothingFactor)
     {
         var length = values.Length;

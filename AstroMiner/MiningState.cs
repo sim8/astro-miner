@@ -21,14 +21,14 @@ public class MiningState
 
     public MiningState(int minerTextureSizePx, int cellTextureSizePx)
     {
-        (_grid, MinerPos) = AsteroidGen.InitializeGridAndStartingPos(GridSize);
         _minerGridSize = (float)minerTextureSizePx / cellTextureSizePx;
+        (_grid, MinerPos) = AsteroidGen.InitializeGridAndStartingPos(GridSize, _minerGridSize);
     }
 
     public Vector2 MinerPos { get; private set; }
 
 
-    public Direction MinerDirection { get; private set; } = Direction.Right;
+    public Direction MinerDirection { get; private set; } = Direction.Top;
 
     private bool ApplyVectorToMinerPosIfNoCollisions(Vector2 vector)
     {
@@ -40,7 +40,7 @@ public class MiningState
         foreach (var newPosCorner in new[] { newTopLeft, newTopRight, newBottomRight, newBottomLeft })
             try
             {
-                if (GetCellState(newPosCorner) != CellState.Empty) return false;
+                if (GetCellState(newPosCorner) != CellState.Floor) return false;
             }
             catch (Exception)
             {
@@ -51,7 +51,7 @@ public class MiningState
         return true;
     }
 
-    public CellState GetCellState(int row, int column)
+    public CellState GetCellState(int column, int row)
     {
         if (row < 0 || row >= GridSize || column < 0 || column >= GridSize) throw new IndexOutOfRangeException();
         return _grid[row, column];
@@ -68,7 +68,7 @@ public class MiningState
     {
         var gridX = (int)Math.Floor(vector.X);
         var gridY = (int)Math.Floor(vector.Y);
-        _grid[gridX, gridY] = newState;
+        _grid[gridY, gridX] = newState;
     }
 
     public void MoveMiner(Direction direction, int ellapsedGameTimeMs)
@@ -92,6 +92,9 @@ public class MiningState
             drillPos = MinerPos + new Vector2(_minerGridSize / 2, _minerGridSize + DrillDistance);
         else drillPos = MinerPos + new Vector2(-DrillDistance, _minerGridSize / 2);
 
-        if (GetCellState(drillPos) == CellState.Rock) SetCellState(drillPos, CellState.Empty);
+        Console.WriteLine($"minerPos: {MinerPos}");
+        Console.WriteLine($"drillPos: {drillPos}");
+
+        if (GetCellState(drillPos) == CellState.Rock) SetCellState(drillPos, CellState.Floor);
     }
 }
