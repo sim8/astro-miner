@@ -57,17 +57,20 @@ public class MiningState
         return _grid[row, column];
     }
 
-    public CellState GetCellState(Vector2 vector)
+    private static (int x, int y) ToGridPosition(Vector2 vector)
     {
-        var gridX = (int)Math.Floor(vector.X);
-        var gridY = (int)Math.Floor(vector.Y);
+        return ((int)Math.Floor(vector.X), (int)Math.Floor(vector.Y));
+    }
+
+    private CellState GetCellState(Vector2 vector)
+    {
+        var (gridX, gridY) = ToGridPosition(vector);
         return GetCellState(gridX, gridY);
     }
 
-    public void SetCellState(Vector2 vector, CellState newState)
+    private void SetCellState(Vector2 vector, CellState newState)
     {
-        var gridX = (int)Math.Floor(vector.X);
-        var gridY = (int)Math.Floor(vector.Y);
+        var (gridX, gridY) = ToGridPosition(vector);
         _grid[gridY, gridX] = newState;
     }
 
@@ -91,9 +94,6 @@ public class MiningState
         else if (MinerDirection == Direction.Bottom)
             drillPos = MinerPos + new Vector2(_minerSize / 2, _minerSize + DrillDistance);
         else drillPos = MinerPos + new Vector2(-DrillDistance, _minerSize / 2);
-
-        Console.WriteLine($"minerPos: {MinerPos}");
-        Console.WriteLine($"drillPos: {drillPos}");
 
         if (GetCellState(drillPos) == CellState.Rock) SetCellState(drillPos, CellState.Floor);
     }
