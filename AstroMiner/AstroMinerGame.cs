@@ -19,6 +19,7 @@ public class AstroMinerGame : Game
     private const int MinerTextureSizePx = 38;
     private const int ScaleMultiplier = 1;
     private const int CellTextureSizePx = 64;
+    private readonly HashSet<MiningControls> _activeMiningControls = new();
 
     private readonly GraphicsDeviceManager _graphics;
 
@@ -64,21 +65,26 @@ public class AstroMinerGame : Game
 
     protected override void Update(GameTime gameTime)
     {
+        _activeMiningControls.Clear();
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        if (Keyboard.GetState().IsKeyDown(Keys.W))
-            _miningState.MoveMiner(Direction.Top, gameTime.ElapsedGameTime.Milliseconds);
-        else if (Keyboard.GetState().IsKeyDown(Keys.D))
-            _miningState.MoveMiner(Direction.Right, gameTime.ElapsedGameTime.Milliseconds);
-        else if (Keyboard.GetState().IsKeyDown(Keys.S))
-            _miningState.MoveMiner(Direction.Bottom, gameTime.ElapsedGameTime.Milliseconds);
-        else if (Keyboard.GetState().IsKeyDown(Keys.A))
-            _miningState.MoveMiner(Direction.Left, gameTime.ElapsedGameTime.Milliseconds);
+        var keyboardState = Keyboard.GetState();
 
+        // TODO use a map for this instead?
+        if (keyboardState.IsKeyDown(Keys.W))
+            _activeMiningControls.Add(MiningControls.MoveUp);
+        if (keyboardState.IsKeyDown(Keys.D))
+            _activeMiningControls.Add(MiningControls.MoveRight);
+        if (keyboardState.IsKeyDown(Keys.S))
+            _activeMiningControls.Add(MiningControls.MoveDown);
+        if (keyboardState.IsKeyDown(Keys.A))
+            _activeMiningControls.Add(MiningControls.MoveLeft);
         if (Keyboard.GetState().IsKeyDown(Keys.Space))
-            _miningState.UseDrill(gameTime.ElapsedGameTime.Milliseconds);
+            _activeMiningControls.Add(MiningControls.Drill);
+
+        _miningState.Update(_activeMiningControls, gameTime.ElapsedGameTime.Milliseconds);
 
         base.Update(gameTime);
     }

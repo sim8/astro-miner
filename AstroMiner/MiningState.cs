@@ -1,7 +1,19 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
+
+public enum MiningControls
+{
+    // Movement
+    MoveUp,
+    MoveRight,
+    MoveDown,
+    MoveLeft,
+
+    Drill
+}
 
 public enum Direction
 {
@@ -16,11 +28,19 @@ public class MiningState
     public const int GridSize = 40;
     private const float DrillDistance = 0.2f;
     private const float MinerMovementSpeed = 9f;
+    private readonly Dictionary<MiningControls, Direction> _directionsControlsMapping;
     private readonly CellState[,] _grid;
     private readonly float _minerSize;
 
     public MiningState(float minerSize)
     {
+        _directionsControlsMapping = new Dictionary<MiningControls, Direction>
+        {
+            { MiningControls.MoveUp, Direction.Top },
+            { MiningControls.MoveRight, Direction.Right },
+            { MiningControls.MoveDown, Direction.Bottom },
+            { MiningControls.MoveLeft, Direction.Left }
+        };
         _minerSize = minerSize;
         (_grid, MinerPos) = AsteroidGen.InitializeGridAndStartingPos(GridSize, _minerSize);
     }
@@ -74,6 +94,20 @@ public class MiningState
         _grid[gridY, gridX] = newState;
     }
 
+    public void Update(HashSet<MiningControls> activeMiningControls, int elapsedMs)
+    {
+        if (activeMiningControls.Contains(MiningControls.MoveUp))
+            MoveMiner(Direction.Top, elapsedMs);
+        else if (activeMiningControls.Contains(MiningControls.MoveRight))
+            MoveMiner(Direction.Right, elapsedMs);
+        else if (activeMiningControls.Contains(MiningControls.MoveDown))
+            MoveMiner(Direction.Bottom, elapsedMs);
+        else if (activeMiningControls.Contains(MiningControls.MoveLeft))
+            MoveMiner(Direction.Left, elapsedMs);
+
+        if (activeMiningControls.Contains(MiningControls.Drill)) UseDrill(elapsedMs);
+    }
+
     public void MoveMiner(Direction direction, int ellapsedGameTimeMs)
     {
         MinerDirection = direction;
@@ -85,7 +119,7 @@ public class MiningState
         if (direction == Direction.Left) ApplyVectorToMinerPosIfNoCollisions(new Vector2(-distance, 0));
     }
 
-    public void UseDrill(int ellapsedGameTimeMs)
+    private void UseDrill(int ellapsedGameTimeMs)
     {
         Vector2 drillPos;
         if (MinerDirection == Direction.Top) drillPos = MinerPos + new Vector2(_minerSize / 2, -DrillDistance);
