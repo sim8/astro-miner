@@ -33,10 +33,16 @@ public class Renderer(
         var minerXPx = (int)(miningState.MinerPos.X * _cellDisplayedSizePx);
         var minerYPx = (int)(miningState.MinerPos.Y * _cellDisplayedSizePx);
         var minerVisibleRadius = minerTextureSizePx * scaleMultiplier / 2;
+
+        // return new Rectangle(
+        //     (x - minerXPx - minerVisibleRadius + graphics.GraphicsDevice.Viewport.Width / 2) / 4 + 500,
+        //     (y - minerYPx - minerVisibleRadius + graphics.GraphicsDevice.Viewport.Height / 2) / 4 + 500, width / 4,
+        //     height / 4);
+
         return new Rectangle(
-            (x - minerXPx - minerVisibleRadius + graphics.GraphicsDevice.Viewport.Width / 2) / 4 + 500,
-            (y - minerYPx - minerVisibleRadius + graphics.GraphicsDevice.Viewport.Height / 2) / 4 + 500, width / 4,
-            height / 4);
+            x - minerXPx - minerVisibleRadius + graphics.GraphicsDevice.Viewport.Width / 2,
+            y - minerYPx - minerVisibleRadius + graphics.GraphicsDevice.Viewport.Height / 2, width,
+            height);
     }
 
     public void Render(SpriteBatch spriteBatch)

@@ -19,7 +19,7 @@ public class AstroMinerGame : Game
 {
     // TODO these should live elsewhere but needed by a few places
     private const int MinerTextureSizePx = 38;
-    private const int ScaleMultiplier = 1;
+    private const int ScaleMultiplier = 2;
     private const int CellTextureSizePx = 64;
     private readonly HashSet<MiningControls> _activeMiningControls = new();
 
