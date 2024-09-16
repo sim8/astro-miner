@@ -31,6 +31,8 @@ public class MiningState
     private readonly Dictionary<MiningControls, Direction> _directionsControlsMapping;
     private readonly CellState[,] _grid;
     private readonly float _minerSize;
+    private int _drillingMs;
+    private (int x, int y)? _drillingPosition;
 
     public MiningState(float minerSize)
     {
@@ -129,6 +131,29 @@ public class MiningState
             drillPos = MinerPos + new Vector2(_minerSize / 2, _minerSize + DrillDistance);
         else drillPos = MinerPos + new Vector2(-DrillDistance, _minerSize / 2);
 
-        if (GetCellState(drillPos) == CellState.Rock) SetCellState(drillPos, CellState.Floor);
+        var gridPos = ToGridPosition(drillPos);
+
+        if (gridPos == _drillingPosition)
+        {
+            _drillingMs += ellapsedGameTimeMs;
+        }
+        else
+        {
+            // Drilling different cell, reset timer
+            _drillingPosition = gridPos;
+            _drillingMs = ellapsedGameTimeMs;
+        }
+
+        if (GetCellState(gridPos.Item1, gridPos.Item2) == CellState.Rock && _drillingMs > 1000)
+            SetCellState(drillPos, CellState.Floor);
+    }
+
+    private void ResetDrill()
+    {
+        if (_drillingPosition.HasValue)
+        {
+            _drillingPosition = null;
+            _drillingMs = 0;
+        }
     }
 }
