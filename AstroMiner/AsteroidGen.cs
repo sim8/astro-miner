@@ -6,8 +6,12 @@ namespace AstroMiner;
 public static class AsteroidGen
 {
     private const float NoiseScale = 0.4f;
-    private const float InnerThreshold = 0.55f; // Adjust this value
-    private const float OuterThreshold = 0.65f; // Adjust this value
+    private const float DiamondsRadius = 0.2f;
+    private const float AsteroidCoreRadius = 0.7f;
+    private static readonly (float, float) CoreSolidRockRange = (0.55f, 1);
+    private static readonly (float, float) OuterSolidRockRange = (0.65f, 1);
+    private static readonly (float, float) DiamondRange = (0.65f, 1);
+    private static readonly (float, float) RubyRange = (0.35f, 0.365f);
 
     public static (CellState[,], Vector2) InitializeGridAndStartingPos(int gridSize, float minerSize)
     {
@@ -45,6 +49,11 @@ public static class AsteroidGen
         }
 
         throw new Exception("No 3x1 solid blocks in grid");
+    }
+
+    private static bool noiseValWithinRange(float noiseValue, (float, float) range)
+    {
+        return noiseValue >= range.Item1 && noiseValue < range.Item2;
     }
 
 
@@ -107,8 +116,15 @@ public static class AsteroidGen
                 var xCoord = x * NoiseScale;
                 var yCoord = y * NoiseScale;
                 var noiseValue = perlinNoise.Noise(xCoord, yCoord);
-                var threshold = distance < radius * 0.7 ? InnerThreshold : OuterThreshold;
-                grid[x, y] = noiseValue > threshold ? CellState.SolidRock : CellState.Rock;
+                var range = distance < radius * AsteroidCoreRadius
+                    ? CoreSolidRockRange
+                    : OuterSolidRockRange;
+                if (noiseValWithinRange(noiseValue, range))
+                    grid[x, y] = distance < radius * DiamondsRadius && noiseValWithinRange(noiseValue, DiamondRange)
+                        ? CellState.Diamond
+                        : CellState.SolidRock;
+                else
+                    grid[x, y] = noiseValWithinRange(noiseValue, RubyRange) ? CellState.Ruby : CellState.Rock;
             }
             else if (distance <= radius + perimeterWidth)
             {

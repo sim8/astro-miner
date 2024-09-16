@@ -10,7 +10,9 @@ public enum CellState
     Empty,
     Floor,
     Rock,
-    SolidRock
+    SolidRock,
+    Diamond,
+    Ruby
 }
 
 public class AstroMinerGame : Game

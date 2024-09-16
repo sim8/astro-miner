@@ -49,11 +49,20 @@ public class Renderer(
             else if (miningState.GetCellState(col, row) == CellState.SolidRock)
                 spriteBatch.Draw(textures["solid-rock"], GetVisibleRectForGridCell(col, row),
                     Color.White);
+            else if (miningState.GetCellState(col, row) == CellState.Diamond)
+                spriteBatch.Draw(textures["diamond"], GetVisibleRectForGridCell(col, row),
+                    Color.White);
+            else if (miningState.GetCellState(col, row) == CellState.Ruby)
+                spriteBatch.Draw(textures["ruby"], GetVisibleRectForGridCell(col, row),
+                    Color.White);
+            else if (miningState.GetCellState(col, row) == CellState.Floor)
+                spriteBatch.Draw(textures["floor"], GetVisibleRectForGridCell(col, row),
+                    Color.White);
             else
                 spriteBatch.Draw(
                     textures["floor"],
                     GetVisibleRectForGridCell(col, row),
-                    miningState.GetCellState(col, row) == CellState.Floor ? Color.White : Color.DarkBlue);
+                    Color.DarkBlue);
 
         var sourceRectangle = new Rectangle(
             miningState.MinerDirection == Direction.Top || miningState.MinerDirection == Direction.Left
