@@ -51,7 +51,7 @@ public static class AsteroidGen
         throw new Exception("No 3x1 solid blocks in grid");
     }
 
-    private static bool noiseValWithinRange(float noiseValue, (float, float) range)
+    private static bool NoiseValWithinRange(float noiseValue, (float, float) range)
     {
         return noiseValue >= range.Item1 && noiseValue < range.Item2;
     }
@@ -119,12 +119,12 @@ public static class AsteroidGen
                 var range = distance < radius * AsteroidCoreRadius
                     ? CoreSolidRockRange
                     : OuterSolidRockRange;
-                if (noiseValWithinRange(noiseValue, range))
-                    grid[x, y] = distance < radius * DiamondsRadius && noiseValWithinRange(noiseValue, DiamondRange)
+                if (NoiseValWithinRange(noiseValue, range))
+                    grid[x, y] = distance < radius * DiamondsRadius && NoiseValWithinRange(noiseValue, DiamondRange)
                         ? CellState.Diamond
                         : CellState.SolidRock;
                 else
-                    grid[x, y] = noiseValWithinRange(noiseValue, RubyRange) ? CellState.Ruby : CellState.Rock;
+                    grid[x, y] = NoiseValWithinRange(noiseValue, RubyRange) ? CellState.Ruby : CellState.Rock;
             }
             else if (distance <= radius + perimeterWidth)
             {

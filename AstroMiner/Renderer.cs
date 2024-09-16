@@ -45,7 +45,7 @@ public class Renderer(
         for (var col = 0; col < MiningState.GridSize; col++)
             if (miningState.GetCellState(col, row) == CellState.Rock)
                 spriteBatch.Draw(textures["rock"], GetVisibleRectForGridCell(col, row),
-                    Color.White);
+                    miningState.DrillingPos == (col, row) ? Color.Red : Color.White);
             else if (miningState.GetCellState(col, row) == CellState.SolidRock)
                 spriteBatch.Draw(textures["solid-rock"], GetVisibleRectForGridCell(col, row),
                     Color.White);

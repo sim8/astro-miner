@@ -32,7 +32,7 @@ public class MiningState
     private readonly CellState[,] _grid;
     private readonly float _minerSize;
     private int _drillingMs;
-    private (int x, int y)? _drillingPosition;
+    private (int x, int y)? _drillingPos;
 
     public MiningState(float minerSize)
     {
@@ -46,6 +46,8 @@ public class MiningState
         _minerSize = minerSize;
         (_grid, MinerPos) = AsteroidGen.InitializeGridAndStartingPos(GridSize, _minerSize);
     }
+
+    public (int, int)? DrillingPos => _drillingPos;
 
     public Vector2 MinerPos { get; private set; }
 
@@ -107,7 +109,10 @@ public class MiningState
         else if (activeMiningControls.Contains(MiningControls.MoveLeft))
             MoveMiner(Direction.Left, elapsedMs);
 
-        if (activeMiningControls.Contains(MiningControls.Drill)) UseDrill(elapsedMs);
+        if (activeMiningControls.Contains(MiningControls.Drill))
+            UseDrill(elapsedMs);
+        else
+            ResetDrill();
     }
 
     public void MoveMiner(Direction direction, int ellapsedGameTimeMs)
@@ -133,14 +138,14 @@ public class MiningState
 
         var gridPos = ToGridPosition(drillPos);
 
-        if (gridPos == _drillingPosition)
+        if (gridPos == _drillingPos)
         {
             _drillingMs += ellapsedGameTimeMs;
         }
         else
         {
             // Drilling different cell, reset timer
-            _drillingPosition = gridPos;
+            _drillingPos = gridPos;
             _drillingMs = ellapsedGameTimeMs;
         }
 
@@ -150,9 +155,9 @@ public class MiningState
 
     private void ResetDrill()
     {
-        if (_drillingPosition.HasValue)
+        if (_drillingPos.HasValue)
         {
-            _drillingPosition = null;
+            _drillingPos = null;
             _drillingMs = 0;
         }
     }
