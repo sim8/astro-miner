@@ -50,7 +50,7 @@ public static class Tilesets
     {
         // Dark
         if (AllFilledExcept(state, col, row)) return (1, 2);
-        
+
         // Concave
         if (AllFilledExcept(state, col, row, Neighbours.AboveRight))
             return (2, 2);
@@ -60,6 +60,12 @@ public static class Tilesets
             return (4, 0);
         if (AllFilledExcept(state, col, row, Neighbours.AboveLeft))
             return (4, 2);
+
+        // Double concave
+        if (AllFilledExcept(state, col, row, Neighbours.AboveRight, Neighbours.BelowLeft))
+            return (5, 0);
+        if (AllFilledExcept(state, col, row, Neighbours.AboveLeft, Neighbours.BelowRight))
+            return (5, 1);
 
         // Flat edges
         if (AllFilledExcept([Neighbours.AboveLeft, Neighbours.Above, Neighbours.AboveRight], state, col, row))
@@ -72,15 +78,26 @@ public static class Tilesets
             return (4, 1);
 
         // Convex
-        if (AllFilledExcept([Neighbours.AboveLeft, Neighbours.Above, Neighbours.AboveRight, Neighbours.Right, Neighbours.BelowRight], state, col, row))
+        if (AllFilledExcept(
+            [
+                Neighbours.AboveLeft, Neighbours.Above, Neighbours.AboveRight, Neighbours.Right, Neighbours.BelowRight
+            ], state, col, row))
             return (1, 0);
-        if (AllFilledExcept([Neighbours.AboveRight, Neighbours.Right, Neighbours.BelowRight, Neighbours.Below, Neighbours.BelowLeft], state, col, row,
+        if (AllFilledExcept(
+                [
+                    Neighbours.AboveRight, Neighbours.Right, Neighbours.BelowRight, Neighbours.Below,
+                    Neighbours.BelowLeft
+                ], state, col, row,
                 Neighbours.Right, Neighbours.Below))
             return (1, 1);
-        if (AllFilledExcept([Neighbours.BelowRight, Neighbours.Below, Neighbours.BelowLeft, Neighbours.Left, Neighbours.AboveLeft], state, col, row,
+        if (AllFilledExcept(
+                [Neighbours.BelowRight, Neighbours.Below, Neighbours.BelowLeft, Neighbours.Left, Neighbours.AboveLeft],
+                state, col, row,
                 Neighbours.Below, Neighbours.Left))
             return (0, 1);
-        if (AllFilledExcept([Neighbours.BelowLeft, Neighbours.Left, Neighbours.AboveLeft, Neighbours.Above, Neighbours.AboveRight], state, col, row,
+        if (AllFilledExcept(
+                [Neighbours.BelowLeft, Neighbours.Left, Neighbours.AboveLeft, Neighbours.Above, Neighbours.AboveRight],
+                state, col, row,
                 Neighbours.Left, Neighbours.Above))
             return (0, 0);
 
