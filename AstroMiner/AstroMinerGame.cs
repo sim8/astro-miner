@@ -58,10 +58,10 @@ public class AstroMinerGame : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         LoadTexture("floor");
-        LoadTexture("rock");
-        LoadTexture("solid-rock");
-        LoadTexture("ruby");
-        LoadTexture("diamond");
+        LoadTexture("rock-tileset");
+        LoadTexture("solid-rock-tileset");
+        LoadTexture("ruby-tileset");
+        LoadTexture("diamond-tileset");
         LoadTexture("miner");
     }
 
