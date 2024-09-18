@@ -58,34 +58,46 @@ public class MiningState
 
     public Vector2 MinerPos { get; private set; }
 
-
     public Direction MinerDirection { get; private set; } = Direction.Top;
 
     private bool ApplyVectorToMinerPosIfNoCollisions(Vector2 vector)
     {
-        var newTopLeft = MinerPos + vector;
-        var newTopRight = MinerPos + vector + new Vector2(_minerSize, 0);
-        var newBottomLeft = MinerPos + vector + new Vector2(0, _minerSize);
-        var newBottomRight = MinerPos + vector + new Vector2(_minerSize, _minerSize);
+        var newPositions = new[]
+        {
+            MinerPos + vector,
+            MinerPos + vector + new Vector2(_minerSize, 0),
+            MinerPos + vector + new Vector2(0, _minerSize),
+            MinerPos + vector + new Vector2(_minerSize, _minerSize)
+        };
 
-        foreach (var newPosCorner in new[] { newTopLeft, newTopRight, newBottomRight, newBottomLeft })
-            try
-            {
-                if (GetCellState(newPosCorner) != CellState.Floor) return false;
-            }
-            catch (Exception)
-            {
-                return false; // out of bounds
-            }
+        foreach (var newPos in newPositions)
+        {
+            var (x, y) = ToGridPosition(newPos);
+            if (!IsValidGridPosition(x, y) || GetCellState(x, y) != CellState.Floor)
+                return false;
+        }
 
-        MinerPos = newTopLeft;
+        MinerPos += vector;
         return true;
     }
 
-    public CellState GetCellState(int column, int row)
+    public CellState GetCellState(int x, int y)
     {
-        if (row < 0 || row >= GridSize || column < 0 || column >= GridSize) throw new IndexOutOfRangeException();
-        return _grid[row, column];
+        if (!IsValidGridPosition(x, y))
+            throw new IndexOutOfRangeException();
+        return _grid[y, x];
+    }
+
+    private void SetCellState(int x, int y, CellState newState)
+    {
+        if (!IsValidGridPosition(x, y))
+            throw new IndexOutOfRangeException();
+        _grid[y, x] = newState;
+    }
+
+    private bool IsValidGridPosition(int x, int y)
+    {
+        return x >= 0 && x < GridSize && y >= 0 && y < GridSize;
     }
 
     private static (int x, int y) ToGridPosition(Vector2 vector)
@@ -93,28 +105,14 @@ public class MiningState
         return ((int)Math.Floor(vector.X), (int)Math.Floor(vector.Y));
     }
 
-    private CellState GetCellState(Vector2 vector)
-    {
-        var (gridX, gridY) = ToGridPosition(vector);
-        return GetCellState(gridX, gridY);
-    }
-
-    private void SetCellState(Vector2 vector, CellState newState)
-    {
-        var (gridX, gridY) = ToGridPosition(vector);
-        _grid[gridY, gridX] = newState;
-    }
-
     public void Update(HashSet<MiningControls> activeMiningControls, int elapsedMs)
     {
-        if (activeMiningControls.Contains(MiningControls.MoveUp))
-            MoveMiner(Direction.Top, elapsedMs);
-        else if (activeMiningControls.Contains(MiningControls.MoveRight))
-            MoveMiner(Direction.Right, elapsedMs);
-        else if (activeMiningControls.Contains(MiningControls.MoveDown))
-            MoveMiner(Direction.Bottom, elapsedMs);
-        else if (activeMiningControls.Contains(MiningControls.MoveLeft))
-            MoveMiner(Direction.Left, elapsedMs);
+        foreach (var control in activeMiningControls)
+            if (_directionsControlsMapping.TryGetValue(control, out var direction))
+            {
+                MoveMiner(direction, elapsedMs);
+                break; // Only move in one direction per update
+            }
 
         if (activeMiningControls.Contains(MiningControls.Drill))
             UseDrill(elapsedMs);
@@ -122,52 +120,64 @@ public class MiningState
             ResetDrill();
     }
 
-    public void MoveMiner(Direction direction, int ellapsedGameTimeMs)
+    public void MoveMiner(Direction direction, int elapsedGameTimeMs)
     {
         MinerDirection = direction;
-        var distance = MinerMovementSpeed * (ellapsedGameTimeMs / 1000f);
+        var distance = MinerMovementSpeed * (elapsedGameTimeMs / 1000f);
 
-        if (direction == Direction.Top) ApplyVectorToMinerPosIfNoCollisions(new Vector2(0, -distance));
-        if (direction == Direction.Right) ApplyVectorToMinerPosIfNoCollisions(new Vector2(distance, 0));
-        if (direction == Direction.Bottom) ApplyVectorToMinerPosIfNoCollisions(new Vector2(0, distance));
-        if (direction == Direction.Left) ApplyVectorToMinerPosIfNoCollisions(new Vector2(-distance, 0));
+        var movement = direction switch
+        {
+            Direction.Top => new Vector2(0, -distance),
+            Direction.Right => new Vector2(distance, 0),
+            Direction.Bottom => new Vector2(0, distance),
+            Direction.Left => new Vector2(-distance, 0),
+            _ => Vector2.Zero
+        };
+
+        ApplyVectorToMinerPosIfNoCollisions(movement);
     }
 
-    private void UseDrill(int ellapsedGameTimeMs)
+    private void UseDrill(int elapsedGameTimeMs)
     {
-        Vector2 drillPos;
-        if (MinerDirection == Direction.Top) drillPos = MinerPos + new Vector2(_minerSize / 2, -DrillDistance);
-        else if (MinerDirection == Direction.Right)
-            drillPos = MinerPos + new Vector2(_minerSize + DrillDistance, _minerSize / 2);
-        else if (MinerDirection == Direction.Bottom)
-            drillPos = MinerPos + new Vector2(_minerSize / 2, _minerSize + DrillDistance);
-        else drillPos = MinerPos + new Vector2(-DrillDistance, _minerSize / 2);
-
+        var drillPos = GetDrillPosition();
         var gridPos = ToGridPosition(drillPos);
 
         if (gridPos == _drillingPos)
         {
-            _drillingMs += ellapsedGameTimeMs;
+            _drillingMs += elapsedGameTimeMs;
         }
         else
         {
-            // Drilling different cell, reset timer
             _drillingPos = gridPos;
-            _drillingMs = ellapsedGameTimeMs;
+            _drillingMs = elapsedGameTimeMs;
         }
 
-        var cellState = GetCellState(gridPos.Item1, gridPos.Item2);
+        var (x, y) = gridPos;
 
-        if (_drillTimesMs.ContainsKey(cellState) && _drillingMs > _drillTimesMs[cellState])
-            SetCellState(drillPos, CellState.Floor);
+        if (!IsValidGridPosition(x, y))
+            return;
+
+        var cellState = GetCellState(x, y);
+
+        if (_drillTimesMs.TryGetValue(cellState, out var requiredTime) && _drillingMs > requiredTime)
+            SetCellState(x, y, CellState.Floor);
+    }
+
+    private Vector2 GetDrillPosition()
+    {
+        return MinerDirection switch
+        {
+            Direction.Top => MinerPos + new Vector2(_minerSize / 2, -DrillDistance),
+            Direction.Right => MinerPos + new Vector2(_minerSize + DrillDistance, _minerSize / 2),
+            Direction.Bottom => MinerPos + new Vector2(_minerSize / 2, _minerSize + DrillDistance),
+            Direction.Left => MinerPos + new Vector2(-DrillDistance, _minerSize / 2),
+            _ => MinerPos
+        };
     }
 
     private void ResetDrill()
     {
-        if (_drillingPos.HasValue)
-        {
-            _drillingPos = null;
-            _drillingMs = 0;
-        }
+        _drillingPos = null;
+        _drillingMs = 0;
     }
 }
