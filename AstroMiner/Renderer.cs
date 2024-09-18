@@ -62,6 +62,16 @@ public class Renderer(
                     cellTextureSizePx, cellTextureSizePx);
                 spriteBatch.Draw(textures[name], GetVisibleRectForGridCell(col, row),
                     tilesetSourceRect, Color.White);
+                if (offset == (1, 2)) // Top piece
+                {
+                    var overlayOffset = (5, 2);
+                    var overlaySourceRect = new Rectangle(overlayOffset.Item1 * cellTextureSizePx,
+                        overlayOffset.Item2 * cellTextureSizePx,
+                        cellTextureSizePx, cellTextureSizePx);
+                    var overlayOpacity = HasFloorWithinTwoTiles(col, row) ? 0.8f : 1;
+                    spriteBatch.Draw(textures[name], GetVisibleRectForGridCell(col, row),
+                        overlaySourceRect, Color.White * overlayOpacity);
+                }
             }
             else if (miningState.GetCellState(col, row) == CellState.Floor)
             {
@@ -71,13 +81,6 @@ public class Renderer(
                 spriteBatch.Draw(textures["rock-tileset"], GetVisibleRectForGridCell(col, row), tilesetSourceRect,
                     Color.White);
             }
-            // else
-            // {
-            //     spriteBatch.Draw(
-            //         textures["floor"],
-            //         GetVisibleRectForGridCell(col, row),
-            //         Color.DarkBlue);
-            // }
         }
 
         var sourceRectangle = new Rectangle(
@@ -92,5 +95,22 @@ public class Renderer(
         var destinationRectangle = GetVisibleRectForObject(miningState.MinerPos.X, miningState.MinerPos.Y,
             minerTextureSizePx, minerTextureSizePx);
         spriteBatch.Draw(textures["miner"], destinationRectangle, sourceRectangle, Color.White);
+    }
+
+    private bool HasFloorWithinTwoTiles(int col, int row)
+    {
+        for (var x = col - 1; x <= col + 1; x++)
+            if ((miningState.IsValidGridPosition(x, row - 2) &&
+                 miningState.GetCellState(x, row - 2) == CellState.Floor) ||
+                (miningState.IsValidGridPosition(x, row + 2) &&
+                 miningState.GetCellState(x, row + 2) == CellState.Floor))
+                return true;
+        for (var y = row - 1; y <= row + 1; y++)
+            if ((miningState.IsValidGridPosition(col + 2, y) &&
+                 miningState.GetCellState(col + 2, y) == CellState.Floor) ||
+                (miningState.IsValidGridPosition(col - 2, y) &&
+                 miningState.GetCellState(col - 2, y) == CellState.Floor))
+                return true;
+        return false;
     }
 }

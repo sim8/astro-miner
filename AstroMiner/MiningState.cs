@@ -95,7 +95,7 @@ public class MiningState
         _grid[y, x] = newState;
     }
 
-    private bool IsValidGridPosition(int x, int y)
+    public bool IsValidGridPosition(int x, int y)
     {
         return x >= 0 && x < GridSize && y >= 0 && y < GridSize;
     }
