@@ -29,6 +29,7 @@ public class MiningState
     private const float DrillDistance = 0.2f;
     private const float MinerMovementSpeed = 9f;
     private readonly Dictionary<MiningControls, Direction> _directionsControlsMapping;
+    private readonly Dictionary<CellState, int> _drillTimesMs;
     private readonly CellState[,] _grid;
     private readonly float _minerSize;
     private int _drillingMs;
@@ -42,6 +43,12 @@ public class MiningState
             { MiningControls.MoveRight, Direction.Right },
             { MiningControls.MoveDown, Direction.Bottom },
             { MiningControls.MoveLeft, Direction.Left }
+        };
+        _drillTimesMs = new Dictionary<CellState, int>
+        {
+            { CellState.Rock, 600 },
+            { CellState.Ruby, 1800 },
+            { CellState.Diamond, 4000 }
         };
         _minerSize = minerSize;
         (_grid, MinerPos) = AsteroidGen.InitializeGridAndStartingPos(GridSize, _minerSize);
@@ -149,7 +156,9 @@ public class MiningState
             _drillingMs = ellapsedGameTimeMs;
         }
 
-        if (GetCellState(gridPos.Item1, gridPos.Item2) == CellState.Rock && _drillingMs > 1000)
+        var cellState = GetCellState(gridPos.Item1, gridPos.Item2);
+
+        if (_drillTimesMs.ContainsKey(cellState) && _drillingMs > _drillTimesMs[cellState])
             SetCellState(drillPos, CellState.Floor);
     }
 
