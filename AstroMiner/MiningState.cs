@@ -27,11 +27,12 @@ public class MiningState
 {
     public const int GridSize = 40;
     private const float DrillDistance = 0.2f;
-    private const float MinerMovementSpeed = 9f;
+    private const float MinerMovementSpeed = 3f;
     private readonly Dictionary<MiningControls, Direction> _directionsControlsMapping;
     private readonly Dictionary<CellState, int> _drillTimesMs;
     private readonly CellState[,] _grid;
     private readonly float _minerSize;
+    private int _acceleratingForMs;
     private int _drillingMs;
     private (int x, int y)? _drillingPos;
 
@@ -120,10 +121,15 @@ public class MiningState
             ResetDrill();
     }
 
+    private float getMinerCurrentSpeed()
+    {
+        return _acceleratingForMs < 500 ? MinerMovementSpeed * _acceleratingForMs / 500 : MinerMovementSpeed;
+    }
+
     public void MoveMiner(Direction direction, int elapsedGameTimeMs)
     {
         MinerDirection = direction;
-        var distance = MinerMovementSpeed * (elapsedGameTimeMs / 1000f);
+        var distance = getMinerCurrentSpeed() * (elapsedGameTimeMs / 1000f);
 
         var movement = direction switch
         {
@@ -134,7 +140,11 @@ public class MiningState
             _ => Vector2.Zero
         };
 
-        ApplyVectorToMinerPosIfNoCollisions(movement);
+        var noCollisions = ApplyVectorToMinerPosIfNoCollisions(movement);
+        if (noCollisions) // TODO and direction is adjacent to current
+            _acceleratingForMs += elapsedGameTimeMs;
+        else
+            _acceleratingForMs = 0;
     }
 
     private void UseDrill(int elapsedGameTimeMs)
