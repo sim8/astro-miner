@@ -106,14 +106,21 @@ public class MiningState
         return ((int)Math.Floor(vector.X), (int)Math.Floor(vector.Y));
     }
 
-    public void Update(HashSet<MiningControls> activeMiningControls, int elapsedMs)
+    private Direction? GetDirectionFromActiveControls(HashSet<MiningControls> activeMiningControls)
     {
         foreach (var control in activeMiningControls)
             if (_directionsControlsMapping.TryGetValue(control, out var direction))
-            {
-                MoveMiner(direction, elapsedMs);
-                break; // Only move in one direction per update
-            }
+                return direction;
+        return null;
+    }
+
+    public void Update(HashSet<MiningControls> activeMiningControls, int elapsedMs)
+    {
+        var direction = GetDirectionFromActiveControls(activeMiningControls);
+        if (direction.HasValue)
+            MoveMiner(direction.GetValueOrDefault(), elapsedMs);
+        else if (_acceleratingForMs > 0)
+            _acceleratingForMs = 0;
 
         if (activeMiningControls.Contains(MiningControls.Drill))
             UseDrill(elapsedMs);
@@ -121,7 +128,7 @@ public class MiningState
             ResetDrill();
     }
 
-    private float getMinerCurrentSpeed()
+    private float GetMinerCurrentSpeed()
     {
         return _acceleratingForMs < 500 ? MinerMovementSpeed * _acceleratingForMs / 500 : MinerMovementSpeed;
     }
@@ -129,7 +136,7 @@ public class MiningState
     public void MoveMiner(Direction direction, int elapsedGameTimeMs)
     {
         MinerDirection = direction;
-        var distance = getMinerCurrentSpeed() * (elapsedGameTimeMs / 1000f);
+        var distance = GetMinerCurrentSpeed() * (elapsedGameTimeMs / 1000f);
 
         var movement = direction switch
         {
