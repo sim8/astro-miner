@@ -23,10 +23,9 @@ public class MinerRenderer(
                 : GameConfig.CellTextureSizePx,
             GameConfig.CellTextureSizePx,
             GameConfig.CellTextureSizePx);
-        var destinationRectangle = viewHelpers.GetVisibleRectForObject(miningState.MinerPos.X,
-            miningState.MinerPos.Y,
+        var destinationRectangle = viewHelpers.GetVisibleRectForObject(miningState.MinerPos,
             GameConfig.CellTextureSizePx, GameConfig.CellTextureSizePx, MinerTextureOffsetX, MinerTextureOffsetY);
 
-        spriteBatch.Draw(textures["miner-2"], destinationRectangle, sourceRectangle, Color.White);
+        spriteBatch.Draw(textures["miner-no-tracks"], destinationRectangle, sourceRectangle, Color.White);
     }
 }
