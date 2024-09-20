@@ -27,7 +27,7 @@ public class MiningState
 {
     public const int GridSize = 40;
     private const float DrillDistance = 0.2f;
-    private const float MinerMovementSpeed = 3f;
+    private const float MinerMovementSpeed = 1.5f;
     private readonly Dictionary<MiningControls, Direction> _directionsControlsMapping;
     private readonly Dictionary<CellState, int> _drillTimesMs;
     private readonly CellState[,] _grid;

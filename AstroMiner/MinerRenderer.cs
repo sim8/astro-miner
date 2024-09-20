@@ -32,11 +32,10 @@ public class MinerRenderer(
 
     private Texture2D GetTracksTexture()
     {
-        var (gridX, gridY) = ViewHelpers.GridPosToPx(miningState.MinerPos);
-        var trackIndex = gridY % 3;
+        var (gridX, gridY) = ViewHelpers.GridPosToTexturePx(miningState.MinerPos);
         if (miningState.MinerDirection is Direction.Top) return textures["tracks-" + (2 - gridY % 3)];
-        if (miningState.MinerDirection is Direction.Right) return textures["tracks-" + (gridX % 3)];
-        if (miningState.MinerDirection is Direction.Bottom) return textures["tracks-" + (gridY % 3)];
+        if (miningState.MinerDirection is Direction.Right) return textures["tracks-" + gridX % 3];
+        if (miningState.MinerDirection is Direction.Bottom) return textures["tracks-" + gridY % 3];
         if (miningState.MinerDirection is Direction.Left) return textures["tracks-" + (2 - gridX % 3)];
         return textures["tracks-1"];
     }

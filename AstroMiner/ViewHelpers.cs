@@ -6,7 +6,7 @@ public class ViewHelpers(MiningState miningState, GraphicsDeviceManager graphics
 {
     private Rectangle AdjustRectForCamera(int x, int y, int width, int height)
     {
-        var (minerXPx, minerYPx) = GridPosToPx(miningState.MinerPos);
+        var (minerXPx, minerYPx) = GridPosToDisplayedPx(miningState.MinerPos);
         return new Rectangle(
             x - minerXPx - GameConfig.MinerVisibleRadius + graphics.GraphicsDevice.Viewport.Width / 2,
             y - minerYPx - GameConfig.MinerVisibleRadius + graphics.GraphicsDevice.Viewport.Height / 2, width,
@@ -23,15 +23,20 @@ public class ViewHelpers(MiningState miningState, GraphicsDeviceManager graphics
     public Rectangle GetVisibleRectForObject(Vector2 objectPos, int textureWidth, int textureHeight,
         int textureOffsetX = 0, int textureOffsetY = 0)
     {
-        var (xPx, yPx) = GridPosToPx(objectPos);
+        var (xPx, yPx) = GridPosToDisplayedPx(objectPos);
         xPx += textureOffsetX * GameConfig.ScaleMultiplier;
         yPx += textureOffsetY * GameConfig.ScaleMultiplier;
         return AdjustRectForCamera(xPx, yPx, textureWidth * GameConfig.ScaleMultiplier,
             textureHeight * GameConfig.ScaleMultiplier);
     }
 
-    public static (int, int) GridPosToPx(Vector2 gridPos)
+    private static (int, int) GridPosToDisplayedPx(Vector2 gridPos)
     {
         return ((int)(gridPos.X * GameConfig.CellDisplayedSizePx), (int)(gridPos.Y * GameConfig.CellDisplayedSizePx));
+    }
+
+    public static (int, int) GridPosToTexturePx(Vector2 gridPos)
+    {
+        return ((int)(gridPos.X * GameConfig.CellTextureSizePx), (int)(gridPos.Y * GameConfig.CellTextureSizePx));
     }
 }
