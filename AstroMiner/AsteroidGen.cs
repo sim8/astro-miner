@@ -13,16 +13,16 @@ public static class AsteroidGen
     private static readonly (float, float) DiamondRange = (0.65f, 1);
     private static readonly (float, float) RubyRange = (0.35f, 0.365f);
 
-    public static (CellState[,], Vector2) InitializeGridAndStartingPos(int gridSize, float minerSize)
+    public static (CellState[,], Vector2) InitializeGridAndStartingPos(int gridSize)
     {
         var rnd = new Random();
         var seed = rnd.Next(1, 999);
         var perlinNoise = new PerlinNoiseGenerator(seed);
         var grid = InitializeGrid(gridSize, perlinNoise);
-        return (grid, ClearAndGetStartingPos(grid, minerSize));
+        return (grid, ClearAndGetStartingPos(grid));
     }
 
-    private static Vector2 ClearAndGetStartingPos(CellState[,] grid, float minerSize)
+    private static Vector2 ClearAndGetStartingPos(CellState[,] grid)
     {
         for (var row = grid.GetLength(0) - 1; row >= 0; row--)
         {
@@ -35,7 +35,7 @@ public static class AsteroidGen
                 // Find first row which has >= 3 contiguous solid blocks as starting pos
                 else if (solidBlocksInARow >= 3)
                 {
-                    var minerCellOffset = 0.5f - minerSize / 2;
+                    var minerCellOffset = 0.5f - GameConfig.MinerSize / 2;
                     var minerColIndex = col - solidBlocksInARow / 2;
                     // Clear 2x3 landing area
                     grid[row, minerColIndex - 1] = CellState.Floor;

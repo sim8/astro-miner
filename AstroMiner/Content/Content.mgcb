@@ -73,7 +73,7 @@
 /processorParam:TextureFormat=Color
 /build:img/floor.png
 
-#begin img/miner.png
+#begin img/miner-2.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -83,4 +83,4 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:img/miner.png
+/build:img/miner-2.png

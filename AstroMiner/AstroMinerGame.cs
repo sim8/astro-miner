@@ -18,9 +18,6 @@ public enum CellState
 public class AstroMinerGame : Game
 {
     // TODO these should live elsewhere but needed by a few places
-    private const int MinerTextureSizePx = 38;
-    private const int ScaleMultiplier = 2;
-    private const int CellTextureSizePx = 64;
     private readonly HashSet<MiningControls> _activeMiningControls = new();
 
     private readonly GraphicsDeviceManager _graphics;
@@ -42,10 +39,8 @@ public class AstroMinerGame : Game
 
     protected override void Initialize()
     {
-        var minerSize = (float)MinerTextureSizePx / CellTextureSizePx;
-        _miningState = new MiningState(minerSize);
-        _renderer = new Renderer(_graphics, _textures, _miningState, ScaleMultiplier, MinerTextureSizePx,
-            CellTextureSizePx);
+        _miningState = new MiningState();
+        _renderer = new Renderer(_graphics, _textures, _miningState);
         base.Initialize();
     }
 
@@ -62,7 +57,7 @@ public class AstroMinerGame : Game
         LoadTexture("solid-rock-tileset");
         LoadTexture("ruby-tileset");
         LoadTexture("diamond-tileset");
-        LoadTexture("miner");
+        LoadTexture("miner-2");
     }
 
     protected override void Update(GameTime gameTime)

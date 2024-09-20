@@ -31,12 +31,11 @@ public class MiningState
     private readonly Dictionary<MiningControls, Direction> _directionsControlsMapping;
     private readonly Dictionary<CellState, int> _drillTimesMs;
     private readonly CellState[,] _grid;
-    private readonly float _minerSize;
     private int _acceleratingForMs;
     private int _drillingMs;
     private (int x, int y)? _drillingPos;
 
-    public MiningState(float minerSize)
+    public MiningState()
     {
         _directionsControlsMapping = new Dictionary<MiningControls, Direction>
         {
@@ -51,8 +50,7 @@ public class MiningState
             { CellState.Ruby, 1800 },
             { CellState.Diamond, 4000 }
         };
-        _minerSize = minerSize;
-        (_grid, MinerPos) = AsteroidGen.InitializeGridAndStartingPos(GridSize, _minerSize);
+        (_grid, MinerPos) = AsteroidGen.InitializeGridAndStartingPos(GridSize);
     }
 
     public (int, int)? DrillingPos => _drillingPos;
@@ -66,9 +64,9 @@ public class MiningState
         var newPositions = new[]
         {
             MinerPos + vector,
-            MinerPos + vector + new Vector2(_minerSize, 0),
-            MinerPos + vector + new Vector2(0, _minerSize),
-            MinerPos + vector + new Vector2(_minerSize, _minerSize)
+            MinerPos + vector + new Vector2(GameConfig.MinerSize, 0),
+            MinerPos + vector + new Vector2(0, GameConfig.MinerSize),
+            MinerPos + vector + new Vector2(GameConfig.MinerSize, GameConfig.MinerSize)
         };
 
         foreach (var newPos in newPositions)
@@ -135,6 +133,7 @@ public class MiningState
 
     public void MoveMiner(Direction direction, int elapsedGameTimeMs)
     {
+        var prevDirection = MinerDirection;
         MinerDirection = direction;
         var distance = GetMinerCurrentSpeed() * (elapsedGameTimeMs / 1000f);
 
@@ -184,10 +183,10 @@ public class MiningState
     {
         return MinerDirection switch
         {
-            Direction.Top => MinerPos + new Vector2(_minerSize / 2, -DrillDistance),
-            Direction.Right => MinerPos + new Vector2(_minerSize + DrillDistance, _minerSize / 2),
-            Direction.Bottom => MinerPos + new Vector2(_minerSize / 2, _minerSize + DrillDistance),
-            Direction.Left => MinerPos + new Vector2(-DrillDistance, _minerSize / 2),
+            Direction.Top => MinerPos + new Vector2(GameConfig.MinerSize / 2, -DrillDistance),
+            Direction.Right => MinerPos + new Vector2(GameConfig.MinerSize + DrillDistance, GameConfig.MinerSize / 2),
+            Direction.Bottom => MinerPos + new Vector2(GameConfig.MinerSize / 2, GameConfig.MinerSize + DrillDistance),
+            Direction.Left => MinerPos + new Vector2(-DrillDistance, GameConfig.MinerSize / 2),
             _ => MinerPos
         };
     }
