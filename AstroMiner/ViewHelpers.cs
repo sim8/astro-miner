@@ -30,7 +30,7 @@ public class ViewHelpers(MiningState miningState, GraphicsDeviceManager graphics
             textureHeight * GameConfig.ScaleMultiplier);
     }
 
-    private static (int, int) GridPosToPx(Vector2 gridPos)
+    public static (int, int) GridPosToPx(Vector2 gridPos)
     {
         return ((int)(gridPos.X * GameConfig.CellDisplayedSizePx), (int)(gridPos.Y * GameConfig.CellDisplayedSizePx));
     }

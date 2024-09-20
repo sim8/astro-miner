@@ -58,9 +58,9 @@ public class AstroMinerGame : Game
         LoadTexture("ruby-tileset");
         LoadTexture("diamond-tileset");
         LoadTexture("miner-no-tracks");
+        LoadTexture("tracks-0");
         LoadTexture("tracks-1");
         LoadTexture("tracks-2");
-        LoadTexture("tracks-3");
     }
 
     protected override void Update(GameTime gameTime)
