@@ -6,8 +6,11 @@ namespace AstroMiner;
 
 public class Renderer
 {
+    private readonly GraphicsDeviceManager _graphics;
+    private readonly RenderTarget2D _lightingRenderTarget;
     private readonly MinerRenderer _minerRenderer;
     private readonly MiningState _miningState;
+    private readonly BlendState _multiplyBlendState;
     private readonly Dictionary<string, Texture2D> _textures;
     private readonly ViewHelpers _viewHelpers;
 
@@ -19,10 +22,38 @@ public class Renderer
         _miningState = miningState;
         _textures = textures;
         _viewHelpers = new ViewHelpers(miningState, graphics);
+        _graphics = graphics;
         _minerRenderer = new MinerRenderer(textures, _miningState, _viewHelpers);
+        _multiplyBlendState = new BlendState();
+        _multiplyBlendState.ColorBlendFunction = BlendFunction.Add;
+        _multiplyBlendState.ColorSourceBlend = Blend.DestinationColor;
+        _multiplyBlendState.ColorDestinationBlend = Blend.Zero;
+
+        _lightingRenderTarget = new RenderTarget2D(
+            graphics.GraphicsDevice,
+            graphics.GraphicsDevice.PresentationParameters.BackBufferWidth,
+            graphics.GraphicsDevice.PresentationParameters.BackBufferHeight,
+            false,
+            graphics.GraphicsDevice.PresentationParameters.BackBufferFormat,
+            DepthFormat.Depth24);
     }
 
     public void Render(SpriteBatch spriteBatch)
+    {
+        // Draw RenderTargets first to avoid wiping BackBuffer
+        RenderLightingToRenderTarget(spriteBatch);
+
+        spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
+        RenderScene(spriteBatch);
+        spriteBatch.End();
+
+        // Multiply lights/shadow with scene
+        spriteBatch.Begin(SpriteSortMode.Deferred, _multiplyBlendState, SamplerState.PointClamp);
+        spriteBatch.Draw(_lightingRenderTarget, new Rectangle(0, 0, 600, 600), Color.White);
+        spriteBatch.End();
+    }
+
+    private void RenderScene(SpriteBatch spriteBatch)
     {
         for (var row = 0; row < MiningState.GridSize; row++)
         for (var col = 0; col < MiningState.GridSize; col++)
@@ -59,6 +90,29 @@ public class Renderer
         }
 
         _minerRenderer.RenderMiner(spriteBatch);
+    }
+
+    private void RenderLightingToRenderTarget(SpriteBatch spriteBatch)
+    {
+        // Set the render target
+        _graphics.GraphicsDevice.SetRenderTarget(_lightingRenderTarget);
+        _graphics.GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true };
+
+        // Draw the scene
+        _graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
+
+        spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
+        var (viewportWidth, viewportHeight) = _viewHelpers.GetViewportSize();
+        spriteBatch.Draw(_textures["dark-screen"], new Rectangle(0, 0, viewportWidth, viewportHeight), Color.White);
+
+        var minerLightSource = _miningState.GetMinerLightSource();
+        var destinationRect = _viewHelpers.GetVisibleRectForObject(minerLightSource, 256, 256, -128, -128);
+        spriteBatch.Draw(_textures["light-mask"], destinationRect, Color.White);
+
+        spriteBatch.End();
+
+        // Drop the render target
+        _graphics.GraphicsDevice.SetRenderTarget(null);
     }
 
     private bool HasFloorWithinTwoTiles(int col, int row)

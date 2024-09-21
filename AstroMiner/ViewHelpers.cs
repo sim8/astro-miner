@@ -13,6 +13,11 @@ public class ViewHelpers(MiningState miningState, GraphicsDeviceManager graphics
             height);
     }
 
+    public (int, int) GetViewportSize()
+    {
+        return (graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
+    }
+
     public Rectangle GetVisibleRectForGridCell(int gridX, int gridY, int widthOnGrid = 1, int heightOnGrid = 1)
     {
         return AdjustRectForCamera(gridX * GameConfig.CellDisplayedSizePx, gridY * GameConfig.CellDisplayedSizePx,

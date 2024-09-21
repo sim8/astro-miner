@@ -61,6 +61,8 @@ public class AstroMinerGame : Game
         LoadTexture("tracks-0");
         LoadTexture("tracks-1");
         LoadTexture("tracks-2");
+        LoadTexture("dark-screen");
+        LoadTexture("light-mask");
     }
 
     protected override void Update(GameTime gameTime)
@@ -93,11 +95,7 @@ public class AstroMinerGame : Game
     {
         GraphicsDevice.Clear(Color.Black);
 
-        _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
-
         _renderer.Render(_spriteBatch);
-
-        _spriteBatch.End();
 
         base.Draw(gameTime);
     }

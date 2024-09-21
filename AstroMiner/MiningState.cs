@@ -191,6 +191,18 @@ public class MiningState
         };
     }
 
+    public Vector2 GetMinerLightSource()
+    {
+        return MinerDirection switch
+        {
+            Direction.Top => MinerPos + new Vector2(GameConfig.MinerSize / 2, -DrillDistance),
+            Direction.Right => MinerPos + new Vector2(GameConfig.MinerSize + DrillDistance, GameConfig.MinerSize / 2),
+            Direction.Bottom => MinerPos + new Vector2(GameConfig.MinerSize / 2, GameConfig.MinerSize + DrillDistance),
+            Direction.Left => MinerPos + new Vector2(-DrillDistance, GameConfig.MinerSize / 2),
+            _ => MinerPos
+        };
+    }
+
     private void ResetDrill()
     {
         _drillingPos = null;
