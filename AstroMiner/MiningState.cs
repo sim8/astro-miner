@@ -195,10 +195,10 @@ public class MiningState
     {
         return MinerDirection switch
         {
-            Direction.Top => MinerPos + new Vector2(GameConfig.MinerSize / 2, -DrillDistance),
-            Direction.Right => MinerPos + new Vector2(GameConfig.MinerSize + DrillDistance, GameConfig.MinerSize / 2),
-            Direction.Bottom => MinerPos + new Vector2(GameConfig.MinerSize / 2, GameConfig.MinerSize + DrillDistance),
-            Direction.Left => MinerPos + new Vector2(-DrillDistance, GameConfig.MinerSize / 2),
+            Direction.Top => MinerPos + new Vector2(0.52f, 0.15f),
+            Direction.Right => MinerPos + new Vector2(0.35f, 0.33f),
+            Direction.Bottom => MinerPos + new Vector2(0.08f, 0.3f),
+            Direction.Left => MinerPos + new Vector2(0.2f, -0.1f),
             _ => MinerPos
         };
     }

@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace AstroMiner;
 
@@ -49,7 +51,8 @@ public class Renderer
 
         // Multiply lights/shadow with scene
         spriteBatch.Begin(SpriteSortMode.Deferred, _multiplyBlendState, SamplerState.PointClamp);
-        spriteBatch.Draw(_lightingRenderTarget, new Rectangle(0, 0, 600, 600), Color.White);
+        var (viewportWidth, viewportHeight) = _viewHelpers.GetViewportSize();
+        spriteBatch.Draw(_lightingRenderTarget, new Rectangle(0, 0, viewportWidth, viewportHeight), Color.White);
         spriteBatch.End();
     }
 
@@ -94,24 +97,33 @@ public class Renderer
 
     private void RenderLightingToRenderTarget(SpriteBatch spriteBatch)
     {
-        // Set the render target
         _graphics.GraphicsDevice.SetRenderTarget(_lightingRenderTarget);
         _graphics.GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true };
 
-        // Draw the scene
-        _graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
-
+        _graphics.GraphicsDevice.Clear(Color.Transparent);
         spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
         var (viewportWidth, viewportHeight) = _viewHelpers.GetViewportSize();
         spriteBatch.Draw(_textures["dark-screen"], new Rectangle(0, 0, viewportWidth, viewportHeight), Color.White);
 
         var minerLightSource = _miningState.GetMinerLightSource();
-        var destinationRect = _viewHelpers.GetVisibleRectForObject(minerLightSource, 256, 256, -128, -128);
-        spriteBatch.Draw(_textures["light-mask"], destinationRect, Color.White);
+        var destinationRect = _viewHelpers.GetVisibleRectForObject(minerLightSource, 256, 256);
 
+
+        var radians = _miningState.MinerDirection switch
+        {
+            Direction.Top => 0f,
+            Direction.Right => (float)Math.PI / 2,
+            Direction.Bottom => (float)Math.PI,
+            Direction.Left => (float)(3 * Math.PI / 2),
+            _ => 0
+        };
+
+        var origin = new Vector2(_textures["light-mask"].Width / 2f, _textures["light-mask"].Height / 2f);
+
+        spriteBatch.Draw(_textures["light-mask"], destinationRect, null, Color.White, radians, origin,
+            SpriteEffects.None, 0);
         spriteBatch.End();
 
-        // Drop the render target
         _graphics.GraphicsDevice.SetRenderTarget(null);
     }
 
