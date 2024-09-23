@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
@@ -6,7 +7,7 @@ public class ViewHelpers(MiningState miningState, GraphicsDeviceManager graphics
 {
     private Rectangle AdjustRectForCamera(int x, int y, int width, int height)
     {
-        var (minerXPx, minerYPx) = GridPosToDisplayedPx(miningState.MinerPos);
+        var (minerXPx, minerYPx) = GridPosToDisplayedPx(miningState.GetActiveControllableEntity().Position);
         return new Rectangle(
             x - minerXPx - GameConfig.MinerVisibleRadius + graphics.GraphicsDevice.Viewport.Width / 2,
             y - minerYPx - GameConfig.MinerVisibleRadius + graphics.GraphicsDevice.Viewport.Height / 2, width,
@@ -43,5 +44,15 @@ public class ViewHelpers(MiningState miningState, GraphicsDeviceManager graphics
     public static (int, int) GridPosToTexturePx(Vector2 gridPos)
     {
         return ((int)(gridPos.X * GameConfig.CellTextureSizePx), (int)(gridPos.Y * GameConfig.CellTextureSizePx));
+    }
+
+    public static (int x, int y) ToGridPosition(Vector2 vector)
+    {
+        return ((int)Math.Floor(vector.X), (int)Math.Floor(vector.Y));
+    }
+
+    public static bool IsValidGridPosition(int x, int y)
+    {
+        return x >= 0 && x < GameConfig.GridSize && y >= 0 && y < GameConfig.GridSize;
     }
 }

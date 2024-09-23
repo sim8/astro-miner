@@ -85,6 +85,8 @@ public class AstroMinerGame : Game
             _activeMiningControls.Add(MiningControls.MoveLeft);
         if (Keyboard.GetState().IsKeyDown(Keys.Space))
             _activeMiningControls.Add(MiningControls.Drill);
+        if (Keyboard.GetState().IsKeyDown(Keys.E))
+            _activeMiningControls.Add(MiningControls.EnterOrExit);
 
         _miningState.Update(_activeMiningControls, gameTime.ElapsedGameTime.Milliseconds);
 
