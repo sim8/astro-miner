@@ -6,7 +6,6 @@ namespace AstroMiner;
 public class MiningControllableEntity : Entity
 {
     private const float DrillDistance = 0.2f;
-    private const float MinerMovementSpeed = 1.5f;
 
     private readonly Dictionary<MiningControls, Direction> _directionsControlsMapping = new()
     {
@@ -35,7 +34,9 @@ public class MiningControllableEntity : Entity
         };
     }
 
-    public virtual float MaxSpeed { get; } = 1f;
+    protected virtual float MaxSpeed => 1f;
+    protected virtual int TimeToReachMaxSpeedMs { get; } = 0;
+
 
     public Direction Direction { get; private set; } = Direction.Top;
 
@@ -87,7 +88,7 @@ public class MiningControllableEntity : Entity
     {
         var prevDirection = Direction;
         Direction = direction;
-        var distance = GetMinerCurrentSpeed() * (elapsedGameTimeMs / 1000f);
+        var distance = GetCurrentSpeed() * (elapsedGameTimeMs / 1000f);
 
         var movement = direction switch
         {
@@ -161,8 +162,10 @@ public class MiningControllableEntity : Entity
         _drillingMs = 0;
     }
 
-    private float GetMinerCurrentSpeed()
+    private float GetCurrentSpeed()
     {
-        return _acceleratingForMs < 500 ? MinerMovementSpeed * _acceleratingForMs / 500 : MinerMovementSpeed;
+        return _acceleratingForMs < TimeToReachMaxSpeedMs
+            ? MaxSpeed * _acceleratingForMs / TimeToReachMaxSpeedMs
+            : MaxSpeed;
     }
 }
