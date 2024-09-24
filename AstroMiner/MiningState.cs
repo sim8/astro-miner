@@ -27,6 +27,7 @@ public class MiningState
     public readonly GridState GridState;
     public readonly MinerEntity Miner;
     public readonly PlayerEntity Player;
+    private bool _prevPressedEnterOrExit;
 
     public MiningState()
     {
@@ -35,6 +36,7 @@ public class MiningState
         Miner = new MinerEntity(GridState, minerPos);
         Player = new PlayerEntity(GridState, minerPos);
         IsInMiner = true;
+        _prevPressedEnterOrExit = false;
     }
 
     public bool IsInMiner { get; private set; }
@@ -46,13 +48,26 @@ public class MiningState
 
     public void Update(HashSet<MiningControls> activeMiningControls, int elapsedMs)
     {
-        // TODO only press once
         if (activeMiningControls.Contains(MiningControls.EnterOrExit))
-            if (GetActiveControllableEntity() == Player)
-                // TODO check distance
-                IsInMiner = true;
-            else
-                IsInMiner = false;
+        {
+            // Not continuous
+            if (!_prevPressedEnterOrExit)
+            {
+                var activeControllableEntity = GetActiveControllableEntity();
+                activeControllableEntity.Disembark();
+                if (activeControllableEntity == Player && Player.GetDistanceTo(Miner) < GameConfig.MinEmbarkingDistance)
+                    IsInMiner = true;
+                else
+                    IsInMiner = false;
+            }
+
+            _prevPressedEnterOrExit = true;
+        }
+        else
+        {
+            _prevPressedEnterOrExit = false;
+        }
+
         GetActiveControllableEntity().Update(activeMiningControls, elapsedMs);
     }
 }

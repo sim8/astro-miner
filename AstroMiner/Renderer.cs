@@ -13,6 +13,7 @@ public class Renderer
     private readonly MinerRenderer _minerRenderer;
     private readonly MiningState _miningState;
     private readonly BlendState _multiplyBlendState;
+    private readonly PlayerRenderer _playerRenderer;
     private readonly Dictionary<string, Texture2D> _textures;
     private readonly ViewHelpers _viewHelpers;
 
@@ -26,6 +27,7 @@ public class Renderer
         _viewHelpers = new ViewHelpers(miningState, graphics);
         _graphics = graphics;
         _minerRenderer = new MinerRenderer(textures, _miningState, _viewHelpers);
+        _playerRenderer = new PlayerRenderer(textures, _miningState, _viewHelpers);
         _multiplyBlendState = new BlendState();
         _multiplyBlendState.ColorBlendFunction = BlendFunction.Add;
         _multiplyBlendState.ColorSourceBlend = Blend.DestinationColor;
@@ -52,7 +54,7 @@ public class Renderer
         // Multiply lights/shadow with scene
         spriteBatch.Begin(SpriteSortMode.Deferred, _multiplyBlendState, SamplerState.PointClamp);
         var (viewportWidth, viewportHeight) = _viewHelpers.GetViewportSize();
-        spriteBatch.Draw(_lightingRenderTarget, new Rectangle(0, 0, viewportWidth, viewportHeight), Color.White);
+        spriteBatch.Draw(_lightingRenderTarget, new Rectangle(0, 0, viewportWidth, viewportHeight), Color.White * 1f);
         spriteBatch.End();
     }
 
@@ -92,6 +94,7 @@ public class Renderer
             }
         }
 
+        if (!_miningState.IsInMiner) _playerRenderer.RenderPlayer(spriteBatch);
         _minerRenderer.RenderMiner(spriteBatch);
     }
 

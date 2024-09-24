@@ -9,8 +9,8 @@ public class MinerRenderer(
     MiningState miningState,
     ViewHelpers viewHelpers)
 {
-    private const int MinerTextureOffsetX = -13;
-    private const int MinerTextureOffsetY = -20;
+    private const int MinerBoxOffsetX = -13;
+    private const int MinerBoxOffsetY = -20;
 
     public void RenderMiner(SpriteBatch spriteBatch)
     {
@@ -24,7 +24,7 @@ public class MinerRenderer(
             GameConfig.CellTextureSizePx,
             GameConfig.CellTextureSizePx);
         var destinationRectangle = viewHelpers.GetVisibleRectForObject(miningState.Miner.Position,
-            GameConfig.CellTextureSizePx, GameConfig.CellTextureSizePx, MinerTextureOffsetX, MinerTextureOffsetY);
+            GameConfig.CellTextureSizePx, GameConfig.CellTextureSizePx, MinerBoxOffsetX, MinerBoxOffsetY);
 
         spriteBatch.Draw(GetTracksTexture(), destinationRectangle, sourceRectangle, Color.White);
         spriteBatch.Draw(textures["miner-no-tracks"], destinationRectangle, sourceRectangle, Color.White);

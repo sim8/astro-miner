@@ -19,7 +19,10 @@ public class MiningControllableEntity : Entity
 
     private readonly GridState _gridState;
     private int _acceleratingForMs;
+
     private int _drillingMs;
+
+    // TODO is this needed?
     private (int x, int y)? _drillingPos;
 
     public MiningControllableEntity(GridState gridState, Vector2 pos)
@@ -48,14 +51,20 @@ public class MiningControllableEntity : Entity
         return null;
     }
 
+    public void Disembark()
+    {
+        _acceleratingForMs = 0;
+        _drillingMs = 0;
+    }
+
     private bool ApplyVectorToPosIfNoCollisions(Vector2 vector)
     {
         var newPositions = new[]
         {
             Position + vector,
-            Position + vector + new Vector2(GameConfig.MinerSize, 0),
-            Position + vector + new Vector2(0, GameConfig.MinerSize),
-            Position + vector + new Vector2(GameConfig.MinerSize, GameConfig.MinerSize)
+            Position + vector + new Vector2(GridBoxSize, 0),
+            Position + vector + new Vector2(0, GridBoxSize),
+            Position + vector + new Vector2(GridBoxSize, GridBoxSize)
         };
 
         foreach (var newPos in newPositions)
@@ -136,10 +145,10 @@ public class MiningControllableEntity : Entity
     {
         return Direction switch
         {
-            Direction.Top => Position + new Vector2(GameConfig.MinerSize / 2, -DrillDistance),
-            Direction.Right => Position + new Vector2(GameConfig.MinerSize + DrillDistance, GameConfig.MinerSize / 2),
-            Direction.Bottom => Position + new Vector2(GameConfig.MinerSize / 2, GameConfig.MinerSize + DrillDistance),
-            Direction.Left => Position + new Vector2(-DrillDistance, GameConfig.MinerSize / 2),
+            Direction.Top => Position + new Vector2(GridBoxSize / 2, -DrillDistance),
+            Direction.Right => Position + new Vector2(GridBoxSize + DrillDistance, GridBoxSize / 2),
+            Direction.Bottom => Position + new Vector2(GridBoxSize / 2, GridBoxSize + DrillDistance),
+            Direction.Left => Position + new Vector2(-DrillDistance, GridBoxSize / 2),
             _ => Position
         };
     }

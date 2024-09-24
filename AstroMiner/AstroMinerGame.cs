@@ -57,6 +57,7 @@ public class AstroMinerGame : Game
         LoadTexture("solid-rock-tileset");
         LoadTexture("ruby-tileset");
         LoadTexture("diamond-tileset");
+        LoadTexture("player");
         LoadTexture("miner-no-tracks");
         LoadTexture("tracks-0");
         LoadTexture("tracks-1");
