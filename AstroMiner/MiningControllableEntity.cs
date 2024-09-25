@@ -91,7 +91,7 @@ public class MiningControllableEntity : Entity
             ResetDrill();
     }
 
-    public void UpdateMinerPosAndSpeed(Direction? selectedDirection, int elapsedGameTimeMs)
+    private void UpdateMinerPosAndSpeed(Direction? selectedDirection, int elapsedGameTimeMs)
     {
         Direction = selectedDirection ?? Direction;
 
@@ -112,7 +112,7 @@ public class MiningControllableEntity : Entity
         }
     }
 
-    public bool UpdateMinerPos(int elapsedGameTimeMs)
+    private bool UpdateMinerPos(int elapsedGameTimeMs)
     {
         var distance = _currentSpeed * (elapsedGameTimeMs / 1000f);
 
