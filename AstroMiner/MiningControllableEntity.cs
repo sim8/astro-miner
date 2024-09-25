@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
@@ -18,7 +19,7 @@ public class MiningControllableEntity : Entity
     private readonly Dictionary<CellState, int> _drillTimesMs;
 
     private readonly GridState _gridState;
-    private int _acceleratingForMs;
+    private float _currentSpeed;
 
     private int _drillingMs;
 
@@ -39,6 +40,7 @@ public class MiningControllableEntity : Entity
 
     protected virtual float MaxSpeed => 1f;
     protected virtual int TimeToReachMaxSpeedMs { get; } = 0;
+    protected virtual int TimeToStopMs { get; } = 0;
 
 
     public Direction Direction { get; private set; } = Direction.Top;
@@ -53,7 +55,7 @@ public class MiningControllableEntity : Entity
 
     public void Disembark()
     {
-        _acceleratingForMs = 0;
+        _currentSpeed = 0;
         _drillingMs = 0;
     }
 
@@ -81,10 +83,7 @@ public class MiningControllableEntity : Entity
     public void Update(HashSet<MiningControls> activeMiningControls, int elapsedMs)
     {
         var direction = GetDirectionFromActiveControls(activeMiningControls);
-        if (direction.HasValue)
-            MoveMiner(direction.GetValueOrDefault(), elapsedMs);
-        else if (_acceleratingForMs > 0)
-            _acceleratingForMs = 0;
+        UpdateMinerPosAndSpeed(direction, elapsedMs);
 
         if (activeMiningControls.Contains(MiningControls.Drill))
             UseDrill(elapsedMs);
@@ -92,14 +91,32 @@ public class MiningControllableEntity : Entity
             ResetDrill();
     }
 
-
-    public void MoveMiner(Direction direction, int elapsedGameTimeMs)
+    public void UpdateMinerPosAndSpeed(Direction? selectedDirection, int elapsedGameTimeMs)
     {
-        var prevDirection = Direction;
-        Direction = direction;
-        var distance = GetCurrentSpeed() * (elapsedGameTimeMs / 1000f);
+        Direction = selectedDirection ?? Direction;
 
-        var movement = direction switch
+        // Decelerate if nothing pressed
+        if (!selectedDirection.HasValue && _currentSpeed > 0)
+            _currentSpeed = Math.Max(0,
+                _currentSpeed - MaxSpeed * (elapsedGameTimeMs / (float)TimeToStopMs));
+
+        if (_currentSpeed > 0 || selectedDirection.HasValue)
+        {
+            var hasCollisions = UpdateMinerPos(elapsedGameTimeMs);
+            if (hasCollisions)
+                _currentSpeed = 0;
+            // Accelerate if direction pressed
+            else if (selectedDirection.HasValue)
+                _currentSpeed = Math.Min(MaxSpeed,
+                    _currentSpeed + MaxSpeed * (elapsedGameTimeMs / (float)TimeToReachMaxSpeedMs));
+        }
+    }
+
+    public bool UpdateMinerPos(int elapsedGameTimeMs)
+    {
+        var distance = _currentSpeed * (elapsedGameTimeMs / 1000f);
+
+        var movement = Direction switch
         {
             Direction.Top => new Vector2(0, -distance),
             Direction.Right => new Vector2(distance, 0),
@@ -108,11 +125,7 @@ public class MiningControllableEntity : Entity
             _ => Vector2.Zero
         };
 
-        var noCollisions = ApplyVectorToPosIfNoCollisions(movement);
-        if (noCollisions) // TODO and direction is adjacent to current
-            _acceleratingForMs += elapsedGameTimeMs;
-        else
-            _acceleratingForMs = 0;
+        return !ApplyVectorToPosIfNoCollisions(movement);
     }
 
     private void UseDrill(int elapsedGameTimeMs)
@@ -169,12 +182,5 @@ public class MiningControllableEntity : Entity
     {
         _drillingPos = null;
         _drillingMs = 0;
-    }
-
-    private float GetCurrentSpeed()
-    {
-        return _acceleratingForMs < TimeToReachMaxSpeedMs
-            ? MaxSpeed * _acceleratingForMs / TimeToReachMaxSpeedMs
-            : MaxSpeed;
     }
 }

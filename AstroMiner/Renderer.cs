@@ -103,10 +103,11 @@ public class Renderer
         _graphics.GraphicsDevice.SetRenderTarget(_lightingRenderTarget);
         _graphics.GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true };
 
-        _graphics.GraphicsDevice.Clear(Color.Transparent);
+        _graphics.GraphicsDevice.Clear(Color.White);
         spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
         var (viewportWidth, viewportHeight) = _viewHelpers.GetViewportSize();
-        spriteBatch.Draw(_textures["dark-screen"], new Rectangle(0, 0, viewportWidth, viewportHeight), Color.White);
+        spriteBatch.Draw(_textures["dark-screen"], new Rectangle(0, 0, viewportWidth, viewportHeight),
+            Color.White * 0.8f);
 
         var minerLightSource = _miningState.Miner.GetMinerLightSource();
         var destinationRect = _viewHelpers.GetVisibleRectForObject(minerLightSource, 256, 256);
