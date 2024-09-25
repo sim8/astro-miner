@@ -55,7 +55,6 @@ public class MiningControllableEntity : Entity
 
     public void Disembark()
     {
-        _currentSpeed = 0;
         _drillingMs = 0;
     }
 

@@ -24,6 +24,7 @@ public enum Direction
 
 public class MiningState
 {
+    private readonly HashSet<MiningControls> _EmptyMiningControls;
     public readonly GridState GridState;
     public readonly MinerEntity Miner;
     public readonly PlayerEntity Player;
@@ -37,6 +38,7 @@ public class MiningState
         Player = new PlayerEntity(GridState, minerPos);
         IsInMiner = true;
         _prevPressedEnterOrExit = false;
+        _EmptyMiningControls = new HashSet<MiningControls>();
     }
 
     public bool IsInMiner { get; private set; }
@@ -56,9 +58,14 @@ public class MiningState
                 var activeControllableEntity = GetActiveControllableEntity();
                 activeControllableEntity.Disembark();
                 if (activeControllableEntity == Player && Player.GetDistanceTo(Miner) < GameConfig.MinEmbarkingDistance)
+                {
                     IsInMiner = true;
+                }
                 else
+                {
                     IsInMiner = false;
+                    Player.Position = Miner.Position;
+                }
             }
 
             _prevPressedEnterOrExit = true;
@@ -68,6 +75,8 @@ public class MiningState
             _prevPressedEnterOrExit = false;
         }
 
-        GetActiveControllableEntity().Update(activeMiningControls, elapsedMs);
+
+        Miner.Update(IsInMiner ? activeMiningControls : _EmptyMiningControls, elapsedMs);
+        Player.Update(IsInMiner ? _EmptyMiningControls : activeMiningControls, elapsedMs);
     }
 }

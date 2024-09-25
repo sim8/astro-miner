@@ -94,8 +94,17 @@ public class Renderer
             }
         }
 
-        if (!_miningState.IsInMiner) _playerRenderer.RenderPlayer(spriteBatch);
-        _minerRenderer.RenderMiner(spriteBatch);
+        // TODO ordered render of all visible entities
+        if (_miningState.Player.Position.Y > _miningState.Miner.Position.Y)
+        {
+            _minerRenderer.RenderMiner(spriteBatch);
+            if (!_miningState.IsInMiner) _playerRenderer.RenderPlayer(spriteBatch);
+        }
+        else
+        {
+            if (!_miningState.IsInMiner) _playerRenderer.RenderPlayer(spriteBatch);
+            _minerRenderer.RenderMiner(spriteBatch);
+        }
     }
 
     private void RenderLightingToRenderTarget(SpriteBatch spriteBatch)

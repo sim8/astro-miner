@@ -4,7 +4,7 @@ namespace AstroMiner;
 
 public class Entity
 {
-    public Vector2 Position { get; protected set; }
+    public Vector2 Position { get; set; }
     public virtual int BoxSizePx { get; } = 1;
 
     public float GridBoxSize => (float)BoxSizePx / GameConfig.CellTextureSizePx;
