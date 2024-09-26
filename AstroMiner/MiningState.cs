@@ -39,7 +39,10 @@ public class MiningState
         IsInMiner = true;
         _prevPressedEnterOrExit = false;
         _EmptyMiningControls = new HashSet<MiningControls>();
+        TimeUntilAsteroidExplodesMs = 5 * 60 * 1000;
     }
+
+    public int TimeUntilAsteroidExplodesMs { get; private set; }
 
     public bool IsInMiner { get; private set; }
 
@@ -50,6 +53,8 @@ public class MiningState
 
     public void Update(HashSet<MiningControls> activeMiningControls, int elapsedMs)
     {
+        TimeUntilAsteroidExplodesMs -= elapsedMs;
+
         if (activeMiningControls.Contains(MiningControls.EnterOrExit))
         {
             // Not continuous

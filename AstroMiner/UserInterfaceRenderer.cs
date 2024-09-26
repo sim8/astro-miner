@@ -11,7 +11,17 @@ public class UserInterfaceRenderer(
 {
     public void RenderUserInterface(SpriteBatch spriteBatch)
     {
-        RenderString(spriteBatch, "HEY THERE 0123456789 NICE 12");
+        var timeLeft = miningState.TimeUntilAsteroidExplodesMs;
+        if (timeLeft < 0)
+        {
+            RenderString(spriteBatch, "UR DEAD");
+        }
+        else
+        {
+            var minutes = timeLeft / 60000;
+            var seconds = timeLeft % 60000 / 1000;
+            RenderString(spriteBatch, minutes.ToString("D2") + " " + seconds.ToString("D2"));
+        }
     }
 
     private void RenderString(SpriteBatch spriteBatch, string str)
