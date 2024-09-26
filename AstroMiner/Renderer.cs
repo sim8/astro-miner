@@ -15,6 +15,7 @@ public class Renderer
     private readonly BlendState _multiplyBlendState;
     private readonly PlayerRenderer _playerRenderer;
     private readonly Dictionary<string, Texture2D> _textures;
+    private readonly UserInterfaceRenderer _userInterfaceRenderer;
     private readonly ViewHelpers _viewHelpers;
 
     public Renderer(
@@ -28,6 +29,7 @@ public class Renderer
         _graphics = graphics;
         _minerRenderer = new MinerRenderer(textures, _miningState, _viewHelpers);
         _playerRenderer = new PlayerRenderer(textures, _miningState, _viewHelpers);
+        _userInterfaceRenderer = new UserInterfaceRenderer(textures, _miningState, _viewHelpers);
         _multiplyBlendState = new BlendState();
         _multiplyBlendState.ColorBlendFunction = BlendFunction.Add;
         _multiplyBlendState.ColorSourceBlend = Blend.DestinationColor;
@@ -55,6 +57,11 @@ public class Renderer
         spriteBatch.Begin(SpriteSortMode.Deferred, _multiplyBlendState, SamplerState.PointClamp);
         var (viewportWidth, viewportHeight) = _viewHelpers.GetViewportSize();
         spriteBatch.Draw(_lightingRenderTarget, new Rectangle(0, 0, viewportWidth, viewportHeight), Color.White * 1f);
+        spriteBatch.End();
+
+        // Lastly, draw UI
+        spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
+        _userInterfaceRenderer.RenderUserInterface(spriteBatch);
         spriteBatch.End();
     }
 
@@ -105,8 +112,6 @@ public class Renderer
             if (!_miningState.IsInMiner) _playerRenderer.RenderPlayer(spriteBatch);
             _minerRenderer.RenderMiner(spriteBatch);
         }
-
-        RenderString(spriteBatch, "HEY THERE 0123456789 NICE 12");
     }
 
     private void RenderRadialLightSource(SpriteBatch spriteBatch, Vector2 pos, int size = 256, float opacity = 1)
@@ -161,19 +166,6 @@ public class Renderer
         spriteBatch.End();
 
         _graphics.GraphicsDevice.SetRenderTarget(null);
-    }
-
-    private void RenderString(SpriteBatch spriteBatch, string str)
-    {
-        var linePxCount = 0;
-        var scale = 6;
-        foreach (var (x, y, width) in FontHelpers.TransformString(str))
-        {
-            var sourceRect = new Rectangle(x, y, width, 8);
-            var destRect = new Rectangle(linePxCount * scale, 10, width * scale, 8 * scale);
-            spriteBatch.Draw(_textures["dogica-font"], destRect, sourceRect, Color.White);
-            linePxCount += width;
-        }
     }
 
     private bool HasFloorWithinTwoTiles(int col, int row)
