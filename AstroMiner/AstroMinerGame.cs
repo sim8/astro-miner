@@ -52,6 +52,7 @@ public class AstroMinerGame : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
+        LoadTexture("dogica-font");
         LoadTexture("floor");
         LoadTexture("rock-tileset");
         LoadTexture("solid-rock-tileset");
