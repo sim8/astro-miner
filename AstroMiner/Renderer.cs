@@ -107,6 +107,33 @@ public class Renderer
         }
     }
 
+    private void RenderRadialLightSource(SpriteBatch spriteBatch, Vector2 pos, int size = 256, float opacity = 1)
+    {
+        var offset = -(size / 2);
+        var destinationRect = _viewHelpers.GetVisibleRectForObject(pos, size, size, offset, offset);
+        spriteBatch.Draw(_textures["radial-light"], destinationRect, Color.White * opacity);
+    }
+
+    private void RenderDirectionalLightSource(SpriteBatch spriteBatch, Vector2 pos, Direction dir, int size = 256)
+    {
+        var destinationRect = _viewHelpers.GetVisibleRectForObject(pos, size, size);
+
+
+        var radians = dir switch
+        {
+            Direction.Top => 0f,
+            Direction.Right => (float)Math.PI / 2,
+            Direction.Bottom => (float)Math.PI,
+            Direction.Left => (float)(3 * Math.PI / 2),
+            _ => 0
+        };
+
+        var origin = new Vector2(_textures["directional-light"].Width / 2f, _textures["directional-light"].Height);
+
+        spriteBatch.Draw(_textures["directional-light"], destinationRect, null, Color.White, radians, origin,
+            SpriteEffects.None, 0);
+    }
+
     private void RenderLightingToRenderTarget(SpriteBatch spriteBatch)
     {
         _graphics.GraphicsDevice.SetRenderTarget(_lightingRenderTarget);
@@ -118,23 +145,17 @@ public class Renderer
         spriteBatch.Draw(_textures["dark-screen"], new Rectangle(0, 0, viewportWidth, viewportHeight),
             Color.White * 0.8f);
 
-        var minerLightSource = _miningState.Miner.GetMinerLightSource();
-        var destinationRect = _viewHelpers.GetVisibleRectForObject(minerLightSource, 256, 256);
 
+        RenderDirectionalLightSource(spriteBatch, _miningState.Miner.GetDirectionalLightSource(),
+            _miningState.Miner.Direction);
 
-        var radians = _miningState.Miner.Direction switch
-        {
-            Direction.Top => 0f,
-            Direction.Right => (float)Math.PI / 2,
-            Direction.Bottom => (float)Math.PI,
-            Direction.Left => (float)(3 * Math.PI / 2),
-            _ => 0
-        };
+        if (!_miningState.IsInMiner)
+            RenderDirectionalLightSource(spriteBatch, _miningState.Player.GetDirectionalLightSource(),
+                _miningState.Player.Direction, 128);
 
-        var origin = new Vector2(_textures["light-mask"].Width / 2f, _textures["light-mask"].Height / 2f);
+        RenderRadialLightSource(spriteBatch,
+            _miningState.IsInMiner ? _miningState.Miner.CenterPosition : _miningState.Player.CenterPosition, 256, 0.4f);
 
-        spriteBatch.Draw(_textures["light-mask"], destinationRect, null, Color.White, radians, origin,
-            SpriteEffects.None, 0);
         spriteBatch.End();
 
         _graphics.GraphicsDevice.SetRenderTarget(null);

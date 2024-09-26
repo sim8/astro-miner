@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 
 namespace AstroMiner;
 
 public class GridState
 {
+    private readonly List<Entity> _activeEntities;
     private readonly CellState[,] _grid;
 
     public GridState(CellState[,] grid)

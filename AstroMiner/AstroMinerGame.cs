@@ -63,7 +63,8 @@ public class AstroMinerGame : Game
         LoadTexture("tracks-1");
         LoadTexture("tracks-2");
         LoadTexture("dark-screen");
-        LoadTexture("light-mask");
+        LoadTexture("radial-light");
+        LoadTexture("directional-light");
     }
 
     protected override void Update(GameTime gameTime)

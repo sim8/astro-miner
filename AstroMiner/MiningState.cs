@@ -61,7 +61,7 @@ public class MiningState
                 {
                     IsInMiner = true;
                 }
-                else
+                else if (activeControllableEntity == Miner)
                 {
                     IsInMiner = false;
                     Player.Position = Miner.Position;
