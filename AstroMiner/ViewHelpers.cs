@@ -7,10 +7,10 @@ public class ViewHelpers(MiningState miningState, GraphicsDeviceManager graphics
 {
     private Rectangle AdjustRectForCamera(int x, int y, int width, int height)
     {
-        var (minerXPx, minerYPx) = GridPosToDisplayedPx(miningState.GetActiveControllableEntity().Position);
+        var (xPx, yPx) = GridPosToDisplayedPx(miningState.GetActiveControllableEntity().CenterPosition);
         return new Rectangle(
-            x - minerXPx - GameConfig.MinerVisibleRadius + graphics.GraphicsDevice.Viewport.Width / 2,
-            y - minerYPx - GameConfig.MinerVisibleRadius + graphics.GraphicsDevice.Viewport.Height / 2, width,
+            x - xPx + graphics.GraphicsDevice.Viewport.Width / 2,
+            y - yPx + graphics.GraphicsDevice.Viewport.Height / 2, width,
             height);
     }
 

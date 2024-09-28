@@ -12,5 +12,4 @@ public static class GameConfig
     // Derived consts
     public const float MinerSize = (float)MinerBoxSizePx / CellTextureSizePx;
     public const int CellDisplayedSizePx = CellTextureSizePx * ScaleMultiplier;
-    public const int MinerVisibleRadius = MinerBoxSizePx * ScaleMultiplier / 2;
 }
