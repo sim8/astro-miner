@@ -16,7 +16,6 @@ public class PlayerEntity(GameState gameState, Vector2 pos) : MiningControllable
         if (activeMiningControls.Contains(MiningControls.PlaceDynamite))
         {
             // Not continuous
-            Console.WriteLine(_prevPressedPlaceDynamite);
             if (!_prevPressedPlaceDynamite)
             {
                 var dynamiteEntity = new DynamiteEntity(gameState, CenterPosition);
