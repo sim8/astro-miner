@@ -1,19 +1,19 @@
-using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace AstroMiner;
 
 public class Renderer
 {
+    private readonly DynamiteRenderer _dynamiteRenderer;
     private readonly GameState _gameState;
     private readonly GraphicsDeviceManager _graphics;
     private readonly RenderTarget2D _lightingRenderTarget;
     private readonly MinerRenderer _minerRenderer;
     private readonly BlendState _multiplyBlendState;
     private readonly PlayerRenderer _playerRenderer;
+    private readonly RendererHelpers _rendererHelpers;
     private readonly Dictionary<string, Texture2D> _textures;
     private readonly UserInterfaceRenderer _userInterfaceRenderer;
     private readonly ViewHelpers _viewHelpers;
@@ -29,7 +29,9 @@ public class Renderer
         _graphics = graphics;
         _minerRenderer = new MinerRenderer(textures, _gameState, _viewHelpers);
         _playerRenderer = new PlayerRenderer(textures, _gameState, _viewHelpers);
+        _dynamiteRenderer = new DynamiteRenderer(textures, _gameState, _viewHelpers);
         _userInterfaceRenderer = new UserInterfaceRenderer(textures, _gameState, _viewHelpers);
+        _rendererHelpers = new RendererHelpers(_viewHelpers, textures);
         _multiplyBlendState = new BlendState();
         _multiplyBlendState.ColorBlendFunction = BlendFunction.Add;
         _multiplyBlendState.ColorSourceBlend = Blend.DestinationColor;
@@ -104,34 +106,10 @@ public class Renderer
         foreach (var entity in _gameState.ActiveEntitiesSortedByDistance)
             if (entity is MinerEntity)
                 _minerRenderer.RenderMiner(spriteBatch);
-            else if (entity is PlayerEntity) _playerRenderer.RenderPlayer(spriteBatch);
-    }
-
-    private void RenderRadialLightSource(SpriteBatch spriteBatch, Vector2 pos, int size = 256, float opacity = 1)
-    {
-        var offset = -(size / 2);
-        var destinationRect = _viewHelpers.GetVisibleRectForObject(pos, size, size, offset, offset);
-        spriteBatch.Draw(_textures["radial-light"], destinationRect, Color.White * opacity);
-    }
-
-    private void RenderDirectionalLightSource(SpriteBatch spriteBatch, Vector2 pos, Direction dir, int size = 256)
-    {
-        var destinationRect = _viewHelpers.GetVisibleRectForObject(pos, size, size);
-
-
-        var radians = dir switch
-        {
-            Direction.Top => 0f,
-            Direction.Right => (float)Math.PI / 2,
-            Direction.Bottom => (float)Math.PI,
-            Direction.Left => (float)(3 * Math.PI / 2),
-            _ => 0
-        };
-
-        var origin = new Vector2(_textures["directional-light"].Width / 2f, _textures["directional-light"].Height);
-
-        spriteBatch.Draw(_textures["directional-light"], destinationRect, null, Color.White, radians, origin,
-            SpriteEffects.None, 0);
+            else if (entity is PlayerEntity)
+                _playerRenderer.RenderPlayer(spriteBatch);
+            else if (entity is DynamiteEntity dynamiteEntity)
+                _dynamiteRenderer.RenderDynamite(spriteBatch, dynamiteEntity);
     }
 
     private void RenderLightingToRenderTarget(SpriteBatch spriteBatch)
@@ -146,15 +124,19 @@ public class Renderer
             Color.White * 0.8f);
 
 
-        RenderDirectionalLightSource(spriteBatch, _gameState.Miner.GetDirectionalLightSource(),
+        _rendererHelpers.RenderDirectionalLightSource(spriteBatch, _gameState.Miner.GetDirectionalLightSource(),
             _gameState.Miner.Direction);
 
         if (!_gameState.IsInMiner)
-            RenderDirectionalLightSource(spriteBatch, _gameState.Player.GetDirectionalLightSource(),
+            _rendererHelpers.RenderDirectionalLightSource(spriteBatch, _gameState.Player.GetDirectionalLightSource(),
                 _gameState.Player.Direction, 128);
 
-        RenderRadialLightSource(spriteBatch,
+        _rendererHelpers.RenderRadialLightSource(spriteBatch,
             _gameState.IsInMiner ? _gameState.Miner.CenterPosition : _gameState.Player.CenterPosition, 256, 0.4f);
+
+        foreach (var entity in _gameState.ActiveEntitiesSortedByDistance)
+            if (entity is DynamiteEntity dynamiteEntity)
+                _dynamiteRenderer.RenderLightSource(spriteBatch, dynamiteEntity, _rendererHelpers);
 
         spriteBatch.End();
 

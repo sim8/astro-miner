@@ -150,7 +150,7 @@ public class MiningControllableEntity : Entity
         var cellState = _gameState.Grid.GetCellState(x, y);
 
         if (_drillTimesMs.TryGetValue(cellState, out var requiredTime) && _drillingMs > requiredTime)
-            _gameState.Grid.SetCellState(x, y, CellState.Floor);
+            _gameState.Grid.DemolishCell(x, y);
     }
 
     private Vector2 GetDrillPosition()
