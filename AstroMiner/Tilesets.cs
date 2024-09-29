@@ -47,7 +47,7 @@ public static class Tilesets
         };
     }
 
-    public static (int, int) GetTileCoords(MiningState state, int col, int row)
+    public static (int, int) GetTileCoords(GameState state, int col, int row)
     {
         // Dark
         if (AllFilledExcept(state, col, row))
@@ -107,7 +107,7 @@ public static class Tilesets
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool AllFilledExcept(
-        MiningState state,
+        GameState state,
         int col,
         int row,
         Neighbours shouldBeEmptyNeighbours = Neighbours.None,
@@ -121,7 +121,7 @@ public static class Tilesets
                 continue;
 
             var offset = Offsets[i];
-            var cellState = state.GridState.GetCellState(col + offset.Item1, row + offset.Item2);
+            var cellState = state.Grid.GetCellState(col + offset.Item1, row + offset.Item2);
             var isFilled = cellState != CellState.Empty && cellState != CellState.Floor;
             var shouldBeFilled = (shouldBeEmptyNeighbours & neighbour) == Neighbours.None;
 

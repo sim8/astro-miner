@@ -6,12 +6,12 @@ namespace AstroMiner;
 
 public class UserInterfaceRenderer(
     Dictionary<string, Texture2D> textures,
-    MiningState miningState,
+    GameState gameState,
     ViewHelpers viewHelpers)
 {
     public void RenderUserInterface(SpriteBatch spriteBatch)
     {
-        var timeLeft = miningState.TimeUntilAsteroidExplodesMs;
+        var timeLeft = gameState.TimeUntilAsteroidExplodesMs;
         if (timeLeft < 0)
         {
             RenderString(spriteBatch, "UR DEAD");

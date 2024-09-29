@@ -18,7 +18,7 @@ public class MiningControllableEntity : Entity
 
     private readonly Dictionary<CellState, int> _drillTimesMs;
 
-    private readonly GridState _gridState;
+    private readonly GameState _gameState;
     private float _currentSpeed;
 
     private int _drillingMs;
@@ -26,9 +26,9 @@ public class MiningControllableEntity : Entity
     // TODO is this needed?
     private (int x, int y)? _drillingPos;
 
-    public MiningControllableEntity(GridState gridState, Vector2 pos)
+    public MiningControllableEntity(GameState gameState, Vector2 pos)
     {
-        _gridState = gridState;
+        _gameState = gameState;
         Position = pos;
         _drillTimesMs = new Dictionary<CellState, int>
         {
@@ -71,7 +71,7 @@ public class MiningControllableEntity : Entity
         foreach (var newPos in newPositions)
         {
             var (x, y) = ViewHelpers.ToGridPosition(newPos);
-            if (!ViewHelpers.IsValidGridPosition(x, y) || _gridState.GetCellState(x, y) != CellState.Floor)
+            if (!ViewHelpers.IsValidGridPosition(x, y) || _gameState.Grid.GetCellState(x, y) != CellState.Floor)
                 return false;
         }
 
@@ -147,10 +147,10 @@ public class MiningControllableEntity : Entity
         if (!ViewHelpers.IsValidGridPosition(x, y))
             return;
 
-        var cellState = _gridState.GetCellState(x, y);
+        var cellState = _gameState.Grid.GetCellState(x, y);
 
         if (_drillTimesMs.TryGetValue(cellState, out var requiredTime) && _drillingMs > requiredTime)
-            _gridState.SetCellState(x, y, CellState.Floor);
+            _gameState.Grid.SetCellState(x, y, CellState.Floor);
     }
 
     private Vector2 GetDrillPosition()

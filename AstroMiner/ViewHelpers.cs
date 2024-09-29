@@ -3,11 +3,11 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
 
-public class ViewHelpers(MiningState miningState, GraphicsDeviceManager graphics)
+public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
 {
     private Rectangle AdjustRectForCamera(int x, int y, int width, int height)
     {
-        var (xPx, yPx) = GridPosToDisplayedPx(miningState.GetActiveControllableEntity().CenterPosition);
+        var (xPx, yPx) = GridPosToDisplayedPx(gameState.GetActiveControllableEntity().CenterPosition);
         return new Rectangle(
             x - xPx + graphics.GraphicsDevice.Viewport.Width / 2,
             y - yPx + graphics.GraphicsDevice.Viewport.Height / 2, width,

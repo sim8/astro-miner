@@ -6,7 +6,7 @@ namespace AstroMiner;
 
 public class PlayerRenderer(
     Dictionary<string, Texture2D> textures,
-    MiningState miningState,
+    GameState gameState,
     ViewHelpers viewHelpers)
 {
     private const int PlayerBoxOffsetX = -16;
@@ -15,7 +15,7 @@ public class PlayerRenderer(
 
     public void RenderPlayer(SpriteBatch spriteBatch)
     {
-        var textureFrameOffsetX = miningState.Player.Direction switch
+        var textureFrameOffsetX = gameState.Player.Direction switch
         {
             Direction.Bottom => 0,
             Direction.Left => PlayerTextureSizePx * 1,
@@ -27,7 +27,7 @@ public class PlayerRenderer(
             textureFrameOffsetX, 0,
             PlayerTextureSizePx,
             PlayerTextureSizePx);
-        var destinationRectangle = viewHelpers.GetVisibleRectForObject(miningState.Player.Position,
+        var destinationRectangle = viewHelpers.GetVisibleRectForObject(gameState.Player.Position,
             PlayerTextureSizePx, PlayerTextureSizePx, PlayerBoxOffsetX, PlayerBoxOffsetY);
 
         spriteBatch.Draw(textures["player"], destinationRectangle, sourceRectangle, Color.White);

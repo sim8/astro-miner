@@ -11,7 +11,7 @@ public class Renderer
     private readonly GraphicsDeviceManager _graphics;
     private readonly RenderTarget2D _lightingRenderTarget;
     private readonly MinerRenderer _minerRenderer;
-    private readonly MiningState _miningState;
+    private readonly GameState _gameState;
     private readonly BlendState _multiplyBlendState;
     private readonly PlayerRenderer _playerRenderer;
     private readonly Dictionary<string, Texture2D> _textures;
@@ -21,15 +21,15 @@ public class Renderer
     public Renderer(
         GraphicsDeviceManager graphics,
         Dictionary<string, Texture2D> textures,
-        MiningState miningState)
+        GameState gameState)
     {
-        _miningState = miningState;
+        _gameState = gameState;
         _textures = textures;
-        _viewHelpers = new ViewHelpers(miningState, graphics);
+        _viewHelpers = new ViewHelpers(gameState, graphics);
         _graphics = graphics;
-        _minerRenderer = new MinerRenderer(textures, _miningState, _viewHelpers);
-        _playerRenderer = new PlayerRenderer(textures, _miningState, _viewHelpers);
-        _userInterfaceRenderer = new UserInterfaceRenderer(textures, _miningState, _viewHelpers);
+        _minerRenderer = new MinerRenderer(textures, _gameState, _viewHelpers);
+        _playerRenderer = new PlayerRenderer(textures, _gameState, _viewHelpers);
+        _userInterfaceRenderer = new UserInterfaceRenderer(textures, _gameState, _viewHelpers);
         _multiplyBlendState = new BlendState();
         _multiplyBlendState.ColorBlendFunction = BlendFunction.Add;
         _multiplyBlendState.ColorSourceBlend = Blend.DestinationColor;
@@ -70,10 +70,10 @@ public class Renderer
         for (var row = 0; row < GameConfig.GridSize; row++)
         for (var col = 0; col < GameConfig.GridSize; col++)
         {
-            var cellState = _miningState.GridState.GetCellState(col, row);
+            var cellState = _gameState.Grid.GetCellState(col, row);
             if (Tilesets.TilesetTextureNames.TryGetValue(cellState, out var name))
             {
-                var offset = Tilesets.GetTileCoords(_miningState, col, row);
+                var offset = Tilesets.GetTileCoords(_gameState, col, row);
                 var tilesetSourceRect = new Rectangle(offset.Item1 * GameConfig.CellTextureSizePx,
                     offset.Item2 * GameConfig.CellTextureSizePx,
                     GameConfig.CellTextureSizePx, GameConfig.CellTextureSizePx);
@@ -90,7 +90,7 @@ public class Renderer
                         overlaySourceRect, Color.White * overlayOpacity);
                 }
             }
-            else if (_miningState.GridState.GetCellState(col, row) == CellState.Floor)
+            else if (_gameState.Grid.GetCellState(col, row) == CellState.Floor)
             {
                 var tilesetSourceRect = new Rectangle(3 * GameConfig.CellTextureSizePx,
                     GameConfig.CellTextureSizePx,
@@ -102,14 +102,14 @@ public class Renderer
         }
 
         // TODO ordered render of all visible entities
-        if (_miningState.Player.Position.Y > _miningState.Miner.Position.Y)
+        if (_gameState.Player.Position.Y > _gameState.Miner.Position.Y)
         {
             _minerRenderer.RenderMiner(spriteBatch);
-            if (!_miningState.IsInMiner) _playerRenderer.RenderPlayer(spriteBatch);
+            if (!_gameState.IsInMiner) _playerRenderer.RenderPlayer(spriteBatch);
         }
         else
         {
-            if (!_miningState.IsInMiner) _playerRenderer.RenderPlayer(spriteBatch);
+            if (!_gameState.IsInMiner) _playerRenderer.RenderPlayer(spriteBatch);
             _minerRenderer.RenderMiner(spriteBatch);
         }
     }
@@ -153,15 +153,15 @@ public class Renderer
             Color.White * 0.8f);
 
 
-        RenderDirectionalLightSource(spriteBatch, _miningState.Miner.GetDirectionalLightSource(),
-            _miningState.Miner.Direction);
+        RenderDirectionalLightSource(spriteBatch, _gameState.Miner.GetDirectionalLightSource(),
+            _gameState.Miner.Direction);
 
-        if (!_miningState.IsInMiner)
-            RenderDirectionalLightSource(spriteBatch, _miningState.Player.GetDirectionalLightSource(),
-                _miningState.Player.Direction, 128);
+        if (!_gameState.IsInMiner)
+            RenderDirectionalLightSource(spriteBatch, _gameState.Player.GetDirectionalLightSource(),
+                _gameState.Player.Direction, 128);
 
         RenderRadialLightSource(spriteBatch,
-            _miningState.IsInMiner ? _miningState.Miner.CenterPosition : _miningState.Player.CenterPosition, 256, 0.4f);
+            _gameState.IsInMiner ? _gameState.Miner.CenterPosition : _gameState.Player.CenterPosition, 256, 0.4f);
 
         spriteBatch.End();
 
@@ -172,15 +172,15 @@ public class Renderer
     {
         for (var x = col - 1; x <= col + 1; x++)
             if ((ViewHelpers.IsValidGridPosition(x, row - 2) &&
-                 _miningState.GridState.GetCellState(x, row - 2) == CellState.Floor) ||
+                 _gameState.Grid.GetCellState(x, row - 2) == CellState.Floor) ||
                 (ViewHelpers.IsValidGridPosition(x, row + 2) &&
-                 _miningState.GridState.GetCellState(x, row + 2) == CellState.Floor))
+                 _gameState.Grid.GetCellState(x, row + 2) == CellState.Floor))
                 return true;
         for (var y = row - 1; y <= row + 1; y++)
             if ((ViewHelpers.IsValidGridPosition(col + 2, y) &&
-                 _miningState.GridState.GetCellState(col + 2, y) == CellState.Floor) ||
+                 _gameState.Grid.GetCellState(col + 2, y) == CellState.Floor) ||
                 (ViewHelpers.IsValidGridPosition(col - 2, y) &&
-                 _miningState.GridState.GetCellState(col - 2, y) == CellState.Floor))
+                 _gameState.Grid.GetCellState(col - 2, y) == CellState.Floor))
                 return true;
         return false;
     }

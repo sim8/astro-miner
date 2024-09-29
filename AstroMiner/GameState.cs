@@ -22,23 +22,23 @@ public enum Direction
     Left
 }
 
-public class MiningState
+public class GameState
 {
-    private readonly HashSet<MiningControls> _EmptyMiningControls;
-    public readonly GridState GridState;
+    private readonly HashSet<MiningControls> _emptyMiningControls;
+    public readonly GridState Grid;
     public readonly MinerEntity Miner;
     public readonly PlayerEntity Player;
     private bool _prevPressedEnterOrExit;
 
-    public MiningState()
+    public GameState()
     {
         var (grid, minerPos) = AsteroidGen.InitializeGridAndStartingPos(GameConfig.GridSize);
-        GridState = new GridState(grid);
-        Miner = new MinerEntity(GridState, minerPos);
-        Player = new PlayerEntity(GridState, minerPos);
+        Grid = new GridState(grid);
+        Miner = new MinerEntity(this, minerPos);
+        Player = new PlayerEntity(this, minerPos);
         IsInMiner = true;
         _prevPressedEnterOrExit = false;
-        _EmptyMiningControls = new HashSet<MiningControls>();
+        _emptyMiningControls = new HashSet<MiningControls>();
         TimeUntilAsteroidExplodesMs = 5 * 60 * 1000;
     }
 
@@ -81,7 +81,7 @@ public class MiningState
         }
 
 
-        Miner.Update(IsInMiner ? activeMiningControls : _EmptyMiningControls, elapsedMs);
-        Player.Update(IsInMiner ? _EmptyMiningControls : activeMiningControls, elapsedMs);
+        Miner.Update(IsInMiner ? activeMiningControls : _emptyMiningControls, elapsedMs);
+        Player.Update(IsInMiner ? _emptyMiningControls : activeMiningControls, elapsedMs);
     }
 }

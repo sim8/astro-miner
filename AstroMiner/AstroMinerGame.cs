@@ -23,7 +23,7 @@ public class AstroMinerGame : Game
     private readonly GraphicsDeviceManager _graphics;
 
     private readonly Dictionary<string, Texture2D> _textures = new();
-    private MiningState _miningState;
+    private GameState _gameState;
     private Renderer _renderer;
     private SpriteBatch _spriteBatch;
 
@@ -39,8 +39,8 @@ public class AstroMinerGame : Game
 
     protected override void Initialize()
     {
-        _miningState = new MiningState();
-        _renderer = new Renderer(_graphics, _textures, _miningState);
+        _gameState = new GameState();
+        _renderer = new Renderer(_graphics, _textures, _gameState);
         base.Initialize();
     }
 
@@ -91,7 +91,7 @@ public class AstroMinerGame : Game
         if (Keyboard.GetState().IsKeyDown(Keys.E))
             _activeMiningControls.Add(MiningControls.EnterOrExit);
 
-        _miningState.Update(_activeMiningControls, gameTime.ElapsedGameTime.Milliseconds);
+        _gameState.Update(_activeMiningControls, gameTime.ElapsedGameTime.Milliseconds);
 
         base.Update(gameTime);
     }
