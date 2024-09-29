@@ -49,11 +49,10 @@ public class GameState
     public int TimeUntilAsteroidExplodesMs { get; private set; }
 
     public bool IsInMiner => !ActiveEntitiesSortedByDistance.Contains(Player);
+    
+    
 
-    public MiningControllableEntity GetActiveControllableEntity()
-    {
-        return IsInMiner ? Miner : Player;
-    }
+    public MiningControllableEntity ActiveControllableEntity => IsInMiner ? Miner : Player;
 
     private void SortActiveEntities()
     {
@@ -70,13 +69,12 @@ public class GameState
             // Not continuous
             if (!_prevPressedEnterOrExit)
             {
-                var activeControllableEntity = GetActiveControllableEntity();
-                activeControllableEntity.Disembark();
-                if (activeControllableEntity == Player && Player.GetDistanceTo(Miner) < GameConfig.MinEmbarkingDistance)
+                ActiveControllableEntity.Disembark();
+                if (ActiveControllableEntity == Player && Player.GetDistanceTo(Miner) < GameConfig.MinEmbarkingDistance)
                 {
                     ActiveEntitiesSortedByDistance.Remove(Player);
                 }
-                else if (activeControllableEntity == Miner)
+                else if (ActiveControllableEntity == Miner)
                 {
                     Player.Position = Miner.Position;
                     ActiveEntitiesSortedByDistance.Add(Player);
@@ -91,7 +89,7 @@ public class GameState
         }
 
         foreach (var entity in ActiveEntitiesSortedByDistance)
-            if (entity is MiningControllableEntity && entity == GetActiveControllableEntity())
+            if (entity is MiningControllableEntity && entity == ActiveControllableEntity)
                 entity.Update(elapsedMs, activeMiningControls);
             else
                 entity.Update(elapsedMs, _emptyMiningControls);

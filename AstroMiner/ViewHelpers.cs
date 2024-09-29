@@ -7,7 +7,7 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
 {
     private Rectangle AdjustRectForCamera(int x, int y, int width, int height)
     {
-        var (xPx, yPx) = GridPosToDisplayedPx(gameState.GetActiveControllableEntity().CenterPosition);
+        var (xPx, yPx) = GridPosToDisplayedPx(gameState.ActiveControllableEntity.CenterPosition);
         return new Rectangle(
             x - xPx + graphics.GraphicsDevice.Viewport.Width / 2,
             y - yPx + graphics.GraphicsDevice.Viewport.Height / 2, width,
