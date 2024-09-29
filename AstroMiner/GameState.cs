@@ -25,6 +25,7 @@ public enum Direction
 public class GameState
 {
     private readonly HashSet<MiningControls> _emptyMiningControls;
+    public readonly List<Entity> ActiveEntitiesSortedByDistance;
     public readonly GridState Grid;
     public readonly MinerEntity Miner;
     public readonly PlayerEntity Player;
@@ -36,7 +37,7 @@ public class GameState
         Grid = new GridState(grid);
         Miner = new MinerEntity(this, minerPos);
         Player = new PlayerEntity(this, minerPos);
-        IsInMiner = true;
+        ActiveEntitiesSortedByDistance = [Miner];
         _prevPressedEnterOrExit = false;
         _emptyMiningControls = new HashSet<MiningControls>();
         TimeUntilAsteroidExplodesMs = 5 * 60 * 1000;
@@ -44,16 +45,22 @@ public class GameState
 
     public int TimeUntilAsteroidExplodesMs { get; private set; }
 
-    public bool IsInMiner { get; private set; }
+    public bool IsInMiner => !ActiveEntitiesSortedByDistance.Contains(Player);
 
     public MiningControllableEntity GetActiveControllableEntity()
     {
         return IsInMiner ? Miner : Player;
     }
 
+    private void SortActiveEntities()
+    {
+        ActiveEntitiesSortedByDistance.Sort((a, b) => a.Position.Y.CompareTo(b.Position.Y));
+    }
+
     public void Update(HashSet<MiningControls> activeMiningControls, int elapsedMs)
     {
         TimeUntilAsteroidExplodesMs -= elapsedMs;
+        SortActiveEntities(); // TODO only call when needed? Seems error prone
 
         if (activeMiningControls.Contains(MiningControls.EnterOrExit))
         {
@@ -64,12 +71,12 @@ public class GameState
                 activeControllableEntity.Disembark();
                 if (activeControllableEntity == Player && Player.GetDistanceTo(Miner) < GameConfig.MinEmbarkingDistance)
                 {
-                    IsInMiner = true;
+                    ActiveEntitiesSortedByDistance.Remove(Player);
                 }
                 else if (activeControllableEntity == Miner)
                 {
-                    IsInMiner = false;
                     Player.Position = Miner.Position;
+                    ActiveEntitiesSortedByDistance.Add(Player);
                 }
             }
 

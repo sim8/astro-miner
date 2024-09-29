@@ -8,10 +8,10 @@ namespace AstroMiner;
 
 public class Renderer
 {
+    private readonly GameState _gameState;
     private readonly GraphicsDeviceManager _graphics;
     private readonly RenderTarget2D _lightingRenderTarget;
     private readonly MinerRenderer _minerRenderer;
-    private readonly GameState _gameState;
     private readonly BlendState _multiplyBlendState;
     private readonly PlayerRenderer _playerRenderer;
     private readonly Dictionary<string, Texture2D> _textures;
@@ -101,17 +101,10 @@ public class Renderer
             }
         }
 
-        // TODO ordered render of all visible entities
-        if (_gameState.Player.Position.Y > _gameState.Miner.Position.Y)
-        {
-            _minerRenderer.RenderMiner(spriteBatch);
-            if (!_gameState.IsInMiner) _playerRenderer.RenderPlayer(spriteBatch);
-        }
-        else
-        {
-            if (!_gameState.IsInMiner) _playerRenderer.RenderPlayer(spriteBatch);
-            _minerRenderer.RenderMiner(spriteBatch);
-        }
+        foreach (var entity in _gameState.ActiveEntitiesSortedByDistance)
+            if (entity is MinerEntity)
+                _minerRenderer.RenderMiner(spriteBatch);
+            else if (entity is PlayerEntity) _playerRenderer.RenderPlayer(spriteBatch);
     }
 
     private void RenderRadialLightSource(SpriteBatch spriteBatch, Vector2 pos, int size = 256, float opacity = 1)
