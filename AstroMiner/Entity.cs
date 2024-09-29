@@ -12,6 +12,8 @@ public class Entity
 
     public Vector2 CenterPosition => Position + new Vector2(GridBoxSize / 2f, GridBoxSize / 2f);
 
+    public float FrontY => Position.Y + GridBoxSize;
+
     public float GetDistanceTo(Entity entity)
     {
         return Vector2.Distance(CenterPosition, entity.CenterPosition);

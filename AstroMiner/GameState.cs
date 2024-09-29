@@ -56,7 +56,7 @@ public class GameState
 
     private void SortActiveEntities()
     {
-        ActiveEntitiesSortedByDistance.Sort((a, b) => a.Position.Y.CompareTo(b.Position.Y));
+        ActiveEntitiesSortedByDistance.Sort((a, b) => a.FrontY.CompareTo(b.FrontY));
     }
 
     public void Update(HashSet<MiningControls> activeMiningControls, int elapsedMs)
