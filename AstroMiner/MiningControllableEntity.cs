@@ -79,7 +79,7 @@ public class MiningControllableEntity : Entity
         return true;
     }
 
-    public void Update(HashSet<MiningControls> activeMiningControls, int elapsedMs)
+    public override void Update(int elapsedMs, HashSet<MiningControls> activeMiningControls)
     {
         var direction = GetDirectionFromActiveControls(activeMiningControls);
         UpdateMinerPosAndSpeed(direction, elapsedMs);

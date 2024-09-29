@@ -11,7 +11,10 @@ public enum MiningControls
     MoveLeft,
 
     Drill,
-    EnterOrExit
+    EnterOrExit,
+
+    // Player-only
+    PlaceDynamite
 }
 
 public enum Direction
@@ -87,8 +90,10 @@ public class GameState
             _prevPressedEnterOrExit = false;
         }
 
-
-        Miner.Update(IsInMiner ? activeMiningControls : _emptyMiningControls, elapsedMs);
-        Player.Update(IsInMiner ? _emptyMiningControls : activeMiningControls, elapsedMs);
+        foreach (var entity in ActiveEntitiesSortedByDistance)
+            if (entity is MiningControllableEntity && entity == GetActiveControllableEntity())
+                entity.Update(elapsedMs, activeMiningControls);
+            else
+                entity.Update(elapsedMs, _emptyMiningControls);
     }
 }
