@@ -165,6 +165,14 @@ public class MiningControllableEntity : Entity
         };
     }
 
+    public Direction GetRotatedDirection(Direction rotation)
+    {
+        var directionInt = (int)Direction;
+        var rotationInt = (int)rotation;
+        var newDirectionInt = (directionInt + rotationInt) % 4;
+        return (Direction)newDirectionInt;
+    }
+
     public virtual Vector2 GetDirectionalLightSource()
     {
         // Can be adjusted if lightsource has different placements per rotation

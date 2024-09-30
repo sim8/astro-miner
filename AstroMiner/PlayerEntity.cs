@@ -18,6 +18,7 @@ public class PlayerEntity(GameState gameState, Vector2 pos) : MiningControllable
             if (!_prevPressedPlaceDynamite)
             {
                 var dynamiteEntity = new DynamiteEntity(gameState, CenterPosition);
+                dynamiteEntity.SetPositionRelativeToDirectionalEntity(this, Direction.Top);
                 gameState.ActiveEntitiesSortedByDistance.Add(dynamiteEntity);
                 _prevPressedPlaceDynamite = true;
             }
