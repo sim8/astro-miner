@@ -7,6 +7,7 @@ namespace AstroMiner;
 public class Renderer
 {
     private readonly DynamiteRenderer _dynamiteRenderer;
+    private readonly ExplosionRenderer _explosionRenderer;
     private readonly GameState _gameState;
     private readonly GraphicsDeviceManager _graphics;
     private readonly RenderTarget2D _lightingRenderTarget;
@@ -30,6 +31,7 @@ public class Renderer
         _minerRenderer = new MinerRenderer(textures, _gameState, _viewHelpers);
         _playerRenderer = new PlayerRenderer(textures, _gameState, _viewHelpers);
         _dynamiteRenderer = new DynamiteRenderer(textures, _gameState, _viewHelpers);
+        _explosionRenderer = new ExplosionRenderer(textures, _gameState, _viewHelpers);
         _userInterfaceRenderer = new UserInterfaceRenderer(textures, _gameState, _viewHelpers);
         _rendererHelpers = new RendererHelpers(_viewHelpers, textures);
         _multiplyBlendState = new BlendState();
@@ -110,6 +112,8 @@ public class Renderer
                 _playerRenderer.RenderPlayer(spriteBatch);
             else if (entity is DynamiteEntity dynamiteEntity)
                 _dynamiteRenderer.RenderDynamite(spriteBatch, dynamiteEntity);
+            else if (entity is ExplosionEntity explosionEntity)
+                _explosionRenderer.RenderExplosion(spriteBatch, explosionEntity);
     }
 
     private void RenderLightingToRenderTarget(SpriteBatch spriteBatch)
@@ -132,11 +136,13 @@ public class Renderer
                 _gameState.Player.Direction, 128);
 
         _rendererHelpers.RenderRadialLightSource(spriteBatch,
-            _gameState.IsInMiner ? _gameState.Miner.CenterPosition : _gameState.Player.CenterPosition, 256, 0.4f);
+            _gameState.IsInMiner ? _gameState.Miner.CenterPosition : _gameState.Player.CenterPosition, 512, 0.4f);
 
         foreach (var entity in _gameState.ActiveEntitiesSortedByDistance)
             if (entity is DynamiteEntity dynamiteEntity)
                 _dynamiteRenderer.RenderLightSource(spriteBatch, dynamiteEntity, _rendererHelpers);
+            else if (entity is ExplosionEntity explosionEntity)
+                _explosionRenderer.RenderLightSource(spriteBatch, explosionEntity, _rendererHelpers);
 
         spriteBatch.End();
 

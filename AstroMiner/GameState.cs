@@ -59,6 +59,16 @@ public class GameState
         ActiveEntitiesSortedByDistance.Sort((a, b) => a.FrontY.CompareTo(b.FrontY));
     }
 
+    public void ActivateEntity(Entity entity)
+    {
+        ActiveEntitiesSortedByDistance.Add(entity);
+    }
+
+    public void DeactivateEntity(Entity entity)
+    {
+        ActiveEntitiesSortedByDistance.Remove(entity);
+    }
+
     public void Update(HashSet<MiningControls> activeMiningControls, int elapsedMs)
     {
         TimeUntilAsteroidExplodesMs -= elapsedMs;
@@ -71,12 +81,12 @@ public class GameState
                 ActiveControllableEntity.Disembark();
                 if (ActiveControllableEntity == Player && Player.GetDistanceTo(Miner) < GameConfig.MinEmbarkingDistance)
                 {
-                    ActiveEntitiesSortedByDistance.Remove(Player);
+                    DeactivateEntity(Player);
                 }
                 else if (ActiveControllableEntity == Miner)
                 {
                     Player.Position = Miner.Position;
-                    ActiveEntitiesSortedByDistance.Add(Player);
+                    ActivateEntity(Player);
                 }
 
                 _prevPressedEnterOrExit = true;
