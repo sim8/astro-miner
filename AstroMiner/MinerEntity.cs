@@ -7,8 +7,8 @@ public class MinerEntity(GameState gameState, Vector2 pos) : MiningControllableE
     protected override float MaxSpeed => 1.6f;
     protected override int TimeToReachMaxSpeedMs { get; } = 1200;
     protected override int TimeToStopMs { get; } = 400;
-    public override int BoxSizePx { get; } = GameConfig.MinerBoxSizePx;
-    
+    protected override int BoxSizePx { get; } = GameConfig.MinerBoxSizePx;
+
     public override Vector2 GetDirectionalLightSource()
     {
         return Direction switch

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
@@ -8,7 +7,7 @@ public class PlayerEntity(GameState gameState, Vector2 pos) : MiningControllable
 {
     private bool _prevPressedPlaceDynamite;
     protected override float MaxSpeed => 1f;
-    public override int BoxSizePx { get; } = GameConfig.PlayerBoxSizePx;
+    protected override int BoxSizePx { get; } = GameConfig.PlayerBoxSizePx;
 
     public override void Update(int elapsedMs, HashSet<MiningControls> activeMiningControls)
     {

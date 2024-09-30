@@ -17,7 +17,7 @@ public class DynamiteEntity : Entity
         _gameState = gameState;
     }
 
-    public override int BoxSizePx { get; } = 4;
+    protected override int BoxSizePx { get; } = 4;
 
     public float FusePercentLeft => TimeToExplodeMs / (float)FuseTimeMs;
 
