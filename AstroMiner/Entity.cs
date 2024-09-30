@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Drawing;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
@@ -7,12 +8,15 @@ public class Entity
 {
     public Vector2 Position { get; set; }
     protected virtual int BoxSizePx { get; } = 1;
+    public virtual bool CanCollide { get; } = true;
 
     public float GridBoxSize => (float)BoxSizePx / GameConfig.CellTextureSizePx;
 
     public Vector2 CenterPosition => Position + new Vector2(GridBoxSize / 2f, GridBoxSize / 2f);
 
     public float FrontY => Position.Y + GridBoxSize;
+
+    public RectangleF Rectangle => new(Position.X, Position.Y, GridBoxSize, GridBoxSize);
 
     public float GetDistanceTo(Entity entity)
     {
@@ -41,8 +45,8 @@ public class Entity
         var newPos = newCenterPos - new Vector2(GridBoxSize / 2, GridBoxSize / 2);
 
         Position = newPos;
-        
-        
+
+
         // TODO check collisions - set or return false
         return true;
     }

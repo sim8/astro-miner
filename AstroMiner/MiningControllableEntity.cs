@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
@@ -74,6 +75,15 @@ public class MiningControllableEntity : Entity
             if (!ViewHelpers.IsValidGridPosition(x, y) || _gameState.Grid.GetCellState(x, y) != CellState.Floor)
                 return false;
         }
+
+
+        var newVector = Position + vector;
+        var newRectangle = new RectangleF(newVector.X, newVector.Y, GridBoxSize, GridBoxSize);
+
+        foreach (var entity in _gameState.ActiveEntitiesSortedByDistance)
+            if (entity != this && entity.CanCollide && newRectangle.IntersectsWith(entity.Rectangle) &&
+                !Rectangle.IntersectsWith(entity.Rectangle)) // Allow movement if currently clipping
+                return false;
 
         Position += vector;
         return true;

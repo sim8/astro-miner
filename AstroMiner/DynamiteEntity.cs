@@ -18,6 +18,7 @@ public class DynamiteEntity : Entity
     }
 
     protected override int BoxSizePx { get; } = 4;
+    public override bool CanCollide { get; } = false;
 
     public float FusePercentLeft => TimeToExplodeMs / (float)FuseTimeMs;
 
