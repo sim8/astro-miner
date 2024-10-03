@@ -16,7 +16,7 @@
   - Test on Xbox?
 ## Rendering / art
   - Change palette colors - blue shadows
-  - Improve direction light art
+  - ~~Improve direction light art~~
   - Additive light pass for glares (bright lights, explosions)
   - Player animation
   - Ground tileset

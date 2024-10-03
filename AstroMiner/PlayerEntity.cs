@@ -28,4 +28,16 @@ public class PlayerEntity(GameState gameState, Vector2 pos) : MiningControllable
             _prevPressedPlaceDynamite = false;
         }
     }
+    
+    public override Vector2 GetDirectionalLightSource()
+    {
+        return Direction switch
+        {
+            Direction.Top => Position + new Vector2(0.14f, -0.15f),
+            Direction.Right => Position + new Vector2(0.16f, -0.15f),
+            Direction.Bottom => Position + new Vector2(0.12f, -0.15f),
+            Direction.Left => Position + new Vector2(0.13f, -0.14f),
+            _ => Position
+        };
+    }
 }

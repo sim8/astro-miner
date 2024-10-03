@@ -133,7 +133,7 @@ public class Renderer
 
         if (!_gameState.IsInMiner)
             _rendererHelpers.RenderDirectionalLightSource(spriteBatch, _gameState.Player.GetDirectionalLightSource(),
-                _gameState.Player.Direction, 128);
+                _gameState.Player.Direction, 256);
 
         _rendererHelpers.RenderRadialLightSource(spriteBatch,
             _gameState.IsInMiner ? _gameState.Miner.CenterPosition : _gameState.Player.CenterPosition, 512, 0.4f);

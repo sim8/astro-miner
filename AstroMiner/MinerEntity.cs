@@ -13,10 +13,10 @@ public class MinerEntity(GameState gameState, Vector2 pos) : MiningControllableE
     {
         return Direction switch
         {
-            Direction.Top => Position + new Vector2(0.52f, 0.15f),
+            Direction.Top => Position + new Vector2(0.53f, 0.17f),
             Direction.Right => Position + new Vector2(0.35f, 0.33f),
-            Direction.Bottom => Position + new Vector2(0.08f, 0.3f),
-            Direction.Left => Position + new Vector2(0.2f, -0.1f),
+            Direction.Bottom => Position + new Vector2(0.06f, 0.29f),
+            Direction.Left => Position + new Vector2(0.24f, -0.14f),
             _ => Position
         };
     }

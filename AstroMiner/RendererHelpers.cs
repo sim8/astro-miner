@@ -16,7 +16,7 @@ public class RendererHelpers(
         spriteBatch.Draw(textures["radial-light"], destinationRect, Color.White * opacity);
     }
 
-    public void RenderDirectionalLightSource(SpriteBatch spriteBatch, Vector2 pos, Direction dir, int size = 256)
+    public void RenderDirectionalLightSource(SpriteBatch spriteBatch, Vector2 pos, Direction dir, int size = 512)
     {
         var destinationRect = viewHelpers.GetVisibleRectForObject(pos, size, size);
 
