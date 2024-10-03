@@ -1,34 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace AstroMiner;
 
-public enum CellState
+public class ProcGenViewerGame : Game
 {
-    Empty,
-    Floor,
-    Rock,
-    SolidRock,
-    Diamond,
-    Ruby
-}
-
-public class AstroMinerGame : Game
-{
-    // TODO these should live elsewhere but needed by a few places
-    private readonly HashSet<MiningControls> _activeMiningControls = new();
-
     private readonly GraphicsDeviceManager _graphics;
 
     private readonly Dictionary<string, Texture2D> _textures = new();
     private GameState _gameState;
-    private Renderer _renderer;
+    private ProcGenViewerRenderer _renderer;
     private SpriteBatch _spriteBatch;
+    private bool prevPressedNew;
 
 
-    public AstroMinerGame()
+    public ProcGenViewerGame()
     {
         _graphics = new GraphicsDeviceManager(this);
         _graphics.PreferredBackBufferWidth = 1280;
@@ -40,7 +29,7 @@ public class AstroMinerGame : Game
     protected override void Initialize()
     {
         _gameState = new GameState();
-        _renderer = new Renderer(_graphics, _textures, _gameState);
+        _renderer = new ProcGenViewerRenderer(_textures, _gameState);
         base.Initialize();
     }
 
@@ -71,30 +60,21 @@ public class AstroMinerGame : Game
 
     protected override void Update(GameTime gameTime)
     {
-        _activeMiningControls.Clear();
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-            Keyboard.GetState().IsKeyDown(Keys.Escape))
-            Exit();
+        if (Keyboard.GetState().IsKeyDown(Keys.N))
 
-        var keyboardState = Keyboard.GetState();
+        {
+            if (!prevPressedNew)
+            {
+                Console.WriteLine("new woooorld");
+                _gameState.Initialize();
+            }
 
-        // TODO use a map for this instead?
-        if (keyboardState.IsKeyDown(Keys.W))
-            _activeMiningControls.Add(MiningControls.MoveUp);
-        if (keyboardState.IsKeyDown(Keys.D))
-            _activeMiningControls.Add(MiningControls.MoveRight);
-        if (keyboardState.IsKeyDown(Keys.S))
-            _activeMiningControls.Add(MiningControls.MoveDown);
-        if (keyboardState.IsKeyDown(Keys.A))
-            _activeMiningControls.Add(MiningControls.MoveLeft);
-        if (keyboardState.IsKeyDown(Keys.Space))
-            _activeMiningControls.Add(MiningControls.Drill);
-        if (keyboardState.IsKeyDown(Keys.E))
-            _activeMiningControls.Add(MiningControls.EnterOrExit);
-        if (keyboardState.IsKeyDown(Keys.R))
-            _activeMiningControls.Add(MiningControls.PlaceDynamite);
-
-        _gameState.Update(_activeMiningControls, gameTime.ElapsedGameTime.Milliseconds);
+            prevPressedNew = true;
+        }
+        else
+        {
+            prevPressedNew = false;
+        }
 
         base.Update(gameTime);
     }

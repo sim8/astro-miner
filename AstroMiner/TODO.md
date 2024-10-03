@@ -9,7 +9,7 @@
     - Timer runs out
     - Drop off edge
 ## Quality
-  - Easy grid view for ast gen + new entry point
+  - ~~Easy grid view for ast gen + new entry point~~
   - Player placement when exiting
   - Renderer inheritance?
   - Control mapping

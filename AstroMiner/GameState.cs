@@ -28,14 +28,26 @@ public enum Direction
 
 public class GameState
 {
-    private readonly HashSet<MiningControls> _emptyMiningControls;
-    public readonly List<Entity> ActiveEntitiesSortedByDistance;
-    public readonly GridState Grid;
-    public readonly MinerEntity Miner;
-    public readonly PlayerEntity Player;
+    private HashSet<MiningControls> _emptyMiningControls;
     private bool _prevPressedEnterOrExit;
+    public List<Entity> ActiveEntitiesSortedByDistance;
+    public GridState Grid;
+    public MinerEntity Miner;
+    public PlayerEntity Player;
 
     public GameState()
+    {
+        Initialize();
+    }
+
+    public int TimeUntilAsteroidExplodesMs { get; private set; }
+
+    public bool IsInMiner => !ActiveEntitiesSortedByDistance.Contains(Player);
+
+
+    public MiningControllableEntity ActiveControllableEntity => IsInMiner ? Miner : Player;
+
+    public void Initialize()
     {
         var (grid, minerPos) = AsteroidGen.InitializeGridAndStartingPos(GameConfig.GridSize);
         Grid = new GridState(grid);
@@ -46,13 +58,6 @@ public class GameState
         _emptyMiningControls = new HashSet<MiningControls>();
         TimeUntilAsteroidExplodesMs = 5 * 60 * 1000;
     }
-
-    public int TimeUntilAsteroidExplodesMs { get; private set; }
-
-    public bool IsInMiner => !ActiveEntitiesSortedByDistance.Contains(Player);
-
-
-    public MiningControllableEntity ActiveControllableEntity => IsInMiner ? Miner : Player;
 
     private void SortActiveEntities()
     {

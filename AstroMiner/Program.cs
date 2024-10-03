@@ -1,4 +1,13 @@
-﻿using AstroMiner;
+﻿using System;
+using AstroMiner;
 
-using var game = new AstroMinerGame();
-game.Run();
+if (Environment.GetEnvironmentVariable("PROC_GEN_VIEWER") == "true")
+{
+    using var game = new ProcGenViewerGame();
+    game.Run();
+}
+else
+{
+    using var game = new AstroMinerGame();
+    game.Run();
+}
