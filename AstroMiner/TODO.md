@@ -9,6 +9,8 @@
     - Timer runs out
     - Drop off edge
   - player / miner health
+  - Add zoom
+  - Minimap?
 ## Quality
   - ~~Easy grid view for ast gen + new entry point~~
   - Player placement when exiting
