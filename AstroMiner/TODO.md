@@ -1,10 +1,17 @@
 # TODO
+
 ## Gameplay - asteroid
+  - Holes - shouldn't be totally solid
   - Explosive pieces + chain reaction
   - Bigger asteroid
   - Mystery box cell - similar design to explosive?
   - IS there a risk/reward element?
 ## Gameplay - other
+  - In/out of miner needs balancing
+    - Miner doesn't mine?
+    - Better protection in miner?
+    - Miner 2x2 - harder to navigate?
+    - Inventory - miner can hold more - tool swap?
   - Endgame state
     - Timer runs out
     - Drop off edge
