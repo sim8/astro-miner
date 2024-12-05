@@ -18,6 +18,13 @@
   - player / miner health
   - Add zoom
   - Minimap?
+  - NPC helpers
+    - Recruit between digs
+    - Give tasks
+      - Focus on x mineral
+      - Follow in miner?
+    - Unique dialogue
+    - End up in hospital too!
 ## Quality
   - ~~Easy grid view for ast gen + new entry point~~
   - Player placement when exiting
