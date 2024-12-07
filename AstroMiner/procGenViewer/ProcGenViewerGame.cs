@@ -35,27 +35,16 @@ public class ProcGenViewerGame : Game
 
     private void LoadTexture(string name)
     {
-        _textures[name] = Content.Load<Texture2D>($"img/{name}");
+        _textures[name] = Content.Load<Texture2D>($"img-proc-gen/{name}");
     }
 
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        LoadTexture("dogica-font");
-        LoadTexture("floor");
         LoadTexture("rock-tileset");
         LoadTexture("solid-rock-tileset");
         LoadTexture("ruby-tileset");
         LoadTexture("diamond-tileset");
-        LoadTexture("player");
-        LoadTexture("miner-no-tracks");
-        LoadTexture("tracks-0");
-        LoadTexture("tracks-1");
-        LoadTexture("tracks-2");
-        LoadTexture("dark-screen");
-        LoadTexture("radial-light");
-        LoadTexture("directional-light");
-        LoadTexture("dynamite");
     }
 
     protected override void Update(GameTime gameTime)
