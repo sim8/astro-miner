@@ -36,7 +36,7 @@ public static class AsteroidGen
                 else if (solidBlocksInARow >= 4)
                 {
                     var minerCellOffset = 1f - GameConfig.MinerSize / 2;
-                    var minerColIndex = col - solidBlocksInARow / 2 - 1;
+                    var minerColIndex = col - solidBlocksInARow / 2 - 1; // -1 to account for miner being 2x cell size
                     // Clear 2x3 landing area
                     grid[row, minerColIndex - 1] = CellState.Floor;
                     grid[row, minerColIndex] = CellState.Floor;
