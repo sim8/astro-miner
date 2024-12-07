@@ -32,12 +32,12 @@ public static class AsteroidGen
                 {
                     solidBlocksInARow++;
                 }
-                // Find first row which has >= 3 contiguous solid blocks as starting pos
+                // Find first row which has >= 4 contiguous solid blocks as starting pos
                 else if (solidBlocksInARow >= 4)
                 {
                     var minerCellOffset = 1f - GameConfig.MinerSize / 2;
                     var minerColIndex = col - solidBlocksInARow / 2 - 1; // -1 to account for miner being 2x cell size
-                    // Clear 2x3 landing area
+                    // Clear 2x4 landing area
                     grid[row, minerColIndex - 1] = CellState.Floor;
                     grid[row, minerColIndex] = CellState.Floor;
                     grid[row, minerColIndex + 1] = CellState.Floor;
