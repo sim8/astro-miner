@@ -4,10 +4,10 @@ public static class GameConfig
 {
     public const int MinerBoxSizePx = 38;
     public const int PlayerBoxSizePx = 18;
-    public const int ScaleMultiplier = 2;
-    public const int CellTextureSizePx = 64;
+    public const int ScaleMultiplier = 3;
+    public const int CellTextureSizePx = 32;
     public const int GridSize = 40;
-    public const float MinEmbarkingDistance = 0.7f;
+    public const float MinEmbarkingDistance = 1.2f;
 
     // Derived consts
     public const float MinerSize = (float)MinerBoxSizePx / CellTextureSizePx;
