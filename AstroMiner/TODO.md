@@ -10,7 +10,8 @@
   - In/out of miner needs balancing
     - Miner doesn't mine?
     - Better protection in miner?
-    - Miner 2x2 - harder to navigate?
+    - Miner 2x2 (3x3?) - harder to navigate?
+      - Change design
     - Inventory - miner can hold more - tool swap?
   - Endgame state
     - Timer runs out
