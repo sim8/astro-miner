@@ -165,12 +165,13 @@ public class MiningControllableEntity : Entity
 
     private Vector2 GetDrillPosition()
     {
+        var drillDistanceFromCenter = GridBoxSize / 2 + DrillDistance;
         return Direction switch
         {
-            Direction.Top => Position + new Vector2(GridBoxSize / 2, -DrillDistance),
-            Direction.Right => Position + new Vector2(GridBoxSize + DrillDistance, GridBoxSize / 2),
-            Direction.Bottom => Position + new Vector2(GridBoxSize / 2, GridBoxSize + DrillDistance),
-            Direction.Left => Position + new Vector2(-DrillDistance, GridBoxSize / 2),
+            Direction.Top => CenterPosition + new Vector2(0, -drillDistanceFromCenter),
+            Direction.Right => CenterPosition + new Vector2(drillDistanceFromCenter, 0),
+            Direction.Bottom => CenterPosition + new Vector2(0, drillDistanceFromCenter),
+            Direction.Left => CenterPosition + new Vector2(-drillDistanceFromCenter, 0),
             _ => Position
         };
     }
