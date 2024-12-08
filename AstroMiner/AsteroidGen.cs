@@ -9,9 +9,10 @@ public static class AsteroidGen
     private const float DiamondsRadius = 0.2f;
     private const float AsteroidCoreRadius = 0.7f;
     private static readonly (float, float) CoreSolidRockRange = (0.55f, 1);
-    private static readonly (float, float) OuterSolidRockRange = (0.65f, 1);
+    private static readonly (float, float) OuterSolidRockRange = (0.7f, 1);
     private static readonly (float, float) DiamondRange = (0.65f, 1);
-    private static readonly (float, float) RubyRange = (0.35f, 0.365f);
+    private static readonly (float, float) RubyRange = (0.4f, 0.42f);
+    private static readonly (float, float) FloorRange = (0.28f, 0.32f);
 
     public static (CellState[,], Vector2) InitializeGridAndStartingPos(int gridSize)
     {
@@ -53,9 +54,9 @@ public static class AsteroidGen
         throw new Exception("No 3x1 solid blocks in grid");
     }
 
-    private static bool NoiseValWithinRange(float noiseValue, (float, float) range)
+    private static bool NoiseValWithinRange(float noiseValue, (float, float) range, float allowance = 0f)
     {
-        return noiseValue >= range.Item1 && noiseValue < range.Item2;
+        return noiseValue >= range.Item1 - allowance && noiseValue < range.Item2 + allowance;
     }
 
 
@@ -64,7 +65,7 @@ public static class AsteroidGen
         var grid = new CellState[gridSize, gridSize];
         var centerX = gridSize / 2;
         var centerY = gridSize / 2;
-        double averageRadius = 15;
+        double averageRadius = 25;
         double maxDeviation = 3; // Adjusted for larger imperfections
         var maxDelta = 1; // Adjusted for smoother transitions
 
@@ -125,6 +126,10 @@ public static class AsteroidGen
                     grid[x, y] = distance < radius * DiamondsRadius && NoiseValWithinRange(noiseValue, DiamondRange)
                         ? CellState.Diamond
                         : CellState.SolidRock;
+                
+                // Widen floor range relative to closeness to edge TODO make ramp clearer, especially near edges
+                else if (NoiseValWithinRange(noiseValue, FloorRange, ((float)distance/(float)radius) / 6))
+                    grid[x, y] = CellState.Floor;
                 else
                     grid[x, y] = NoiseValWithinRange(noiseValue, RubyRange) ? CellState.Ruby : CellState.Rock;
             }

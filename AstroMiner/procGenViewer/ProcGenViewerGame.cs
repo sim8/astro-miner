@@ -70,7 +70,7 @@ public class ProcGenViewerGame : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Color.Black);
+        GraphicsDevice.Clear(Color.DarkGreen);
 
         _renderer.Render(_spriteBatch);
 
