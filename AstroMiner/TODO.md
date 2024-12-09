@@ -23,6 +23,12 @@
     - depth charge - in hole. but only if not exploding!
     - big explosive
     - scanner
+  - fuel?
+  - Upgrades
+    - speed
+    - drill speed
+    - color/design
+    - tools
   - Endgame state
     - Timer runs out
     - Drop off edge
