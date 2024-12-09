@@ -36,6 +36,7 @@
   - Change palette colors - blue shadows
   - ~~Improve direction light art~~
   - Additive light pass for glares (bright lights, explosions)
+  - Darker overlay nearer center
   - Player animation
   - Ground tileset
   - Redo rock tileset - 1 central piece per block
