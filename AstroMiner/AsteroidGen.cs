@@ -12,7 +12,6 @@ public static class AsteroidGen
     private static readonly (float, float) OuterSolidRockRange = (0.7f, 1);
     private static readonly (float, float) DiamondRange = (0.65f, 1);
     private static readonly (float, float) RubyRange = (0.4f, 0.42f);
-    private static readonly (float, float) FloorRange = (0.28f, 0.32f);
 
     public static (CellState[,], Vector2) InitializeGridAndStartingPos(int gridSize)
     {
@@ -54,9 +53,9 @@ public static class AsteroidGen
         throw new Exception("No 3x1 solid blocks in grid");
     }
 
-    private static bool NoiseValWithinRange(float noiseValue, (float, float) range, float allowance = 0f)
+    private static bool NoiseValWithinRange(float noiseValue, (float, float) range)
     {
-        return noiseValue >= range.Item1 - allowance && noiseValue < range.Item2 + allowance;
+        return noiseValue >= range.Item1 && noiseValue < range.Item2;
     }
 
 
@@ -128,7 +127,7 @@ public static class AsteroidGen
                         : CellState.SolidRock;
                 
                 // Widen floor range relative to closeness to edge TODO make ramp clearer, especially near edges
-                else if (NoiseValWithinRange(noiseValue, FloorRange, ((float)distance/(float)radius) / 6))
+                else if (NoiseValWithinRange(noiseValue, GetFloorRange(distance, radius)))
                     grid[x, y] = CellState.Floor;
                 else
                     grid[x, y] = NoiseValWithinRange(noiseValue, RubyRange) ? CellState.Ruby : CellState.Rock;
@@ -144,6 +143,21 @@ public static class AsteroidGen
         }
 
         return grid;
+    }
+
+    // The floorspace should gradually disappear from outside -> inside.
+    // Make it appear natural by narrowing noise range for floor
+    private static (float, float) GetFloorRange(double distanceFromCenter, double radius)
+    {
+        // these are the min range
+        float baseLowerBound = 0.28f;
+        float baseUpperBound = 0.32f;
+        
+        float distanceFromCenterPercentage = (float)distanceFromCenter / (float)radius;
+        
+        // transform distanceFromCenter to a float that's 0 for most distances then ramping up a small amount
+        float widenBy = Math.Max(distanceFromCenterPercentage - 0.5f, 0) / 1.5f;
+        return (baseLowerBound - widenBy, baseUpperBound + widenBy);
     }
 
     // Function to smooth radius values
