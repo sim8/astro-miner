@@ -1,18 +1,28 @@
 # TODO
 
 ## Gameplay - asteroid
-  - Holes - shouldn't be totally solid
+  - interior floor - shouldn't be totally solid
   - Explosive pieces + chain reaction
+    - OR gas/lava holes/wells which bubble over
+      - lava - turn into rock
+    - holes can appear under rock!
   - Bigger asteroid
   - Mystery box cell - similar design to explosive?
   - IS there a risk/reward element?
+  - variable yield? skill based?
 ## Gameplay - other
   - In/out of miner needs balancing
     - Miner doesn't mine?
     - Better protection in miner?
     - Miner 2x2 (3x3?) - harder to navigate?
       - Change design
-    - Inventory - miner can hold more - tool swap?
+  - inventory
+  - Tools
+    - grapple? human only!
+    - rpg
+    - depth charge - in hole. but only if not exploding!
+    - big explosive
+    - scanner
   - Endgame state
     - Timer runs out
     - Drop off edge
