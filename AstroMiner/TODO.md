@@ -1,12 +1,14 @@
 # TODO
 
 ## Gameplay - asteroid
-  - interior floor - shouldn't be totally solid
+  - only have solid rock near center
+  - swap core range for sliding range?
+  - ~~interior floor - shouldn't be totally solid~~
   - Explosive pieces + chain reaction
     - OR gas/lava holes/wells which bubble over
       - lava - turn into rock
     - holes can appear under rock!
-  - Bigger asteroid
+  - ~~Bigger asteroid~~
   - Mystery box cell - similar design to explosive?
   - IS there a risk/reward element?
   - variable yield? skill based?
@@ -14,8 +16,7 @@
   - In/out of miner needs balancing
     - Miner doesn't mine?
     - Better protection in miner?
-    - Miner 2x2 (3x3?) - harder to navigate?
-      - Change design
+    - ~~Miner 2x2 (3x3?) - harder to navigate?~~
   - inventory
   - Tools
     - grapple? human only!
@@ -66,6 +67,7 @@
     - Higher pitched for player?
   - Reverb - higher when more central
   - Wind noise - higher when nearer edge
+  - rumbling for eruption
   - Music?
 ## Performance
   - Replace pos / boxsize with rectangle - avoid creating new
