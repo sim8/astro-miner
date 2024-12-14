@@ -105,6 +105,9 @@ public class Renderer
                 spriteBatch.Draw(_textures["rock-tileset"], _viewHelpers.GetVisibleRectForGridCell(col, row),
                     tilesetSourceRect,
                     Color.White);
+                if (_gameState.Grid.GetCellState(col, row).hasLavaWell)
+                    spriteBatch.Draw(_textures["radial-light"], _viewHelpers.GetVisibleRectForGridCell(col, row),
+                        Color.Yellow);
             }
         }
 

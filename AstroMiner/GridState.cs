@@ -19,11 +19,16 @@ public class GridState(GameState gameState, CellState[,] grid)
     public int Columns => grid.GetLength(0);
     public int Rows => grid.GetLength(1);
 
-    public CellType GetCellType(int x, int y)
+    public CellState GetCellState(int x, int y)
     {
         if (!ViewHelpers.IsValidGridPosition(x, y))
             throw new IndexOutOfRangeException();
-        return grid[y, x].type;
+        return grid[y, x];
+    }
+
+    public CellType GetCellType(int x, int y)
+    {
+        return GetCellState(x, y).type;
     }
 
     public void DemolishCell(int x, int y, bool addToInventory = false)

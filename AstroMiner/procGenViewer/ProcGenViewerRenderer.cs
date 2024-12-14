@@ -37,8 +37,8 @@ public class ProcGenViewerRenderer
         for (var row = 0; row < GameConfig.GridSize; row++)
         for (var col = 0; col < GameConfig.GridSize; col++)
         {
-            var cellType = _gameState.Grid.GetCellType(col, row);
-            if (Tilesets.TilesetTextureNames.TryGetValue(cellType, out var name))
+            var cellState = _gameState.Grid.GetCellState(col, row);
+            if (Tilesets.TilesetTextureNames.TryGetValue(cellState.type, out var name))
             {
                 var offset = Tilesets.GetTileCoords(_gameState, col, row);
                 var tilesetSourceRect = new Rectangle(offset.Item1 * GameConfig.CellTextureSizePx,
@@ -46,12 +46,16 @@ public class ProcGenViewerRenderer
                     GameConfig.CellTextureSizePx, GameConfig.CellTextureSizePx);
                 spriteBatch.Draw(_textures[name], GetGridCellRect(col, row),
                     tilesetSourceRect, Color.White);
+                if (cellState.hasLavaWell)
+                    spriteBatch.Draw(_textures["radial-light"], GetGridCellRect(col, row),
+                        Color.Yellow);
             }
-            else if (_gameState.Grid.GetCellType(col, row) == CellType.Floor)
+            else if (cellState.type == CellType.Floor)
             {
                 var tilesetSourceRect = new Rectangle(3 * GameConfig.CellTextureSizePx,
                     GameConfig.CellTextureSizePx,
                     GameConfig.CellTextureSizePx, GameConfig.CellTextureSizePx);
+
                 spriteBatch.Draw(_textures["rock-tileset"], GetGridCellRect(col, row),
                     tilesetSourceRect,
                     Color.White);

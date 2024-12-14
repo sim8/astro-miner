@@ -45,6 +45,7 @@ public class ProcGenViewerGame : Game
         LoadTexture("solid-rock-tileset");
         LoadTexture("ruby-tileset");
         LoadTexture("diamond-tileset");
+        _textures["radial-light"] = Content.Load<Texture2D>("img/radial-light");
     }
 
     protected override void Update(GameTime gameTime)
