@@ -21,7 +21,6 @@
     - Miner doesn't mine?
     - Better protection in miner?
     - ~~Miner 2x2 (3x3?) - harder to navigate?~~
-  - inventory
   - Tools
     - grapple? human only!
     - rpg

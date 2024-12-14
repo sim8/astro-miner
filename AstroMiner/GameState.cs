@@ -32,6 +32,7 @@ public class GameState
     private bool _prevPressedEnterOrExit;
     public List<Entity> ActiveEntitiesSortedByDistance;
     public GridState Grid;
+    public Inventory Inventory;
     public MinerEntity Miner;
     public PlayerEntity Player;
 
@@ -50,9 +51,10 @@ public class GameState
     public void Initialize()
     {
         var (grid, minerPos) = AsteroidGen.InitializeGridAndStartingPos(GameConfig.GridSize);
-        Grid = new GridState(grid);
+        Grid = new GridState(this, grid);
         Miner = new MinerEntity(this, minerPos);
         Player = new PlayerEntity(this, minerPos);
+        Inventory = new Inventory();
         ActiveEntitiesSortedByDistance = [Miner];
         _prevPressedEnterOrExit = false;
         _emptyMiningControls = new HashSet<MiningControls>();

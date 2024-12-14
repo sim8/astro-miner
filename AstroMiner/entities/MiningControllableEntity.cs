@@ -43,6 +43,7 @@ public class MiningControllableEntity : Entity
     protected virtual int TimeToReachMaxSpeedMs { get; } = 0;
     protected virtual int TimeToStopMs { get; } = 0;
     protected virtual float DrillingWidth { get; } = 0f;
+    protected virtual bool CanAddToInventory { get; } = true;
 
 
     public Direction Direction { get; private set; } = Direction.Top;
@@ -183,7 +184,7 @@ public class MiningControllableEntity : Entity
         var cellState = _gameState.Grid.GetCellState(x, y);
 
         if (_drillTimesMs.TryGetValue(cellState, out var requiredTime) && _drillingMs > requiredTime)
-            _gameState.Grid.DemolishCell(x, y);
+            _gameState.Grid.DemolishCell(x, y, CanAddToInventory);
     }
 
     private Vector2 GetDrillPosition()
