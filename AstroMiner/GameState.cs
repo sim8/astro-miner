@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -31,6 +32,7 @@ public class GameState
     private HashSet<MiningControls> _emptyMiningControls;
     private bool _prevPressedEnterOrExit;
     public List<Entity> ActiveEntitiesSortedByDistance;
+    public List<(int x, int y)> EdgeCells;
     public GridState Grid;
     public Inventory Inventory;
     public MinerEntity Miner;
@@ -55,6 +57,8 @@ public class GameState
         Miner = new MinerEntity(this, minerPos);
         Player = new PlayerEntity(this, minerPos);
         Inventory = new Inventory();
+        EdgeCells = UserInterfaceHelpers.GetAsteroidEdgeCells(Grid);
+        Console.WriteLine(EdgeCells.Count);
         ActiveEntitiesSortedByDistance = [Miner];
         _prevPressedEnterOrExit = false;
         _emptyMiningControls = new HashSet<MiningControls>();

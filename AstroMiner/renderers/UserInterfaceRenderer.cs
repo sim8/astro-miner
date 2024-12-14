@@ -25,6 +25,8 @@ public class UserInterfaceRenderer(
 
         RenderString(spriteBatch, 0, 100, "DIAMONDS " + gameState.Inventory.NumDiamonds);
         RenderString(spriteBatch, 0, 160, "RUBIES " + gameState.Inventory.NumRubies);
+
+        RenderMinimap(spriteBatch);
     }
 
     private void RenderString(SpriteBatch spriteBatch, int startX, int startY, string str)
@@ -38,5 +40,22 @@ public class UserInterfaceRenderer(
             spriteBatch.Draw(textures["dogica-font"], destRect, sourceRect, Color.Green);
             linePxCount += width;
         }
+    }
+
+    private void RenderMinimap(SpriteBatch spriteBatch)
+    {
+        var xOffset = 10;
+        var yOffset = 300;
+        var playerSize = 26;
+        foreach (var gameStateEdgeCell in gameState.EdgeCells)
+        {
+            var edgeCellDestRect = new Rectangle(xOffset + gameStateEdgeCell.x, yOffset + gameStateEdgeCell.y, 1, 1);
+            spriteBatch.Draw(textures["white"], edgeCellDestRect, Color.White);
+        }
+
+        var playerGridPos = ViewHelpers.ToGridPosition(gameState.ActiveControllableEntity.CenterPosition);
+        var playerDestRect = new Rectangle(xOffset + playerGridPos.x - playerSize / 2,
+            yOffset + playerGridPos.y - playerSize / 2, playerSize, playerSize);
+        spriteBatch.Draw(textures["radial-light"], playerDestRect, Color.Red);
     }
 }

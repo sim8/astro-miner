@@ -25,4 +25,20 @@ public class GridState(GameState gameState, CellState[,] grid)
 
         grid[y, x] = CellState.Floor;
     }
+
+    public bool CellHasNeighbourOfType(int x, int y, CellState cellState)
+    {
+        int[] xOffsets = { -1, 0, 1, 1, 1, 0, -1, -1 };
+        int[] yOffsets = { -1, -1, -1, 0, 1, 1, 1, 0 };
+
+        for (var i = 0; i < xOffsets.Length; i++)
+        {
+            var newX = x + xOffsets[i];
+            var newY = y + yOffsets[i];
+
+            if (ViewHelpers.IsValidGridPosition(newX, newY) && grid[newY, newX] == cellState) return true;
+        }
+
+        return false;
+    }
 }
