@@ -83,8 +83,11 @@
 
 ## Performance
 
+- Show framerate
 - Replace pos / boxsize with rectangle - avoid creating new
 - Move tileset stuff to update loop + cache?
+- Only render on-screen stuff
+- RenderTargets?
 
 ## Meta
 

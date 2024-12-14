@@ -20,24 +20,23 @@ public class UserInterfaceRenderer(
         {
             var minutes = timeLeft / 60000;
             var seconds = timeLeft % 60000 / 1000;
-            RenderString(spriteBatch, 0, 0, minutes.ToString("D2") + " " + seconds.ToString("D2"));
+            RenderString(spriteBatch, 0, 0, minutes.ToString("D2") + " " + seconds.ToString("D2"), 6);
         }
 
-        RenderString(spriteBatch, 0, 100, "DIAMOND " + gameState.Inventory.NumDiamonds);
-        RenderString(spriteBatch, 0, 160, "RUBY " + gameState.Inventory.NumRubies);
+        RenderString(spriteBatch, 0, 80, "DIAMOND " + gameState.Inventory.NumDiamonds);
+        RenderString(spriteBatch, 0, 120, "RUBY " + gameState.Inventory.NumRubies);
 
         RenderMinimap(spriteBatch);
     }
 
-    private void RenderString(SpriteBatch spriteBatch, int startX, int startY, string str)
+    private void RenderString(SpriteBatch spriteBatch, int startX, int startY, string str, int scale = 3)
     {
         var linePxCount = 0;
-        var scale = 6;
         foreach (var (x, y, width) in FontHelpers.TransformString(str))
         {
             var sourceRect = new Rectangle(x, y, width, 8);
             var destRect = new Rectangle(startX + linePxCount * scale, startY + 10, width * scale, 8 * scale);
-            spriteBatch.Draw(textures["dogica-font"], destRect, sourceRect, Color.Green);
+            spriteBatch.Draw(textures["dogica-font"], destRect, sourceRect, Color.LimeGreen);
             linePxCount += width;
         }
     }
@@ -45,11 +44,13 @@ public class UserInterfaceRenderer(
     private void RenderMinimap(SpriteBatch spriteBatch)
     {
         var xOffset = 10;
-        var yOffset = 300;
+        var yOffset = 180;
         var playerSize = 26;
+        var asteroidLineThickness = 2;
         foreach (var gameStateEdgeCell in gameState.EdgeCells)
         {
-            var edgeCellDestRect = new Rectangle(xOffset + gameStateEdgeCell.x, yOffset + gameStateEdgeCell.y, 1, 1);
+            var edgeCellDestRect = new Rectangle(xOffset + gameStateEdgeCell.x, yOffset + gameStateEdgeCell.y,
+                asteroidLineThickness, asteroidLineThickness);
             spriteBatch.Draw(textures["white"], edgeCellDestRect, Color.White);
         }
 
