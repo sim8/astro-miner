@@ -63,6 +63,7 @@
     - How do gems work?
   - Clouds / background animation
   - Drilling animation
+  - Darker overlay near center
   - Better gems
   - Gem entities (collectable)
 ## Sound design
@@ -71,6 +72,7 @@
   - Reverb - higher when more central
   - Wind noise - higher when nearer edge
   - Music?
+  - Rumbling for eruption?
 ## Performance
   - Replace pos / boxsize with rectangle - avoid creating new
   - Move tileset stuff to update loop + cache?
