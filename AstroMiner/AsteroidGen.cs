@@ -125,7 +125,7 @@ public static class AsteroidGen
                     grid[x, y] = distance < radius * DiamondsRadius && NoiseValWithinRange(noiseValue, DiamondRange)
                         ? CellState.Diamond
                         : CellState.SolidRock;
-                
+
                 // Widen floor range relative to closeness to edge TODO make ramp clearer, especially near edges
                 else if (NoiseValWithinRange(noiseValue, GetFloorRange(distance, radius)))
                     grid[x, y] = CellState.Floor;
@@ -150,13 +150,13 @@ public static class AsteroidGen
     private static (float, float) GetFloorRange(double distanceFromCenter, double radius)
     {
         // these are the min range
-        float baseLowerBound = 0.28f;
-        float baseUpperBound = 0.32f;
-        
-        float distanceFromCenterPercentage = (float)distanceFromCenter / (float)radius;
-        
+        var baseLowerBound = 0.28f;
+        var baseUpperBound = 0.32f;
+
+        var distanceFromCenterPercentage = (float)distanceFromCenter / (float)radius;
+
         // transform distanceFromCenter to a float that's 0 for most distances then ramping up a small amount
-        float widenBy = Math.Max(distanceFromCenterPercentage - 0.5f, 0) / 1.5f;
+        var widenBy = Math.Max(distanceFromCenterPercentage - 0.5f, 0) / 1.5f;
         return (baseLowerBound - widenBy, baseUpperBound + widenBy);
     }
 
