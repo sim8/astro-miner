@@ -5,7 +5,7 @@ namespace AstroMiner;
 
 public static class AsteroidGen
 {
-    private const float NoiseScale = 0.4f;
+    private const float NoiseScale = 0.22f;
     private const float DiamondsRadius = 0.2f;
     private const float AsteroidCoreRadius = 0.6f;
 
@@ -13,10 +13,9 @@ public static class AsteroidGen
     private const int MaxDeviation = 12; // Adjusted for larger imperfections
     private const double MaxDelta = 9; // Adjusted for smoother transitions
     private const int AngleSegments = 140; // Adjusted for larger-scale variations
-    private static readonly (float, float) CoreSolidRockRange = (0.55f, 1);
-    private static readonly (float, float) OuterSolidRockRange = (0.7f, 1);
+    private static readonly (float, float) SolidRockRange = (0.55f, 1);
     private static readonly (float, float) DiamondRange = (0.65f, 1);
-    private static readonly (float, float) RubyRange = (0.4f, 0.42f);
+    private static readonly (float, float) RubyRange = (0.41f, 0.42f);
 
     public static (CellState[,], Vector2) InitializeGridAndStartingPos(int gridSize)
     {
@@ -118,10 +117,7 @@ public static class AsteroidGen
                 var xCoord = x * NoiseScale;
                 var yCoord = y * NoiseScale;
                 var noiseValue = perlinNoise.Noise(xCoord, yCoord);
-                var range = distance < radius * AsteroidCoreRadius
-                    ? CoreSolidRockRange
-                    : OuterSolidRockRange;
-                if (NoiseValWithinRange(noiseValue, range))
+                if (distance < radius * AsteroidCoreRadius && NoiseValWithinRange(noiseValue, SolidRockRange))
                     grid[x, y] = distance < radius * DiamondsRadius && NoiseValWithinRange(noiseValue, DiamondRange)
                         ? CellState.Diamond
                         : CellState.SolidRock;
@@ -156,7 +152,7 @@ public static class AsteroidGen
         var distanceFromCenterPercentage = (float)distanceFromCenter / (float)radius;
 
         // transform distanceFromCenter to a float that's 0 for most distances then ramping up a small amount
-        var widenBy = Math.Max(distanceFromCenterPercentage - 0.5f, 0) / 1.5f;
+        var widenBy = Math.Max(distanceFromCenterPercentage - 0.5f, 0) / 1.6f;
         return (baseLowerBound - widenBy, baseUpperBound + widenBy);
     }
 
