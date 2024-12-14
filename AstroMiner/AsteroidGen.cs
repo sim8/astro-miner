@@ -7,7 +7,12 @@ public static class AsteroidGen
 {
     private const float NoiseScale = 0.4f;
     private const float DiamondsRadius = 0.2f;
-    private const float AsteroidCoreRadius = 0.7f;
+    private const float AsteroidCoreRadius = 0.6f;
+
+    private const int AverageRadius = 30;
+    private const int MaxDeviation = 12; // Adjusted for larger imperfections
+    private const double MaxDelta = 9; // Adjusted for smoother transitions
+    private const int AngleSegments = 140; // Adjusted for larger-scale variations
     private static readonly (float, float) CoreSolidRockRange = (0.55f, 1);
     private static readonly (float, float) OuterSolidRockRange = (0.7f, 1);
     private static readonly (float, float) DiamondRange = (0.65f, 1);
@@ -64,34 +69,29 @@ public static class AsteroidGen
         var grid = new CellState[gridSize, gridSize];
         var centerX = gridSize / 2;
         var centerY = gridSize / 2;
-        double averageRadius = 25;
-        double maxDeviation = 3; // Adjusted for larger imperfections
-        var maxDelta = 1; // Adjusted for smoother transitions
-
-        var angleSegments = 90; // Adjusted for larger-scale variations
-        var radiusValues = new double[angleSegments];
-        var perimeterWidths = new int[angleSegments]; // New array for perimeter widths
+        var radiusValues = new double[AngleSegments];
+        var perimeterWidths = new int[AngleSegments]; // New array for perimeter widths
         var rand = new Random();
 
         // Generate smooth radius values
-        radiusValues[0] = averageRadius + rand.NextDouble() * maxDeviation * 2 - maxDeviation;
+        radiusValues[0] = AverageRadius + rand.NextDouble() * MaxDeviation * 2 - MaxDeviation;
 
-        for (var i = 1; i < angleSegments; i++)
+        for (var i = 1; i < AngleSegments; i++)
         {
             // Gradually change the radius to create smooth imperfections
-            var delta = rand.NextDouble() * maxDelta * 2 - maxDelta;
+            var delta = rand.NextDouble() * MaxDelta * 2 - MaxDelta;
             radiusValues[i] = radiusValues[i - 1] + delta;
 
             // Clamp the radius within [averageRadius - maxDeviation, averageRadius + maxDeviation]
-            radiusValues[i] = Math.Max(averageRadius - maxDeviation,
-                Math.Min(averageRadius + maxDeviation, radiusValues[i]));
+            radiusValues[i] = Math.Max(AverageRadius - MaxDeviation,
+                Math.Min(AverageRadius + MaxDeviation, radiusValues[i]));
         }
 
         // Optionally smooth the radius values further
         radiusValues = SmoothRadiusValues(radiusValues, 5);
 
         // Generate perimeter widths for each angle segment
-        for (var i = 0; i < angleSegments; i++)
+        for (var i = 0; i < AngleSegments; i++)
             perimeterWidths[i] = rand.Next(0, 4); // Random integer between 0 and 3 inclusive
 
         // Optionally smooth the perimeter widths
@@ -109,7 +109,7 @@ public static class AsteroidGen
             var angle = Math.Atan2(dy, dx) * (180 / Math.PI);
             if (angle < 0) angle += 360;
 
-            var index = (int)Math.Round(angle * angleSegments / 360.0) % angleSegments;
+            var index = (int)Math.Round(angle * AngleSegments / 360.0) % AngleSegments;
             var radius = radiusValues[index];
             var perimeterWidth = perimeterWidths[index];
 
