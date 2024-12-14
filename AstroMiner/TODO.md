@@ -12,6 +12,10 @@
   - Mystery box cell - similar design to explosive?
   - IS there a risk/reward element?
   - variable yield? skill based?
+  - Make it clearer where center is - clearer sections?
+    - Should hard rock only start appearing at certain range?
+  - Besides usual randomness, should we have different "types" of asteroid?
+    - Asteroids don't really have characteristics
 ## Gameplay - other
   - In/out of miner needs balancing
     - Miner doesn't mine?
@@ -53,13 +57,13 @@
   - Change palette colors - blue shadows
   - ~~Improve direction light art~~
   - Additive light pass for glares (bright lights, explosions)
-  - Darker overlay nearer center
   - Player animation
   - Ground tileset
   - Redo rock tileset - 1 central piece per block
     - How do gems work?
   - Clouds / background animation
   - Drilling animation
+  - Darker overlay near center
   - Better gems
   - Gem entities (collectable)
 ## Sound design
@@ -67,8 +71,8 @@
     - Higher pitched for player?
   - Reverb - higher when more central
   - Wind noise - higher when nearer edge
-  - rumbling for eruption
   - Music?
+  - Rumbling for eruption?
 ## Performance
   - Replace pos / boxsize with rectangle - avoid creating new
   - Move tileset stuff to update loop + cache?

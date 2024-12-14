@@ -6,7 +6,7 @@ namespace AstroMiner;
 public class PlayerEntity(GameState gameState, Vector2 pos) : MiningControllableEntity(gameState, pos)
 {
     private bool _prevPressedPlaceDynamite;
-    protected override float MaxSpeed => 1f;
+    protected override float MaxSpeed => 2f;
     protected override int BoxSizePx { get; } = GameConfig.PlayerBoxSizePx;
 
     public override void Update(int elapsedMs, HashSet<MiningControls> activeMiningControls)
@@ -33,10 +33,10 @@ public class PlayerEntity(GameState gameState, Vector2 pos) : MiningControllable
     {
         return Direction switch
         {
-            Direction.Top => Position + new Vector2(0.14f, -0.15f),
-            Direction.Right => Position + new Vector2(0.16f, -0.15f),
-            Direction.Bottom => Position + new Vector2(0.12f, -0.15f),
-            Direction.Left => Position + new Vector2(0.13f, -0.14f),
+            Direction.Top => Position + new Vector2(0.28f, -0.30f),
+            Direction.Right => Position + new Vector2(0.32f, -0.30f),
+            Direction.Bottom => Position + new Vector2(0.24f, -0.30f),
+            Direction.Left => Position + new Vector2(0.26f, -0.28f),
             _ => Position
         };
     }

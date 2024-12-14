@@ -9,9 +9,9 @@ public static class AsteroidGen
     private const float DiamondsRadius = 0.2f;
     private const float AsteroidCoreRadius = 0.7f;
     private static readonly (float, float) CoreSolidRockRange = (0.55f, 1);
-    private static readonly (float, float) OuterSolidRockRange = (0.65f, 1);
+    private static readonly (float, float) OuterSolidRockRange = (0.7f, 1);
     private static readonly (float, float) DiamondRange = (0.65f, 1);
-    private static readonly (float, float) RubyRange = (0.35f, 0.365f);
+    private static readonly (float, float) RubyRange = (0.4f, 0.42f);
 
     public static (CellState[,], Vector2) InitializeGridAndStartingPos(int gridSize)
     {
@@ -32,19 +32,21 @@ public static class AsteroidGen
                 {
                     solidBlocksInARow++;
                 }
-                // Find first row which has >= 3 contiguous solid blocks as starting pos
-                else if (solidBlocksInARow >= 3)
+                // Find first row which has >= 4 contiguous solid blocks as starting pos
+                else if (solidBlocksInARow >= 4)
                 {
-                    var minerCellOffset = 0.5f - GameConfig.MinerSize / 2;
-                    var minerColIndex = col - solidBlocksInARow / 2;
-                    // Clear 2x3 landing area
+                    var minerCellOffset = 1f - GameConfig.MinerSize / 2;
+                    var minerColIndex = col - solidBlocksInARow / 2 - 1; // -1 to account for miner being 2x cell size
+                    // Clear 2x4 landing area
                     grid[row, minerColIndex - 1] = CellState.Floor;
                     grid[row, minerColIndex] = CellState.Floor;
                     grid[row, minerColIndex + 1] = CellState.Floor;
+                    grid[row, minerColIndex + 2] = CellState.Floor;
                     grid[row - 1, minerColIndex - 1] = CellState.Floor;
                     grid[row - 1, minerColIndex] = CellState.Floor;
                     grid[row - 1, minerColIndex + 1] = CellState.Floor;
-                    return new Vector2(minerColIndex + minerCellOffset, row + minerCellOffset);
+                    grid[row - 1, minerColIndex + 2] = CellState.Floor;
+                    return new Vector2(minerColIndex + minerCellOffset, row - 1 + minerCellOffset);
                 }
         }
 
@@ -62,7 +64,7 @@ public static class AsteroidGen
         var grid = new CellState[gridSize, gridSize];
         var centerX = gridSize / 2;
         var centerY = gridSize / 2;
-        double averageRadius = 15;
+        double averageRadius = 25;
         double maxDeviation = 3; // Adjusted for larger imperfections
         var maxDelta = 1; // Adjusted for smoother transitions
 
@@ -123,6 +125,10 @@ public static class AsteroidGen
                     grid[x, y] = distance < radius * DiamondsRadius && NoiseValWithinRange(noiseValue, DiamondRange)
                         ? CellState.Diamond
                         : CellState.SolidRock;
+                
+                // Widen floor range relative to closeness to edge TODO make ramp clearer, especially near edges
+                else if (NoiseValWithinRange(noiseValue, GetFloorRange(distance, radius)))
+                    grid[x, y] = CellState.Floor;
                 else
                     grid[x, y] = NoiseValWithinRange(noiseValue, RubyRange) ? CellState.Ruby : CellState.Rock;
             }
@@ -137,6 +143,21 @@ public static class AsteroidGen
         }
 
         return grid;
+    }
+
+    // The floorspace should gradually disappear from outside -> inside.
+    // Make it appear natural by narrowing noise range for floor
+    private static (float, float) GetFloorRange(double distanceFromCenter, double radius)
+    {
+        // these are the min range
+        float baseLowerBound = 0.28f;
+        float baseUpperBound = 0.32f;
+        
+        float distanceFromCenterPercentage = (float)distanceFromCenter / (float)radius;
+        
+        // transform distanceFromCenter to a float that's 0 for most distances then ramping up a small amount
+        float widenBy = Math.Max(distanceFromCenterPercentage - 0.5f, 0) / 1.5f;
+        return (baseLowerBound - widenBy, baseUpperBound + widenBy);
     }
 
     // Function to smooth radius values

@@ -6,7 +6,7 @@ namespace AstroMiner;
 
 public class ProcGenViewerRenderer
 {
-    private const int CellSize = 20;
+    private const int CellSize = 10;
     private readonly GameState _gameState;
 
 
@@ -55,6 +55,15 @@ public class ProcGenViewerRenderer
                 spriteBatch.Draw(_textures["rock-tileset"], GetGridCellRect(col, row),
                     tilesetSourceRect,
                     Color.White);
+            }
+            else
+            {
+                var tilesetSourceRect = new Rectangle(3 * GameConfig.CellTextureSizePx,
+                    GameConfig.CellTextureSizePx,
+                    GameConfig.CellTextureSizePx, GameConfig.CellTextureSizePx);
+                spriteBatch.Draw(_textures["rock-tileset"], GetGridCellRect(col, row),
+                    tilesetSourceRect,
+                    Color.Black);
             }
         }
     }

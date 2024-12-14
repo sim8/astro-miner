@@ -46,9 +46,14 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         return ((int)(gridPos.X * GameConfig.CellTextureSizePx), (int)(gridPos.Y * GameConfig.CellTextureSizePx));
     }
 
+    public static int ToXorYCoordinate(float fl)
+    {
+        return (int)Math.Floor(fl);
+    }
+
     public static (int x, int y) ToGridPosition(Vector2 vector)
     {
-        return ((int)Math.Floor(vector.X), (int)Math.Floor(vector.Y));
+        return (ToXorYCoordinate(vector.X), ToXorYCoordinate(vector.Y));
     }
 
     public static bool IsValidGridPosition(int x, int y)

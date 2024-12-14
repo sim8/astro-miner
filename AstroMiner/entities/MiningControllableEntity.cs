@@ -42,6 +42,7 @@ public class MiningControllableEntity : Entity
     protected virtual float MaxSpeed => 1f;
     protected virtual int TimeToReachMaxSpeedMs { get; } = 0;
     protected virtual int TimeToStopMs { get; } = 0;
+    protected virtual float DrillingWidth { get; } = 0f;
 
 
     public Direction Direction { get; private set; } = Direction.Top;
@@ -152,8 +153,30 @@ public class MiningControllableEntity : Entity
             _drillingMs = elapsedGameTimeMs;
         }
 
-        var (x, y) = gridPos;
+        if (Direction == Direction.Top || Direction == Direction.Bottom)
+        {
+            var leftX = ViewHelpers.ToXorYCoordinate(drillPos.X - DrillingWidth / 2);
+            var rightX = ViewHelpers.ToXorYCoordinate(drillPos.X + DrillingWidth / 2);
+            for (var iX = leftX; iX <= rightX; iX++)
+            {
+                var (nice, y) = gridPos;
+                ApplyDrillToCell(iX, y);
+            }
+        }
+        else // left or right
+        {
+            var topY = ViewHelpers.ToXorYCoordinate(drillPos.Y - DrillingWidth / 2);
+            var bottomY = ViewHelpers.ToXorYCoordinate(drillPos.Y + DrillingWidth / 2);
+            for (var iY = topY; iY <= bottomY; iY++)
+            {
+                var (x, nice) = gridPos;
+                ApplyDrillToCell(x, iY);
+            }
+        }
+    }
 
+    private void ApplyDrillToCell(int x, int y)
+    {
         if (!ViewHelpers.IsValidGridPosition(x, y))
             return;
 
@@ -165,12 +188,13 @@ public class MiningControllableEntity : Entity
 
     private Vector2 GetDrillPosition()
     {
+        var drillDistanceFromCenter = GridBoxSize / 2 + DrillDistance;
         return Direction switch
         {
-            Direction.Top => Position + new Vector2(GridBoxSize / 2, -DrillDistance),
-            Direction.Right => Position + new Vector2(GridBoxSize + DrillDistance, GridBoxSize / 2),
-            Direction.Bottom => Position + new Vector2(GridBoxSize / 2, GridBoxSize + DrillDistance),
-            Direction.Left => Position + new Vector2(-DrillDistance, GridBoxSize / 2),
+            Direction.Top => CenterPosition + new Vector2(0, -drillDistanceFromCenter),
+            Direction.Right => CenterPosition + new Vector2(drillDistanceFromCenter, 0),
+            Direction.Bottom => CenterPosition + new Vector2(0, drillDistanceFromCenter),
+            Direction.Left => CenterPosition + new Vector2(-drillDistanceFromCenter, 0),
             _ => Position
         };
     }
