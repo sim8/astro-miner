@@ -9,7 +9,7 @@ public class UserInterfaceRenderer(
     GameState gameState,
     ViewHelpers viewHelpers)
 {
-    public void RenderUserInterface(SpriteBatch spriteBatch)
+    public void RenderUserInterface(SpriteBatch spriteBatch, FrameCounter frameCounter)
     {
         var timeLeft = gameState.TimeUntilAsteroidExplodesMs;
         if (timeLeft < 0)
@@ -27,6 +27,9 @@ public class UserInterfaceRenderer(
         RenderString(spriteBatch, 0, 120, "RUBY " + gameState.Inventory.NumRubies);
 
         RenderMinimap(spriteBatch);
+
+
+        RenderString(spriteBatch, 0, 300, "FPS " + frameCounter.AverageFramesPerSecond.ToString("F0"));
     }
 
     private void RenderString(SpriteBatch spriteBatch, int startX, int startY, string str, int scale = 3)

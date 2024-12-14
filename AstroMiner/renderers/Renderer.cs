@@ -8,6 +8,7 @@ public class Renderer
 {
     private readonly DynamiteRenderer _dynamiteRenderer;
     private readonly ExplosionRenderer _explosionRenderer;
+    private readonly FrameCounter _frameCounter;
     private readonly GameState _gameState;
     private readonly GraphicsDeviceManager _graphics;
     private readonly RenderTarget2D _lightingRenderTarget;
@@ -22,12 +23,14 @@ public class Renderer
     public Renderer(
         GraphicsDeviceManager graphics,
         Dictionary<string, Texture2D> textures,
-        GameState gameState)
+        GameState gameState,
+        FrameCounter frameCounter)
     {
         _gameState = gameState;
         _textures = textures;
         _viewHelpers = new ViewHelpers(gameState, graphics);
         _graphics = graphics;
+        _frameCounter = frameCounter;
         _minerRenderer = new MinerRenderer(textures, _gameState, _viewHelpers);
         _playerRenderer = new PlayerRenderer(textures, _gameState, _viewHelpers);
         _dynamiteRenderer = new DynamiteRenderer(textures, _gameState, _viewHelpers);
@@ -65,7 +68,7 @@ public class Renderer
 
         // Lastly, draw UI
         spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
-        _userInterfaceRenderer.RenderUserInterface(spriteBatch);
+        _userInterfaceRenderer.RenderUserInterface(spriteBatch, _frameCounter);
         spriteBatch.End();
     }
 

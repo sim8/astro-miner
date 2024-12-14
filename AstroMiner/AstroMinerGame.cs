@@ -19,6 +19,7 @@ public class AstroMinerGame : Game
 {
     // TODO these should live elsewhere but needed by a few places
     private readonly HashSet<MiningControls> _activeMiningControls = new();
+    private readonly FrameCounter _frameCounter = new();
 
     private readonly GraphicsDeviceManager _graphics;
 
@@ -40,7 +41,7 @@ public class AstroMinerGame : Game
     protected override void Initialize()
     {
         _gameState = new GameState();
-        _renderer = new Renderer(_graphics, _textures, _gameState);
+        _renderer = new Renderer(_graphics, _textures, _gameState, _frameCounter);
         base.Initialize();
     }
 
@@ -102,6 +103,10 @@ public class AstroMinerGame : Game
 
     protected override void Draw(GameTime gameTime)
     {
+        var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        _frameCounter.Update(deltaTime);
+
+
         GraphicsDevice.Clear(Color.Black);
 
         _renderer.Render(_spriteBatch);
