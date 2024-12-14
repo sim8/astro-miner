@@ -30,7 +30,7 @@ public static class AsteroidGen
         {
             var solidBlocksInARow = 0;
             for (var col = 0; col < grid.GetLength(1); col++)
-                if (grid[row, col] != CellState.Empty)
+                if (grid[row, col].type != CellType.Empty)
                 {
                     solidBlocksInARow++;
                 }
@@ -40,14 +40,14 @@ public static class AsteroidGen
                     var minerCellOffset = 1f - GameConfig.MinerSize / 2;
                     var minerColIndex = col - solidBlocksInARow / 2 - 1; // -1 to account for miner being 2x cell size
                     // Clear 2x4 landing area
-                    grid[row, minerColIndex - 1] = CellState.Floor;
-                    grid[row, minerColIndex] = CellState.Floor;
-                    grid[row, minerColIndex + 1] = CellState.Floor;
-                    grid[row, minerColIndex + 2] = CellState.Floor;
-                    grid[row - 1, minerColIndex - 1] = CellState.Floor;
-                    grid[row - 1, minerColIndex] = CellState.Floor;
-                    grid[row - 1, minerColIndex + 1] = CellState.Floor;
-                    grid[row - 1, minerColIndex + 2] = CellState.Floor;
+                    grid[row, minerColIndex - 1].type = CellType.Floor;
+                    grid[row, minerColIndex].type = CellType.Floor;
+                    grid[row, minerColIndex + 1].type = CellType.Floor;
+                    grid[row, minerColIndex + 2].type = CellType.Floor;
+                    grid[row - 1, minerColIndex - 1].type = CellType.Floor;
+                    grid[row - 1, minerColIndex].type = CellType.Floor;
+                    grid[row - 1, minerColIndex + 1].type = CellType.Floor;
+                    grid[row - 1, minerColIndex + 2].type = CellType.Floor;
                     return new Vector2(minerColIndex + minerCellOffset, row - 1 + minerCellOffset);
                 }
         }
@@ -110,30 +110,35 @@ public static class AsteroidGen
             var radius = radiusValues[index];
             var perimeterWidth = perimeterWidths[index];
 
+
+            CellType cellType;
+
             if (distance <= radius)
             {
                 var xCoord = x * NoiseScale;
                 var yCoord = y * NoiseScale;
                 var noiseValue = perlinNoise.Noise(xCoord, yCoord);
                 if (distance < radius * AsteroidCoreRadius && NoiseValWithinRange(noiseValue, SolidRockRange))
-                    grid[x, y] = distance < radius * DiamondsRadius && NoiseValWithinRange(noiseValue, DiamondRange)
-                        ? CellState.Diamond
-                        : CellState.SolidRock;
+                    cellType = distance < radius * DiamondsRadius && NoiseValWithinRange(noiseValue, DiamondRange)
+                        ? CellType.Diamond
+                        : CellType.SolidRock;
 
                 // Widen floor range relative to closeness to edge TODO make ramp clearer, especially near edges
                 else if (NoiseValWithinRange(noiseValue, GetFloorRange(distance, radius)))
-                    grid[x, y] = CellState.Floor;
+                    cellType = CellType.Floor;
                 else
-                    grid[x, y] = NoiseValWithinRange(noiseValue, RubyRange) ? CellState.Ruby : CellState.Rock;
+                    cellType = NoiseValWithinRange(noiseValue, RubyRange) ? CellType.Ruby : CellType.Rock;
             }
             else if (distance <= radius + perimeterWidth)
             {
-                grid[x, y] = CellState.Floor;
+                cellType = CellType.Floor;
             }
             else
             {
-                grid[x, y] = CellState.Empty;
+                cellType = CellType.Empty;
             }
+
+            grid[x, y] = new CellState(cellType, false);
         }
 
         return grid;

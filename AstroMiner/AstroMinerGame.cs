@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace AstroMiner;
 
-public enum CellState
+public enum CellType
 {
     Empty,
     Floor,

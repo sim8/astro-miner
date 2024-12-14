@@ -77,8 +77,8 @@ public class Renderer
         for (var row = 0; row < GameConfig.GridSize; row++)
         for (var col = 0; col < GameConfig.GridSize; col++)
         {
-            var cellState = _gameState.Grid.GetCellState(col, row);
-            if (Tilesets.TilesetTextureNames.TryGetValue(cellState, out var name))
+            var cellType = _gameState.Grid.GetCellType(col, row);
+            if (Tilesets.TilesetTextureNames.TryGetValue(cellType, out var name))
             {
                 var offset = Tilesets.GetTileCoords(_gameState, col, row);
                 var tilesetSourceRect = new Rectangle(offset.Item1 * GameConfig.CellTextureSizePx,
@@ -97,7 +97,7 @@ public class Renderer
                         overlaySourceRect, Color.White * overlayOpacity);
                 }
             }
-            else if (_gameState.Grid.GetCellState(col, row) == CellState.Floor)
+            else if (_gameState.Grid.GetCellType(col, row) == CellType.Floor)
             {
                 var tilesetSourceRect = new Rectangle(3 * GameConfig.CellTextureSizePx,
                     GameConfig.CellTextureSizePx,
@@ -156,15 +156,15 @@ public class Renderer
     {
         for (var x = col - 1; x <= col + 1; x++)
             if ((ViewHelpers.IsValidGridPosition(x, row - 2) &&
-                 _gameState.Grid.GetCellState(x, row - 2) == CellState.Floor) ||
+                 _gameState.Grid.GetCellType(x, row - 2) == CellType.Floor) ||
                 (ViewHelpers.IsValidGridPosition(x, row + 2) &&
-                 _gameState.Grid.GetCellState(x, row + 2) == CellState.Floor))
+                 _gameState.Grid.GetCellType(x, row + 2) == CellType.Floor))
                 return true;
         for (var y = row - 1; y <= row + 1; y++)
             if ((ViewHelpers.IsValidGridPosition(col + 2, y) &&
-                 _gameState.Grid.GetCellState(col + 2, y) == CellState.Floor) ||
+                 _gameState.Grid.GetCellType(col + 2, y) == CellType.Floor) ||
                 (ViewHelpers.IsValidGridPosition(col - 2, y) &&
-                 _gameState.Grid.GetCellState(col - 2, y) == CellState.Floor))
+                 _gameState.Grid.GetCellType(col - 2, y) == CellType.Floor))
                 return true;
         return false;
     }
