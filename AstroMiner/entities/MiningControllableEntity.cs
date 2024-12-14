@@ -42,6 +42,7 @@ public class MiningControllableEntity : Entity
     protected virtual float MaxSpeed => 1f;
     protected virtual int TimeToReachMaxSpeedMs { get; } = 0;
     protected virtual int TimeToStopMs { get; } = 0;
+    protected virtual float DrillingWidth { get; } = 0f;
 
 
     public Direction Direction { get; private set; } = Direction.Top;
@@ -152,8 +153,30 @@ public class MiningControllableEntity : Entity
             _drillingMs = elapsedGameTimeMs;
         }
 
-        var (x, y) = gridPos;
+        if (Direction == Direction.Top || Direction == Direction.Bottom)
+        {
+            var leftX = ViewHelpers.ToXorYCoordinate(drillPos.X - DrillingWidth / 2);
+            var rightX = ViewHelpers.ToXorYCoordinate(drillPos.X + DrillingWidth / 2);
+            for (var iX = leftX; iX <= rightX; iX++)
+            {
+                var (nice, y) = gridPos;
+                ApplyDrillToCell(iX, y);
+            }
+        }
+        else // left or right
+        {
+            var topY = ViewHelpers.ToXorYCoordinate(drillPos.Y - DrillingWidth / 2);
+            var bottomY = ViewHelpers.ToXorYCoordinate(drillPos.Y + DrillingWidth / 2);
+            for (var iY = topY; iY <= bottomY; iY++)
+            {
+                var (x, nice) = gridPos;
+                ApplyDrillToCell(x, iY);
+            }
+        }
+    }
 
+    private void ApplyDrillToCell(int x, int y)
+    {
         if (!ViewHelpers.IsValidGridPosition(x, y))
             return;
 
