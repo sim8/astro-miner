@@ -23,8 +23,8 @@ public class UserInterfaceRenderer(
             RenderString(spriteBatch, 0, 0, minutes.ToString("D2") + " " + seconds.ToString("D2"));
         }
 
-        RenderString(spriteBatch, 0, 100, "DIAMONDS " + gameState.Inventory.NumDiamonds);
-        RenderString(spriteBatch, 0, 160, "RUBIES " + gameState.Inventory.NumRubies);
+        RenderString(spriteBatch, 0, 100, "DIAMOND " + gameState.Inventory.NumDiamonds);
+        RenderString(spriteBatch, 0, 160, "RUBY " + gameState.Inventory.NumRubies);
 
         RenderMinimap(spriteBatch);
     }

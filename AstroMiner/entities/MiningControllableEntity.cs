@@ -154,7 +154,7 @@ public class MiningControllableEntity : Entity
             _drillingMs = elapsedGameTimeMs;
         }
 
-        if (Direction == Direction.Top || Direction == Direction.Bottom)
+        if (Direction is Direction.Top or Direction.Bottom)
         {
             var leftX = ViewHelpers.ToXorYCoordinate(drillPos.X - DrillingWidth / 2);
             var rightX = ViewHelpers.ToXorYCoordinate(drillPos.X + DrillingWidth / 2);
