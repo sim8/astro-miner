@@ -61,25 +61,26 @@ public class MiningControllableEntity : Entity
         _drillingMs = 0;
     }
 
+    private bool IsNewPositionIntersectingWithFilledCells(Vector2 position)
+    {
+        var topLeftCell = ViewHelpers.ToGridPosition(position);
+        var bottomRightCell = ViewHelpers.ToGridPosition(position + new Vector2(GridBoxSize, GridBoxSize));
+
+        for (var x = topLeftCell.x; x <= bottomRightCell.x; x++)
+        for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
+            if (_gameState.Grid.GetCellState(x, y) != CellState.Floor)
+                return true;
+
+        return false;
+    }
+
     private bool ApplyVectorToPosIfNoCollisions(Vector2 vector)
     {
-        var newPositions = new[]
-        {
-            Position + vector,
-            Position + vector + new Vector2(GridBoxSize, 0),
-            Position + vector + new Vector2(0, GridBoxSize),
-            Position + vector + new Vector2(GridBoxSize, GridBoxSize)
-        };
-
-        foreach (var newPos in newPositions)
-        {
-            var (x, y) = ViewHelpers.ToGridPosition(newPos);
-            if (!ViewHelpers.IsValidGridPosition(x, y) || _gameState.Grid.GetCellState(x, y) != CellState.Floor)
-                return false;
-        }
-
-
         var newVector = Position + vector;
+        var newPositionHasCollisions = IsNewPositionIntersectingWithFilledCells(newVector);
+
+        if (newPositionHasCollisions) return false;
+
         var newRectangle = new RectangleF(newVector.X, newVector.Y, GridBoxSize, GridBoxSize);
 
         foreach (var entity in _gameState.ActiveEntitiesSortedByDistance)
