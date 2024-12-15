@@ -5,13 +5,24 @@ namespace AstroMiner;
 
 public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
 {
-    private Rectangle AdjustRectForCamera(int x, int y, int width, int height)
+    // Should only be used at very end of calc pipeline
+    private int ConvertToRenderedPxValue_CAUTION(double value)
+    {
+        // Round up to reduce visual artifacts
+        return (int)Math.Ceiling(value);
+    }
+
+    private Rectangle AdjustRectForCamera(float x, float y, float width, float height)
     {
         var (xPx, yPx) = GridPosToDisplayedPx(gameState.ActiveControllableEntity.CenterPosition);
+        var adjustedX = x - xPx + graphics.GraphicsDevice.Viewport.Width / 2f;
+        var adjustedY = y - yPx + graphics.GraphicsDevice.Viewport.Height / 2f;
         return new Rectangle(
-            x - xPx + graphics.GraphicsDevice.Viewport.Width / 2,
-            y - yPx + graphics.GraphicsDevice.Viewport.Height / 2, width,
-            height);
+            ConvertToRenderedPxValue_CAUTION(adjustedX),
+            ConvertToRenderedPxValue_CAUTION(adjustedY),
+            ConvertToRenderedPxValue_CAUTION(width),
+            ConvertToRenderedPxValue_CAUTION(height)
+        );
     }
 
     public (int, int) GetViewportSize()
@@ -26,14 +37,14 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
             ConvertGridUnitsToVisiblePx(heightOnGrid));
     }
 
-    private int ConvertGridUnitsToVisiblePx(float gridUnits)
+    private float ConvertGridUnitsToVisiblePx(float gridUnits)
     {
-        return (int)Math.Round(gridUnits * GameConfig.CellTextureSizePx * gameState.UserInterface.ScaleMultiplier);
+        return gridUnits * GameConfig.CellTextureSizePx * gameState.UserInterface.ScaleMultiplier;
     }
 
-    private int ConvertTexturePxToVisiblePx(int numToScale)
+    private float ConvertTexturePxToVisiblePx(int numToScale)
     {
-        return (int)Math.Round(numToScale * gameState.UserInterface.ScaleMultiplier);
+        return numToScale * gameState.UserInterface.ScaleMultiplier;
     }
 
     public Rectangle GetVisibleRectForObject(Vector2 objectPos, int textureWidth, int textureHeight,
@@ -46,7 +57,7 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
             ConvertTexturePxToVisiblePx(textureHeight));
     }
 
-    private (int, int) GridPosToDisplayedPx(Vector2 gridPos)
+    private (float, float) GridPosToDisplayedPx(Vector2 gridPos)
     {
         return (ConvertGridUnitsToVisiblePx(gridPos.X), ConvertGridUnitsToVisiblePx(gridPos.Y));
     }
