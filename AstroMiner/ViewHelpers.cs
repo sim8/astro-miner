@@ -39,12 +39,12 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
 
     private float ConvertGridUnitsToVisiblePx(float gridUnits)
     {
-        return gridUnits * GameConfig.CellTextureSizePx * gameState.UserInterface.ScaleMultiplier;
+        return gridUnits * GameConfig.CellTextureSizePx * gameState.Camera.ScaleMultiplier;
     }
 
     private float ConvertTexturePxToVisiblePx(int numToScale)
     {
-        return numToScale * gameState.UserInterface.ScaleMultiplier;
+        return numToScale * gameState.Camera.ScaleMultiplier;
     }
 
     public Rectangle GetVisibleRectForObject(Vector2 objectPos, int textureWidth, int textureHeight,

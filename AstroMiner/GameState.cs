@@ -31,12 +31,12 @@ public class GameState
     private HashSet<MiningControls> _emptyMiningControls;
     private bool _prevPressedEnterOrExit;
     public List<Entity> ActiveEntitiesSortedByDistance;
+    public CameraState Camera;
     public List<(int x, int y)> EdgeCells;
     public GridState Grid;
     public Inventory Inventory;
     public MinerEntity Miner;
     public PlayerEntity Player;
-    public UserInterfaceState UserInterface;
 
     public GameState()
     {
@@ -58,7 +58,7 @@ public class GameState
         Player = new PlayerEntity(this, minerPos);
         Inventory = new Inventory();
         EdgeCells = UserInterfaceHelpers.GetAsteroidEdgeCells(Grid);
-        UserInterface = new UserInterfaceState(this);
+        Camera = new CameraState(this);
         ActiveEntitiesSortedByDistance = [Miner];
         _prevPressedEnterOrExit = false;
         _emptyMiningControls = new HashSet<MiningControls>();
@@ -118,6 +118,6 @@ public class GameState
         // Do last to reflect changes
         SortActiveEntities(); // TODO only call when needed? Seems error prone
 
-        UserInterface.Update(elapsedMs);
+        Camera.Update(elapsedMs);
     }
 }
