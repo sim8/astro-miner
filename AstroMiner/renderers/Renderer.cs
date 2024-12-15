@@ -77,7 +77,8 @@ public class Renderer
         for (var row = 0; row < GameConfig.GridSize; row++)
         for (var col = 0; col < GameConfig.GridSize; col++)
         {
-            var cellType = _gameState.Grid.GetCellType(col, row);
+            var cellState = _gameState.Grid.GetCellState(col, row);
+            var cellType = cellState.type;
             if (Tilesets.TilesetTextureNames.TryGetValue(cellType, out var name))
             {
                 var offset = Tilesets.GetTileCoords(_gameState, col, row);
@@ -86,16 +87,6 @@ public class Renderer
                     GameConfig.CellTextureSizePx, GameConfig.CellTextureSizePx);
                 spriteBatch.Draw(_textures[name], _viewHelpers.GetVisibleRectForGridCell(col, row),
                     tilesetSourceRect, Color.White);
-                if (offset == (1, 2)) // Top piece
-                {
-                    var overlayOffset = (5, 2);
-                    var overlaySourceRect = new Rectangle(overlayOffset.Item1 * GameConfig.CellTextureSizePx,
-                        overlayOffset.Item2 * GameConfig.CellTextureSizePx,
-                        GameConfig.CellTextureSizePx, GameConfig.CellTextureSizePx);
-                    var overlayOpacity = HasFloorWithinTwoTiles(col, row) ? 0.8f : 1;
-                    spriteBatch.Draw(_textures[name], _viewHelpers.GetVisibleRectForGridCell(col, row),
-                        overlaySourceRect, Color.White * overlayOpacity);
-                }
             }
             else if (_gameState.Grid.GetCellType(col, row) == CellType.Floor)
             {
@@ -105,9 +96,19 @@ public class Renderer
                 spriteBatch.Draw(_textures["rock-tileset"], _viewHelpers.GetVisibleRectForGridCell(col, row),
                     tilesetSourceRect,
                     Color.White);
-                if (_gameState.Grid.GetCellState(col, row).hasLavaWell)
+                if (cellState.distanceToOutsideConnectedFloor == 0)
+                    spriteBatch.Draw(_textures["radial-light"], _viewHelpers.GetVisibleRectForGridCell(col, row),
+                        Color.Blue);
+                if (cellState.hasLavaWell)
                     spriteBatch.Draw(_textures["radial-light"], _viewHelpers.GetVisibleRectForGridCell(col, row),
                         Color.Yellow);
+            }
+
+            if (cellState.distanceToOutsideConnectedFloor > 1)
+            {
+                var rect = _viewHelpers.GetVisibleRectForGridCell(col, row);
+                _userInterfaceRenderer.RenderString(spriteBatch, rect.X + 20, rect.Y + 20,
+                    cellState.distanceToOutsideConnectedFloor.ToString());
             }
         }
 

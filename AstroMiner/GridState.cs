@@ -129,4 +129,46 @@ public class GridState(GameState gameState, CellState[,] grid)
 
         // Now isOutsideConnectedFloor[x, y] is true for all floor cells connected to the map edge via empty/floor cells.
     }
+
+    public void ComputeDistancesToOutsideConnectedFloor(int maxDistance = int.MaxValue)
+    {
+        Queue<(int x, int y)> queue = new();
+
+        // Enqueue all cells that are already known to be outside-connected floor
+        // i.e. distanceToOutsideConnectedFloor == 0
+        for (var x = 0; x < GameConfig.GridSize; x++)
+        for (var y = 0; y < GameConfig.GridSize; y++)
+            if (grid[x, y].distanceToOutsideConnectedFloor == 0)
+                queue.Enqueue((x, y));
+
+        int[] dx = { 0, 1, 1, 1, 0, -1, -1, -1 };
+        int[] dy = { -1, -1, 0, 1, 1, 1, 0, -1 };
+
+        while (queue.Count > 0)
+        {
+            var (cx, cy) = queue.Dequeue();
+            var currentDistance = grid[cx, cy].distanceToOutsideConnectedFloor;
+
+            // If we've reached the maxDistance cap, don't spread further
+            if (currentDistance >= maxDistance)
+                continue;
+
+            for (var i = 0; i < dx.Length; i++)
+            {
+                var nx = cx + dx[i];
+                var ny = cy + dy[i];
+
+                if (nx < 0 || nx >= GameConfig.GridSize || ny < 0 || ny >= GameConfig.GridSize)
+                    continue;
+
+                // Only proceed if this cell is not empty and has not been assigned a distance yet
+                if (grid[nx, ny].type != CellType.Empty
+                    && grid[nx, ny].distanceToOutsideConnectedFloor == -1)
+                {
+                    grid[nx, ny].distanceToOutsideConnectedFloor = currentDistance + 1;
+                    queue.Enqueue((nx, ny));
+                }
+            }
+        }
+    }
 }

@@ -35,7 +35,8 @@ public class UserInterfaceRenderer(
         RenderString(spriteBatch, 0, 340, "SEED " + gameState.Seed);
     }
 
-    private void RenderString(SpriteBatch spriteBatch, int startX, int startY, string str, int scale = 3)
+    // TODO change back to private
+    public void RenderString(SpriteBatch spriteBatch, int startX, int startY, string str, int scale = 3)
     {
         var linePxCount = 0;
         foreach (var (x, y, width) in FontHelpers.TransformString(str))
