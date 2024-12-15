@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -37,6 +36,7 @@ public class GameState
     public Inventory Inventory;
     public MinerEntity Miner;
     public PlayerEntity Player;
+    public UserInterfaceState UserInterface;
 
     public GameState()
     {
@@ -58,7 +58,7 @@ public class GameState
         Player = new PlayerEntity(this, minerPos);
         Inventory = new Inventory();
         EdgeCells = UserInterfaceHelpers.GetAsteroidEdgeCells(Grid);
-        Console.WriteLine(EdgeCells.Count);
+        UserInterface = new UserInterfaceState(this);
         ActiveEntitiesSortedByDistance = [Miner];
         _prevPressedEnterOrExit = false;
         _emptyMiningControls = new HashSet<MiningControls>();
@@ -117,5 +117,7 @@ public class GameState
 
         // Do last to reflect changes
         SortActiveEntities(); // TODO only call when needed? Seems error prone
+
+        UserInterface.Update(elapsedMs);
     }
 }

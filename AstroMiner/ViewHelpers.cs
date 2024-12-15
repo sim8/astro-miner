@@ -21,24 +21,34 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
 
     public Rectangle GetVisibleRectForGridCell(int gridX, int gridY, int widthOnGrid = 1, int heightOnGrid = 1)
     {
-        return AdjustRectForCamera(gridX * GameConfig.CellDisplayedSizePx, gridY * GameConfig.CellDisplayedSizePx,
-            widthOnGrid * GameConfig.CellDisplayedSizePx,
-            heightOnGrid * GameConfig.CellDisplayedSizePx);
+        return AdjustRectForCamera(ConvertGridUnitsToVisiblePx(gridX), ConvertGridUnitsToVisiblePx(gridY),
+            ConvertGridUnitsToVisiblePx(widthOnGrid),
+            ConvertGridUnitsToVisiblePx(heightOnGrid));
+    }
+
+    private int ConvertGridUnitsToVisiblePx(float gridUnits)
+    {
+        return (int)Math.Round(gridUnits * GameConfig.CellTextureSizePx * gameState.UserInterface.ScaleMultiplier);
+    }
+
+    private int ConvertTexturePxToVisiblePx(int numToScale)
+    {
+        return (int)Math.Round(numToScale * gameState.UserInterface.ScaleMultiplier);
     }
 
     public Rectangle GetVisibleRectForObject(Vector2 objectPos, int textureWidth, int textureHeight,
         int textureOffsetX = 0, int textureOffsetY = 0)
     {
         var (xPx, yPx) = GridPosToDisplayedPx(objectPos);
-        xPx += textureOffsetX * GameConfig.ScaleMultiplier;
-        yPx += textureOffsetY * GameConfig.ScaleMultiplier;
-        return AdjustRectForCamera(xPx, yPx, textureWidth * GameConfig.ScaleMultiplier,
-            textureHeight * GameConfig.ScaleMultiplier);
+        xPx += ConvertTexturePxToVisiblePx(textureOffsetX);
+        yPx += ConvertTexturePxToVisiblePx(textureOffsetY);
+        return AdjustRectForCamera(xPx, yPx, ConvertTexturePxToVisiblePx(textureWidth),
+            ConvertTexturePxToVisiblePx(textureHeight));
     }
 
-    private static (int, int) GridPosToDisplayedPx(Vector2 gridPos)
+    private (int, int) GridPosToDisplayedPx(Vector2 gridPos)
     {
-        return ((int)(gridPos.X * GameConfig.CellDisplayedSizePx), (int)(gridPos.Y * GameConfig.CellDisplayedSizePx));
+        return (ConvertGridUnitsToVisiblePx(gridPos.X), ConvertGridUnitsToVisiblePx(gridPos.Y));
     }
 
     public static (int, int) GridPosToTexturePx(Vector2 gridPos)
