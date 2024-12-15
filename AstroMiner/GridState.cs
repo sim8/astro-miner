@@ -130,7 +130,7 @@ public class GridState(GameState gameState, CellState[,] grid)
         // Now isOutsideConnectedFloor[x, y] is true for all floor cells connected to the map edge via empty/floor cells.
     }
 
-    public void ComputeDistancesToOutsideConnectedFloor(int maxDistance = int.MaxValue)
+    public void ComputeDistancesToOutsideConnectedFloor()
     {
         Queue<(int x, int y)> queue = new();
 
@@ -149,8 +149,8 @@ public class GridState(GameState gameState, CellState[,] grid)
             var (cx, cy) = queue.Dequeue();
             var currentDistance = grid[cx, cy].distanceToOutsideConnectedFloor;
 
-            // If we've reached the maxDistance cap, don't spread further
-            if (currentDistance >= maxDistance)
+            // If we've reached the MaxUnexploredCellsVisible cap, don't spread further
+            if (currentDistance >= GameConfig.MaxUnexploredCellsVisible)
                 continue;
 
             for (var i = 0; i < dx.Length; i++)
