@@ -5,13 +5,24 @@ namespace AstroMiner;
 
 public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
 {
-    private Rectangle AdjustRectForCamera(int x, int y, int width, int height)
+    // Should only be used at very end of calc pipeline
+    private int ConvertToRenderedPxValue_CAUTION(double value)
+    {
+        // Round up to reduce visual artifacts
+        return (int)Math.Ceiling(value);
+    }
+
+    private Rectangle AdjustRectForCamera(float x, float y, float width, float height)
     {
         var (xPx, yPx) = GridPosToDisplayedPx(gameState.ActiveControllableEntity.CenterPosition);
+        var adjustedX = x - xPx + graphics.GraphicsDevice.Viewport.Width / 2f;
+        var adjustedY = y - yPx + graphics.GraphicsDevice.Viewport.Height / 2f;
         return new Rectangle(
-            x - xPx + graphics.GraphicsDevice.Viewport.Width / 2,
-            y - yPx + graphics.GraphicsDevice.Viewport.Height / 2, width,
-            height);
+            ConvertToRenderedPxValue_CAUTION(adjustedX),
+            ConvertToRenderedPxValue_CAUTION(adjustedY),
+            ConvertToRenderedPxValue_CAUTION(width),
+            ConvertToRenderedPxValue_CAUTION(height)
+        );
     }
 
     public (int, int) GetViewportSize()
@@ -21,24 +32,34 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
 
     public Rectangle GetVisibleRectForGridCell(int gridX, int gridY, int widthOnGrid = 1, int heightOnGrid = 1)
     {
-        return AdjustRectForCamera(gridX * GameConfig.CellDisplayedSizePx, gridY * GameConfig.CellDisplayedSizePx,
-            widthOnGrid * GameConfig.CellDisplayedSizePx,
-            heightOnGrid * GameConfig.CellDisplayedSizePx);
+        return AdjustRectForCamera(ConvertGridUnitsToVisiblePx(gridX), ConvertGridUnitsToVisiblePx(gridY),
+            ConvertGridUnitsToVisiblePx(widthOnGrid),
+            ConvertGridUnitsToVisiblePx(heightOnGrid));
+    }
+
+    private float ConvertGridUnitsToVisiblePx(float gridUnits)
+    {
+        return gridUnits * GameConfig.CellTextureSizePx * gameState.Camera.ScaleMultiplier;
+    }
+
+    private float ConvertTexturePxToVisiblePx(int numToScale)
+    {
+        return numToScale * gameState.Camera.ScaleMultiplier;
     }
 
     public Rectangle GetVisibleRectForObject(Vector2 objectPos, int textureWidth, int textureHeight,
         int textureOffsetX = 0, int textureOffsetY = 0)
     {
         var (xPx, yPx) = GridPosToDisplayedPx(objectPos);
-        xPx += textureOffsetX * GameConfig.ScaleMultiplier;
-        yPx += textureOffsetY * GameConfig.ScaleMultiplier;
-        return AdjustRectForCamera(xPx, yPx, textureWidth * GameConfig.ScaleMultiplier,
-            textureHeight * GameConfig.ScaleMultiplier);
+        xPx += ConvertTexturePxToVisiblePx(textureOffsetX);
+        yPx += ConvertTexturePxToVisiblePx(textureOffsetY);
+        return AdjustRectForCamera(xPx, yPx, ConvertTexturePxToVisiblePx(textureWidth),
+            ConvertTexturePxToVisiblePx(textureHeight));
     }
 
-    private static (int, int) GridPosToDisplayedPx(Vector2 gridPos)
+    private (float, float) GridPosToDisplayedPx(Vector2 gridPos)
     {
-        return ((int)(gridPos.X * GameConfig.CellDisplayedSizePx), (int)(gridPos.Y * GameConfig.CellDisplayedSizePx));
+        return (ConvertGridUnitsToVisiblePx(gridPos.X), ConvertGridUnitsToVisiblePx(gridPos.Y));
     }
 
     public static (int, int) GridPosToTexturePx(Vector2 gridPos)
