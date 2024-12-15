@@ -1,17 +1,13 @@
 using System;
+using System.Collections.Generic;
 
 namespace AstroMiner;
 
-public struct CellState
+public struct CellState(CellType type, bool hasLavaWell)
 {
-    public CellType type;
-    public bool hasLavaWell;
-
-    public CellState(CellType type, bool hasLavaWell)
-    {
-        this.type = type;
-        this.hasLavaWell = hasLavaWell;
-    }
+    public CellType type = type;
+    public bool hasLavaWell = hasLavaWell;
+    public int distanceToOutsideConnectedFloor = -1; // Initialized separately. -1 means unknown distance
 }
 
 public class GridState(GameState gameState, CellState[,] grid)
@@ -57,5 +53,80 @@ public class GridState(GameState gameState, CellState[,] grid)
         }
 
         return false;
+    }
+
+
+    public void MarkOutsideConnectedFloors()
+    {
+        // We'll use a BFS from all edge empty cells.
+        Queue<(int x, int y)> queue = new();
+        var visited = new bool[GameConfig.GridSize, GameConfig.GridSize];
+
+        // Enqueue all edge cells that are Empty
+        // Top and bottom rows
+        for (var x = 0; x < GameConfig.GridSize; x++)
+        {
+            if (grid[x, 0].type == CellType.Empty) continue;
+            {
+                queue.Enqueue((x, 0));
+                visited[x, 0] = true;
+            }
+            if (grid[x, GameConfig.GridSize - 1].type == CellType.Empty)
+            {
+                queue.Enqueue((x, GameConfig.GridSize - 1));
+                visited[x, GameConfig.GridSize - 1] = true;
+            }
+        }
+
+        // Left and right columns
+        for (var y = 0; y < GameConfig.GridSize; y++)
+        {
+            if (grid[0, y].type == CellType.Empty && !visited[0, y])
+            {
+                queue.Enqueue((0, y));
+                visited[0, y] = true;
+            }
+
+            if (grid[GameConfig.GridSize - 1, y].type == CellType.Empty && !visited[GameConfig.GridSize - 1, y])
+            {
+                queue.Enqueue((GameConfig.GridSize - 1, y));
+                visited[GameConfig.GridSize - 1, y] = true;
+            }
+        }
+
+        // Directions for 4-way movement (up, down, left, right)
+        int[] dx = { 1, -1, 0, 0 };
+        int[] dy = { 0, 0, 1, -1 };
+
+        // BFS
+        while (queue.Count > 0)
+        {
+            var (cx, cy) = queue.Dequeue();
+
+            // If this cell is a floor cell, mark it as outside-connected
+            if (grid[cx, cy].type == CellType.Floor) grid[cx, cy].distanceToOutsideConnectedFloor = 0;
+
+            // Check neighbors
+            for (var i = 0; i < 4; i++)
+            {
+                var nx = cx + dx[i];
+                var ny = cy + dy[i];
+
+                if (nx < 0 || nx >= GameConfig.GridSize || ny < 0 || ny >= GameConfig.GridSize)
+                    continue; // Out of bounds
+
+                if (visited[nx, ny])
+                    continue; // Already visited
+
+                // We only continue BFS through Empty or Floor cells
+                if (grid[nx, ny].type == CellType.Empty || grid[nx, ny].type == CellType.Floor)
+                {
+                    visited[nx, ny] = true;
+                    queue.Enqueue((nx, ny));
+                }
+            }
+        }
+
+        // Now isOutsideConnectedFloor[x, y] is true for all floor cells connected to the map edge via empty/floor cells.
     }
 }
