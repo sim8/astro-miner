@@ -5,15 +5,17 @@ namespace AstroMiner;
 
 public class CellState(CellType type, bool hasLavaWell)
 {
-    public const int DISTANCE_UNINITIALIZED = -2;
-    public const int DISTANCE_NA = -1;
+    public const int DISTANCE_UNINITIALIZED_OR_ABOVE_MAX = -2;
+    public const int DISTANCE_EMPTY = -1;
 
     /**
-     * -2: uninitislized
-     * -1: N/A or above max distance
-     * 0+ distance
+     * -2: uninitialized or above max distance
+     * -1: N/A (empty piece)
+     * 0+ distance to floor with unbroken connection to edge
      */
-    public int distanceToOutsideConnectedFloor = DISTANCE_UNINITIALIZED;
+    public int distanceToOutsideConnectedFloor = DISTANCE_UNINITIALIZED_OR_ABOVE_MAX;
+
+    public int gradientKey;
 
     public bool hasLavaWell = hasLavaWell;
     public CellType type = type;
@@ -87,7 +89,7 @@ public class GridState(GameState gameState, CellState[,] grid)
         // The BFS assumes all cells in the queue have the correct distance. If running at 
         // startup (x,y == 0,0), assume it's an empty square (-1); otherwise a cell has been
         // cleared and is now floor (0)
-        grid[y, x].distanceToOutsideConnectedFloor = x == 0 && y == 0 ? CellState.DISTANCE_NA : 0;
+        grid[y, x].distanceToOutsideConnectedFloor = x == 0 && y == 0 ? CellState.DISTANCE_EMPTY : 0;
 
         Queue<(int x, int y)> queue = new();
         queue.Enqueue((x, y));
@@ -104,9 +106,9 @@ public class GridState(GameState gameState, CellState[,] grid)
 
                 // Always initialize empty cells
                 if (neighbour.type == CellType.Empty &&
-                    neighbour.distanceToOutsideConnectedFloor == CellState.DISTANCE_UNINITIALIZED)
+                    neighbour.distanceToOutsideConnectedFloor == CellState.DISTANCE_UNINITIALIZED_OR_ABOVE_MAX)
                 {
-                    neighbour.distanceToOutsideConnectedFloor = CellState.DISTANCE_NA;
+                    neighbour.distanceToOutsideConnectedFloor = CellState.DISTANCE_EMPTY;
                     queue.Enqueue((nx, ny));
                 }
                 // Set floor to outside connected if it adjoins with an edge piece or another outside connected floor
@@ -124,15 +126,129 @@ public class GridState(GameState gameState, CellState[,] grid)
                          GameConfig.MaxUnexploredCellsVisible)
                 {
                     var nextDistance = current.distanceToOutsideConnectedFloor + 1;
-                    if (neighbour.distanceToOutsideConnectedFloor == CellState.DISTANCE_UNINITIALIZED ||
+                    if (neighbour.distanceToOutsideConnectedFloor == CellState.DISTANCE_UNINITIALIZED_OR_ABOVE_MAX ||
                         neighbour.distanceToOutsideConnectedFloor >
                         nextDistance)
                     {
                         neighbour.distanceToOutsideConnectedFloor = nextDistance;
+                        if (nextDistance > 2) UpdateGradientKeys(nx, ny);
+
                         queue.Enqueue((nx, ny));
                     }
                 }
             });
         }
+    }
+
+    // Assumes distanceToOutsideConnectedFloor has just incremented.
+    // Sets current cell to flat gradient and ensures neighbors ramp up to
+    // current cell if they're a lower distance
+    public void UpdateGradientKeys(int x, int y)
+    {
+        var current = GetCellState(x, y);
+        current.gradientKey = GradientKeyHelpers.InitialKey;
+        MapNeighbors(x, y, (nx, ny) =>
+        {
+            var neighbor = GetCellState(nx, ny);
+            var higherThanNeighbour =
+                current.distanceToOutsideConnectedFloor > neighbor.distanceToOutsideConnectedFloor;
+            var lowerThanNeighbour = current.distanceToOutsideConnectedFloor < neighbor.distanceToOutsideConnectedFloor;
+            if (current.distanceToOutsideConnectedFloor > neighbor.distanceToOutsideConnectedFloor)
+            {
+                // Determine which corners of the neighbor cell adjoin the current cell
+                if (nx == x + 1 && ny == y) // Right neighbor
+                {
+                    neighbor.gradientKey = GradientKeyHelpers.SetCorners(
+                        neighbor.gradientKey,
+                        Corner.TopLeft,
+                        Corner.BottomLeft,
+                        higherThanNeighbour
+                    );
+                }
+                else if (nx == x - 1 && ny == y) // Left neighbor
+                {
+                    neighbor.gradientKey = GradientKeyHelpers.SetCorners(
+                        neighbor.gradientKey,
+                        Corner.TopRight,
+                        Corner.BottomRight,
+                        higherThanNeighbour
+                    );
+                }
+                else if (nx == x && ny == y + 1) // Bottom neighbor
+                {
+                    neighbor.gradientKey = GradientKeyHelpers.SetCorners(
+                        neighbor.gradientKey,
+                        Corner.TopLeft,
+                        Corner.TopRight,
+                        higherThanNeighbour
+                    );
+                }
+                else if (nx == x && ny == y - 1) // Top neighbor
+                {
+                    neighbor.gradientKey = GradientKeyHelpers.SetCorners(
+                        neighbor.gradientKey,
+                        Corner.BottomLeft,
+                        Corner.BottomRight,
+                        higherThanNeighbour
+                    );
+                }
+                else if (nx == x + 1 && ny == y + 1) // Bottom-right neighbor
+                {
+                    neighbor.gradientKey = GradientKeyHelpers.SetCorner(
+                        neighbor.gradientKey,
+                        Corner.TopLeft,
+                        higherThanNeighbour
+                    );
+                    if (lowerThanNeighbour)
+                        current.gradientKey = GradientKeyHelpers.SetCorner(
+                            current.gradientKey,
+                            Corner.BottomRight,
+                            true
+                        );
+                }
+                else if (nx == x - 1 && ny == y + 1) // Bottom-left neighbor
+                {
+                    neighbor.gradientKey = GradientKeyHelpers.SetCorner(
+                        neighbor.gradientKey,
+                        Corner.TopRight,
+                        higherThanNeighbour
+                    );
+                    if (lowerThanNeighbour)
+                        current.gradientKey = GradientKeyHelpers.SetCorner(
+                            current.gradientKey,
+                            Corner.BottomLeft,
+                            true
+                        );
+                }
+                else if (nx == x + 1 && ny == y - 1) // Top-right neighbor
+                {
+                    neighbor.gradientKey = GradientKeyHelpers.SetCorner(
+                        neighbor.gradientKey,
+                        Corner.BottomLeft,
+                        higherThanNeighbour
+                    );
+                    if (lowerThanNeighbour)
+                        current.gradientKey = GradientKeyHelpers.SetCorner(
+                            current.gradientKey,
+                            Corner.TopRight,
+                            true
+                        );
+                }
+                else if (nx == x - 1 && ny == y - 1) // Top-left neighbor
+                {
+                    neighbor.gradientKey = GradientKeyHelpers.SetCorner(
+                        neighbor.gradientKey,
+                        Corner.BottomRight,
+                        higherThanNeighbour
+                    );
+                    if (lowerThanNeighbour)
+                        current.gradientKey = GradientKeyHelpers.SetCorner(
+                            current.gradientKey,
+                            Corner.TopLeft,
+                            true
+                        );
+                }
+            }
+        });
     }
 }

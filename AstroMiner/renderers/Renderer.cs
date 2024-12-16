@@ -103,7 +103,7 @@ public class Renderer
                         Color.Yellow);
             }
 
-            _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row);
+            _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row, _userInterfaceRenderer);
         }
 
         foreach (var entity in _gameState.ActiveEntitiesSortedByDistance)
