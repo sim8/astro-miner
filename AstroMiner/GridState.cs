@@ -54,18 +54,12 @@ public class GridState(GameState gameState, CellState[,] grid)
 
     public bool CellHasNeighbourOfType(int x, int y, CellType cellType)
     {
-        int[] xOffsets = { -1, 0, 1, 1, 1, 0, -1, -1 };
-        int[] yOffsets = { -1, -1, -1, 0, 1, 1, 1, 0 };
-
-        for (var i = 0; i < xOffsets.Length; i++)
+        var hasNeighbourOfType = false;
+        MapNeighbors(x, y, (nx, ny) =>
         {
-            var newX = x + xOffsets[i];
-            var newY = y + yOffsets[i];
-
-            if (ViewHelpers.IsValidGridPosition(newX, newY) && grid[newY, newX].type == cellType) return true;
-        }
-
-        return false;
+            if (grid[ny, nx].type == cellType) hasNeighbourOfType = true;
+        });
+        return hasNeighbourOfType;
     }
 
     private static void MapNeighbors(int cx, int cy, Action<int, int> neighborAction)
@@ -115,7 +109,6 @@ public class GridState(GameState gameState, CellState[,] grid)
                     neighbour.distanceToOutsideConnectedFloor = CellState.DISTANCE_NA;
                     queue.Enqueue((nx, ny));
                 }
-
                 // Set floor to outside connected if it adjoins with an edge piece or another outside connected floor
                 else if (neighbour.type == CellType.Floor &&
                          (current.type == CellType.Empty || current.distanceToOutsideConnectedFloor == 0) &&
