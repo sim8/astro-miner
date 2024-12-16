@@ -3,11 +3,20 @@ using System.Collections.Generic;
 
 namespace AstroMiner;
 
-public struct CellState(CellType type, bool hasLavaWell)
+public class CellState(CellType type, bool hasLavaWell)
 {
-    public CellType type = type;
+    public const int DISTANCE_UNINITIALIZED = -2;
+    public const int DISTANCE_NA = -1;
+
+    /**
+     * -2: uninitislized
+     * -1: N/A or above max distance
+     * 0+ distance
+     */
+    public int distanceToOutsideConnectedFloor = DISTANCE_UNINITIALIZED;
+
     public bool hasLavaWell = hasLavaWell;
-    public int distanceToOutsideConnectedFloor = -1; // Initialized separately. -1 means unknown distance
+    public CellType type = type;
 }
 
 public class GridState(GameState gameState, CellState[,] grid)
@@ -37,6 +46,8 @@ public class GridState(GameState gameState, CellState[,] grid)
         if (grid[y, x].type == CellType.Diamond && addToInventory) gameState.Inventory.NumDiamonds++;
 
         grid[y, x].type = CellType.Floor;
+
+        MarkAllDistancesFromOutsideConnectedFloors(x, y);
     }
 
     public bool CellHasNeighbourOfType(int x, int y, CellType cellType)
@@ -55,59 +66,33 @@ public class GridState(GameState gameState, CellState[,] grid)
         return false;
     }
 
-
-    public void MarkOutsideConnectedFloors()
+    // For the entire grid, either initializes distanceToOutsideConnectedFloor or ensures current values are correct.
+    // From the starting coordinates, run a BFS until all neighbours have correct values relative to the current cell.
+    // This means it can run on an uninitialized grid, as well as from a just-cleared cell during gameplay.
+    // Assumes that:
+    // - The asteroid has >= 1 floor piece on its perimeter
+    // - Top left cell of grid is empty
+    public void MarkAllDistancesFromOutsideConnectedFloors(int x = 0, int y = 0)
     {
-        // We'll use a BFS from all edge empty cells.
+        int[] dx = { 0, 1, 1, 1, 0, -1, -1, -1 };
+        int[] dy = { -1, -1, 0, 1, 1, 1, 0, -1 };
+
+        // The BFS assumes all cells in the queue have the correct distance. If running at 
+        // startup (x,y == 0,0), assume it's an empty square (-1); otherwise a cell has been
+        // cleared and is now floor (0)
+        grid[y, x].distanceToOutsideConnectedFloor = x == 0 && y == 0 ? CellState.DISTANCE_NA : 0;
+
         Queue<(int x, int y)> queue = new();
-        var visited = new bool[GameConfig.GridSize, GameConfig.GridSize];
-
-        // Enqueue all edge cells that are Empty
-        // Top and bottom rows
-        for (var x = 0; x < GameConfig.GridSize; x++)
-        {
-            if (grid[x, 0].type == CellType.Empty) continue;
-            {
-                queue.Enqueue((x, 0));
-                visited[x, 0] = true;
-            }
-            if (grid[x, GameConfig.GridSize - 1].type == CellType.Empty)
-            {
-                queue.Enqueue((x, GameConfig.GridSize - 1));
-                visited[x, GameConfig.GridSize - 1] = true;
-            }
-        }
-
-        // Left and right columns
-        for (var y = 0; y < GameConfig.GridSize; y++)
-        {
-            if (grid[0, y].type == CellType.Empty && !visited[0, y])
-            {
-                queue.Enqueue((0, y));
-                visited[0, y] = true;
-            }
-
-            if (grid[GameConfig.GridSize - 1, y].type == CellType.Empty && !visited[GameConfig.GridSize - 1, y])
-            {
-                queue.Enqueue((GameConfig.GridSize - 1, y));
-                visited[GameConfig.GridSize - 1, y] = true;
-            }
-        }
-
-        // Directions for 4-way movement (up, down, left, right)
-        int[] dx = { 1, -1, 0, 0 };
-        int[] dy = { 0, 0, 1, -1 };
+        queue.Enqueue((x, y));
 
         // BFS
         while (queue.Count > 0)
         {
             var (cx, cy) = queue.Dequeue();
-
-            // If this cell is a floor cell, mark it as outside-connected
-            if (grid[cx, cy].type == CellType.Floor) grid[cx, cy].distanceToOutsideConnectedFloor = 0;
+            var current = GetCellState(cx, cy);
 
             // Check neighbors
-            for (var i = 0; i < 4; i++)
+            for (var i = 0; i < dx.Length; i++)
             {
                 var nx = cx + dx[i];
                 var ny = cy + dy[i];
@@ -115,58 +100,44 @@ public class GridState(GameState gameState, CellState[,] grid)
                 if (nx < 0 || nx >= GameConfig.GridSize || ny < 0 || ny >= GameConfig.GridSize)
                     continue; // Out of bounds
 
-                if (visited[nx, ny])
-                    continue; // Already visited
+                var neighbour = GetCellState(nx, ny);
 
-                // We only continue BFS through Empty or Floor cells
-                if (grid[nx, ny].type == CellType.Empty || grid[nx, ny].type == CellType.Floor)
+                // Always initialize empty cells
+                if (neighbour.type == CellType.Empty)
                 {
-                    visited[nx, ny] = true;
-                    queue.Enqueue((nx, ny));
-                }
-            }
-        }
+                    if (neighbour.distanceToOutsideConnectedFloor == CellState.DISTANCE_UNINITIALIZED)
+                    {
+                        neighbour.distanceToOutsideConnectedFloor = CellState.DISTANCE_NA;
+                        queue.Enqueue((nx, ny));
+                    }
 
-        // Now isOutsideConnectedFloor[x, y] is true for all floor cells connected to the map edge via empty/floor cells.
-    }
-
-    public void ComputeDistancesToOutsideConnectedFloor()
-    {
-        Queue<(int x, int y)> queue = new();
-
-        // Enqueue all cells that are already known to be outside-connected floor
-        // i.e. distanceToOutsideConnectedFloor == 0
-        for (var x = 0; x < GameConfig.GridSize; x++)
-        for (var y = 0; y < GameConfig.GridSize; y++)
-            if (grid[x, y].distanceToOutsideConnectedFloor == 0)
-                queue.Enqueue((x, y));
-
-        int[] dx = { 0, 1, 1, 1, 0, -1, -1, -1 };
-        int[] dy = { -1, -1, 0, 1, 1, 1, 0, -1 };
-
-        while (queue.Count > 0)
-        {
-            var (cx, cy) = queue.Dequeue();
-            var currentDistance = grid[cx, cy].distanceToOutsideConnectedFloor;
-
-            // If we've reached the MaxUnexploredCellsVisible cap, don't spread further
-            if (currentDistance >= GameConfig.MaxUnexploredCellsVisible)
-                continue;
-
-            for (var i = 0; i < dx.Length; i++)
-            {
-                var nx = cx + dx[i];
-                var ny = cy + dy[i];
-
-                if (nx < 0 || nx >= GameConfig.GridSize || ny < 0 || ny >= GameConfig.GridSize)
                     continue;
+                }
 
-                // Only proceed if this cell is not empty and has not been assigned a distance yet
-                if (grid[nx, ny].type != CellType.Empty
-                    && grid[nx, ny].distanceToOutsideConnectedFloor == -1)
+                // Set floor to outside connected if it adjoins with an edge piece or another outside connected floor
+                if (neighbour.type == CellType.Floor &&
+                    (current.type == CellType.Empty || current.distanceToOutsideConnectedFloor == 0) &&
+                    neighbour.distanceToOutsideConnectedFloor != 0)
                 {
-                    grid[nx, ny].distanceToOutsideConnectedFloor = currentDistance + 1;
+                    neighbour.distanceToOutsideConnectedFloor = 0;
                     queue.Enqueue((nx, ny));
+                    continue;
+                }
+
+                // Set distance from connected floor. Skipped if current piece is empty,
+                // and by this check current has to be either solid or an unconnected floor
+                if (current.type != CellType.Empty &&
+                    current.distanceToOutsideConnectedFloor <
+                    GameConfig.MaxUnexploredCellsVisible)
+                {
+                    var nextDistance = current.distanceToOutsideConnectedFloor + 1;
+                    if (neighbour.distanceToOutsideConnectedFloor == CellState.DISTANCE_UNINITIALIZED ||
+                        neighbour.distanceToOutsideConnectedFloor >
+                        nextDistance)
+                    {
+                        neighbour.distanceToOutsideConnectedFloor = nextDistance;
+                        queue.Enqueue((nx, ny));
+                    }
                 }
             }
         }
