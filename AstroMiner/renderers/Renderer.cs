@@ -10,6 +10,7 @@ public class Renderer
     private readonly ExplosionRenderer _explosionRenderer;
     private readonly FrameCounter _frameCounter;
     private readonly GameState _gameState;
+    private readonly GradientOverlayRenderer _gradientOverlayRenderer;
     private readonly GraphicsDeviceManager _graphics;
     private readonly RenderTarget2D _lightingRenderTarget;
     private readonly MinerRenderer _minerRenderer;
@@ -36,6 +37,7 @@ public class Renderer
         _dynamiteRenderer = new DynamiteRenderer(textures, _gameState, _viewHelpers);
         _explosionRenderer = new ExplosionRenderer(textures, _gameState, _viewHelpers);
         _userInterfaceRenderer = new UserInterfaceRenderer(textures, _gameState, _viewHelpers);
+        _gradientOverlayRenderer = new GradientOverlayRenderer(textures, _gameState, _viewHelpers);
         _rendererHelpers = new RendererHelpers(_viewHelpers, textures);
         _multiplyBlendState = new BlendState();
         _multiplyBlendState.ColorBlendFunction = BlendFunction.Add;
@@ -96,20 +98,12 @@ public class Renderer
                 spriteBatch.Draw(_textures["rock-tileset"], _viewHelpers.GetVisibleRectForGridCell(col, row),
                     tilesetSourceRect,
                     Color.White);
-                if (cellState.distanceToOutsideConnectedFloor == 0)
-                    spriteBatch.Draw(_textures["radial-light"], _viewHelpers.GetVisibleRectForGridCell(col, row),
-                        Color.Blue);
                 if (cellState.hasLavaWell)
                     spriteBatch.Draw(_textures["radial-light"], _viewHelpers.GetVisibleRectForGridCell(col, row),
                         Color.Yellow);
             }
 
-            if (cellState.distanceToOutsideConnectedFloor > 1)
-            {
-                var rect = _viewHelpers.GetVisibleRectForGridCell(col, row);
-                _userInterfaceRenderer.RenderString(spriteBatch, rect.X + 20, rect.Y + 20,
-                    cellState.distanceToOutsideConnectedFloor.ToString());
-            }
+            _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row);
         }
 
         foreach (var entity in _gameState.ActiveEntitiesSortedByDistance)
@@ -154,22 +148,5 @@ public class Renderer
         spriteBatch.End();
 
         _graphics.GraphicsDevice.SetRenderTarget(null);
-    }
-
-    private bool HasFloorWithinTwoTiles(int col, int row)
-    {
-        for (var x = col - 1; x <= col + 1; x++)
-            if ((ViewHelpers.IsValidGridPosition(x, row - 2) &&
-                 _gameState.Grid.GetCellType(x, row - 2) == CellType.Floor) ||
-                (ViewHelpers.IsValidGridPosition(x, row + 2) &&
-                 _gameState.Grid.GetCellType(x, row + 2) == CellType.Floor))
-                return true;
-        for (var y = row - 1; y <= row + 1; y++)
-            if ((ViewHelpers.IsValidGridPosition(col + 2, y) &&
-                 _gameState.Grid.GetCellType(col + 2, y) == CellType.Floor) ||
-                (ViewHelpers.IsValidGridPosition(col - 2, y) &&
-                 _gameState.Grid.GetCellType(col - 2, y) == CellType.Floor))
-                return true;
-        return false;
     }
 }
