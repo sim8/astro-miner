@@ -111,7 +111,7 @@ public class GradientOverlayRenderer
             var overlaySourceRect = GetSourceRect(cellState.gradientKey);
             var solidSourceRect = GetSourceRect(GradientKeyHelpers.InitialKey);
 
-            if (cellState.distanceToOutsideConnectedFloor == 2)
+            if (cellState.distanceToOutsideConnectedFloor == 2 && cellState.gradientKey > 0)
             {
                 // spriteBatch.Draw(_textures["gradient-set"], _viewHelpers.GetVisibleRectForGridCell(col, row),
                 //     overlaySourceRect, overlayColor * overlayOpacityMidPoint);
@@ -122,8 +122,9 @@ public class GradientOverlayRenderer
             {
                 spriteBatch.Draw(_textures["gradient-set"], _viewHelpers.GetVisibleRectForGridCell(col, row),
                     solidSourceRect, overlayColor * overlayOpacityMidPoint);
-                spriteBatch.Draw(_textures["gradient-set"], _viewHelpers.GetVisibleRectForGridCell(col, row),
-                    overlaySourceRect, overlayColor);
+                if (cellState.gradientKey > 0)
+                    spriteBatch.Draw(_textures["gradient-set"], _viewHelpers.GetVisibleRectForGridCell(col, row),
+                        overlaySourceRect, overlayColor);
             }
             else
             {
@@ -148,8 +149,8 @@ public class GradientOverlayRenderer
             var rect = _viewHelpers.GetVisibleRectForGridCell(col, row);
             removeMe.RenderString(spriteBatch, rect.X + 20, rect.Y,
                 cellState.distanceToOutsideConnectedFloor.ToString());
-            removeMe.RenderString(spriteBatch, rect.X + 20, rect.Y + 25,
-                cellState.gradientKey.ToString(), 2);
+            removeMe.RenderString(spriteBatch, rect.X, rect.Y + 25,
+                "X" + col + " Y" + row, 1);
         }
     }
 }
