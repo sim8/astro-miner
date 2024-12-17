@@ -94,6 +94,8 @@ public class GridState(GameState gameState, CellState[,] grid)
         Queue<(int x, int y)> queue = new();
         queue.Enqueue((x, y));
 
+        HashSet<(int x, int y)> updateGradientsFor = new();
+
         // BFS
         while (queue.Count > 0)
         {
@@ -123,7 +125,8 @@ public class GridState(GameState gameState, CellState[,] grid)
                 // and by this check current has to be either solid or an unconnected floor
                 else if (neighbour.type != CellType.Empty && current.type != CellType.Empty &&
                          current.distanceToOutsideConnectedFloor <
-                         GameConfig.MaxUnexploredCellsVisible)
+                         GameConfig.MaxUnexploredCellsVisible +
+                         1) // add one to get gradients for furthest visible cells
                 {
                     var nextDistance = current.distanceToOutsideConnectedFloor + 1;
                     if (neighbour.distanceToOutsideConnectedFloor == CellState.DISTANCE_UNINITIALIZED_OR_ABOVE_MAX ||
@@ -131,22 +134,23 @@ public class GridState(GameState gameState, CellState[,] grid)
                         nextDistance)
                     {
                         neighbour.distanceToOutsideConnectedFloor = nextDistance;
-                        if (nextDistance > 2) UpdateGradientKeys(nx, ny);
+                        neighbour.gradientKey = GradientKeyHelpers.InitialKey;
+                        if (nextDistance > 2) updateGradientsFor.Add((nx, ny));
 
                         queue.Enqueue((nx, ny));
                     }
                 }
             });
         }
+
+        foreach (var (cx, cy) in updateGradientsFor) UpdateGradientKeys(cx, cy);
     }
 
-    // Assumes distanceToOutsideConnectedFloor has just incremented.
-    // Sets current cell to flat gradient and ensures neighbors ramp up to
-    // current cell if they're a lower distance
+    // Called for each cell that distanceToOutsideConnectedFloor has changed for
+    // Assumes gradient has been flattened before calling
     public void UpdateGradientKeys(int x, int y)
     {
         var current = GetCellState(x, y);
-        current.gradientKey = GradientKeyHelpers.InitialKey;
         MapNeighbors(x, y, (nx, ny) =>
         {
             var neighbor = GetCellState(nx, ny);

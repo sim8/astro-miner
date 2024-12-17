@@ -111,25 +111,33 @@ public class GradientOverlayRenderer
             var overlaySourceRect = GetSourceRect(cellState.gradientKey);
             var solidSourceRect = GetSourceRect(GradientKeyHelpers.InitialKey);
 
-            if (cellState.distanceToOutsideConnectedFloor == 2 && cellState.gradientKey > 0)
+            if (cellState.distanceToOutsideConnectedFloor == 2)
             {
-                // spriteBatch.Draw(_textures["gradient-set"], _viewHelpers.GetVisibleRectForGridCell(col, row),
-                //     overlaySourceRect, overlayColor * overlayOpacityMidPoint);
-                spriteBatch.Draw(_textures["gradient-set"], _viewHelpers.GetVisibleRectForGridCell(col, row),
-                    overlaySourceRect, Color.Red);
+                if (cellState.gradientKey > 0)
+                    // spriteBatch.Draw(_textures["gradient-set"], _viewHelpers.GetVisibleRectForGridCell(col, row),
+                    //     overlaySourceRect, overlayColor * overlayOpacityMidPoint);
+                    spriteBatch.Draw(_textures["gradient-set"], _viewHelpers.GetVisibleRectForGridCell(col, row),
+                        overlaySourceRect, Color.Red);
             }
             else if (cellState.distanceToOutsideConnectedFloor == 3)
             {
+                // spriteBatch.Draw(_textures["gradient-set"], _viewHelpers.GetVisibleRectForGridCell(col, row),
+                //     solidSourceRect, overlayColor * overlayOpacityMidPoint);
+                // if (cellState.gradientKey > 0)
+                //     spriteBatch.Draw(_textures["gradient-set"], _viewHelpers.GetVisibleRectForGridCell(col, row),
+                //         overlaySourceRect, overlayColor);
                 spriteBatch.Draw(_textures["gradient-set"], _viewHelpers.GetVisibleRectForGridCell(col, row),
-                    solidSourceRect, overlayColor * overlayOpacityMidPoint);
+                    solidSourceRect, Color.Red);
                 if (cellState.gradientKey > 0)
                     spriteBatch.Draw(_textures["gradient-set"], _viewHelpers.GetVisibleRectForGridCell(col, row),
-                        overlaySourceRect, overlayColor);
+                        overlaySourceRect, Color.Blue);
             }
             else
             {
                 spriteBatch.Draw(_textures["gradient-set"], _viewHelpers.GetVisibleRectForGridCell(col, row),
                     solidSourceRect, overlayColor);
+                spriteBatch.Draw(_textures["gradient-set"], _viewHelpers.GetVisibleRectForGridCell(col, row),
+                    solidSourceRect, Color.Blue);
             }
 
             // var rect = _viewHelpers.GetVisibleRectForGridCell(col, row);
