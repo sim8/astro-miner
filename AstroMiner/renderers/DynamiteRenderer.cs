@@ -1,14 +1,11 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace AstroMiner;
 
 public class DynamiteRenderer(
-    Dictionary<string, Texture2D> textures,
-    GameState gameState,
-    ViewHelpers viewHelpers)
+    RendererShared shared)
 {
     private const int DynamiteBoxOffsetX = -1;
     private const int DynamiteBoxOffsetY = -6;
@@ -35,10 +32,10 @@ public class DynamiteRenderer(
             0, 0,
             6,
             11);
-        var destinationRectangle = viewHelpers.GetVisibleRectForObject(dynamiteEntity.Position,
+        var destinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(dynamiteEntity.Position,
             6, 11, DynamiteBoxOffsetX, DynamiteBoxOffsetY);
 
-        spriteBatch.Draw(textures["dynamite"], destinationRectangle, sourceRectangle, Color.White);
+        spriteBatch.Draw(shared.Textures["dynamite"], destinationRectangle, sourceRectangle, Color.White);
 
         var fuseLeftPx = (int)Math.Floor(dynamiteEntity.FusePercentLeft * FuseLengthPx);
 
@@ -50,19 +47,19 @@ public class DynamiteRenderer(
                 7, SparksBorderSize + (SparksBoxSize + SparksBorderSize) * sparksIndex,
                 SparksBoxSize,
                 SparksBoxSize);
-            var sparksDestinationRectangle = viewHelpers.GetVisibleRectForObject(dynamiteEntity.Position,
+            var sparksDestinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(dynamiteEntity.Position,
                 SparksBoxSize, SparksBoxSize, 0, -(5 + fuseLeftPx));
 
-            spriteBatch.Draw(textures["dynamite"], sparksDestinationRectangle, sparksSourceRectangle, Color.White);
+            spriteBatch.Draw(shared.Textures["dynamite"], sparksDestinationRectangle, sparksSourceRectangle,
+                Color.White);
         }
     }
 
-    public void RenderLightSource(SpriteBatch spriteBatch, DynamiteEntity dynamiteEntity,
-        RendererHelpers rendererHelpers)
+    public void RenderLightSource(SpriteBatch spriteBatch, DynamiteEntity dynamiteEntity)
     {
         var (shouldShow, _) = GetSparksIndex(dynamiteEntity);
 
         var lightSourcePos = dynamiteEntity.CenterPosition;
-        rendererHelpers.RenderRadialLightSource(spriteBatch, lightSourcePos, 128, shouldShow ? 0.3f : 0.1f);
+        shared.RenderRadialLightSource(spriteBatch, lightSourcePos, 128, shouldShow ? 0.3f : 0.1f);
     }
 }

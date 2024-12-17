@@ -1,13 +1,10 @@
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace AstroMiner;
 
 public class MinerRenderer(
-    Dictionary<string, Texture2D> textures,
-    GameState gameState,
-    ViewHelpers viewHelpers)
+    RendererShared shared)
 {
     private const int MinerBoxOffsetX = -13;
     private const int MinerBoxOffsetY = -20;
@@ -16,28 +13,32 @@ public class MinerRenderer(
     public void RenderMiner(SpriteBatch spriteBatch)
     {
         var sourceRectangle = new Rectangle(
-            gameState.Miner.Direction is Direction.Bottom or Direction.Left
+            shared.GameState.Miner.Direction is Direction.Bottom or Direction.Left
                 ? 0
                 : MinerTextureSize,
-            gameState.Miner.Direction is Direction.Top or Direction.Left
+            shared.GameState.Miner.Direction is Direction.Top or Direction.Left
                 ? 0
                 : MinerTextureSize,
             MinerTextureSize,
             MinerTextureSize);
-        var destinationRectangle = viewHelpers.GetVisibleRectForObject(gameState.Miner.Position,
+        var destinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(shared.GameState.Miner.Position,
             MinerTextureSize, MinerTextureSize, MinerBoxOffsetX, MinerBoxOffsetY);
 
         spriteBatch.Draw(GetTracksTexture(), destinationRectangle, sourceRectangle, Color.White);
-        spriteBatch.Draw(textures["miner-no-tracks"], destinationRectangle, sourceRectangle, Color.White);
+        spriteBatch.Draw(shared.Textures["miner-no-tracks"], destinationRectangle, sourceRectangle, Color.White);
     }
 
     private Texture2D GetTracksTexture()
     {
-        var (gridX, gridY) = ViewHelpers.GridPosToTexturePx(gameState.Miner.Position);
-        if (gameState.Miner.Direction is Direction.Top) return textures["tracks-" + (2 - gridY % 3)];
-        if (gameState.Miner.Direction is Direction.Right) return textures["tracks-" + gridX % 3];
-        if (gameState.Miner.Direction is Direction.Bottom) return textures["tracks-" + gridY % 3];
-        if (gameState.Miner.Direction is Direction.Left) return textures["tracks-" + (2 - gridX % 3)];
-        return textures["tracks-1"];
+        var (gridX, gridY) = ViewHelpers.GridPosToTexturePx(shared.GameState.Miner.Position);
+        switch (shared.GameState.Miner.Direction)
+        {
+            case Direction.Top: return shared.Textures["tracks-" + (2 - gridY % 3)];
+            case Direction.Right: return shared.Textures["tracks-" + gridX % 3];
+            case Direction.Bottom: return shared.Textures["tracks-" + gridY % 3];
+            case Direction.Left: return shared.Textures["tracks-" + (2 - gridX % 3)];
+        }
+
+        return shared.Textures["tracks-1"];
     }
 }

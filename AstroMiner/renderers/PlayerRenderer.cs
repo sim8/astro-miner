@@ -5,9 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace AstroMiner;
 
 public class PlayerRenderer(
-    Dictionary<string, Texture2D> textures,
-    GameState gameState,
-    ViewHelpers viewHelpers)
+    RendererShared shared)
 {
     private const int PlayerBoxOffsetX = -16;
     private const int PlayerBoxOffsetY = -22;
@@ -15,7 +13,7 @@ public class PlayerRenderer(
 
     public void RenderPlayer(SpriteBatch spriteBatch)
     {
-        var textureFrameOffsetX = gameState.Player.Direction switch
+        var textureFrameOffsetX = shared.GameState.Player.Direction switch
         {
             Direction.Bottom => 0,
             Direction.Left => PlayerTextureSizePx * 1,
@@ -27,9 +25,9 @@ public class PlayerRenderer(
             textureFrameOffsetX, 0,
             PlayerTextureSizePx,
             PlayerTextureSizePx);
-        var destinationRectangle = viewHelpers.GetVisibleRectForObject(gameState.Player.Position,
+        var destinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(shared.GameState.Player.Position,
             PlayerTextureSizePx, PlayerTextureSizePx, PlayerBoxOffsetX, PlayerBoxOffsetY);
 
-        spriteBatch.Draw(textures["player"], destinationRectangle, sourceRectangle, Color.White);
+        spriteBatch.Draw(shared.Textures["player"], destinationRectangle, sourceRectangle, Color.White);
     }
 }
