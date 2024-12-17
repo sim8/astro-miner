@@ -125,8 +125,8 @@ public class Renderer
         _graphics.GraphicsDevice.Clear(Color.White);
         spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
         var (viewportWidth, viewportHeight) = _viewHelpers.GetViewportSize();
-        spriteBatch.Draw(_textures["dark-screen"], new Rectangle(0, 0, viewportWidth, viewportHeight),
-            Color.White * 0.8f);
+        spriteBatch.Draw(_textures["white"], new Rectangle(0, 0, viewportWidth, viewportHeight),
+            GradientOverlayRenderer.OverlayColor * 0.8f);
 
 
         _rendererHelpers.RenderDirectionalLightSource(spriteBatch, _gameState.Miner.GetDirectionalLightSource(),
@@ -145,7 +145,12 @@ public class Renderer
             else if (entity is ExplosionEntity explosionEntity)
                 _explosionRenderer.RenderLightSource(spriteBatch, explosionEntity, _rendererHelpers);
 
+        for (var row = 0; row < GameConfig.GridSize; row++)
+        for (var col = 0; col < GameConfig.GridSize; col++)
+            _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row, _userInterfaceRenderer, 1, 2);
+
         spriteBatch.End();
+
 
         _graphics.GraphicsDevice.SetRenderTarget(null);
     }

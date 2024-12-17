@@ -7,6 +7,7 @@ namespace AstroMiner;
 public class GradientOverlayRenderer
 {
     private static readonly int TextureSizePx = 256;
+    public static readonly Color OverlayColor = new(37, 73, 99);
 
     private readonly Dictionary<int, (int x, int y)> _gradientKeysToOffsets;
     private readonly Dictionary<string, Texture2D> _textures;
@@ -98,37 +99,38 @@ public class GradientOverlayRenderer
             TextureSizePx);
     }
 
-    public void RenderGradientOverlay(SpriteBatch spriteBatch, int col, int row, UserInterfaceRenderer removeMe)
+    // Two tiers of gradients is hard
+    public void RenderGradientOverlay(SpriteBatch spriteBatch, int col, int row, UserInterfaceRenderer removeMe,
+        int innerGradientDepth = 2, int outerGradientDepth = 3)
     {
         var cellState = gameState.Grid.GetCellState(col, row);
-        if (cellState.distanceToOutsideConnectedFloor > 1 ||
+        if (cellState.distanceToOutsideConnectedFloor >= innerGradientDepth ||
             cellState.distanceToOutsideConnectedFloor ==
             CellState.DISTANCE_UNINITIALIZED_OR_ABOVE_MAX) // Cell above max, always render overlay
         {
             var overlayOpacityMidPoint = 0.6f;
-            var overlayColor = new Color(37, 73, 99);
 
             var overlaySourceRect = GetSourceRect(cellState.gradientKey);
             var solidSourceRect = GetSourceRect(GradientKeyHelpers.InitialKey);
 
-            if (cellState.distanceToOutsideConnectedFloor == 2)
+            if (cellState.distanceToOutsideConnectedFloor == innerGradientDepth)
             {
                 if (cellState.gradientKey > 0)
                     spriteBatch.Draw(_textures["gradient-set"], _viewHelpers.GetVisibleRectForGridCell(col, row),
-                        overlaySourceRect, overlayColor * overlayOpacityMidPoint);
+                        overlaySourceRect, OverlayColor * overlayOpacityMidPoint);
             }
-            else if (cellState.distanceToOutsideConnectedFloor == 3)
+            else if (cellState.distanceToOutsideConnectedFloor == outerGradientDepth)
             {
                 spriteBatch.Draw(_textures["gradient-set"], _viewHelpers.GetVisibleRectForGridCell(col, row),
-                    solidSourceRect, overlayColor * overlayOpacityMidPoint);
+                    solidSourceRect, OverlayColor * overlayOpacityMidPoint);
                 if (cellState.gradientKey > 0)
                     spriteBatch.Draw(_textures["gradient-set"], _viewHelpers.GetVisibleRectForGridCell(col, row),
-                        overlaySourceRect, overlayColor);
+                        overlaySourceRect, OverlayColor);
             }
             else
             {
                 spriteBatch.Draw(_textures["gradient-set"], _viewHelpers.GetVisibleRectForGridCell(col, row),
-                    solidSourceRect, overlayColor);
+                    solidSourceRect, OverlayColor);
             }
         }
 
