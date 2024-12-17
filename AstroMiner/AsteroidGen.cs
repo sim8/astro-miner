@@ -138,8 +138,7 @@ public static class AsteroidGen
                 cellType = CellType.Empty;
             }
 
-            var hasLavaWell = cellType == CellType.Ruby; // TODO just for testing
-            grid[x, y] = new CellState(cellType, hasLavaWell);
+            grid[x, y] = new CellState(cellType);
         }
 
         return grid;

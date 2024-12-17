@@ -46,9 +46,6 @@ public class ProcGenViewerRenderer
                     GameConfig.CellTextureSizePx, GameConfig.CellTextureSizePx);
                 spriteBatch.Draw(_textures[name], GetGridCellRect(col, row),
                     tilesetSourceRect, Color.White);
-                if (cellState.hasLavaWell)
-                    spriteBatch.Draw(_textures["radial-light"], GetGridCellRect(col, row),
-                        Color.Yellow);
             }
             else if (cellState.type == CellType.Floor)
             {

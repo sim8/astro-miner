@@ -98,9 +98,6 @@ public class Renderer
                 spriteBatch.Draw(_textures["rock-tileset"], _viewHelpers.GetVisibleRectForGridCell(col, row),
                     tilesetSourceRect,
                     Color.White);
-                if (cellState.hasLavaWell)
-                    spriteBatch.Draw(_textures["radial-light"], _viewHelpers.GetVisibleRectForGridCell(col, row),
-                        Color.Yellow);
             }
 
             _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row, _userInterfaceRenderer);

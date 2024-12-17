@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace AstroMiner;
 
-public class CellState(CellType type, bool hasLavaWell)
+public class CellState(CellType type)
 {
     public const int DISTANCE_UNINITIALIZED_OR_ABOVE_MAX = -2;
     public const int DISTANCE_EMPTY = -1;
@@ -15,9 +15,10 @@ public class CellState(CellType type, bool hasLavaWell)
      */
     public int distanceToOutsideConnectedFloor = DISTANCE_UNINITIALIZED_OR_ABOVE_MAX;
 
+    // Used to determine which gradient to use on the overlay (creates effect
+    // of fading darkness towards unexplored cells)
     public int gradientKey;
 
-    public bool hasLavaWell = hasLavaWell;
     public CellType type = type;
 }
 
@@ -150,6 +151,7 @@ public class GridState(GameState gameState, CellState[,] grid)
         }
     }
 
+    // Updates the gradient for a cell's overlay based on the distance of cells surrounding it
     private void UpdateGradientKey(int x, int y)
     {
         var currentCell = GetCellState(x, y);
