@@ -1,5 +1,3 @@
-using System;
-
 namespace AstroMiner;
 
 // Enum for corners (mapping bits for clarity)
@@ -20,7 +18,6 @@ public static class GradientKeyHelpers
     {
         var key = InitialKey;
         foreach (var corner in corners) key |= 1 << (int)corner;
-        Console.WriteLine(key);
         return key;
     }
 

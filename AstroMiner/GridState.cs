@@ -94,6 +94,7 @@ public class GridState(GameState gameState, CellState[,] grid)
         Queue<(int x, int y)> queue = new();
         queue.Enqueue((x, y));
 
+        // Update gradients after distanceToOutsideConnectedFloor's stable
         HashSet<(int x, int y)> updateGradientsFor = new();
 
         // BFS
@@ -134,8 +135,7 @@ public class GridState(GameState gameState, CellState[,] grid)
                         nextDistance)
                     {
                         neighbour.distanceToOutsideConnectedFloor = nextDistance;
-                        neighbour.gradientKey = GradientKeyHelpers.InitialKey;
-                        if (nextDistance > 2) updateGradientsFor.Add((nx, ny));
+                        updateGradientsFor.Add((nx, ny));
 
                         queue.Enqueue((nx, ny));
                     }
@@ -143,116 +143,60 @@ public class GridState(GameState gameState, CellState[,] grid)
             });
         }
 
-        foreach (var (cx, cy) in updateGradientsFor) UpdateGradientKeys(cx, cy);
+        foreach (var (cx, cy) in updateGradientsFor)
+        {
+            UpdateGradientKey(cx, cy);
+            MapNeighbors(cx, cy, UpdateGradientKey);
+        }
     }
 
-    // Called for each cell that distanceToOutsideConnectedFloor has changed for
-    // Assumes gradient has been flattened before calling
-    public void UpdateGradientKeys(int x, int y)
+    private void UpdateGradientKey(int x, int y)
     {
-        var current = GetCellState(x, y);
-        MapNeighbors(x, y, (nx, ny) =>
-        {
-            var neighbor = GetCellState(nx, ny);
-            var higherThanNeighbour =
-                current.distanceToOutsideConnectedFloor > neighbor.distanceToOutsideConnectedFloor;
-            var lowerThanNeighbour = current.distanceToOutsideConnectedFloor < neighbor.distanceToOutsideConnectedFloor;
-            if (current.distanceToOutsideConnectedFloor > neighbor.distanceToOutsideConnectedFloor)
-            {
-                // Determine which corners of the neighbor cell adjoin the current cell
-                if (nx == x + 1 && ny == y) // Right neighbor
-                {
-                    neighbor.gradientKey = GradientKeyHelpers.SetCorners(
-                        neighbor.gradientKey,
-                        Corner.TopLeft,
-                        Corner.BottomLeft,
-                        higherThanNeighbour
-                    );
-                }
-                else if (nx == x - 1 && ny == y) // Left neighbor
-                {
-                    neighbor.gradientKey = GradientKeyHelpers.SetCorners(
-                        neighbor.gradientKey,
-                        Corner.TopRight,
-                        Corner.BottomRight,
-                        higherThanNeighbour
-                    );
-                }
-                else if (nx == x && ny == y + 1) // Bottom neighbor
-                {
-                    neighbor.gradientKey = GradientKeyHelpers.SetCorners(
-                        neighbor.gradientKey,
-                        Corner.TopLeft,
-                        Corner.TopRight,
-                        higherThanNeighbour
-                    );
-                }
-                else if (nx == x && ny == y - 1) // Top neighbor
-                {
-                    neighbor.gradientKey = GradientKeyHelpers.SetCorners(
-                        neighbor.gradientKey,
-                        Corner.BottomLeft,
-                        Corner.BottomRight,
-                        higherThanNeighbour
-                    );
-                }
-                else if (nx == x + 1 && ny == y + 1) // Bottom-right neighbor
-                {
-                    neighbor.gradientKey = GradientKeyHelpers.SetCorner(
-                        neighbor.gradientKey,
-                        Corner.TopLeft,
-                        higherThanNeighbour
-                    );
-                    if (lowerThanNeighbour)
-                        current.gradientKey = GradientKeyHelpers.SetCorner(
-                            current.gradientKey,
-                            Corner.BottomRight,
-                            true
-                        );
-                }
-                else if (nx == x - 1 && ny == y + 1) // Bottom-left neighbor
-                {
-                    neighbor.gradientKey = GradientKeyHelpers.SetCorner(
-                        neighbor.gradientKey,
-                        Corner.TopRight,
-                        higherThanNeighbour
-                    );
-                    if (lowerThanNeighbour)
-                        current.gradientKey = GradientKeyHelpers.SetCorner(
-                            current.gradientKey,
-                            Corner.BottomLeft,
-                            true
-                        );
-                }
-                else if (nx == x + 1 && ny == y - 1) // Top-right neighbor
-                {
-                    neighbor.gradientKey = GradientKeyHelpers.SetCorner(
-                        neighbor.gradientKey,
-                        Corner.BottomLeft,
-                        higherThanNeighbour
-                    );
-                    if (lowerThanNeighbour)
-                        current.gradientKey = GradientKeyHelpers.SetCorner(
-                            current.gradientKey,
-                            Corner.TopRight,
-                            true
-                        );
-                }
-                else if (nx == x - 1 && ny == y - 1) // Top-left neighbor
-                {
-                    neighbor.gradientKey = GradientKeyHelpers.SetCorner(
-                        neighbor.gradientKey,
-                        Corner.BottomRight,
-                        higherThanNeighbour
-                    );
-                    if (lowerThanNeighbour)
-                        current.gradientKey = GradientKeyHelpers.SetCorner(
-                            current.gradientKey,
-                            Corner.TopLeft,
-                            true
-                        );
-                }
-            }
-        });
+        var currentCell = GetCellState(x, y);
+        var currentDistance = currentCell.distanceToOutsideConnectedFloor;
+
+        var corners = new List<Corner>(4);
+
+        // Pre-fetch neighbors for TopLeft checks
+        var n_tl1 = GetCellState(x - 1, y);
+        var n_tl2 = GetCellState(x - 1, y - 1);
+        var n_tl3 = GetCellState(x, y - 1);
+
+        if ((n_tl1 != null && n_tl1.distanceToOutsideConnectedFloor > currentDistance) ||
+            (n_tl2 != null && n_tl2.distanceToOutsideConnectedFloor > currentDistance) ||
+            (n_tl3 != null && n_tl3.distanceToOutsideConnectedFloor > currentDistance))
+            corners.Add(Corner.TopLeft);
+
+        // TopRight checks
+        var n_tr1 = GetCellState(x + 1, y);
+        var n_tr2 = GetCellState(x + 1, y - 1);
+        var n_tr3 = GetCellState(x, y - 1);
+
+        if ((n_tr1 != null && n_tr1.distanceToOutsideConnectedFloor > currentDistance) ||
+            (n_tr2 != null && n_tr2.distanceToOutsideConnectedFloor > currentDistance) ||
+            (n_tr3 != null && n_tr3.distanceToOutsideConnectedFloor > currentDistance))
+            corners.Add(Corner.TopRight);
+
+        // BottomLeft checks
+        var n_bl1 = GetCellState(x - 1, y);
+        var n_bl2 = GetCellState(x - 1, y + 1);
+        var n_bl3 = GetCellState(x, y + 1);
+
+        if ((n_bl1 != null && n_bl1.distanceToOutsideConnectedFloor > currentDistance) ||
+            (n_bl2 != null && n_bl2.distanceToOutsideConnectedFloor > currentDistance) ||
+            (n_bl3 != null && n_bl3.distanceToOutsideConnectedFloor > currentDistance))
+            corners.Add(Corner.BottomLeft);
+
+        // BottomRight checks
+        var n_br1 = GetCellState(x + 1, y);
+        var n_br2 = GetCellState(x + 1, y + 1);
+        var n_br3 = GetCellState(x, y + 1);
+
+        if ((n_br1 != null && n_br1.distanceToOutsideConnectedFloor > currentDistance) ||
+            (n_br2 != null && n_br2.distanceToOutsideConnectedFloor > currentDistance) ||
+            (n_br3 != null && n_br3.distanceToOutsideConnectedFloor > currentDistance))
+            corners.Add(Corner.BottomRight);
+
+        currentCell.gradientKey = GradientKeyHelpers.CreateKey(corners.ToArray());
     }
 }

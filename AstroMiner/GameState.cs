@@ -55,8 +55,6 @@ public class GameState
 
     private void InitSeed()
     {
-        Seed = 901;
-        return;
         var rnd = new Random();
         Seed = rnd.Next(1, 999);
     }
