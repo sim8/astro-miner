@@ -99,7 +99,7 @@ public class GradientOverlayRenderer
             TextureSizePx);
     }
 
-    // Two tiers of gradients is hard
+    // Two tiers of gradients. Values have to be consecutive and are constrained by MaxUnexploredCellsVisible
     public void RenderGradientOverlay(SpriteBatch spriteBatch, int col, int row, UserInterfaceRenderer removeMe,
         int innerGradientDepth = 2, int outerGradientDepth = 3)
     {
