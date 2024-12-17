@@ -38,7 +38,7 @@ public class ProcGenViewerRenderer
         for (var col = 0; col < GameConfig.GridSize; col++)
         {
             var cellState = _gameState.Grid.GetCellState(col, row);
-            if (Tilesets.TilesetTextureNames.TryGetValue(cellState, out var name))
+            if (Tilesets.TilesetTextureNames.TryGetValue(cellState.type, out var name))
             {
                 var offset = Tilesets.GetTileCoords(_gameState, col, row);
                 var tilesetSourceRect = new Rectangle(offset.Item1 * GameConfig.CellTextureSizePx,
@@ -47,11 +47,12 @@ public class ProcGenViewerRenderer
                 spriteBatch.Draw(_textures[name], GetGridCellRect(col, row),
                     tilesetSourceRect, Color.White);
             }
-            else if (_gameState.Grid.GetCellState(col, row) == CellState.Floor)
+            else if (cellState.type == CellType.Floor)
             {
                 var tilesetSourceRect = new Rectangle(3 * GameConfig.CellTextureSizePx,
                     GameConfig.CellTextureSizePx,
                     GameConfig.CellTextureSizePx, GameConfig.CellTextureSizePx);
+
                 spriteBatch.Draw(_textures["rock-tileset"], GetGridCellRect(col, row),
                     tilesetSourceRect,
                     Color.White);

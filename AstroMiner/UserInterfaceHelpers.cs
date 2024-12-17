@@ -9,8 +9,8 @@ public static class UserInterfaceHelpers
         var edgeCells = new List<(int x, int y)>();
         for (var x = 0; x < GameConfig.GridSize; x++)
         for (var y = 0; y < GameConfig.GridSize; y++)
-            if (gridState.GetCellState(x, y) != CellState.Empty &&
-                gridState.CellHasNeighbourOfType(x, y, CellState.Empty))
+            if (gridState.GetCellType(x, y) != CellType.Empty &&
+                gridState.CellHasNeighbourOfType(x, y, CellType.Empty))
                 edgeCells.Add((x, y));
 
         return edgeCells;

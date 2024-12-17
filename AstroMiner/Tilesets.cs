@@ -21,7 +21,7 @@ internal enum Neighbours
 public static class Tilesets
 {
     private static readonly (int, int)[] Offsets;
-    public static readonly Dictionary<CellState, string> TilesetTextureNames;
+    public static readonly Dictionary<CellType, string> TilesetTextureNames;
 
     static Tilesets()
     {
@@ -38,12 +38,12 @@ public static class Tilesets
             (-1, -1) // AboveLeft (bit position 7)
         };
 
-        TilesetTextureNames = new Dictionary<CellState, string>
+        TilesetTextureNames = new Dictionary<CellType, string>
         {
-            { CellState.Rock, "rock-tileset" },
-            { CellState.SolidRock, "solid-rock-tileset" },
-            { CellState.Diamond, "diamond-tileset" },
-            { CellState.Ruby, "ruby-tileset" }
+            { CellType.Rock, "rock-tileset" },
+            { CellType.SolidRock, "solid-rock-tileset" },
+            { CellType.Diamond, "diamond-tileset" },
+            { CellType.Ruby, "ruby-tileset" }
         };
     }
 
@@ -121,8 +121,8 @@ public static class Tilesets
                 continue;
 
             var offset = Offsets[i];
-            var cellState = state.Grid.GetCellState(col + offset.Item1, row + offset.Item2);
-            var isFilled = cellState != CellState.Empty && cellState != CellState.Floor;
+            var cellType = state.Grid.GetCellType(col + offset.Item1, row + offset.Item2);
+            var isFilled = cellType != CellType.Empty && cellType != CellType.Floor;
             var shouldBeFilled = (shouldBeEmptyNeighbours & neighbour) == Neighbours.None;
 
             if (isFilled != shouldBeFilled)

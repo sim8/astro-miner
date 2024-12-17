@@ -10,6 +10,7 @@ public class Renderer
     private readonly ExplosionRenderer _explosionRenderer;
     private readonly FrameCounter _frameCounter;
     private readonly GameState _gameState;
+    private readonly GradientOverlayRenderer _gradientOverlayRenderer;
     private readonly GraphicsDeviceManager _graphics;
     private readonly RenderTarget2D _lightingRenderTarget;
     private readonly MinerRenderer _minerRenderer;
@@ -36,6 +37,7 @@ public class Renderer
         _dynamiteRenderer = new DynamiteRenderer(textures, _gameState, _viewHelpers);
         _explosionRenderer = new ExplosionRenderer(textures, _gameState, _viewHelpers);
         _userInterfaceRenderer = new UserInterfaceRenderer(textures, _gameState, _viewHelpers);
+        _gradientOverlayRenderer = new GradientOverlayRenderer(textures, _gameState, _viewHelpers);
         _rendererHelpers = new RendererHelpers(_viewHelpers, textures);
         _multiplyBlendState = new BlendState();
         _multiplyBlendState.ColorBlendFunction = BlendFunction.Add;
@@ -63,7 +65,7 @@ public class Renderer
         // Multiply lights/shadow with scene
         spriteBatch.Begin(SpriteSortMode.Deferred, _multiplyBlendState, SamplerState.PointClamp);
         var (viewportWidth, viewportHeight) = _viewHelpers.GetViewportSize();
-        spriteBatch.Draw(_lightingRenderTarget, new Rectangle(0, 0, viewportWidth, viewportHeight), Color.White * 1f);
+        spriteBatch.Draw(_lightingRenderTarget, new Rectangle(0, 0, viewportWidth, viewportHeight), Color.White);
         spriteBatch.End();
 
         // Lastly, draw UI
@@ -78,7 +80,8 @@ public class Renderer
         for (var col = 0; col < GameConfig.GridSize; col++)
         {
             var cellState = _gameState.Grid.GetCellState(col, row);
-            if (Tilesets.TilesetTextureNames.TryGetValue(cellState, out var name))
+            var cellType = cellState.type;
+            if (Tilesets.TilesetTextureNames.TryGetValue(cellType, out var name))
             {
                 var offset = Tilesets.GetTileCoords(_gameState, col, row);
                 var tilesetSourceRect = new Rectangle(offset.Item1 * GameConfig.CellTextureSizePx,
@@ -86,18 +89,8 @@ public class Renderer
                     GameConfig.CellTextureSizePx, GameConfig.CellTextureSizePx);
                 spriteBatch.Draw(_textures[name], _viewHelpers.GetVisibleRectForGridCell(col, row),
                     tilesetSourceRect, Color.White);
-                if (offset == (1, 2)) // Top piece
-                {
-                    var overlayOffset = (5, 2);
-                    var overlaySourceRect = new Rectangle(overlayOffset.Item1 * GameConfig.CellTextureSizePx,
-                        overlayOffset.Item2 * GameConfig.CellTextureSizePx,
-                        GameConfig.CellTextureSizePx, GameConfig.CellTextureSizePx);
-                    var overlayOpacity = HasFloorWithinTwoTiles(col, row) ? 0.8f : 1;
-                    spriteBatch.Draw(_textures[name], _viewHelpers.GetVisibleRectForGridCell(col, row),
-                        overlaySourceRect, Color.White * overlayOpacity);
-                }
             }
-            else if (_gameState.Grid.GetCellState(col, row) == CellState.Floor)
+            else if (_gameState.Grid.GetCellType(col, row) == CellType.Floor)
             {
                 var tilesetSourceRect = new Rectangle(3 * GameConfig.CellTextureSizePx,
                     GameConfig.CellTextureSizePx,
@@ -106,6 +99,8 @@ public class Renderer
                     tilesetSourceRect,
                     Color.White);
             }
+
+            _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row, _userInterfaceRenderer);
         }
 
         foreach (var entity in _gameState.ActiveEntitiesSortedByDistance)
@@ -127,8 +122,8 @@ public class Renderer
         _graphics.GraphicsDevice.Clear(Color.White);
         spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
         var (viewportWidth, viewportHeight) = _viewHelpers.GetViewportSize();
-        spriteBatch.Draw(_textures["dark-screen"], new Rectangle(0, 0, viewportWidth, viewportHeight),
-            Color.White * 0.8f);
+        spriteBatch.Draw(_textures["white"], new Rectangle(0, 0, viewportWidth, viewportHeight),
+            GradientOverlayRenderer.OverlayColor * 0.8f);
 
 
         _rendererHelpers.RenderDirectionalLightSource(spriteBatch, _gameState.Miner.GetDirectionalLightSource(),
@@ -147,25 +142,14 @@ public class Renderer
             else if (entity is ExplosionEntity explosionEntity)
                 _explosionRenderer.RenderLightSource(spriteBatch, explosionEntity, _rendererHelpers);
 
+        // Render overlay gradients onto 
+        for (var row = 0; row < GameConfig.GridSize; row++)
+        for (var col = 0; col < GameConfig.GridSize; col++)
+            _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row, _userInterfaceRenderer, 1, 2);
+
         spriteBatch.End();
 
-        _graphics.GraphicsDevice.SetRenderTarget(null);
-    }
 
-    private bool HasFloorWithinTwoTiles(int col, int row)
-    {
-        for (var x = col - 1; x <= col + 1; x++)
-            if ((ViewHelpers.IsValidGridPosition(x, row - 2) &&
-                 _gameState.Grid.GetCellState(x, row - 2) == CellState.Floor) ||
-                (ViewHelpers.IsValidGridPosition(x, row + 2) &&
-                 _gameState.Grid.GetCellState(x, row + 2) == CellState.Floor))
-                return true;
-        for (var y = row - 1; y <= row + 1; y++)
-            if ((ViewHelpers.IsValidGridPosition(col + 2, y) &&
-                 _gameState.Grid.GetCellState(col + 2, y) == CellState.Floor) ||
-                (ViewHelpers.IsValidGridPosition(col - 2, y) &&
-                 _gameState.Grid.GetCellState(col - 2, y) == CellState.Floor))
-                return true;
-        return false;
+        _graphics.GraphicsDevice.SetRenderTarget(null);
     }
 }

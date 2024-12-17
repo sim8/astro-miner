@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace AstroMiner;
 
-public enum CellState
+public enum CellType
 {
     Empty,
     Floor,
@@ -54,6 +54,7 @@ public class AstroMinerGame : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         LoadTexture("dogica-font");
+        LoadTexture("gradient-set");
         LoadTexture("white");
         LoadTexture("floor");
         LoadTexture("rock-tileset");

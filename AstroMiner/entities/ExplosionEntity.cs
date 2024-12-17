@@ -41,10 +41,7 @@ public class ExplosionEntity : Entity
             TimeSinceExplosionMs += elapsedMs;
         }
 
-        if (TimeSinceExplosionMs >= _animationTime)
-        {
-            _gameState.DeactivateEntity(this);
-        }
+        if (TimeSinceExplosionMs >= _animationTime) _gameState.DeactivateEntity(this);
     }
 
     private List<(int x, int y)> GetCellsInRadius(float centerX, float centerY, float radius)
