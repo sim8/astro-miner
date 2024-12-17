@@ -100,7 +100,7 @@ public class Renderer
                     Color.White);
             }
 
-            _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row, _userInterfaceRenderer);
+            _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row);
         }
 
         foreach (var entity in _gameState.ActiveEntitiesSortedByDistance)
@@ -145,7 +145,7 @@ public class Renderer
         // Render overlay gradients in shadow color over lighting to block out light on unexplored cells
         for (var row = 0; row < GameConfig.GridSize; row++)
         for (var col = 0; col < GameConfig.GridSize; col++)
-            _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row, _userInterfaceRenderer, 1, 2);
+            _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row, 1, 2);
 
         spriteBatch.End();
 

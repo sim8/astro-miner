@@ -10,8 +10,8 @@ public class RendererShared(
     GraphicsDeviceManager graphics,
     Dictionary<string, Texture2D> textures)
 {
-    public readonly Dictionary<string, Texture2D> Textures = textures;
     public readonly GameState GameState = gameState;
+    public readonly Dictionary<string, Texture2D> Textures = textures;
     public readonly ViewHelpers ViewHelpers = new(gameState, graphics);
 
     public void RenderRadialLightSource(SpriteBatch spriteBatch, Vector2 pos, int size = 256, float opacity = 1)
@@ -39,5 +39,17 @@ public class RendererShared(
 
         spriteBatch.Draw(Textures["directional-light"], destinationRect, null, Color.White, radians, origin,
             SpriteEffects.None, 0);
+    }
+
+    public void RenderString(SpriteBatch spriteBatch, int startX, int startY, string str, int scale = 3)
+    {
+        var linePxCount = 0;
+        foreach (var (x, y, width) in FontHelpers.TransformString(str))
+        {
+            var sourceRect = new Rectangle(x, y, width, 8);
+            var destRect = new Rectangle(startX + linePxCount * scale, startY + 10, width * scale, 8 * scale);
+            spriteBatch.Draw(Textures["dogica-font"], destRect, sourceRect, Color.LimeGreen);
+            linePxCount += width;
+        }
     }
 }

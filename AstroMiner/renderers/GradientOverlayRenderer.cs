@@ -86,7 +86,7 @@ public class GradientOverlayRenderer(RendererShared shared)
     }
 
     // Two tiers of gradients. Values have to be consecutive and are constrained by MaxUnexploredCellsVisible
-    public void RenderGradientOverlay(SpriteBatch spriteBatch, int col, int row, UserInterfaceRenderer removeMe,
+    public void RenderGradientOverlay(SpriteBatch spriteBatch, int col, int row,
         int innerGradientDepth = 2, int outerGradientDepth = 3)
     {
         var cellState = shared.GameState.Grid.GetCellState(col, row);
@@ -134,9 +134,9 @@ public class GradientOverlayRenderer(RendererShared shared)
 
         {
             var rect = shared.ViewHelpers.GetVisibleRectForGridCell(col, row);
-            removeMe.RenderString(spriteBatch, rect.X + 20, rect.Y,
+            shared.RenderString(spriteBatch, rect.X + 20, rect.Y,
                 cellState.distanceToOutsideConnectedFloor.ToString());
-            removeMe.RenderString(spriteBatch, rect.X, rect.Y + 25,
+            shared.RenderString(spriteBatch, rect.X, rect.Y + 25,
                 "X" + col + " Y" + row, 1);
         }
     }
