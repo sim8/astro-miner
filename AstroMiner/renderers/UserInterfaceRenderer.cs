@@ -30,6 +30,9 @@ public class UserInterfaceRenderer(
 
 
         RenderString(spriteBatch, 0, 300, "FPS " + frameCounter.AverageFramesPerSecond.ToString("F0"));
+
+
+        RenderString(spriteBatch, 0, 340, "SEED " + gameState.Seed);
     }
 
     private void RenderString(SpriteBatch spriteBatch, int startX, int startY, string str, int scale = 3)

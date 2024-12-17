@@ -17,12 +17,10 @@ public static class AsteroidGen
     private static readonly (float, float) DiamondRange = (0.65f, 1);
     private static readonly (float, float) RubyRange = (0.41f, 0.42f);
 
-    public static (CellState[,], Vector2) InitializeGridAndStartingPos(int gridSize)
+    public static (CellState[,], Vector2) InitializeGridAndStartingPos(int gridSize, int seed)
     {
-        var rnd = new Random();
-        var seed = rnd.Next(1, 999);
         var perlinNoise = new PerlinNoiseGenerator(seed);
-        var grid = InitializeGrid(gridSize, perlinNoise);
+        var grid = InitializeGrid(gridSize, perlinNoise, seed);
         return (grid, ClearAndGetStartingPos(grid));
     }
 
@@ -63,14 +61,14 @@ public static class AsteroidGen
     }
 
 
-    private static CellState[,] InitializeGrid(int gridSize, PerlinNoiseGenerator perlinNoise)
+    private static CellState[,] InitializeGrid(int gridSize, PerlinNoiseGenerator perlinNoise, int seed)
     {
         var grid = new CellState[gridSize, gridSize];
         var centerX = gridSize / 2;
         var centerY = gridSize / 2;
         var radiusValues = new double[AngleSegments];
         var perimeterWidths = new int[AngleSegments]; // New array for perimeter widths
-        var rand = new Random();
+        var rand = new Random(seed);
 
         // Generate smooth radius values
         radiusValues[0] = AverageRadius + rand.NextDouble() * MaxDeviation * 2 - MaxDeviation;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -43,6 +44,8 @@ public class GameState
         Initialize();
     }
 
+    public int Seed { get; private set; }
+
     public int TimeUntilAsteroidExplodesMs { get; private set; }
 
     public bool IsInMiner => !ActiveEntitiesSortedByDistance.Contains(Player);
@@ -50,9 +53,16 @@ public class GameState
 
     public MiningControllableEntity ActiveControllableEntity => IsInMiner ? Miner : Player;
 
+    private void InitSeed()
+    {
+        var rnd = new Random();
+        Seed = rnd.Next(1, 999);
+    }
+
     public void Initialize()
     {
-        var (grid, minerPos) = AsteroidGen.InitializeGridAndStartingPos(GameConfig.GridSize);
+        InitSeed();
+        var (grid, minerPos) = AsteroidGen.InitializeGridAndStartingPos(GameConfig.GridSize, Seed);
         Grid = new GridState(this, grid);
         Miner = new MinerEntity(this, minerPos);
         Player = new PlayerEntity(this, minerPos);
