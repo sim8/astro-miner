@@ -6,7 +6,19 @@ namespace AstroMiner;
 
 public class ProcGenViewerRenderer
 {
-    private const int CellSize = 10;
+    private const int CellSizePx = 10;
+    private const int CellBorderPx = 1;
+
+    private readonly Dictionary<CellType, Color> _cellColors = new()
+    {
+        { CellType.Diamond, new Color(144, 248, 255) },
+        { CellType.Ruby, new Color(200, 0, 0) },
+        { CellType.SolidRock, new Color(100, 100, 100) },
+        { CellType.Rock, new Color(160, 160, 160) },
+        { CellType.Empty, new Color(0, 0, 0) },
+        { CellType.Floor, new Color(240, 240, 240) }
+    };
+
     private readonly GameState _gameState;
 
 
@@ -27,9 +39,10 @@ public class ProcGenViewerRenderer
         spriteBatch.End();
     }
 
-    public Rectangle GetGridCellRect(int col, int row)
+    private Rectangle GetGridCellRect(int col, int row)
     {
-        return new Rectangle(col * CellSize, row * CellSize, CellSize, CellSize);
+        return new Rectangle(col * CellSizePx + CellBorderPx, row * CellSizePx + CellBorderPx,
+            CellSizePx - CellBorderPx * 2, CellSizePx - CellBorderPx * 2);
     }
 
     private void RenderScene(SpriteBatch spriteBatch)
@@ -38,34 +51,9 @@ public class ProcGenViewerRenderer
         for (var col = 0; col < GameConfig.GridSize; col++)
         {
             var cellState = _gameState.Grid.GetCellState(col, row);
-            if (Tilesets.TilesetTextureNames.TryGetValue(cellState.type, out var name))
-            {
-                var offset = Tilesets.GetTileCoords(_gameState, col, row);
-                var tilesetSourceRect = new Rectangle(offset.Item1 * GameConfig.CellTextureSizePx,
-                    offset.Item2 * GameConfig.CellTextureSizePx,
-                    GameConfig.CellTextureSizePx, GameConfig.CellTextureSizePx);
-                spriteBatch.Draw(_textures[name], GetGridCellRect(col, row),
-                    tilesetSourceRect, Color.White);
-            }
-            else if (cellState.type == CellType.Floor)
-            {
-                var tilesetSourceRect = new Rectangle(3 * GameConfig.CellTextureSizePx,
-                    GameConfig.CellTextureSizePx,
-                    GameConfig.CellTextureSizePx, GameConfig.CellTextureSizePx);
 
-                spriteBatch.Draw(_textures["rock-tileset"], GetGridCellRect(col, row),
-                    tilesetSourceRect,
-                    Color.White);
-            }
-            else
-            {
-                var tilesetSourceRect = new Rectangle(3 * GameConfig.CellTextureSizePx,
-                    GameConfig.CellTextureSizePx,
-                    GameConfig.CellTextureSizePx, GameConfig.CellTextureSizePx);
-                spriteBatch.Draw(_textures["rock-tileset"], GetGridCellRect(col, row),
-                    tilesetSourceRect,
-                    Color.Black);
-            }
+            spriteBatch.Draw(_textures["white"], GetGridCellRect(col, row),
+                _cellColors[cellState.type]);
         }
     }
 }

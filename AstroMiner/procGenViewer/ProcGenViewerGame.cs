@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -35,16 +34,13 @@ public class ProcGenViewerGame : Game
 
     private void LoadTexture(string name)
     {
-        _textures[name] = Content.Load<Texture2D>($"img-proc-gen/{name}");
+        _textures[name] = Content.Load<Texture2D>($"img/{name}");
     }
 
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        LoadTexture("rock-tileset");
-        LoadTexture("solid-rock-tileset");
-        LoadTexture("ruby-tileset");
-        LoadTexture("diamond-tileset");
+        LoadTexture("white");
     }
 
     protected override void Update(GameTime gameTime)
@@ -52,11 +48,7 @@ public class ProcGenViewerGame : Game
         if (Keyboard.GetState().IsKeyDown(Keys.N))
 
         {
-            if (!prevPressedNew)
-            {
-                Console.WriteLine("new woooorld");
-                _gameState.Initialize();
-            }
+            if (!prevPressedNew) _gameState.Initialize();
 
             prevPressedNew = true;
         }
@@ -70,7 +62,7 @@ public class ProcGenViewerGame : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Color.SlateGray);
+        GraphicsDevice.Clear(Color.Black);
 
         _renderer.Render(_spriteBatch);
 
