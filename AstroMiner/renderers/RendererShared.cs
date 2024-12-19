@@ -14,11 +14,17 @@ public class RendererShared(
     public readonly Dictionary<string, Texture2D> Textures = textures;
     public readonly ViewHelpers ViewHelpers = new(gameState, graphics);
 
-    public void RenderRadialLightSource(SpriteBatch spriteBatch, Vector2 pos, int size = 256, float opacity = 1)
+    public void RenderRadialLightSource(SpriteBatch spriteBatch, Vector2 pos, Color color, int size = 256,
+        float opacity = 1)
     {
         var offset = -(size / 2);
         var destinationRect = ViewHelpers.GetVisibleRectForObject(pos, size, size, offset, offset);
-        spriteBatch.Draw(Textures["radial-light"], destinationRect, Color.White * opacity);
+        spriteBatch.Draw(Textures["radial-light"], destinationRect, color * opacity);
+    }
+
+    public void RenderRadialLightSource(SpriteBatch spriteBatch, Vector2 pos, int size = 256, float opacity = 1)
+    {
+        RenderRadialLightSource(spriteBatch, pos, Color.White, size, opacity);
     }
 
     public void RenderDirectionalLightSource(SpriteBatch spriteBatch, Vector2 pos, Direction dir, int size = 512)

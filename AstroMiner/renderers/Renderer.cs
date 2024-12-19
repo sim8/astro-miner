@@ -16,6 +16,7 @@ public class Renderer
     private readonly GameState _gameState;
     private readonly GradientOverlayRenderer _gradientOverlayRenderer;
     private readonly GraphicsDeviceManager _graphics;
+    private readonly Color _lavaLightColor = new(255, 231, 171);
     private readonly RenderTarget2D _lightingRenderTarget;
     private readonly MinerRenderer _minerRenderer;
     private readonly BlendState _multiplyBlendState;
@@ -147,7 +148,7 @@ public class Renderer
             if (_gameState.Grid.GetCellType(col, row) == CellType.Lava)
             {
                 var pos = new Vector2(col + 0.5f, row + 0.5f);
-                _shared.RenderRadialLightSource(spriteBatch, pos, 200, 0.4f);
+                _shared.RenderRadialLightSource(spriteBatch, pos, _lavaLightColor, 150, 0.6f);
             }
 
         // Render overlay gradients in shadow color over lighting to block out light on unexplored cells
