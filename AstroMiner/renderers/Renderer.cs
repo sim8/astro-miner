@@ -141,7 +141,7 @@ public class Renderer
             else if (entity is ExplosionEntity explosionEntity)
                 _explosionRenderer.RenderLightSource(spriteBatch, explosionEntity);
 
-        // Render overlay gradients in shadow color over lighting to block out light on unexplored cells
+        // Render any grid-based light sources
         for (var row = 0; row < GameConfig.GridSize; row++)
         for (var col = 0; col < GameConfig.GridSize; col++)
             if (_gameState.Grid.GetCellType(col, row) == CellType.Lava)
