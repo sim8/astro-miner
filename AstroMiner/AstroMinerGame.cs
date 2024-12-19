@@ -9,6 +9,7 @@ public enum CellType
 {
     Empty,
     Floor,
+    Lava,
     Rock,
     SolidRock,
     Diamond,

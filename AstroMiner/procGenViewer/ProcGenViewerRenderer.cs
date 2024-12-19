@@ -16,7 +16,8 @@ public class ProcGenViewerRenderer
         { CellType.SolidRock, new Color(100, 100, 100) },
         { CellType.Rock, new Color(160, 160, 160) },
         { CellType.Empty, new Color(0, 0, 0) },
-        { CellType.Floor, new Color(240, 240, 240) }
+        { CellType.Floor, new Color(240, 240, 240) },
+        { CellType.Lava, Color.Orange }
     };
 
     private readonly GameState _gameState;
