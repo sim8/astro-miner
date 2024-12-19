@@ -68,7 +68,9 @@ public class MiningControllableEntity : Entity
 
         for (var x = topLeftCell.x; x <= bottomRightCell.x; x++)
         for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
-            if (_gameState.Grid.GetCellType(x, y) != CellType.Floor)
+            if (_gameState.Grid.GetCellType(x, y) != CellType.Floor &&
+                _gameState.Grid.GetCellType(x, y) != CellType.Empty &&
+                _gameState.Grid.GetCellType(x, y) != CellType.Lava)
                 return true;
 
         return false;

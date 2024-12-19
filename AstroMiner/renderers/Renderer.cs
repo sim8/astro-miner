@@ -95,6 +95,9 @@ public class Renderer
             else if (_gameState.Grid.GetCellType(col, row) == CellType.Floor)
                 spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
                     _floorColor);
+            else if (_gameState.Grid.GetCellType(col, row) == CellType.Lava)
+                spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
+                    Color.Orange);
 
             _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row);
         }
@@ -137,6 +140,15 @@ public class Renderer
                 _dynamiteRenderer.RenderLightSource(spriteBatch, dynamiteEntity);
             else if (entity is ExplosionEntity explosionEntity)
                 _explosionRenderer.RenderLightSource(spriteBatch, explosionEntity);
+
+        // Render overlay gradients in shadow color over lighting to block out light on unexplored cells
+        for (var row = 0; row < GameConfig.GridSize; row++)
+        for (var col = 0; col < GameConfig.GridSize; col++)
+            if (_gameState.Grid.GetCellType(col, row) == CellType.Lava)
+            {
+                var pos = new Vector2(col + 0.5f, row + 0.5f);
+                _shared.RenderRadialLightSource(spriteBatch, pos, 200, 0.4f);
+            }
 
         // Render overlay gradients in shadow color over lighting to block out light on unexplored cells
         for (var row = 0; row < GameConfig.GridSize; row++)

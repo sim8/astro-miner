@@ -116,7 +116,7 @@ public class GridState(GameState gameState, CellState[,] grid)
                     queue.Enqueue((nx, ny));
                 }
                 // Set floor to outside connected if it adjoins with an edge piece or another outside connected floor
-                else if (neighbour.Type == CellType.Floor &&
+                else if ((neighbour.type == CellType.Floor || neighbour.type == CellType.Lava) &&
                          (current.Type == CellType.Empty || current.DistanceToOutsideConnectedFloor == 0) &&
                          neighbour.DistanceToOutsideConnectedFloor != 0)
                 {
