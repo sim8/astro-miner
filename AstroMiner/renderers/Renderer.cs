@@ -81,13 +81,10 @@ public class Renderer
         {
             var cellState = _gameState.Grid.GetCellState(col, row);
             var cellType = cellState.type;
-            if (Tilesets.TilesetTextureNames.TryGetValue(cellType, out var name))
+            if (Tilesets.IsTilesetCellType(cellType))
             {
-                var offset = Tilesets.GetTileCoords(_gameState, col, row);
-                var tilesetSourceRect = new Rectangle(offset.Item1 * GameConfig.CellTextureSizePx,
-                    offset.Item2 * GameConfig.CellTextureSizePx,
-                    GameConfig.CellTextureSizePx, GameConfig.CellTextureSizePx);
-                spriteBatch.Draw(_textures[name], _viewHelpers.GetVisibleRectForGridCell(col, row),
+                var tilesetSourceRect = Tilesets.GetTileSourceRect(_gameState, col, row);
+                spriteBatch.Draw(_textures["tileset"], _viewHelpers.GetVisibleRectForGridCell(col, row),
                     tilesetSourceRect, Color.White);
             }
             else if (_gameState.Grid.GetCellType(col, row) == CellType.Floor)
@@ -95,7 +92,7 @@ public class Renderer
                 var tilesetSourceRect = new Rectangle(3 * GameConfig.CellTextureSizePx,
                     GameConfig.CellTextureSizePx,
                     GameConfig.CellTextureSizePx, GameConfig.CellTextureSizePx);
-                spriteBatch.Draw(_textures["rock-tileset"], _viewHelpers.GetVisibleRectForGridCell(col, row),
+                spriteBatch.Draw(_textures["tileset"], _viewHelpers.GetVisibleRectForGridCell(col, row),
                     tilesetSourceRect,
                     Color.White);
             }

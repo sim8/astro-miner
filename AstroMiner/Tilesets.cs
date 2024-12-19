@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
 
@@ -20,8 +21,10 @@ internal enum Neighbours
 
 public static class Tilesets
 {
+    private const int TilesetTextureGridWidth = 6;
+    private const int TilesetTextureGridHeight = 3;
     private static readonly (int, int)[] Offsets;
-    public static readonly Dictionary<CellType, string> TilesetTextureNames;
+    public static readonly Dictionary<CellType, int> OffsetsWithinMainTexture;
 
     static Tilesets()
     {
@@ -38,16 +41,35 @@ public static class Tilesets
             (-1, -1) // AboveLeft (bit position 7)
         };
 
-        TilesetTextureNames = new Dictionary<CellType, string>
+        OffsetsWithinMainTexture = new Dictionary<CellType, int>
         {
-            { CellType.Rock, "rock-tileset" },
-            { CellType.SolidRock, "solid-rock-tileset" },
-            { CellType.Diamond, "diamond-tileset" },
-            { CellType.Ruby, "ruby-tileset" }
+            { CellType.Rock, 0 },
+            { CellType.SolidRock, 1 },
+            { CellType.Ruby, 2 },
+            { CellType.Diamond, 3 }
         };
     }
 
-    public static (int, int) GetTileCoords(GameState state, int col, int row)
+    public static bool IsTilesetCellType(CellType cellType)
+    {
+        return OffsetsWithinMainTexture.ContainsKey(cellType);
+    }
+
+    public static Rectangle GetTileSourceRect(GameState state, int col, int row)
+    {
+        var cellType = state.Grid.GetCellType(col, row);
+        var (xOffsetWithinTexture, yOffsetoffsetWithinSet) =
+            GetTileCoords(state, col, row); // no calc needed for x as on far left of texture
+
+        var yOffsetWithinTexture =
+            OffsetsWithinMainTexture[cellType] * TilesetTextureGridHeight + yOffsetoffsetWithinSet;
+
+        return new Rectangle(xOffsetWithinTexture * GameConfig.CellTextureSizePx,
+            yOffsetWithinTexture * GameConfig.CellTextureSizePx,
+            GameConfig.CellTextureSizePx, GameConfig.CellTextureSizePx);
+    }
+
+    private static (int, int) GetTileCoords(GameState state, int col, int row)
     {
         // Dark
         if (AllFilledExcept(state, col, row))
