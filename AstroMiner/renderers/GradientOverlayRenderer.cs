@@ -13,67 +13,67 @@ public class GradientOverlayRenderer(RendererShared shared)
     {
         {
             // right
-            GradientKeyHelpers.CreateKey(Corner.TopRight, Corner.BottomRight), (0, 2)
+            CornerKeyHelpers.CreateKey(Corner.TopRight, Corner.BottomRight), (0, 2)
         },
         {
             // down
-            GradientKeyHelpers.CreateKey(Corner.BottomLeft, Corner.BottomRight), (1, 2)
+            CornerKeyHelpers.CreateKey(Corner.BottomLeft, Corner.BottomRight), (1, 2)
         },
         {
             // left
-            GradientKeyHelpers.CreateKey(Corner.TopLeft, Corner.BottomLeft), (2, 2)
+            CornerKeyHelpers.CreateKey(Corner.TopLeft, Corner.BottomLeft), (2, 2)
         },
         {
             // up
-            GradientKeyHelpers.CreateKey(Corner.TopRight, Corner.TopLeft), (3, 2)
+            CornerKeyHelpers.CreateKey(Corner.TopRight, Corner.TopLeft), (3, 2)
         },
         {
             // up right
-            GradientKeyHelpers.CreateKey(Corner.TopRight), (0, 1)
+            CornerKeyHelpers.CreateKey(Corner.TopRight), (0, 1)
         },
         {
             // down right
-            GradientKeyHelpers.CreateKey(Corner.BottomRight), (0, 0)
+            CornerKeyHelpers.CreateKey(Corner.BottomRight), (0, 0)
         },
         {
             // up left
-            GradientKeyHelpers.CreateKey(Corner.TopLeft), (1, 1)
+            CornerKeyHelpers.CreateKey(Corner.TopLeft), (1, 1)
         },
         {
             // down left
-            GradientKeyHelpers.CreateKey(Corner.BottomLeft), (1, 0)
+            CornerKeyHelpers.CreateKey(Corner.BottomLeft), (1, 0)
         },
         {
             // up right wide
-            GradientKeyHelpers.CreateKey(Corner.TopRight, Corner.BottomRight, Corner.TopLeft), (3, 0)
+            CornerKeyHelpers.CreateKey(Corner.TopRight, Corner.BottomRight, Corner.TopLeft), (3, 0)
         },
         {
             // down right wide
-            GradientKeyHelpers.CreateKey(Corner.TopRight, Corner.BottomRight, Corner.BottomLeft), (3, 1)
+            CornerKeyHelpers.CreateKey(Corner.TopRight, Corner.BottomRight, Corner.BottomLeft), (3, 1)
         },
         {
             // up left wide
-            GradientKeyHelpers.CreateKey(Corner.TopRight, Corner.BottomLeft, Corner.TopLeft), (2, 0)
+            CornerKeyHelpers.CreateKey(Corner.TopRight, Corner.BottomLeft, Corner.TopLeft), (2, 0)
         },
         {
             // down left wide
-            GradientKeyHelpers.CreateKey(Corner.TopLeft, Corner.BottomLeft, Corner.BottomRight), (2, 1)
+            CornerKeyHelpers.CreateKey(Corner.TopLeft, Corner.BottomLeft, Corner.BottomRight), (2, 1)
         },
         {
             // up left to bottom right
-            GradientKeyHelpers.CreateKey(Corner.TopLeft, Corner.BottomRight), (4, 0)
+            CornerKeyHelpers.CreateKey(Corner.TopLeft, Corner.BottomRight), (4, 0)
         },
         {
             // up right to bottom left
-            GradientKeyHelpers.CreateKey(Corner.TopRight, Corner.BottomLeft), (4, 2)
+            CornerKeyHelpers.CreateKey(Corner.TopRight, Corner.BottomLeft), (4, 2)
         },
         {
             // solid
-            GradientKeyHelpers.CreateKey(), (4, 2)
+            CornerKeyHelpers.CreateKey(), (4, 2)
         },
         {
             // TODO REMOVE. Shouldnt happen in game
-            GradientKeyHelpers.CreateKey(Corner.TopRight, Corner.BottomLeft, Corner.BottomRight, Corner.TopLeft),
+            CornerKeyHelpers.CreateKey(Corner.TopRight, Corner.BottomLeft, Corner.BottomRight, Corner.TopLeft),
             (7, 2)
         }
     };
@@ -97,7 +97,7 @@ public class GradientOverlayRenderer(RendererShared shared)
             var overlayOpacityMidPoint = 0.6f;
 
             var overlaySourceRect = GetSourceRect(cellState.gradientKey);
-            var solidSourceRect = GetSourceRect(GradientKeyHelpers.InitialKey);
+            var solidSourceRect = GetSourceRect(CornerKeyHelpers.InitialKey);
 
             if (cellState.distanceToOutsideConnectedFloor == innerGradientDepth)
             {
@@ -124,20 +124,18 @@ public class GradientOverlayRenderer(RendererShared shared)
             }
         }
 
-        // RenderGradientDebug(spriteBatch, col, row, removeMe);
+        // RenderGradientDebug(spriteBatch, col, row);
     }
 
-    public void RenderGradientDebug(SpriteBatch spriteBatch, int col, int row, UserInterfaceRenderer removeMe)
+    public void RenderGradientDebug(SpriteBatch spriteBatch, int col, int row)
     {
         var cellState = shared.GameState.Grid.GetCellState(col, row);
+        var rect = shared.ViewHelpers.GetVisibleRectForGridCell(col, row);
         if (cellState.distanceToOutsideConnectedFloor > 1)
-
-        {
-            var rect = shared.ViewHelpers.GetVisibleRectForGridCell(col, row);
             shared.RenderString(spriteBatch, rect.X + 20, rect.Y,
                 cellState.distanceToOutsideConnectedFloor.ToString());
-            shared.RenderString(spriteBatch, rect.X, rect.Y + 25,
-                "X" + col + " Y" + row, 1);
-        }
+
+        shared.RenderString(spriteBatch, rect.X, rect.Y + 25,
+            "X" + col + " Y" + row, 1);
     }
 }

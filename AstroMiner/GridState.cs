@@ -19,6 +19,11 @@ public class CellState(CellType type)
     // of fading darkness towards unexplored cells)
     public int gradientKey;
 
+    public (int, int) TilesetOffsetBottomLeft;
+    public (int, int) TilesetOffsetBottomRight;
+    public (int, int) TilesetOffsetTopLeft;
+    public (int, int) TilesetOffsetTopRight;
+
     public CellType type = type;
 }
 
@@ -199,6 +204,15 @@ public class GridState(GameState gameState, CellState[,] grid)
             (n_br3 != null && n_br3.distanceToOutsideConnectedFloor > currentDistance))
             corners.Add(Corner.BottomRight);
 
-        currentCell.gradientKey = GradientKeyHelpers.CreateKey(corners.ToArray());
+        currentCell.gradientKey = CornerKeyHelpers.CreateKey(corners.ToArray());
+    }
+
+    private void UpdateCellTilsetOffsets(int x, int y)
+    {
+        var currentCell = GetCellState(x, y);
+
+        // For each corner
+        // Get overall coords based on neighbours
+        // apply actual corner offset
     }
 }

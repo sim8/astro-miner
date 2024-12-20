@@ -57,6 +57,7 @@ public class AstroMinerGame : Game
         LoadTexture("gradient-set");
         LoadTexture("white");
         LoadTexture("floor");
+        LoadTexture("dual-tileset");
         LoadTexture("tileset");
         LoadTexture("player");
         LoadTexture("miner-no-tracks");

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -86,6 +87,14 @@ public class Renderer
                 var tilesetSourceRect = Tilesets.GetTileSourceRect(_gameState, col, row);
                 spriteBatch.Draw(_textures["tileset"], _viewHelpers.GetVisibleRectForGridCell(col, row),
                     tilesetSourceRect, Color.White);
+
+                foreach (Corner corner in Enum.GetValues(typeof(Corner)))
+                {
+                    var dualTilesetSourceRect = DualTilesets.GetCellQuadrantSourceRect(_gameState, col, row, corner);
+                    spriteBatch.Draw(_textures["dual-tileset"],
+                        _viewHelpers.GetVisibleRectForGridQuadrant(col, row, corner),
+                        dualTilesetSourceRect, Color.White);
+                }
             }
             else if (_gameState.Grid.GetCellType(col, row) == CellType.Floor)
             {

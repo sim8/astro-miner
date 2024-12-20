@@ -1,6 +1,5 @@
 namespace AstroMiner;
 
-// Enum for corners (mapping bits for clarity)
 public enum Corner
 {
     TopLeft = 3, // Bit 3
@@ -9,9 +8,20 @@ public enum Corner
     BottomRight = 0 // Bit 0
 }
 
-public static class GradientKeyHelpers
+// Create or modify a bit-based key representing the up/down state of each corner of a cell
+public static class CornerKeyHelpers
 {
     public const int InitialKey = 0;
+
+    public static int CreateKey(bool topLeft, bool topRight, bool bottomLeft, bool bottomRight)
+    {
+        var key = InitialKey;
+        if (topLeft) key |= 1 << (int)Corner.TopLeft;
+        if (topRight) key |= 1 << (int)Corner.TopRight;
+        if (bottomLeft) key |= 1 << (int)Corner.BottomLeft;
+        if (bottomRight) key |= 1 << (int)Corner.BottomRight;
+        return key;
+    }
 
 
     public static int CreateKey(params Corner[] corners)
