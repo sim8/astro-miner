@@ -12,6 +12,7 @@ public static class DualTilesets
     public static readonly Dictionary<Corner, (int, int)> neighboursToCheck;
     public static readonly Dictionary<int, (int, int)> CornerKeyToTextureOffset;
     public static readonly HashSet<CellType> TilesetCellTypes;
+    private static readonly int _quadrantTextureSizePx = GameConfig.CellTextureSizePx / 2;
 
     // A given corner is the center of a 2x2 set of tiles - use this to find the top left of each set
     private static readonly Dictionary<Corner, (int, int)> GetTopLeftOffsetFor2x2 = new()
@@ -111,14 +112,6 @@ public static class DualTilesets
         var isBottomLeftTileset = CellIsTilesetType(gameState, twoByTwoX, twoByTwoY + 1);
         var isBottomRightTileset = CellIsTilesetType(gameState, twoByTwoX + 1, twoByTwoY + 1);
 
-        // if (x == 53 && y == 81 && corner == Corner.BottomRight)
-        // {
-        //     Console.WriteLine("isTopLeftTileset: " + isTopLeftTileset);
-        //     Console.WriteLine("isTopRightTileset: " + isTopRightTileset);
-        //     Console.WriteLine("isBottomLeftTileset: " + isBottomLeftTileset);
-        //     Console.WriteLine("isBottomRightTileset: " + isBottomRightTileset);
-        // }
-
         return CornerKeyHelpers.CreateKey(isTopLeftTileset, isTopRightTileset, isBottomLeftTileset,
             isBottomRightTileset);
     }
@@ -126,21 +119,41 @@ public static class DualTilesets
     // TODO save this to CellState
     private static (int, int) GetCellQuadrantTextureOffset(GameState gameState, int col, int row, Corner corner)
     {
+        // Walls tileset has one quadrant room above each tile for overlaying texture.
+        // // TODO - change/centralize this logic? Will need doing for floor tilesets
+        var topTileQuadrantsTextureHeight = GameConfig.CellTextureSizePx;
+
+        // For the cell quadrant, work out which tile to use
         var tileKey = GetCellQuadrantTileKey(gameState, col, row, corner);
-        var (textureOffsetX, textureOffsetY) = CornerKeyToTextureOffset[tileKey];
 
-        var x = textureOffsetX * GameConfig.CellTextureSizePx +
-                (corner is Corner.TopLeft or Corner.BottomLeft ? GameConfig.CellTextureSizePx / 2 : 0);
-        var y = textureOffsetY * GameConfig.CellTextureSizePx +
-                (corner is Corner.TopLeft or Corner.TopRight ? GameConfig.CellTextureSizePx / 2 : 0);
+        // Get the grid x,y of that tile within the default dual tileset
+        var (textureGridX, textureGridY) = CornerKeyToTextureOffset[tileKey];
+
+        // Convert those to pixel x,y within the actual texture
+        // NOTE y pos accounts for texture overlay space. Logic will need to change for floor tilesets
+        var tileTexturePxX = textureGridX * GameConfig.CellTextureSizePx;
+        var tileTexturePxY = textureGridY * (GameConfig.CellTextureSizePx + _quadrantTextureSizePx);
+
+        var quadrantX = tileTexturePxX +
+                        (corner is Corner.TopLeft or Corner.BottomLeft ? _quadrantTextureSizePx : 0);
+        var quadrantY = tileTexturePxY +
+                        (corner is Corner.TopLeft or Corner.TopRight ? topTileQuadrantsTextureHeight : 0);
 
 
-        return (x, y);
+        return (quadrantX, quadrantY);
     }
 
     public static Rectangle GetCellQuadrantSourceRect(GameState gameState, int col, int row, Corner corner)
     {
         var (x, y) = GetCellQuadrantTextureOffset(gameState, col, row, corner);
-        return new Rectangle(x, y, GameConfig.CellTextureSizePx / 2, GameConfig.CellTextureSizePx / 2);
+
+        // Walls tileset has one quadrant room above each tile for overlaying texture.
+        // Check bottom instead of top as corners are opposite between tiles + cells!
+        // TODO - change/centralize this logic? Will need doing for floor tilesets
+        var height = corner is Corner.BottomLeft or Corner.BottomRight
+            ? GameConfig.CellTextureSizePx
+            : _quadrantTextureSizePx;
+
+        return new Rectangle(x, y, _quadrantTextureSizePx, height);
     }
 }

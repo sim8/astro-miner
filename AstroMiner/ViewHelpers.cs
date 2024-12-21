@@ -39,9 +39,13 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
 
     public Rectangle GetVisibleRectForGridQuadrant(int gridX, int gridY, Corner corner)
     {
+        // Bottom cell quadrants (i.e. top tile quadrants) are rendered twice as high (so their tops overlay tiles behind)
+        var isTopTileQuadrant = corner is Corner.BottomLeft or Corner.BottomRight;
         var quadrantX = corner is Corner.TopRight or Corner.BottomRight ? gridX + 0.5f : gridX;
-        var quadrantY = corner is Corner.BottomLeft or Corner.BottomRight ? gridY + 0.5f : gridY;
-        return GetVisibleRectForGridCell(quadrantX, quadrantY, 0.5f, 0.5f);
+        // Remove .5 from gridY to account for bigger rect
+        // var quadrantY = isTopTileQuadrant ? gridY - 0.5f : gridY + 0.5f;
+        var quadrantY = gridY;
+        return GetVisibleRectForGridCell(quadrantX, quadrantY, 0.5f, isTopTileQuadrant ? 1f : 0.5f);
     }
 
     private float ConvertGridUnitsToVisiblePx(float gridUnits)

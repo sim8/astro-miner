@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -7,6 +6,9 @@ namespace AstroMiner;
 
 public class Renderer
 {
+    private readonly Corner[] _cornersInRenderOrder =
+        [Corner.TopLeft, Corner.TopRight, Corner.BottomLeft, Corner.BottomRight];
+
     private readonly DynamiteRenderer _dynamiteRenderer;
     private readonly ExplosionRenderer _explosionRenderer;
     private readonly FrameCounter _frameCounter;
@@ -86,12 +88,13 @@ public class Renderer
             {
                 var tilesetSourceRect = Tilesets.GetTileSourceRect(_gameState, col, row);
                 spriteBatch.Draw(_textures["tileset"], _viewHelpers.GetVisibleRectForGridCell(col, row),
-                    tilesetSourceRect, Color.White);
+                    tilesetSourceRect, Color.White * 0.4f);
 
-                foreach (Corner corner in Enum.GetValues(typeof(Corner)))
+                foreach (var corner in _cornersInRenderOrder)
                 {
-                    var dualTilesetSourceRect = DualTilesets.GetCellQuadrantSourceRect(_gameState, col, row, corner);
-                    spriteBatch.Draw(_textures["dual-tileset"],
+                    var dualTilesetSourceRect =
+                        DualTilesets.GetCellQuadrantSourceRect(_gameState, col, row, corner);
+                    spriteBatch.Draw(_textures["tall-dual-tileset"],
                         _viewHelpers.GetVisibleRectForGridQuadrant(col, row, corner),
                         dualTilesetSourceRect, Color.White);
                 }
