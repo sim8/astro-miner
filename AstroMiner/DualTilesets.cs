@@ -6,8 +6,65 @@ namespace AstroMiner;
 public static class DualTilesets
 {
     private const int QuadrantTextureSizePx = GameConfig.CellTextureSizePx / 2;
-    private static readonly Dictionary<int, (int, int)> CornerKeyToTextureOffset;
-    private static readonly HashSet<CellType> TilesetCellTypes;
+
+    private static readonly Dictionary<int, (int, int)> CornerKeyToTextureOffset = new()
+    {
+        // Row 1
+        {
+            CornerKeyHelpers.CreateKey(true, true, false, true), (0, 0)
+        },
+        {
+            CornerKeyHelpers.CreateKey(true, false, true, false), (1, 0)
+        },
+        {
+            CornerKeyHelpers.CreateKey(false, true, false, false), (2, 0)
+        },
+        {
+            CornerKeyHelpers.CreateKey(true, true, false, false), (3, 0)
+        },
+        // Row 2
+        {
+            CornerKeyHelpers.CreateKey(false, true, true, false), (0, 1)
+        },
+        {
+            CornerKeyHelpers.CreateKey(true, false, false, false), (1, 1)
+        },
+        {
+            CornerKeyHelpers.CreateKey(false, false, false, false), (2, 1)
+        },
+        {
+            CornerKeyHelpers.CreateKey(false, false, false, true), (3, 1)
+        },
+        // Row 3
+        {
+            CornerKeyHelpers.CreateKey(true, false, true, true), (0, 2)
+        },
+        {
+            CornerKeyHelpers.CreateKey(false, false, true, true), (1, 2)
+        },
+        {
+            CornerKeyHelpers.CreateKey(false, false, true, false), (2, 2)
+        },
+        {
+            CornerKeyHelpers.CreateKey(false, true, false, true), (3, 2)
+        },
+        // Row 4
+        {
+            CornerKeyHelpers.CreateKey(true, true, true, true), (0, 3)
+        },
+        {
+            CornerKeyHelpers.CreateKey(true, true, true, false), (1, 3)
+        },
+        {
+            CornerKeyHelpers.CreateKey(true, false, false, true), (2, 3)
+        },
+        {
+            CornerKeyHelpers.CreateKey(false, true, true, true), (3, 3)
+        }
+    };
+
+    private static readonly HashSet<CellType> TilesetCellTypes =
+        [CellType.Rock, CellType.SolidRock, CellType.Ruby, CellType.Diamond];
 
     // A given corner is the center of a 2x2 set of tiles - use this to find the top left of each set
     private static readonly Dictionary<Corner, (int, int)> GetTopLeftOffsetFor2X2 = new()
@@ -17,67 +74,6 @@ public static class DualTilesets
         { Corner.BottomLeft, (-1, 0) },
         { Corner.BottomRight, (0, 0) }
     };
-
-    static DualTilesets()
-    {
-        CornerKeyToTextureOffset = new Dictionary<int, (int, int)>
-        {
-            // Row 1
-            {
-                CornerKeyHelpers.CreateKey(true, true, false, true), (0, 0)
-            },
-            {
-                CornerKeyHelpers.CreateKey(true, false, true, false), (1, 0)
-            },
-            {
-                CornerKeyHelpers.CreateKey(false, true, false, false), (2, 0)
-            },
-            {
-                CornerKeyHelpers.CreateKey(true, true, false, false), (3, 0)
-            },
-            // Row 2
-            {
-                CornerKeyHelpers.CreateKey(false, true, true, false), (0, 1)
-            },
-            {
-                CornerKeyHelpers.CreateKey(true, false, false, false), (1, 1)
-            },
-            {
-                CornerKeyHelpers.CreateKey(false, false, false, false), (2, 1)
-            },
-            {
-                CornerKeyHelpers.CreateKey(false, false, false, true), (3, 1)
-            },
-            // Row 3
-            {
-                CornerKeyHelpers.CreateKey(true, false, true, true), (0, 2)
-            },
-            {
-                CornerKeyHelpers.CreateKey(false, false, true, true), (1, 2)
-            },
-            {
-                CornerKeyHelpers.CreateKey(false, false, true, false), (2, 2)
-            },
-            {
-                CornerKeyHelpers.CreateKey(false, true, false, true), (3, 2)
-            },
-            // Row 4
-            {
-                CornerKeyHelpers.CreateKey(true, true, true, true), (0, 3)
-            },
-            {
-                CornerKeyHelpers.CreateKey(true, true, true, false), (1, 3)
-            },
-            {
-                CornerKeyHelpers.CreateKey(true, false, false, true), (2, 3)
-            },
-            {
-                CornerKeyHelpers.CreateKey(false, true, true, true), (3, 3)
-            }
-        };
-
-        TilesetCellTypes = [CellType.Rock, CellType.SolidRock, CellType.Ruby, CellType.Diamond];
-    }
 
     private static bool CellIsTilesetType(GameState gameState, int x, int y)
     {
