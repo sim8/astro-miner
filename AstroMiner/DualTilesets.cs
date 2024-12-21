@@ -5,17 +5,12 @@ namespace AstroMiner;
 
 public static class DualTilesets
 {
-    private const int TilesetTextureGridWidth = 4;
-    private const int TilesetTextureGridHeight = 4;
-    private static readonly (int, int)[] Offsets;
-    public static readonly Dictionary<CellType, int> OffsetsWithinMainTexture;
-    public static readonly Dictionary<Corner, (int, int)> neighboursToCheck;
-    public static readonly Dictionary<int, (int, int)> CornerKeyToTextureOffset;
-    public static readonly HashSet<CellType> TilesetCellTypes;
-    private static readonly int _quadrantTextureSizePx = GameConfig.CellTextureSizePx / 2;
+    private const int QuadrantTextureSizePx = GameConfig.CellTextureSizePx / 2;
+    private static readonly Dictionary<int, (int, int)> CornerKeyToTextureOffset;
+    private static readonly HashSet<CellType> TilesetCellTypes;
 
     // A given corner is the center of a 2x2 set of tiles - use this to find the top left of each set
-    private static readonly Dictionary<Corner, (int, int)> GetTopLeftOffsetFor2x2 = new()
+    private static readonly Dictionary<Corner, (int, int)> GetTopLeftOffsetFor2X2 = new()
     {
         { Corner.TopLeft, (-1, -1) },
         { Corner.TopRight, (0, -1) },
@@ -25,14 +20,6 @@ public static class DualTilesets
 
     static DualTilesets()
     {
-        OffsetsWithinMainTexture = new Dictionary<CellType, int>
-        {
-            { CellType.Rock, 0 },
-            { CellType.SolidRock, 1 },
-            { CellType.Ruby, 2 },
-            { CellType.Diamond, 3 }
-        };
-
         CornerKeyToTextureOffset = new Dictionary<int, (int, int)>
         {
             // Row 1
@@ -89,10 +76,7 @@ public static class DualTilesets
             }
         };
 
-        TilesetCellTypes = new HashSet<CellType>
-        {
-            CellType.Rock, CellType.SolidRock, CellType.Ruby, CellType.Diamond
-        };
+        TilesetCellTypes = [CellType.Rock, CellType.SolidRock, CellType.Ruby, CellType.Diamond];
     }
 
     private static bool CellIsTilesetType(GameState gameState, int x, int y)
@@ -102,7 +86,7 @@ public static class DualTilesets
 
     private static int GetCellQuadrantTileKey(GameState gameState, int x, int y, Corner corner)
     {
-        var (topLeftXOffset, topLeftYOffset) = GetTopLeftOffsetFor2x2[corner];
+        var (topLeftXOffset, topLeftYOffset) = GetTopLeftOffsetFor2X2[corner];
 
         var twoByTwoX = x + topLeftXOffset;
         var twoByTwoY = y + topLeftYOffset;
@@ -132,12 +116,12 @@ public static class DualTilesets
         // Convert those to pixel x,y within the actual texture
         // NOTE y pos accounts for texture overlay space. Logic will need to change for floor tilesets
         var tileTexturePxX = textureGridX * GameConfig.CellTextureSizePx;
-        var tileTexturePxY = textureGridY * (GameConfig.CellTextureSizePx + _quadrantTextureSizePx);
+        var tileTexturePxY = textureGridY * (GameConfig.CellTextureSizePx + QuadrantTextureSizePx);
 
         var quadrantX = tileTexturePxX +
-                        (corner is Corner.TopLeft or Corner.BottomLeft ? _quadrantTextureSizePx : 0);
+                        (corner is Corner.TopLeft or Corner.BottomLeft ? QuadrantTextureSizePx : 0);
         var quadrantY = tileTexturePxY +
-                        (corner is Corner.TopLeft or Corner.TopRight ? _quadrantTextureSizePx : 0);
+                        (corner is Corner.TopLeft or Corner.TopRight ? QuadrantTextureSizePx : 0);
 
 
         return (quadrantX, quadrantY);
@@ -150,6 +134,6 @@ public static class DualTilesets
         // Walls tileset has one quadrant room above each tile for overlaying texture.
         // Each quadrant is rendered at double height, overlaying the one behind it
         // TODO - change/centralize this logic? Will need doing for floor tilesets
-        return new Rectangle(x, y, _quadrantTextureSizePx, GameConfig.CellTextureSizePx);
+        return new Rectangle(x, y, QuadrantTextureSizePx, GameConfig.CellTextureSizePx);
     }
 }
