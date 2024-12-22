@@ -5,32 +5,27 @@ namespace AstroMiner;
 
 public class CellState(CellType type)
 {
-    public const int DISTANCE_UNINITIALIZED_OR_ABOVE_MAX = -2;
-    public const int DISTANCE_EMPTY = -1;
+    public const int DistanceUninitializedOrAboveMax = -2;
+    public const int DistanceEmpty = -1;
 
     /**
      * -2: uninitialized or above max distance
      * -1: N/A (empty piece)
      * 0+ distance to floor with unbroken connection to edge
      */
-    public int distanceToOutsideConnectedFloor = DISTANCE_UNINITIALIZED_OR_ABOVE_MAX;
+    public int DistanceToOutsideConnectedFloor = DistanceUninitializedOrAboveMax;
 
     // Used to determine which gradient to use on the overlay (creates effect
     // of fading darkness towards unexplored cells)
-    public int gradientKey;
+    public int GradientKey;
 
-    public (int, int) TilesetOffsetBottomLeft;
-    public (int, int) TilesetOffsetBottomRight;
-    public (int, int) TilesetOffsetTopLeft;
-    public (int, int) TilesetOffsetTopRight;
-
-    public CellType type = type;
+    public CellType Type = type;
 }
 
 public class GridState(GameState gameState, CellState[,] grid)
 {
-    private static readonly int[] neighbourXOffsets = { -1, 0, 1, 1, 1, 0, -1, -1 };
-    private static readonly int[] neighbourYOffsets = { -1, -1, -1, 0, 1, 1, 1, 0 };
+    private static readonly int[] NeighbourXOffsets = { -1, 0, 1, 1, 1, 0, -1, -1 };
+    private static readonly int[] NeighbourYOffsets = { -1, -1, -1, 0, 1, 1, 1, 0 };
     public int Columns => grid.GetLength(0);
     public int Rows => grid.GetLength(1);
 
@@ -43,19 +38,19 @@ public class GridState(GameState gameState, CellState[,] grid)
 
     public CellType GetCellType(int x, int y)
     {
-        return GetCellState(x, y).type;
+        return GetCellState(x, y).Type;
     }
 
     public void DemolishCell(int x, int y, bool addToInventory = false)
     {
         if (!ViewHelpers.IsValidGridPosition(x, y))
             throw new IndexOutOfRangeException();
-        if (grid[y, x].type == CellType.Empty) return;
+        if (grid[y, x].Type == CellType.Empty) return;
 
-        if (grid[y, x].type == CellType.Ruby && addToInventory) gameState.Inventory.NumRubies++;
-        if (grid[y, x].type == CellType.Diamond && addToInventory) gameState.Inventory.NumDiamonds++;
+        if (grid[y, x].Type == CellType.Ruby && addToInventory) gameState.Inventory.NumRubies++;
+        if (grid[y, x].Type == CellType.Diamond && addToInventory) gameState.Inventory.NumDiamonds++;
 
-        grid[y, x].type = CellType.Floor;
+        grid[y, x].Type = CellType.Floor;
 
         MarkAllDistancesFromOutsideConnectedFloors(x, y);
     }
@@ -65,17 +60,17 @@ public class GridState(GameState gameState, CellState[,] grid)
         var hasNeighbourOfType = false;
         MapNeighbors(x, y, (nx, ny) =>
         {
-            if (grid[ny, nx].type == cellType) hasNeighbourOfType = true;
+            if (grid[ny, nx].Type == cellType) hasNeighbourOfType = true;
         });
         return hasNeighbourOfType;
     }
 
     private static void MapNeighbors(int cx, int cy, Action<int, int> neighborAction)
     {
-        for (var i = 0; i < neighbourXOffsets.Length; i++)
+        for (var i = 0; i < NeighbourXOffsets.Length; i++)
         {
-            var nx = cx + neighbourXOffsets[i];
-            var ny = cy + neighbourYOffsets[i];
+            var nx = cx + NeighbourXOffsets[i];
+            var ny = cy + NeighbourYOffsets[i];
 
             if (nx < 0 || nx >= GameConfig.GridSize || ny < 0 || ny >= GameConfig.GridSize)
                 continue;
@@ -95,7 +90,7 @@ public class GridState(GameState gameState, CellState[,] grid)
         // The BFS assumes all cells in the queue have the correct distance. If running at 
         // startup (x,y == 0,0), assume it's an empty square (-1); otherwise a cell has been
         // cleared and is now floor (0)
-        grid[y, x].distanceToOutsideConnectedFloor = x == 0 && y == 0 ? CellState.DISTANCE_EMPTY : 0;
+        grid[y, x].DistanceToOutsideConnectedFloor = x == 0 && y == 0 ? CellState.DistanceEmpty : 0;
 
         Queue<(int x, int y)> queue = new();
         queue.Enqueue((x, y));
@@ -114,33 +109,33 @@ public class GridState(GameState gameState, CellState[,] grid)
                 var neighbour = GetCellState(nx, ny);
 
                 // Always initialize empty cells
-                if (neighbour.type == CellType.Empty &&
-                    neighbour.distanceToOutsideConnectedFloor == CellState.DISTANCE_UNINITIALIZED_OR_ABOVE_MAX)
+                if (neighbour.Type == CellType.Empty &&
+                    neighbour.DistanceToOutsideConnectedFloor == CellState.DistanceUninitializedOrAboveMax)
                 {
-                    neighbour.distanceToOutsideConnectedFloor = CellState.DISTANCE_EMPTY;
+                    neighbour.DistanceToOutsideConnectedFloor = CellState.DistanceEmpty;
                     queue.Enqueue((nx, ny));
                 }
                 // Set floor to outside connected if it adjoins with an edge piece or another outside connected floor
-                else if (neighbour.type == CellType.Floor &&
-                         (current.type == CellType.Empty || current.distanceToOutsideConnectedFloor == 0) &&
-                         neighbour.distanceToOutsideConnectedFloor != 0)
+                else if (neighbour.Type == CellType.Floor &&
+                         (current.Type == CellType.Empty || current.DistanceToOutsideConnectedFloor == 0) &&
+                         neighbour.DistanceToOutsideConnectedFloor != 0)
                 {
-                    neighbour.distanceToOutsideConnectedFloor = 0;
+                    neighbour.DistanceToOutsideConnectedFloor = 0;
                     queue.Enqueue((nx, ny));
                 }
                 // Set distance from connected floor. Skipped if current piece is empty,
                 // and by this check current has to be either solid or an unconnected floor
-                else if (neighbour.type != CellType.Empty && current.type != CellType.Empty &&
-                         current.distanceToOutsideConnectedFloor <
+                else if (neighbour.Type != CellType.Empty && current.Type != CellType.Empty &&
+                         current.DistanceToOutsideConnectedFloor <
                          GameConfig.MaxUnexploredCellsVisible +
                          1) // add one to get gradients for furthest visible cells
                 {
-                    var nextDistance = current.distanceToOutsideConnectedFloor + 1;
-                    if (neighbour.distanceToOutsideConnectedFloor == CellState.DISTANCE_UNINITIALIZED_OR_ABOVE_MAX ||
-                        neighbour.distanceToOutsideConnectedFloor >
+                    var nextDistance = current.DistanceToOutsideConnectedFloor + 1;
+                    if (neighbour.DistanceToOutsideConnectedFloor == CellState.DistanceUninitializedOrAboveMax ||
+                        neighbour.DistanceToOutsideConnectedFloor >
                         nextDistance)
                     {
-                        neighbour.distanceToOutsideConnectedFloor = nextDistance;
+                        neighbour.DistanceToOutsideConnectedFloor = nextDistance;
                         updateGradientsFor.Add((nx, ny));
 
                         queue.Enqueue((nx, ny));
@@ -160,59 +155,50 @@ public class GridState(GameState gameState, CellState[,] grid)
     private void UpdateGradientKey(int x, int y)
     {
         var currentCell = GetCellState(x, y);
-        var currentDistance = currentCell.distanceToOutsideConnectedFloor;
+        var currentDistance = currentCell.DistanceToOutsideConnectedFloor;
 
         var corners = new List<Corner>(4);
 
         // Pre-fetch neighbors for TopLeft checks
-        var n_tl1 = GetCellState(x - 1, y);
-        var n_tl2 = GetCellState(x - 1, y - 1);
-        var n_tl3 = GetCellState(x, y - 1);
+        var nTl1 = GetCellState(x - 1, y);
+        var nTl2 = GetCellState(x - 1, y - 1);
+        var nTl3 = GetCellState(x, y - 1);
 
-        if ((n_tl1 != null && n_tl1.distanceToOutsideConnectedFloor > currentDistance) ||
-            (n_tl2 != null && n_tl2.distanceToOutsideConnectedFloor > currentDistance) ||
-            (n_tl3 != null && n_tl3.distanceToOutsideConnectedFloor > currentDistance))
+        if ((nTl1 != null && nTl1.DistanceToOutsideConnectedFloor > currentDistance) ||
+            (nTl2 != null && nTl2.DistanceToOutsideConnectedFloor > currentDistance) ||
+            (nTl3 != null && nTl3.DistanceToOutsideConnectedFloor > currentDistance))
             corners.Add(Corner.TopLeft);
 
         // TopRight checks
-        var n_tr1 = GetCellState(x + 1, y);
-        var n_tr2 = GetCellState(x + 1, y - 1);
-        var n_tr3 = GetCellState(x, y - 1);
+        var nTr1 = GetCellState(x + 1, y);
+        var nTr2 = GetCellState(x + 1, y - 1);
+        var nTr3 = GetCellState(x, y - 1);
 
-        if ((n_tr1 != null && n_tr1.distanceToOutsideConnectedFloor > currentDistance) ||
-            (n_tr2 != null && n_tr2.distanceToOutsideConnectedFloor > currentDistance) ||
-            (n_tr3 != null && n_tr3.distanceToOutsideConnectedFloor > currentDistance))
+        if ((nTr1 != null && nTr1.DistanceToOutsideConnectedFloor > currentDistance) ||
+            (nTr2 != null && nTr2.DistanceToOutsideConnectedFloor > currentDistance) ||
+            (nTr3 != null && nTr3.DistanceToOutsideConnectedFloor > currentDistance))
             corners.Add(Corner.TopRight);
 
         // BottomLeft checks
-        var n_bl1 = GetCellState(x - 1, y);
-        var n_bl2 = GetCellState(x - 1, y + 1);
-        var n_bl3 = GetCellState(x, y + 1);
+        var nBl1 = GetCellState(x - 1, y);
+        var nBl2 = GetCellState(x - 1, y + 1);
+        var nBl3 = GetCellState(x, y + 1);
 
-        if ((n_bl1 != null && n_bl1.distanceToOutsideConnectedFloor > currentDistance) ||
-            (n_bl2 != null && n_bl2.distanceToOutsideConnectedFloor > currentDistance) ||
-            (n_bl3 != null && n_bl3.distanceToOutsideConnectedFloor > currentDistance))
+        if ((nBl1 != null && nBl1.DistanceToOutsideConnectedFloor > currentDistance) ||
+            (nBl2 != null && nBl2.DistanceToOutsideConnectedFloor > currentDistance) ||
+            (nBl3 != null && nBl3.DistanceToOutsideConnectedFloor > currentDistance))
             corners.Add(Corner.BottomLeft);
 
         // BottomRight checks
-        var n_br1 = GetCellState(x + 1, y);
-        var n_br2 = GetCellState(x + 1, y + 1);
-        var n_br3 = GetCellState(x, y + 1);
+        var nBr1 = GetCellState(x + 1, y);
+        var nBr2 = GetCellState(x + 1, y + 1);
+        var nBr3 = GetCellState(x, y + 1);
 
-        if ((n_br1 != null && n_br1.distanceToOutsideConnectedFloor > currentDistance) ||
-            (n_br2 != null && n_br2.distanceToOutsideConnectedFloor > currentDistance) ||
-            (n_br3 != null && n_br3.distanceToOutsideConnectedFloor > currentDistance))
+        if ((nBr1 != null && nBr1.DistanceToOutsideConnectedFloor > currentDistance) ||
+            (nBr2 != null && nBr2.DistanceToOutsideConnectedFloor > currentDistance) ||
+            (nBr3 != null && nBr3.DistanceToOutsideConnectedFloor > currentDistance))
             corners.Add(Corner.BottomRight);
 
-        currentCell.gradientKey = RampKeys.CreateKey(corners.ToArray());
-    }
-
-    private void UpdateCellTilsetOffsets(int x, int y)
-    {
-        var currentCell = GetCellState(x, y);
-
-        // For each corner
-        // Get overall coords based on neighbours
-        // apply actual corner offset
+        currentCell.GradientKey = RampKeys.CreateKey(corners.ToArray());
     }
 }

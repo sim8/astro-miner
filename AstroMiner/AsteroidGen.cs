@@ -30,7 +30,7 @@ public static class AsteroidGen
         {
             var solidBlocksInARow = 0;
             for (var col = 0; col < grid.GetLength(1); col++)
-                if (grid[row, col].type != CellType.Empty)
+                if (grid[row, col].Type != CellType.Empty)
                 {
                     solidBlocksInARow++;
                 }
@@ -40,14 +40,14 @@ public static class AsteroidGen
                     var minerCellOffset = 1f - GameConfig.MinerSize / 2;
                     var minerColIndex = col - solidBlocksInARow / 2 - 1; // -1 to account for miner being 2x cell size
                     // Clear 2x4 landing area
-                    grid[row, minerColIndex - 1].type = CellType.Floor;
-                    grid[row, minerColIndex].type = CellType.Floor;
-                    grid[row, minerColIndex + 1].type = CellType.Floor;
-                    grid[row, minerColIndex + 2].type = CellType.Floor;
-                    grid[row - 1, minerColIndex - 1].type = CellType.Floor;
-                    grid[row - 1, minerColIndex].type = CellType.Floor;
-                    grid[row - 1, minerColIndex + 1].type = CellType.Floor;
-                    grid[row - 1, minerColIndex + 2].type = CellType.Floor;
+                    grid[row, minerColIndex - 1].Type = CellType.Floor;
+                    grid[row, minerColIndex].Type = CellType.Floor;
+                    grid[row, minerColIndex + 1].Type = CellType.Floor;
+                    grid[row, minerColIndex + 2].Type = CellType.Floor;
+                    grid[row - 1, minerColIndex - 1].Type = CellType.Floor;
+                    grid[row - 1, minerColIndex].Type = CellType.Floor;
+                    grid[row - 1, minerColIndex + 1].Type = CellType.Floor;
+                    grid[row - 1, minerColIndex + 2].Type = CellType.Floor;
                     return new Vector2(minerColIndex + minerCellOffset, row - 1 + minerCellOffset);
                 }
         }

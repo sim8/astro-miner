@@ -3,12 +3,24 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
 
-public static class DualTilesets
+/// <summary>
+///     Based heavily on Dual Grid System https://x.com/OskSta/status/1448248658865049605
+///     High level steps of rendering:
+///     1. Iterate each cell (back to front) and each corner of the cell (back to front)
+///     2. Find the tile to render based on corner's 3 neighbors
+///     3. Render single quadrant (corner of cell)
+///     - Only quadrant rendered as opposed to whole tile, as neighboring cell
+///     might be different type (but shares based rock design)
+///     - Each quadrant rendered two quadrants high, leaving room for overlaying
+///     texture at the top
+/// </summary>
+public static class Tilesets
 {
     private const int QuadrantTextureSizePx = GameConfig.CellTextureSizePx / 2;
 
     private const int TextureGridWidth = 4;
 
+    // Define coordinates for each
     private static readonly Dictionary<int, (int, int)> RampKeyToTextureOffset = new()
     {
         // Row 1
@@ -59,6 +71,7 @@ public static class DualTilesets
         return WallTypeTextureIndex.ContainsKey(gameState.Grid.GetCellType(x, y));
     }
 
+    // Find the tile to render based on corner's 3 neighbors
     private static int GetCellQuadrantTileKey(GameState gameState, int x, int y, Corner corner)
     {
         var (topLeftXOffset, topLeftYOffset) = GetTopLeftOffsetFor2X2[corner];
@@ -75,6 +88,7 @@ public static class DualTilesets
             isBottomRightTileset);
     }
 
+    // Find px offset within main texture for a given quadrant
     // TODO save this to CellState
     private static (int, int) GetCellQuadrantTextureOffset(GameState gameState, int col, int row, Corner corner)
     {

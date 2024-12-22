@@ -65,15 +65,15 @@ public class GradientOverlayRenderer(RendererShared shared)
         int innerGradientDepth = 2, int outerGradientDepth = 3)
     {
         var cellState = shared.GameState.Grid.GetCellState(col, row);
-        if (cellState.distanceToOutsideConnectedFloor >= innerGradientDepth ||
-            cellState.distanceToOutsideConnectedFloor ==
-            CellState.DISTANCE_UNINITIALIZED_OR_ABOVE_MAX) // Cell above max, always render overlay
+        if (cellState.DistanceToOutsideConnectedFloor >= innerGradientDepth ||
+            cellState.DistanceToOutsideConnectedFloor ==
+            CellState.DistanceUninitializedOrAboveMax) // Cell above max, always render overlay
         {
             var overlayOpacityMidPoint = 0.6f;
 
-            var gradientKey = cellState.gradientKey;
+            var gradientKey = cellState.GradientKey;
 
-            var isInnerGradient = cellState.distanceToOutsideConnectedFloor == innerGradientDepth;
+            var isInnerGradient = cellState.DistanceToOutsideConnectedFloor == innerGradientDepth;
 
             var overlaySourceRect = GetSourceRect(gradientKey, isInnerGradient);
             var solidSourceRect = GetSourceRect(RampKeys.Solid, isInnerGradient);
@@ -88,7 +88,7 @@ public class GradientOverlayRenderer(RendererShared shared)
                         overlaySourceRect, OverlayColor * overlayOpacityMidPoint);
                 }
             }
-            else if (cellState.distanceToOutsideConnectedFloor == outerGradientDepth)
+            else if (cellState.DistanceToOutsideConnectedFloor == outerGradientDepth)
             {
                 spriteBatch.Draw(shared.Textures["gradient-set"],
                     GetVisibleRectForGradientOverlay(col, row),
@@ -113,9 +113,9 @@ public class GradientOverlayRenderer(RendererShared shared)
     {
         var cellState = shared.GameState.Grid.GetCellState(col, row);
         var rect = shared.ViewHelpers.GetVisibleRectForGridCell(col, row);
-        if (cellState.distanceToOutsideConnectedFloor > 1)
+        if (cellState.DistanceToOutsideConnectedFloor > 1)
             shared.RenderString(spriteBatch, rect.X + 20, rect.Y,
-                cellState.distanceToOutsideConnectedFloor.ToString());
+                cellState.DistanceToOutsideConnectedFloor.ToString());
 
         shared.RenderString(spriteBatch, rect.X, rect.Y + 25,
             "X" + col + " Y" + row, 1);

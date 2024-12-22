@@ -83,11 +83,11 @@ public class Renderer
         for (var row = 0; row < GameConfig.GridSize; row++)
         for (var col = 0; col < GameConfig.GridSize; col++)
         {
-            if (DualTilesets.CellIsTilesetType(_gameState, col, row))
+            if (Tilesets.CellIsTilesetType(_gameState, col, row))
                 foreach (var corner in _cornersInRenderOrder)
                 {
                     var dualTilesetSourceRect =
-                        DualTilesets.GetCellQuadrantSourceRect(_gameState, col, row, corner);
+                        Tilesets.GetCellQuadrantSourceRect(_gameState, col, row, corner);
                     spriteBatch.Draw(_textures["tileset"],
                         _viewHelpers.GetVisibleRectForGridQuadrant(col, row, corner),
                         dualTilesetSourceRect, Color.White);
