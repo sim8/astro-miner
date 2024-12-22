@@ -44,8 +44,6 @@ public static class DualTilesets
         { CellType.Diamond, 3 }
     };
 
-    private static readonly HashSet<CellType> TilesetCellTypes =
-        [CellType.Rock, CellType.SolidRock, CellType.Ruby, CellType.Diamond];
 
     // A given corner is the center of a 2x2 set of tiles - use this to find the top left of each set
     private static readonly Dictionary<Corner, (int, int)> GetTopLeftOffsetFor2X2 = new()
@@ -56,9 +54,9 @@ public static class DualTilesets
         { Corner.BottomRight, (0, 0) }
     };
 
-    private static bool CellIsTilesetType(GameState gameState, int x, int y)
+    public static bool CellIsTilesetType(GameState gameState, int x, int y)
     {
-        return TilesetCellTypes.Contains(gameState.Grid.GetCellType(x, y));
+        return WallTypeTextureIndex.ContainsKey(gameState.Grid.GetCellType(x, y));
     }
 
     private static int GetCellQuadrantTileKey(GameState gameState, int x, int y, Corner corner)
