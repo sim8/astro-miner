@@ -42,7 +42,9 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         // Quadrants are rendered at double height, with top half overlaying quadrant behind
         var isTopQuadrant = corner is Corner.TopLeft or Corner.TopRight;
         var quadrantX = corner is Corner.TopRight or Corner.BottomRight ? gridX + 0.5f : gridX;
-        var quadrantY = isTopQuadrant ? gridY - 0.5f : gridY; // without offset, would be gridY : gridY + 0.5f
+
+        // All quadrants rendered - .5 y to account for space in texture
+        var quadrantY = isTopQuadrant ? gridY - 0.5f : gridY;
         return GetVisibleRectForGridCell(quadrantX, quadrantY, 0.5f);
     }
 

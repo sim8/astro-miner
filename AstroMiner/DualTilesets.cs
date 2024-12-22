@@ -39,9 +39,9 @@ public static class DualTilesets
     private static readonly Dictionary<CellType, int> WallTypeTextureIndex = new()
     {
         { CellType.Rock, 0 },
-        { CellType.SolidRock, 0 },
-        { CellType.Diamond, 0 },
-        { CellType.Ruby, 0 }
+        { CellType.SolidRock, 1 },
+        { CellType.Ruby, 2 },
+        { CellType.Diamond, 3 }
     };
 
     private static readonly HashSet<CellType> TilesetCellTypes =
@@ -80,7 +80,7 @@ public static class DualTilesets
     // TODO save this to CellState
     private static (int, int) GetCellQuadrantTextureOffset(GameState gameState, int col, int row, Corner corner)
     {
-        // Walls tileset has one quadrant room above each tile for overlaying texture.
+        // Walls tileset has one quadrant's space above each actual quadrant for overlaying texture.
         // Each quadrant is rendered at double height, overlaying the one behind it
         // // TODO - change/centralize this logic? Will need doing for floor tilesets
 
@@ -97,12 +97,12 @@ public static class DualTilesets
         // Convert those to pixel x,y within the actual texture
         // NOTE y pos accounts for texture overlay space. Logic will need to change for floor tilesets
         var tileTexturePxX = (textureTilesetX + textureGridX) * GameConfig.CellTextureSizePx;
-        var tileTexturePxY = textureGridY * (GameConfig.CellTextureSizePx + QuadrantTextureSizePx);
+        var tileTexturePxY = textureGridY * QuadrantTextureSizePx * 4; // Each tile in texture is 4 quadrants high
 
         var quadrantX = tileTexturePxX +
                         (corner is Corner.TopLeft or Corner.BottomLeft ? QuadrantTextureSizePx : 0);
         var quadrantY = tileTexturePxY +
-                        (corner is Corner.TopLeft or Corner.TopRight ? QuadrantTextureSizePx : 0);
+                        (corner is Corner.TopLeft or Corner.TopRight ? QuadrantTextureSizePx * 2 : 0);
 
 
         return (quadrantX, quadrantY);
@@ -112,8 +112,7 @@ public static class DualTilesets
     {
         var (x, y) = GetCellQuadrantTextureOffset(gameState, col, row, corner);
 
-        // Walls tileset has one quadrant room above each tile for overlaying texture.
-        // Each quadrant is rendered at double height, overlaying the one behind it
+        // Each tile quadrant has one quadrant above it in texture for any overlaying visuals. Render at double height
         // TODO - change/centralize this logic? Will need doing for floor tilesets
         return new Rectangle(x, y, QuadrantTextureSizePx, GameConfig.CellTextureSizePx);
     }
