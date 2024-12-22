@@ -7,6 +7,8 @@ public static class DualTilesets
 {
     private const int QuadrantTextureSizePx = GameConfig.CellTextureSizePx / 2;
 
+    private const int TextureGridWidth = 4;
+
     private static readonly Dictionary<int, (int, int)> RampKeyToTextureOffset = new()
     {
         // Row 1
@@ -32,6 +34,14 @@ public static class DualTilesets
         { RampKeys.UpLeftWide, (1, 3) },
         { RampKeys.UpLeftToBottomRight, (2, 3) },
         { RampKeys.DownRightWide, (3, 3) }
+    };
+
+    private static readonly Dictionary<CellType, int> WallTypeTextureIndex = new()
+    {
+        { CellType.Rock, 0 },
+        { CellType.SolidRock, 0 },
+        { CellType.Diamond, 0 },
+        { CellType.Ruby, 0 }
     };
 
     private static readonly HashSet<CellType> TilesetCellTypes =
@@ -80,9 +90,13 @@ public static class DualTilesets
         // Get the grid x,y of that tile within the default dual tileset
         var (textureGridX, textureGridY) = RampKeyToTextureOffset[tileKey];
 
+        // Get grid index of cellType tileset within main texture
+        var cellType = gameState.Grid.GetCellType(col, row);
+        var textureTilesetX = WallTypeTextureIndex[cellType] * TextureGridWidth;
+
         // Convert those to pixel x,y within the actual texture
         // NOTE y pos accounts for texture overlay space. Logic will need to change for floor tilesets
-        var tileTexturePxX = textureGridX * GameConfig.CellTextureSizePx;
+        var tileTexturePxX = (textureTilesetX + textureGridX) * GameConfig.CellTextureSizePx;
         var tileTexturePxY = textureGridY * (GameConfig.CellTextureSizePx + QuadrantTextureSizePx);
 
         var quadrantX = tileTexturePxX +
