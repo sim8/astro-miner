@@ -29,7 +29,7 @@ public static class CornerKeyHelpers
     public static readonly int UpRightToBottomLeft = CreateKey(Corner.TopRight, Corner.BottomLeft);
     public static readonly int Solid = CreateKey();
 
-    public static int
+    public static readonly int
         TodoRemove =
             CreateKey(Corner.TopRight, Corner.BottomLeft, Corner.BottomRight,
                 Corner.TopLeft); // TODO REMOVE. Shouldn't happen in game
