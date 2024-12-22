@@ -11,28 +11,28 @@ public class GradientOverlayRenderer(RendererShared shared)
 
     private static readonly HashSet<int> TopEdgeKeys =
     [
-        CornerKeyHelpers.DownLeft, CornerKeyHelpers.DownLeftWide, CornerKeyHelpers.Down, CornerKeyHelpers.DownRight,
-        CornerKeyHelpers.DownRightWide
+        CornerKeys.DownLeft, CornerKeys.DownLeftWide, CornerKeys.Down, CornerKeys.DownRight,
+        CornerKeys.DownRightWide
     ];
 
     private readonly Dictionary<int, (int x, int y)> _gradientKeysToOffsets = new()
     {
-        { CornerKeyHelpers.Right, (0, 2) },
-        { CornerKeyHelpers.Down, (1, 2) },
-        { CornerKeyHelpers.Left, (2, 2) },
-        { CornerKeyHelpers.Up, (3, 2) },
-        { CornerKeyHelpers.UpRight, (0, 1) },
-        { CornerKeyHelpers.DownRight, (0, 0) },
-        { CornerKeyHelpers.UpLeft, (1, 1) },
-        { CornerKeyHelpers.DownLeft, (1, 0) },
-        { CornerKeyHelpers.UpRightWide, (3, 0) },
-        { CornerKeyHelpers.DownRightWide, (3, 1) },
-        { CornerKeyHelpers.UpLeftWide, (2, 0) },
-        { CornerKeyHelpers.DownLeftWide, (2, 1) },
-        { CornerKeyHelpers.UpLeftToBottomRight, (4, 0) },
-        { CornerKeyHelpers.UpRightToBottomLeft, (4, 2) },
-        { CornerKeyHelpers.Solid, (4, 2) },
-        { CornerKeyHelpers.TodoRemove, (7, 2) }
+        { CornerKeys.Right, (0, 2) },
+        { CornerKeys.Down, (1, 2) },
+        { CornerKeys.Left, (2, 2) },
+        { CornerKeys.Up, (3, 2) },
+        { CornerKeys.UpRight, (0, 1) },
+        { CornerKeys.DownRight, (0, 0) },
+        { CornerKeys.UpLeft, (1, 1) },
+        { CornerKeys.DownLeft, (1, 0) },
+        { CornerKeys.UpRightWide, (3, 0) },
+        { CornerKeys.DownRightWide, (3, 1) },
+        { CornerKeys.UpLeftWide, (2, 0) },
+        { CornerKeys.DownLeftWide, (2, 1) },
+        { CornerKeys.UpLeftToBottomRight, (4, 0) },
+        { CornerKeys.UpRightToBottomLeft, (4, 2) },
+        { CornerKeys.Empty, (4, 2) },
+        { CornerKeys.Solid, (7, 2) }
     };
 
     private Rectangle GetSourceRect(int gradientKey)
@@ -63,7 +63,7 @@ public class GradientOverlayRenderer(RendererShared shared)
             var overlayOpacityMidPoint = 0.6f;
 
             var overlaySourceRect = GetSourceRect(cellState.gradientKey);
-            var solidSourceRect = GetSourceRect(CornerKeyHelpers.InitialKey);
+            var solidSourceRect = GetSourceRect(CornerKeys.InitialKey);
 
             if (cellState.distanceToOutsideConnectedFloor == innerGradientDepth)
             {

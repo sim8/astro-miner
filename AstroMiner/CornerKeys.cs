@@ -9,7 +9,7 @@ public enum Corner
 }
 
 // Create or modify a bit-based key representing the up/down state of each corner of a cell
-public static class CornerKeyHelpers
+public static class CornerKeys
 {
     public const int InitialKey = 0;
 
@@ -27,12 +27,11 @@ public static class CornerKeyHelpers
     public static readonly int DownLeftWide = CreateKey(Corner.TopLeft, Corner.BottomLeft, Corner.BottomRight);
     public static readonly int UpLeftToBottomRight = CreateKey(Corner.TopLeft, Corner.BottomRight);
     public static readonly int UpRightToBottomLeft = CreateKey(Corner.TopRight, Corner.BottomLeft);
-    public static readonly int Solid = CreateKey();
+    public static readonly int Empty = CreateKey();
 
+    // TODO shouldn't happen in gradients
     public static readonly int
-        TodoRemove =
-            CreateKey(Corner.TopRight, Corner.BottomLeft, Corner.BottomRight,
-                Corner.TopLeft); // TODO REMOVE. Shouldn't happen in game
+        Solid = CreateKey(Corner.TopRight, Corner.BottomLeft, Corner.BottomRight, Corner.TopLeft);
 
     public static int CreateKey(bool topLeft, bool topRight, bool bottomLeft, bool bottomRight)
     {

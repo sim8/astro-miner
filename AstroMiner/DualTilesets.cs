@@ -10,27 +10,27 @@ public static class DualTilesets
     private static readonly Dictionary<int, (int, int)> CornerKeyToTextureOffset = new()
     {
         // Row 1
-        { CornerKeyHelpers.UpRightWide, (0, 0) }, // (true, true, false, true)
-        { CornerKeyHelpers.Left, (1, 0) }, // (true, false, true, false)
-        { CornerKeyHelpers.UpRight, (2, 0) }, // (false, true, false, false)
-        { CornerKeyHelpers.Up, (3, 0) }, // (true, true, false, false)
+        { CornerKeys.UpRightWide, (0, 0) }, // (true, true, false, true)
+        { CornerKeys.Left, (1, 0) }, // (true, false, true, false)
+        { CornerKeys.UpRight, (2, 0) }, // (false, true, false, false)
+        { CornerKeys.Up, (3, 0) }, // (true, true, false, false)
 
         // Row 2
-        { CornerKeyHelpers.UpRightToBottomLeft, (0, 1) }, // (false, true, true, false)
-        { CornerKeyHelpers.UpLeft, (1, 1) }, // (true, false, false, false)
-        { CornerKeyHelpers.Solid, (2, 1) }, // (false, false, false, false)
-        { CornerKeyHelpers.DownRight, (3, 1) }, // (false, false, false, true)
+        { CornerKeys.UpRightToBottomLeft, (0, 1) }, // (false, true, true, false)
+        { CornerKeys.UpLeft, (1, 1) }, // (true, false, false, false)
+        { CornerKeys.Empty, (2, 1) }, // (false, false, false, false)
+        { CornerKeys.DownRight, (3, 1) }, // (false, false, false, true)
 
         // Row 3
-        { CornerKeyHelpers.DownLeftWide, (0, 2) }, // (true, false, true, true) 
-        { CornerKeyHelpers.Down, (1, 2) }, // (false, false, true, true)
-        { CornerKeyHelpers.DownLeft, (2, 2) }, // (false, false, true, false)
-        { CornerKeyHelpers.Right, (3, 2) },
+        { CornerKeys.DownLeftWide, (0, 2) }, // (true, false, true, true) 
+        { CornerKeys.Down, (1, 2) }, // (false, false, true, true)
+        { CornerKeys.DownLeft, (2, 2) }, // (false, false, true, false)
+        { CornerKeys.Right, (3, 2) },
         // Row 4
-        { CornerKeyHelpers.TodoRemove, (0, 3) }, // all corners
-        { CornerKeyHelpers.UpLeftWide, (1, 3) }, // top-left, top-right, bottom-left
-        { CornerKeyHelpers.UpLeftToBottomRight, (2, 3) }, // (true, false, false, true)
-        { CornerKeyHelpers.DownRightWide, (3, 3) }
+        { CornerKeys.Solid, (0, 3) }, // all corners
+        { CornerKeys.UpLeftWide, (1, 3) }, // top-left, top-right, bottom-left
+        { CornerKeys.UpLeftToBottomRight, (2, 3) }, // (true, false, false, true)
+        { CornerKeys.DownRightWide, (3, 3) }
     };
 
     private static readonly HashSet<CellType> TilesetCellTypes =
@@ -62,7 +62,7 @@ public static class DualTilesets
         var isBottomLeftTileset = CellIsTilesetType(gameState, twoByTwoX, twoByTwoY + 1);
         var isBottomRightTileset = CellIsTilesetType(gameState, twoByTwoX + 1, twoByTwoY + 1);
 
-        return CornerKeyHelpers.CreateKey(isTopLeftTileset, isTopRightTileset, isBottomLeftTileset,
+        return CornerKeys.CreateKey(isTopLeftTileset, isTopRightTileset, isBottomLeftTileset,
             isBottomRightTileset);
     }
 
