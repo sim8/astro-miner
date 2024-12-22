@@ -11,8 +11,7 @@ public enum Corner
 // Create or modify a bit-based key representing the up/down state of each corner of a cell
 public static class RampKeys
 {
-    public const int InitialKey = 0;
-
+    public static readonly int Empty = CreateKey();
     public static readonly int Right = CreateKey(Corner.TopRight, Corner.BottomRight);
     public static readonly int Down = CreateKey(Corner.BottomLeft, Corner.BottomRight);
     public static readonly int Left = CreateKey(Corner.TopLeft, Corner.BottomLeft);
@@ -27,7 +26,6 @@ public static class RampKeys
     public static readonly int DownLeftWide = CreateKey(Corner.TopLeft, Corner.BottomLeft, Corner.BottomRight);
     public static readonly int UpLeftToBottomRight = CreateKey(Corner.TopLeft, Corner.BottomRight);
     public static readonly int UpRightToBottomLeft = CreateKey(Corner.TopRight, Corner.BottomLeft);
-    public static readonly int Empty = CreateKey();
 
     // TODO shouldn't happen in gradients
     public static readonly int
@@ -35,7 +33,7 @@ public static class RampKeys
 
     public static int CreateKey(bool topLeft, bool topRight, bool bottomLeft, bool bottomRight)
     {
-        var key = InitialKey;
+        var key = Empty;
         if (topLeft) key |= 1 << (int)Corner.TopLeft;
         if (topRight) key |= 1 << (int)Corner.TopRight;
         if (bottomLeft) key |= 1 << (int)Corner.BottomLeft;
@@ -46,7 +44,7 @@ public static class RampKeys
 
     public static int CreateKey(params Corner[] corners)
     {
-        var key = InitialKey;
+        var key = Empty;
         foreach (var corner in corners) key |= 1 << (int)corner;
         return key;
     }

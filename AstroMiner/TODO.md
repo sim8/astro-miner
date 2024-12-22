@@ -2,7 +2,6 @@
 
 ## Gameplay - asteroid
 
-- only have solid rock near center
 - swap core range for sliding range?
 - ~~interior floor - shouldn't be totally solid~~
 - Explosive pieces + chain reaction
@@ -14,7 +13,6 @@
 - IS there a risk/reward element?
 - variable yield? skill based?
 - Make it clearer where center is - clearer sections?
-    - Should hard rock only start appearing at certain range?
 - Besides usual randomness, should we have different "types" of asteroid?
     - Asteroids don't really have characteristics
 
@@ -53,18 +51,14 @@
 
 - ~~Easy grid view for ast gen + new entry point~~
 - Player placement when exiting
-- Renderer inheritance?
 - Control mapping
 - Test on Xbox?
 
 ## Rendering / art
 
-- Change palette colors - blue shadows
 - Additive light pass for glares (bright lights, explosions)
 - Player animation
 - Ground tileset
-- Redo rock tileset - 1 central piece per block
-    - How do gems work?
 - Clouds / background animation
 - Drilling animation
 - Darker overlay near center
@@ -82,7 +76,6 @@
 
 ## Performance
 
-- Show framerate
 - Replace pos / boxsize with rectangle - avoid creating new
 - Move tileset stuff to update loop + cache?
 - Only render on-screen stuff
