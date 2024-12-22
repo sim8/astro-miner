@@ -13,6 +13,27 @@ public static class CornerKeyHelpers
 {
     public const int InitialKey = 0;
 
+    public static readonly int Right = CreateKey(Corner.TopRight, Corner.BottomRight);
+    public static readonly int Down = CreateKey(Corner.BottomLeft, Corner.BottomRight);
+    public static readonly int Left = CreateKey(Corner.TopLeft, Corner.BottomLeft);
+    public static readonly int Up = CreateKey(Corner.TopRight, Corner.TopLeft);
+    public static readonly int UpRight = CreateKey(Corner.TopRight);
+    public static readonly int DownRight = CreateKey(Corner.BottomRight);
+    public static readonly int UpLeft = CreateKey(Corner.TopLeft);
+    public static readonly int DownLeft = CreateKey(Corner.BottomLeft);
+    public static readonly int UpRightWide = CreateKey(Corner.TopRight, Corner.BottomRight, Corner.TopLeft);
+    public static readonly int DownRightWide = CreateKey(Corner.TopRight, Corner.BottomRight, Corner.BottomLeft);
+    public static readonly int UpLeftWide = CreateKey(Corner.TopRight, Corner.BottomLeft, Corner.TopLeft);
+    public static readonly int DownLeftWide = CreateKey(Corner.TopLeft, Corner.BottomLeft, Corner.BottomRight);
+    public static readonly int UpLeftToBottomRight = CreateKey(Corner.TopLeft, Corner.BottomRight);
+    public static readonly int UpRightToBottomLeft = CreateKey(Corner.TopRight, Corner.BottomLeft);
+    public static readonly int Solid = CreateKey();
+
+    public static int
+        TodoRemove =
+            CreateKey(Corner.TopRight, Corner.BottomLeft, Corner.BottomRight,
+                Corner.TopLeft); // TODO REMOVE. Shouldn't happen in game
+
     public static int CreateKey(bool topLeft, bool topRight, bool bottomLeft, bool bottomRight)
     {
         var key = InitialKey;

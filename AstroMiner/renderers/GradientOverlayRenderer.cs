@@ -9,73 +9,30 @@ public class GradientOverlayRenderer(RendererShared shared)
     private static readonly int TextureSizePx = 256;
     public static readonly Color OverlayColor = new(37, 73, 99);
 
+    private static readonly HashSet<int> TopEdgeKeys =
+    [
+        CornerKeyHelpers.DownLeft, CornerKeyHelpers.DownLeftWide, CornerKeyHelpers.Down, CornerKeyHelpers.DownRight,
+        CornerKeyHelpers.DownRightWide
+    ];
+
     private readonly Dictionary<int, (int x, int y)> _gradientKeysToOffsets = new()
     {
-        {
-            // right
-            CornerKeyHelpers.CreateKey(Corner.TopRight, Corner.BottomRight), (0, 2)
-        },
-        {
-            // down
-            CornerKeyHelpers.CreateKey(Corner.BottomLeft, Corner.BottomRight), (1, 2)
-        },
-        {
-            // left
-            CornerKeyHelpers.CreateKey(Corner.TopLeft, Corner.BottomLeft), (2, 2)
-        },
-        {
-            // up
-            CornerKeyHelpers.CreateKey(Corner.TopRight, Corner.TopLeft), (3, 2)
-        },
-        {
-            // up right
-            CornerKeyHelpers.CreateKey(Corner.TopRight), (0, 1)
-        },
-        {
-            // down right
-            CornerKeyHelpers.CreateKey(Corner.BottomRight), (0, 0)
-        },
-        {
-            // up left
-            CornerKeyHelpers.CreateKey(Corner.TopLeft), (1, 1)
-        },
-        {
-            // down left
-            CornerKeyHelpers.CreateKey(Corner.BottomLeft), (1, 0)
-        },
-        {
-            // up right wide
-            CornerKeyHelpers.CreateKey(Corner.TopRight, Corner.BottomRight, Corner.TopLeft), (3, 0)
-        },
-        {
-            // down right wide
-            CornerKeyHelpers.CreateKey(Corner.TopRight, Corner.BottomRight, Corner.BottomLeft), (3, 1)
-        },
-        {
-            // up left wide
-            CornerKeyHelpers.CreateKey(Corner.TopRight, Corner.BottomLeft, Corner.TopLeft), (2, 0)
-        },
-        {
-            // down left wide
-            CornerKeyHelpers.CreateKey(Corner.TopLeft, Corner.BottomLeft, Corner.BottomRight), (2, 1)
-        },
-        {
-            // up left to bottom right
-            CornerKeyHelpers.CreateKey(Corner.TopLeft, Corner.BottomRight), (4, 0)
-        },
-        {
-            // up right to bottom left
-            CornerKeyHelpers.CreateKey(Corner.TopRight, Corner.BottomLeft), (4, 2)
-        },
-        {
-            // solid
-            CornerKeyHelpers.CreateKey(), (4, 2)
-        },
-        {
-            // TODO REMOVE. Shouldnt happen in game
-            CornerKeyHelpers.CreateKey(Corner.TopRight, Corner.BottomLeft, Corner.BottomRight, Corner.TopLeft),
-            (7, 2)
-        }
+        { CornerKeyHelpers.Right, (0, 2) },
+        { CornerKeyHelpers.Down, (1, 2) },
+        { CornerKeyHelpers.Left, (2, 2) },
+        { CornerKeyHelpers.Up, (3, 2) },
+        { CornerKeyHelpers.UpRight, (0, 1) },
+        { CornerKeyHelpers.DownRight, (0, 0) },
+        { CornerKeyHelpers.UpLeft, (1, 1) },
+        { CornerKeyHelpers.DownLeft, (1, 0) },
+        { CornerKeyHelpers.UpRightWide, (3, 0) },
+        { CornerKeyHelpers.DownRightWide, (3, 1) },
+        { CornerKeyHelpers.UpLeftWide, (2, 0) },
+        { CornerKeyHelpers.DownLeftWide, (2, 1) },
+        { CornerKeyHelpers.UpLeftToBottomRight, (4, 0) },
+        { CornerKeyHelpers.UpRightToBottomLeft, (4, 2) },
+        { CornerKeyHelpers.Solid, (4, 2) },
+        { CornerKeyHelpers.TodoRemove, (7, 2) }
     };
 
     private Rectangle GetSourceRect(int gradientKey)
@@ -83,6 +40,15 @@ public class GradientOverlayRenderer(RendererShared shared)
         var offsetXY = _gradientKeysToOffsets[gradientKey];
         return new Rectangle(offsetXY.Item1 * TextureSizePx, offsetXY.Item2 * TextureSizePx, TextureSizePx,
             TextureSizePx);
+    }
+
+    // Offset gradient overlay to appear higher up
+    // Top edge gradients are made smaller to not overlay ground (unwanted shadow)
+    private Rectangle GetVisibleRectForGradientOverlay(float col, float row, bool isTopEdgeOfOverlay = false)
+    {
+        var gridY = isTopEdgeOfOverlay ? row : row - 0.5f;
+        var height = isTopEdgeOfOverlay ? 0.5f : 1f;
+        return shared.ViewHelpers.GetVisibleRectForGridCell(col, gridY, 1f, height);
     }
 
     // Two tiers of gradients. Values have to be consecutive and are constrained by MaxUnexploredCellsVisible
@@ -102,24 +68,29 @@ public class GradientOverlayRenderer(RendererShared shared)
             if (cellState.distanceToOutsideConnectedFloor == innerGradientDepth)
             {
                 if (cellState.gradientKey > 0)
+                {
+                    var isTopEdgeOfOverlay = TopEdgeKeys.Contains(cellState.gradientKey);
                     spriteBatch.Draw(shared.Textures["gradient-set"],
-                        shared.ViewHelpers.GetVisibleRectForGridCell(col, row),
+                        GetVisibleRectForGradientOverlay(col, row, isTopEdgeOfOverlay),
                         overlaySourceRect, OverlayColor * overlayOpacityMidPoint);
+                    // GetVisibleRectForGradientOverlay(col, row, isTopEdgeOfOverlay),
+                    // overlaySourceRect, Color.Red);
+                }
             }
             else if (cellState.distanceToOutsideConnectedFloor == outerGradientDepth)
             {
                 spriteBatch.Draw(shared.Textures["gradient-set"],
-                    shared.ViewHelpers.GetVisibleRectForGridCell(col, row),
+                    GetVisibleRectForGradientOverlay(col, row),
                     solidSourceRect, OverlayColor * overlayOpacityMidPoint);
                 if (cellState.gradientKey > 0)
                     spriteBatch.Draw(shared.Textures["gradient-set"],
-                        shared.ViewHelpers.GetVisibleRectForGridCell(col, row),
+                        GetVisibleRectForGradientOverlay(col, row),
                         overlaySourceRect, OverlayColor);
             }
             else
             {
                 spriteBatch.Draw(shared.Textures["gradient-set"],
-                    shared.ViewHelpers.GetVisibleRectForGridCell(col, row),
+                    GetVisibleRectForGradientOverlay(col, row),
                     solidSourceRect, OverlayColor);
             }
         }
