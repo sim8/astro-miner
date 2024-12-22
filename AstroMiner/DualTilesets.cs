@@ -7,30 +7,31 @@ public static class DualTilesets
 {
     private const int QuadrantTextureSizePx = GameConfig.CellTextureSizePx / 2;
 
-    private static readonly Dictionary<int, (int, int)> CornerKeyToTextureOffset = new()
+    private static readonly Dictionary<int, (int, int)> RampKeyToTextureOffset = new()
     {
         // Row 1
-        { CornerKeys.UpRightWide, (0, 0) }, // (true, true, false, true)
-        { CornerKeys.Left, (1, 0) }, // (true, false, true, false)
-        { CornerKeys.UpRight, (2, 0) }, // (false, true, false, false)
-        { CornerKeys.Up, (3, 0) }, // (true, true, false, false)
+        { RampKeys.UpRightWide, (0, 0) },
+        { RampKeys.Left, (1, 0) },
+        { RampKeys.UpRight, (2, 0) },
+        { RampKeys.Up, (3, 0) },
 
         // Row 2
-        { CornerKeys.UpRightToBottomLeft, (0, 1) }, // (false, true, true, false)
-        { CornerKeys.UpLeft, (1, 1) }, // (true, false, false, false)
-        { CornerKeys.Empty, (2, 1) }, // (false, false, false, false)
-        { CornerKeys.DownRight, (3, 1) }, // (false, false, false, true)
+        { RampKeys.UpRightToBottomLeft, (0, 1) },
+        { RampKeys.UpLeft, (1, 1) },
+        { RampKeys.Empty, (2, 1) },
+        { RampKeys.DownRight, (3, 1) },
 
         // Row 3
-        { CornerKeys.DownLeftWide, (0, 2) }, // (true, false, true, true) 
-        { CornerKeys.Down, (1, 2) }, // (false, false, true, true)
-        { CornerKeys.DownLeft, (2, 2) }, // (false, false, true, false)
-        { CornerKeys.Right, (3, 2) },
+        { RampKeys.DownLeftWide, (0, 2) },
+        { RampKeys.Down, (1, 2) },
+        { RampKeys.DownLeft, (2, 2) },
+        { RampKeys.Right, (3, 2) },
+
         // Row 4
-        { CornerKeys.Solid, (0, 3) }, // all corners
-        { CornerKeys.UpLeftWide, (1, 3) }, // top-left, top-right, bottom-left
-        { CornerKeys.UpLeftToBottomRight, (2, 3) }, // (true, false, false, true)
-        { CornerKeys.DownRightWide, (3, 3) }
+        { RampKeys.Solid, (0, 3) },
+        { RampKeys.UpLeftWide, (1, 3) },
+        { RampKeys.UpLeftToBottomRight, (2, 3) },
+        { RampKeys.DownRightWide, (3, 3) }
     };
 
     private static readonly HashSet<CellType> TilesetCellTypes =
@@ -62,7 +63,7 @@ public static class DualTilesets
         var isBottomLeftTileset = CellIsTilesetType(gameState, twoByTwoX, twoByTwoY + 1);
         var isBottomRightTileset = CellIsTilesetType(gameState, twoByTwoX + 1, twoByTwoY + 1);
 
-        return CornerKeys.CreateKey(isTopLeftTileset, isTopRightTileset, isBottomLeftTileset,
+        return RampKeys.CreateKey(isTopLeftTileset, isTopRightTileset, isBottomLeftTileset,
             isBottomRightTileset);
     }
 
@@ -77,7 +78,7 @@ public static class DualTilesets
         var tileKey = GetCellQuadrantTileKey(gameState, col, row, corner);
 
         // Get the grid x,y of that tile within the default dual tileset
-        var (textureGridX, textureGridY) = CornerKeyToTextureOffset[tileKey];
+        var (textureGridX, textureGridY) = RampKeyToTextureOffset[tileKey];
 
         // Convert those to pixel x,y within the actual texture
         // NOTE y pos accounts for texture overlay space. Logic will need to change for floor tilesets

@@ -11,28 +11,28 @@ public class GradientOverlayRenderer(RendererShared shared)
 
     private static readonly HashSet<int> TopEdgeKeys =
     [
-        CornerKeys.DownLeft, CornerKeys.DownLeftWide, CornerKeys.Down, CornerKeys.DownRight,
-        CornerKeys.DownRightWide
+        RampKeys.DownLeft, RampKeys.DownLeftWide, RampKeys.Down, RampKeys.DownRight,
+        RampKeys.DownRightWide
     ];
 
     private readonly Dictionary<int, (int x, int y)> _gradientKeysToOffsets = new()
     {
-        { CornerKeys.Right, (0, 2) },
-        { CornerKeys.Down, (1, 2) },
-        { CornerKeys.Left, (2, 2) },
-        { CornerKeys.Up, (3, 2) },
-        { CornerKeys.UpRight, (0, 1) },
-        { CornerKeys.DownRight, (0, 0) },
-        { CornerKeys.UpLeft, (1, 1) },
-        { CornerKeys.DownLeft, (1, 0) },
-        { CornerKeys.UpRightWide, (3, 0) },
-        { CornerKeys.DownRightWide, (3, 1) },
-        { CornerKeys.UpLeftWide, (2, 0) },
-        { CornerKeys.DownLeftWide, (2, 1) },
-        { CornerKeys.UpLeftToBottomRight, (4, 0) },
-        { CornerKeys.UpRightToBottomLeft, (4, 2) },
-        { CornerKeys.Empty, (4, 2) },
-        { CornerKeys.Solid, (7, 2) }
+        { RampKeys.Right, (0, 2) },
+        { RampKeys.Down, (1, 2) },
+        { RampKeys.Left, (2, 2) },
+        { RampKeys.Up, (3, 2) },
+        { RampKeys.UpRight, (0, 1) },
+        { RampKeys.DownRight, (0, 0) },
+        { RampKeys.UpLeft, (1, 1) },
+        { RampKeys.DownLeft, (1, 0) },
+        { RampKeys.UpRightWide, (3, 0) },
+        { RampKeys.DownRightWide, (3, 1) },
+        { RampKeys.UpLeftWide, (2, 0) },
+        { RampKeys.DownLeftWide, (2, 1) },
+        { RampKeys.UpLeftToBottomRight, (4, 0) },
+        { RampKeys.UpRightToBottomLeft, (4, 2) },
+        { RampKeys.Empty, (4, 2) },
+        { RampKeys.Solid, (7, 2) }
     };
 
     private Rectangle GetSourceRect(int gradientKey)
@@ -63,7 +63,7 @@ public class GradientOverlayRenderer(RendererShared shared)
             var overlayOpacityMidPoint = 0.6f;
 
             var overlaySourceRect = GetSourceRect(cellState.gradientKey);
-            var solidSourceRect = GetSourceRect(CornerKeys.InitialKey);
+            var solidSourceRect = GetSourceRect(RampKeys.InitialKey);
 
             if (cellState.distanceToOutsideConnectedFloor == innerGradientDepth)
             {

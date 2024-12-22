@@ -204,7 +204,7 @@ public class GridState(GameState gameState, CellState[,] grid)
             (n_br3 != null && n_br3.distanceToOutsideConnectedFloor > currentDistance))
             corners.Add(Corner.BottomRight);
 
-        currentCell.gradientKey = CornerKeyHelpers.CreateKey(corners.ToArray());
+        currentCell.gradientKey = RampKeys.CreateKey(corners.ToArray());
     }
 
     private void UpdateCellTilsetOffsets(int x, int y)
