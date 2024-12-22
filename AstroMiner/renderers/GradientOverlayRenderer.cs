@@ -11,9 +11,12 @@ public class GradientOverlayRenderer(RendererShared shared)
 
     private static readonly HashSet<int> TopEdgeKeys =
     [
-        RampKeys.DownLeft, RampKeys.DownLeftWide, RampKeys.Down, RampKeys.DownRight,
-        RampKeys.DownRightWide
+        RampKeys.DownLeft, RampKeys.Down, RampKeys.DownRight
     ];
+
+    private readonly (int, int) _downLeftWideWithOffset = (5, 1);
+
+    private readonly (int, int) _downRightWideWithOffset = (5, 0);
 
     private readonly Dictionary<int, (int x, int y)> _gradientKeysToOffsets = new()
     {
@@ -31,14 +34,20 @@ public class GradientOverlayRenderer(RendererShared shared)
         { RampKeys.DownLeftWide, (2, 1) },
         { RampKeys.UpLeftToBottomRight, (4, 0) },
         { RampKeys.UpRightToBottomLeft, (4, 2) },
-        { RampKeys.Empty, (4, 2) },
-        { RampKeys.Solid, (7, 2) }
+        { RampKeys.Empty, (5, 2) },
+        { RampKeys.Solid, (4, 2) }
     };
 
-    private Rectangle GetSourceRect(int gradientKey)
+    private Rectangle GetSourceRect(int gradientKey, bool isInnerGradient)
     {
-        var offsetXY = _gradientKeysToOffsets[gradientKey];
-        return new Rectangle(offsetXY.Item1 * TextureSizePx, offsetXY.Item2 * TextureSizePx, TextureSizePx,
+        var textureOffset = _gradientKeysToOffsets[gradientKey];
+
+        // Top edge gradients are rendered at reduced height to avoid overlaying ground.
+        // For smooth gradient, swap out downWideLeft/Right for versions which smoothly join to shorter "down" gradient
+        if (isInnerGradient && gradientKey == RampKeys.DownLeftWide) textureOffset = _downLeftWideWithOffset;
+        if (isInnerGradient && gradientKey == RampKeys.DownRightWide) textureOffset = _downRightWideWithOffset;
+
+        return new Rectangle(textureOffset.Item1 * TextureSizePx, textureOffset.Item2 * TextureSizePx, TextureSizePx,
             TextureSizePx);
     }
 
@@ -62,19 +71,21 @@ public class GradientOverlayRenderer(RendererShared shared)
         {
             var overlayOpacityMidPoint = 0.6f;
 
-            var overlaySourceRect = GetSourceRect(cellState.gradientKey);
-            var solidSourceRect = GetSourceRect(RampKeys.InitialKey);
+            var gradientKey = cellState.gradientKey;
 
-            if (cellState.distanceToOutsideConnectedFloor == innerGradientDepth)
+            var isInnerGradient = cellState.distanceToOutsideConnectedFloor == innerGradientDepth;
+
+            var overlaySourceRect = GetSourceRect(gradientKey, isInnerGradient);
+            var solidSourceRect = GetSourceRect(RampKeys.Solid, isInnerGradient);
+
+            if (isInnerGradient)
             {
-                if (cellState.gradientKey > 0)
+                if (gradientKey > 0)
                 {
-                    var isTopEdgeOfOverlay = TopEdgeKeys.Contains(cellState.gradientKey);
+                    var isTopEdgeOfOverlay = TopEdgeKeys.Contains(gradientKey);
                     spriteBatch.Draw(shared.Textures["gradient-set"],
                         GetVisibleRectForGradientOverlay(col, row, isTopEdgeOfOverlay),
                         overlaySourceRect, OverlayColor * overlayOpacityMidPoint);
-                    // GetVisibleRectForGradientOverlay(col, row, isTopEdgeOfOverlay),
-                    // overlaySourceRect, Color.Red);
                 }
             }
             else if (cellState.distanceToOutsideConnectedFloor == outerGradientDepth)
@@ -82,7 +93,7 @@ public class GradientOverlayRenderer(RendererShared shared)
                 spriteBatch.Draw(shared.Textures["gradient-set"],
                     GetVisibleRectForGradientOverlay(col, row),
                     solidSourceRect, OverlayColor * overlayOpacityMidPoint);
-                if (cellState.gradientKey > 0)
+                if (gradientKey > 0)
                     spriteBatch.Draw(shared.Textures["gradient-set"],
                         GetVisibleRectForGradientOverlay(col, row),
                         overlaySourceRect, OverlayColor);
