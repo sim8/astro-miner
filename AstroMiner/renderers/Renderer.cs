@@ -11,6 +11,7 @@ public class Renderer
 
     private readonly DynamiteRenderer _dynamiteRenderer;
     private readonly ExplosionRenderer _explosionRenderer;
+    private readonly Color _floorColor = new(212, 225, 227);
     private readonly FrameCounter _frameCounter;
     private readonly GameState _gameState;
     private readonly GradientOverlayRenderer _gradientOverlayRenderer;
@@ -83,25 +84,17 @@ public class Renderer
         for (var col = 0; col < GameConfig.GridSize; col++)
         {
             if (DualTilesets.CellIsTilesetType(_gameState, col, row))
-            {
                 foreach (var corner in _cornersInRenderOrder)
                 {
                     var dualTilesetSourceRect =
                         DualTilesets.GetCellQuadrantSourceRect(_gameState, col, row, corner);
-                    spriteBatch.Draw(_textures["tall-dual-tileset"],
+                    spriteBatch.Draw(_textures["tileset"],
                         _viewHelpers.GetVisibleRectForGridQuadrant(col, row, corner),
                         dualTilesetSourceRect, Color.White);
                 }
-            }
             else if (_gameState.Grid.GetCellType(col, row) == CellType.Floor)
-            {
-                var tilesetSourceRect = new Rectangle(3 * GameConfig.CellTextureSizePx,
-                    GameConfig.CellTextureSizePx,
-                    GameConfig.CellTextureSizePx, GameConfig.CellTextureSizePx);
-                spriteBatch.Draw(_textures["tileset"], _viewHelpers.GetVisibleRectForGridCell(col, row),
-                    tilesetSourceRect,
-                    Color.White);
-            }
+                spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
+                    _floorColor);
 
             _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row);
         }
