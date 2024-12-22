@@ -53,7 +53,7 @@ public class ProcGenViewerRenderer
             var cellState = _gameState.Grid.GetCellState(col, row);
 
             spriteBatch.Draw(_textures["white"], GetGridCellRect(col, row),
-                _cellColors[cellState.type]);
+                _cellColors[cellState.Type]);
         }
     }
 }

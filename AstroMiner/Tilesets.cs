@@ -1,156 +1,131 @@
-using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
 
-[Flags]
-internal enum Neighbours
-{
-    None = 0,
-    Above = 1 << 0, // 1
-    AboveRight = 1 << 1, // 2
-    Right = 1 << 2, // 4
-    BelowRight = 1 << 3, // 8
-    Below = 1 << 4, // 16
-    BelowLeft = 1 << 5, // 32
-    Left = 1 << 6, // 64
-    AboveLeft = 1 << 7 // 128
-}
-
+/// <summary>
+///     Based heavily on Dual Grid System https://x.com/OskSta/status/1448248658865049605
+///     High level steps of rendering:
+///     1. Iterate each cell (back to front) and each corner of the cell (back to front)
+///     2. Find the tile to render based on corner's 3 neighbors
+///     3. Render single quadrant (corner of cell)
+///     - Only quadrant rendered as opposed to whole tile, as neighboring cell
+///     might be different type (but shares based rock design)
+///     - Each quadrant rendered two quadrants high, leaving room for overlaying
+///     texture at the top
+/// </summary>
 public static class Tilesets
 {
-    private const int TilesetTextureGridWidth = 6;
-    private const int TilesetTextureGridHeight = 3;
-    private static readonly (int, int)[] Offsets;
-    public static readonly Dictionary<CellType, int> OffsetsWithinMainTexture;
+    private const int QuadrantTextureSizePx = GameConfig.CellTextureSizePx / 2;
 
-    static Tilesets()
+    private const int TextureGridWidth = 4;
+
+    // Define coordinates for each
+    private static readonly Dictionary<int, (int, int)> RampKeyToTextureOffset = new()
     {
-        // Initialize the offsets for each neighbour, indexed by bit position (0-7)
-        Offsets = new (int, int)[8]
-        {
-            (0, -1), // Above (bit position 0)
-            (1, -1), // AboveRight (bit position 1)
-            (1, 0), // Right (bit position 2)
-            (1, 1), // BelowRight (bit position 3)
-            (0, 1), // Below (bit position 4)
-            (-1, 1), // BelowLeft (bit position 5)
-            (-1, 0), // Left (bit position 6)
-            (-1, -1) // AboveLeft (bit position 7)
-        };
+        // Row 1
+        { RampKeys.UpRightWide, (0, 0) },
+        { RampKeys.Left, (1, 0) },
+        { RampKeys.UpRight, (2, 0) },
+        { RampKeys.Up, (3, 0) },
 
-        OffsetsWithinMainTexture = new Dictionary<CellType, int>
-        {
-            { CellType.Rock, 0 },
-            { CellType.SolidRock, 1 },
-            { CellType.Ruby, 2 },
-            { CellType.Diamond, 3 }
-        };
+        // Row 2
+        { RampKeys.UpRightToBottomLeft, (0, 1) },
+        { RampKeys.UpLeft, (1, 1) },
+        { RampKeys.Empty, (2, 1) },
+        { RampKeys.DownRight, (3, 1) },
+
+        // Row 3
+        { RampKeys.DownLeftWide, (0, 2) },
+        { RampKeys.Down, (1, 2) },
+        { RampKeys.DownLeft, (2, 2) },
+        { RampKeys.Right, (3, 2) },
+
+        // Row 4
+        { RampKeys.Solid, (0, 3) },
+        { RampKeys.UpLeftWide, (1, 3) },
+        { RampKeys.UpLeftToBottomRight, (2, 3) },
+        { RampKeys.DownRightWide, (3, 3) }
+    };
+
+    private static readonly Dictionary<CellType, int> WallTypeTextureIndex = new()
+    {
+        { CellType.Rock, 0 },
+        { CellType.SolidRock, 1 },
+        { CellType.Ruby, 2 },
+        { CellType.Diamond, 3 }
+    };
+
+
+    // A given corner is the center of a 2x2 set of tiles - use this to find the top left of each set
+    private static readonly Dictionary<Corner, (int, int)> GetTopLeftOffsetFor2X2 = new()
+    {
+        { Corner.TopLeft, (-1, -1) },
+        { Corner.TopRight, (0, -1) },
+        { Corner.BottomLeft, (-1, 0) },
+        { Corner.BottomRight, (0, 0) }
+    };
+
+    public static bool CellIsTilesetType(GameState gameState, int x, int y)
+    {
+        return WallTypeTextureIndex.ContainsKey(gameState.Grid.GetCellType(x, y));
     }
 
-    public static bool IsTilesetCellType(CellType cellType)
+    // Find the tile to render based on corner's 3 neighbors
+    private static int GetCellQuadrantTileKey(GameState gameState, int x, int y, Corner corner)
     {
-        return OffsetsWithinMainTexture.ContainsKey(cellType);
+        var (topLeftXOffset, topLeftYOffset) = GetTopLeftOffsetFor2X2[corner];
+
+        var twoByTwoX = x + topLeftXOffset;
+        var twoByTwoY = y + topLeftYOffset;
+
+        var isTopLeftTileset = CellIsTilesetType(gameState, twoByTwoX, twoByTwoY);
+        var isTopRightTileset = CellIsTilesetType(gameState, twoByTwoX + 1, twoByTwoY);
+        var isBottomLeftTileset = CellIsTilesetType(gameState, twoByTwoX, twoByTwoY + 1);
+        var isBottomRightTileset = CellIsTilesetType(gameState, twoByTwoX + 1, twoByTwoY + 1);
+
+        return RampKeys.CreateKey(isTopLeftTileset, isTopRightTileset, isBottomLeftTileset,
+            isBottomRightTileset);
     }
 
-    public static Rectangle GetTileSourceRect(GameState state, int col, int row)
+    // Find px offset within main texture for a given quadrant
+    // TODO save this to CellState
+    private static (int, int) GetCellQuadrantTextureOffset(GameState gameState, int col, int row, Corner corner)
     {
-        var cellType = state.Grid.GetCellType(col, row);
-        var (xOffsetWithinTexture, yOffsetoffsetWithinSet) =
-            GetTileCoords(state, col, row); // no calc needed for x as on far left of texture
+        // Walls tileset has one quadrant's space above each actual quadrant for overlaying texture.
+        // Each quadrant is rendered at double height, overlaying the one behind it
+        // // TODO - change/centralize this logic? Will need doing for floor tilesets
 
-        var yOffsetWithinTexture =
-            OffsetsWithinMainTexture[cellType] * TilesetTextureGridHeight + yOffsetoffsetWithinSet;
+        // For the cell quadrant, work out which tile to use
+        var tileKey = GetCellQuadrantTileKey(gameState, col, row, corner);
 
-        return new Rectangle(xOffsetWithinTexture * GameConfig.CellTextureSizePx,
-            yOffsetWithinTexture * GameConfig.CellTextureSizePx,
-            GameConfig.CellTextureSizePx, GameConfig.CellTextureSizePx);
+        // Get the grid x,y of that tile within the default dual tileset
+        var (textureGridX, textureGridY) = RampKeyToTextureOffset[tileKey];
+
+        // Get grid index of cellType tileset within main texture
+        var cellType = gameState.Grid.GetCellType(col, row);
+        var textureTilesetX = WallTypeTextureIndex[cellType] * TextureGridWidth;
+
+        // Convert those to pixel x,y within the actual texture
+        // NOTE y pos accounts for texture overlay space. Logic will need to change for floor tilesets
+        var tileTexturePxX = (textureTilesetX + textureGridX) * GameConfig.CellTextureSizePx;
+        var tileTexturePxY = textureGridY * QuadrantTextureSizePx * 4; // Each tile in texture is 4 quadrants high
+
+        var quadrantX = tileTexturePxX +
+                        (corner is Corner.TopLeft or Corner.BottomLeft ? QuadrantTextureSizePx : 0);
+        var quadrantY = tileTexturePxY +
+                        (corner is Corner.TopLeft or Corner.TopRight ? QuadrantTextureSizePx * 2 : 0);
+
+
+        return (quadrantX, quadrantY);
     }
 
-    private static (int, int) GetTileCoords(GameState state, int col, int row)
+    public static Rectangle GetCellQuadrantSourceRect(GameState gameState, int col, int row, Corner corner)
     {
-        // Dark
-        if (AllFilledExcept(state, col, row))
-            return (1, 2);
+        var (x, y) = GetCellQuadrantTextureOffset(gameState, col, row, corner);
 
-        // Concave corners
-        if (AllFilledExcept(state, col, row, Neighbours.AboveRight))
-            return (2, 2);
-        if (AllFilledExcept(state, col, row, Neighbours.BelowRight))
-            return (2, 0);
-        if (AllFilledExcept(state, col, row, Neighbours.BelowLeft))
-            return (4, 0);
-        if (AllFilledExcept(state, col, row, Neighbours.AboveLeft))
-            return (4, 2);
-
-        // Double concave corners
-        if (AllFilledExcept(state, col, row, Neighbours.AboveRight | Neighbours.BelowLeft))
-            return (5, 0);
-        if (AllFilledExcept(state, col, row, Neighbours.AboveLeft | Neighbours.BelowRight))
-            return (5, 1);
-
-        // Flat edges
-        if (AllFilledExcept(state, col, row, Neighbours.None,
-                Neighbours.AboveLeft | Neighbours.Above | Neighbours.AboveRight))
-            return (3, 2);
-        if (AllFilledExcept(state, col, row, Neighbours.None,
-                Neighbours.AboveRight | Neighbours.Right | Neighbours.BelowRight))
-            return (2, 1);
-        if (AllFilledExcept(state, col, row, Neighbours.None,
-                Neighbours.BelowLeft | Neighbours.Below | Neighbours.BelowRight))
-            return (3, 0);
-        if (AllFilledExcept(state, col, row, Neighbours.None,
-                Neighbours.AboveLeft | Neighbours.Left | Neighbours.BelowLeft))
-            return (4, 1);
-
-        // Convex corners
-        if (AllFilledExcept(state, col, row, Neighbours.None,
-                Neighbours.AboveLeft | Neighbours.Above | Neighbours.AboveRight | Neighbours.Right |
-                Neighbours.BelowRight))
-            return (1, 0);
-        if (AllFilledExcept(state, col, row, Neighbours.Right | Neighbours.Below,
-                Neighbours.AboveRight | Neighbours.Right | Neighbours.BelowRight | Neighbours.Below |
-                Neighbours.BelowLeft))
-            return (1, 1);
-        if (AllFilledExcept(state, col, row, Neighbours.Below | Neighbours.Left,
-                Neighbours.BelowRight | Neighbours.Below | Neighbours.BelowLeft | Neighbours.Left |
-                Neighbours.AboveLeft))
-            return (0, 1);
-        if (AllFilledExcept(state, col, row, Neighbours.Left | Neighbours.Above,
-                Neighbours.BelowLeft | Neighbours.Left | Neighbours.AboveLeft | Neighbours.Above |
-                Neighbours.AboveRight))
-            return (0, 0);
-
-        // Island
-        return (0, 2);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool AllFilledExcept(
-        GameState state,
-        int col,
-        int row,
-        Neighbours shouldBeEmptyNeighbours = Neighbours.None,
-        Neighbours disregardNeighbours = Neighbours.None)
-    {
-        for (var i = 0; i < 8; i++)
-        {
-            var neighbour = (Neighbours)(1 << i);
-
-            if ((disregardNeighbours & neighbour) != Neighbours.None)
-                continue;
-
-            var offset = Offsets[i];
-            var cellType = state.Grid.GetCellType(col + offset.Item1, row + offset.Item2);
-            var isFilled = cellType != CellType.Empty && cellType != CellType.Floor;
-            var shouldBeFilled = (shouldBeEmptyNeighbours & neighbour) == Neighbours.None;
-
-            if (isFilled != shouldBeFilled)
-                return false;
-        }
-
-        return true;
+        // Each tile quadrant has one quadrant above it in texture for any overlaying visuals. Render at double height
+        // TODO - change/centralize this logic? Will need doing for floor tilesets
+        return new Rectangle(x, y, QuadrantTextureSizePx, GameConfig.CellTextureSizePx);
     }
 }

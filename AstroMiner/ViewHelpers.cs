@@ -30,11 +30,22 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         return (graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
     }
 
-    public Rectangle GetVisibleRectForGridCell(int gridX, int gridY, int widthOnGrid = 1, int heightOnGrid = 1)
+    public Rectangle GetVisibleRectForGridCell(float gridX, float gridY, float widthOnGrid = 1, float heightOnGrid = 1)
     {
         return AdjustRectForCamera(ConvertGridUnitsToVisiblePx(gridX), ConvertGridUnitsToVisiblePx(gridY),
             ConvertGridUnitsToVisiblePx(widthOnGrid),
             ConvertGridUnitsToVisiblePx(heightOnGrid));
+    }
+
+    public Rectangle GetVisibleRectForGridQuadrant(int gridX, int gridY, Corner corner)
+    {
+        // Quadrants are rendered at double height, with top half overlaying quadrant behind
+        var isTopQuadrant = corner is Corner.TopLeft or Corner.TopRight;
+        var quadrantX = corner is Corner.TopRight or Corner.BottomRight ? gridX + 0.5f : gridX;
+
+        // All quadrants rendered - .5 y to account for space in texture
+        var quadrantY = isTopQuadrant ? gridY - 0.5f : gridY;
+        return GetVisibleRectForGridCell(quadrantX, quadrantY, 0.5f);
     }
 
     private float ConvertGridUnitsToVisiblePx(float gridUnits)
