@@ -8,7 +8,7 @@ public class GradientOverlayRenderer(RendererShared shared)
     public static readonly Color OverlayColor = new(37, 73, 99);
 
     public void RenderGradientOverlay(SpriteBatch spriteBatch, int col, int row,
-        int showGradientsAtDistance = 3, int gradientSize = 130)
+        int showGradientsAtDistance = 4, int gradientSize = 160)
     {
         var cellState = shared.GameState.Grid.GetCellState(col, row);
 
