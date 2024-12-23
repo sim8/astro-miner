@@ -83,7 +83,6 @@ public class Renderer
     {
         for (var row = 0; row < GameConfig.GridSize; row++)
         for (var col = 0; col < GameConfig.GridSize; col++)
-        {
             if (Tilesets.CellIsTilesetType(_gameState, col, row))
                 foreach (var corner in _cornersInRenderOrder)
                 {
@@ -100,8 +99,9 @@ public class Renderer
                 spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
                     Color.Orange);
 
+        for (var row = 0; row < GameConfig.GridSize; row++)
+        for (var col = 0; col < GameConfig.GridSize; col++)
             _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row);
-        }
 
         foreach (var entity in _gameState.ActiveEntitiesSortedByDistance)
             if (entity is MinerEntity)
@@ -154,7 +154,7 @@ public class Renderer
         // Render overlay gradients in shadow color over lighting to block out light on unexplored cells
         for (var row = 0; row < GameConfig.GridSize; row++)
         for (var col = 0; col < GameConfig.GridSize; col++)
-            _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row, 1, 2);
+            _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row, 2, 120);
 
         spriteBatch.End();
 
