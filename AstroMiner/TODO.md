@@ -36,6 +36,7 @@
     - tools
 - Endgame state
     - Timer runs out
+      - serious consequences. Lose digger?
     - Drop off edge
 - player / miner health
 - Add zoom
@@ -49,7 +50,8 @@
 
 ## Quality
 
-- ~~Easy grid view for ast gen + new entry point~~
+- dir structure
+- tests
 - Player placement when exiting
 - Control mapping
 - Test on Xbox?
@@ -62,7 +64,6 @@
 - Clouds / background animation
 - Drilling animation
 - Darker overlay near center
-- Better gems
 - Gem entities (collectable)
 
 ## Sound design
