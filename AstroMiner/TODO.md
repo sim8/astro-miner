@@ -2,13 +2,14 @@
 
 ## Gameplay - asteroid
 
-- swap core range for sliding range?
-- ~~interior floor - shouldn't be totally solid~~
 - Explosive pieces + chain reaction
     - OR gas/lava holes/wells which bubble over
         - lava - turn into rock
-    - holes can appear under rock!
-- ~~Bigger asteroid~~
+    - holes can appear under rock
+- lower level
+  - darker, fuzzy minimap?
+  - drive up / down
+  - collapsing ground
 - Mystery box cell - similar design to explosive?
 - IS there a risk/reward element?
 - variable yield? skill based?
