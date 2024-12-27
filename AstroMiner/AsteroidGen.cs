@@ -5,7 +5,6 @@ namespace AstroMiner;
 
 public static class AsteroidGen
 {
-    private const float NoiseScale = 0.22f;
     private const float DiamondsRadius = 0.2f;
     private const float AsteroidCoreRadius = 0.6f;
 
@@ -13,14 +12,31 @@ public static class AsteroidGen
     private const int MaxDeviation = 12; // Adjusted for larger imperfections
     private const double MaxDelta = 9; // Adjusted for smoother transitions
     private const int AngleSegments = 140; // Adjusted for larger-scale variations
+
+
+    // Two different layers of Perlin noise
+    // Layer 1 - All solid blocks
+    // Layer 2 - Lava lakes and their floor perimeters
+
+    private const float Perlin1NoiseScale = 0.22f;
+
+    // Much lower frequency for bigger, cleaner lakes
+    private const float Perlin2NoiseScale = 0.07f;
+
+    // Perlin noise 1
     private static readonly (float, float) SolidRockRange = (0.55f, 1);
     private static readonly (float, float) DiamondRange = (0.65f, 1);
     private static readonly (float, float) RubyRange = (0.41f, 0.42f);
 
+    // Perlin noise 2
+    private static readonly (float, float) LavaRange = (0.65f, 1);
+    private static readonly (float, float) LavaFloorPerimeterRange = (0.58f, 0.65f);
+
     public static (CellState[,], Vector2) InitializeGridAndStartingPos(int gridSize, int seed)
     {
-        var perlinNoise = new PerlinNoiseGenerator(seed);
-        var grid = InitializeGrid(gridSize, perlinNoise, seed);
+        var perlinNoise1 = new PerlinNoiseGenerator(seed);
+        var perlinNoise2 = new PerlinNoiseGenerator(seed + 42);
+        var grid = InitializeGrid(gridSize, perlinNoise1, perlinNoise2, seed);
         return (grid, ClearAndGetStartingPos(grid));
     }
 
@@ -61,7 +77,8 @@ public static class AsteroidGen
     }
 
 
-    private static CellState[,] InitializeGrid(int gridSize, PerlinNoiseGenerator perlinNoise, int seed)
+    private static CellState[,] InitializeGrid(int gridSize, PerlinNoiseGenerator perlinNoise1,
+        PerlinNoiseGenerator perlinNoise2, int seed)
     {
         var grid = new CellState[gridSize, gridSize];
         var centerX = gridSize / 2;
@@ -115,19 +132,23 @@ public static class AsteroidGen
 
             if (distance <= radius)
             {
-                var xCoord = x * NoiseScale;
-                var yCoord = y * NoiseScale;
-                var noiseValue = perlinNoise.Noise(xCoord, yCoord);
-                if (distance < radius * AsteroidCoreRadius && NoiseValWithinRange(noiseValue, SolidRockRange))
-                    cellType = distance < radius * DiamondsRadius && NoiseValWithinRange(noiseValue, DiamondRange)
+                var noise1Value = perlinNoise1.Noise(x * Perlin1NoiseScale, y * Perlin1NoiseScale);
+                var noise2Value = perlinNoise2.Noise(x * Perlin2NoiseScale, y * Perlin2NoiseScale);
+                var withinCore = distance < radius * AsteroidCoreRadius;
+
+                if (withinCore && NoiseValWithinRange(noise2Value, LavaRange))
+                    cellType = CellType.Lava;
+                else if (withinCore && NoiseValWithinRange(noise2Value, LavaFloorPerimeterRange))
+                    cellType = CellType.Floor;
+                else if (withinCore && NoiseValWithinRange(noise1Value, SolidRockRange))
+                    cellType = distance < radius * DiamondsRadius && NoiseValWithinRange(noise1Value, DiamondRange)
                         ? CellType.Diamond
                         : CellType.SolidRock;
-
                 // Widen floor range relative to closeness to edge TODO make ramp clearer, especially near edges
-                else if (NoiseValWithinRange(noiseValue, GetFloorRange(distance, radius)))
+                else if (NoiseValWithinRange(noise1Value, GetFloorRange(distance, radius)))
                     cellType = CellType.Floor;
                 else
-                    cellType = NoiseValWithinRange(noiseValue, RubyRange) ? CellType.Ruby : CellType.Rock;
+                    cellType = NoiseValWithinRange(noise1Value, RubyRange) ? CellType.Ruby : CellType.Rock;
             }
             else if (distance <= radius + perimeterWidth)
             {

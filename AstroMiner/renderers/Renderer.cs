@@ -16,6 +16,7 @@ public class Renderer
     private readonly GameState _gameState;
     private readonly GradientOverlayRenderer _gradientOverlayRenderer;
     private readonly GraphicsDeviceManager _graphics;
+    private readonly Color _lavaLightColor = new(255, 231, 171);
     private readonly RenderTarget2D _lightingRenderTarget;
     private readonly MinerRenderer _minerRenderer;
     private readonly BlendState _multiplyBlendState;
@@ -82,7 +83,6 @@ public class Renderer
     {
         for (var row = 0; row < GameConfig.GridSize; row++)
         for (var col = 0; col < GameConfig.GridSize; col++)
-        {
             if (Tilesets.CellIsTilesetType(_gameState, col, row))
                 foreach (var corner in _cornersInRenderOrder)
                 {
@@ -95,9 +95,13 @@ public class Renderer
             else if (_gameState.Grid.GetCellType(col, row) == CellType.Floor)
                 spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
                     _floorColor);
+            else if (_gameState.Grid.GetCellType(col, row) == CellType.Lava)
+                spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
+                    Color.Orange);
 
+        for (var row = 0; row < GameConfig.GridSize; row++)
+        for (var col = 0; col < GameConfig.GridSize; col++)
             _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row);
-        }
 
         foreach (var entity in _gameState.ActiveEntitiesSortedByDistance)
             if (entity is MinerEntity)
@@ -138,10 +142,19 @@ public class Renderer
             else if (entity is ExplosionEntity explosionEntity)
                 _explosionRenderer.RenderLightSource(spriteBatch, explosionEntity);
 
+        // Render any grid-based light sources
+        for (var row = 0; row < GameConfig.GridSize; row++)
+        for (var col = 0; col < GameConfig.GridSize; col++)
+            if (_gameState.Grid.GetCellType(col, row) == CellType.Lava)
+            {
+                var pos = new Vector2(col + 0.5f, row + 0.5f);
+                _shared.RenderRadialLightSource(spriteBatch, pos, _lavaLightColor, 150, 0.6f);
+            }
+
         // Render overlay gradients in shadow color over lighting to block out light on unexplored cells
         for (var row = 0; row < GameConfig.GridSize; row++)
         for (var col = 0; col < GameConfig.GridSize; col++)
-            _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row, 1, 2);
+            _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row, 2, 120);
 
         spriteBatch.End();
 

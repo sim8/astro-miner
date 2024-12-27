@@ -15,10 +15,6 @@ public class CellState(CellType type)
      */
     public int DistanceToOutsideConnectedFloor = DistanceUninitializedOrAboveMax;
 
-    // Used to determine which gradient to use on the overlay (creates effect
-    // of fading darkness towards unexplored cells)
-    public int GradientKey;
-
     public CellType Type = type;
 }
 
@@ -95,9 +91,6 @@ public class GridState(GameState gameState, CellState[,] grid)
         Queue<(int x, int y)> queue = new();
         queue.Enqueue((x, y));
 
-        // Update gradients after distanceToOutsideConnectedFloor's stable
-        HashSet<(int x, int y)> updateGradientsFor = new();
-
         // BFS
         while (queue.Count > 0)
         {
@@ -116,7 +109,7 @@ public class GridState(GameState gameState, CellState[,] grid)
                     queue.Enqueue((nx, ny));
                 }
                 // Set floor to outside connected if it adjoins with an edge piece or another outside connected floor
-                else if (neighbour.Type == CellType.Floor &&
+                else if ((neighbour.Type == CellType.Floor || neighbour.Type == CellType.Lava) &&
                          (current.Type == CellType.Empty || current.DistanceToOutsideConnectedFloor == 0) &&
                          neighbour.DistanceToOutsideConnectedFloor != 0)
                 {
@@ -136,69 +129,10 @@ public class GridState(GameState gameState, CellState[,] grid)
                         nextDistance)
                     {
                         neighbour.DistanceToOutsideConnectedFloor = nextDistance;
-                        updateGradientsFor.Add((nx, ny));
-
                         queue.Enqueue((nx, ny));
                     }
                 }
             });
         }
-
-        foreach (var (cx, cy) in updateGradientsFor)
-        {
-            UpdateGradientKey(cx, cy);
-            MapNeighbors(cx, cy, UpdateGradientKey);
-        }
-    }
-
-    // Updates the gradient for a cell's overlay based on the distance of cells surrounding it
-    private void UpdateGradientKey(int x, int y)
-    {
-        var currentCell = GetCellState(x, y);
-        var currentDistance = currentCell.DistanceToOutsideConnectedFloor;
-
-        var corners = new List<Corner>(4);
-
-        // Pre-fetch neighbors for TopLeft checks
-        var nTl1 = GetCellState(x - 1, y);
-        var nTl2 = GetCellState(x - 1, y - 1);
-        var nTl3 = GetCellState(x, y - 1);
-
-        if ((nTl1 != null && nTl1.DistanceToOutsideConnectedFloor > currentDistance) ||
-            (nTl2 != null && nTl2.DistanceToOutsideConnectedFloor > currentDistance) ||
-            (nTl3 != null && nTl3.DistanceToOutsideConnectedFloor > currentDistance))
-            corners.Add(Corner.TopLeft);
-
-        // TopRight checks
-        var nTr1 = GetCellState(x + 1, y);
-        var nTr2 = GetCellState(x + 1, y - 1);
-        var nTr3 = GetCellState(x, y - 1);
-
-        if ((nTr1 != null && nTr1.DistanceToOutsideConnectedFloor > currentDistance) ||
-            (nTr2 != null && nTr2.DistanceToOutsideConnectedFloor > currentDistance) ||
-            (nTr3 != null && nTr3.DistanceToOutsideConnectedFloor > currentDistance))
-            corners.Add(Corner.TopRight);
-
-        // BottomLeft checks
-        var nBl1 = GetCellState(x - 1, y);
-        var nBl2 = GetCellState(x - 1, y + 1);
-        var nBl3 = GetCellState(x, y + 1);
-
-        if ((nBl1 != null && nBl1.DistanceToOutsideConnectedFloor > currentDistance) ||
-            (nBl2 != null && nBl2.DistanceToOutsideConnectedFloor > currentDistance) ||
-            (nBl3 != null && nBl3.DistanceToOutsideConnectedFloor > currentDistance))
-            corners.Add(Corner.BottomLeft);
-
-        // BottomRight checks
-        var nBr1 = GetCellState(x + 1, y);
-        var nBr2 = GetCellState(x + 1, y + 1);
-        var nBr3 = GetCellState(x, y + 1);
-
-        if ((nBr1 != null && nBr1.DistanceToOutsideConnectedFloor > currentDistance) ||
-            (nBr2 != null && nBr2.DistanceToOutsideConnectedFloor > currentDistance) ||
-            (nBr3 != null && nBr3.DistanceToOutsideConnectedFloor > currentDistance))
-            corners.Add(Corner.BottomRight);
-
-        currentCell.GradientKey = RampKeys.CreateKey(corners.ToArray());
     }
 }
