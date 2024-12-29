@@ -17,7 +17,9 @@ public class ProcGenViewerRenderer
         { CellType.Rock, new Color(160, 160, 160) },
         { CellType.Empty, new Color(0, 0, 0) },
         { CellType.Floor, new Color(240, 240, 240) },
-        { CellType.Lava, Color.Orange }
+        { CellType.Lava, Color.Orange },
+        { CellType.Nickel, Color.DarkGreen },
+        { CellType.Gold, Color.Yellow }
     };
 
     private readonly GameState _gameState;
@@ -43,7 +45,7 @@ public class ProcGenViewerRenderer
     private Rectangle GetGridCellRect(int col, int row)
     {
         return new Rectangle(col * CellSizePx + CellBorderPx, row * CellSizePx + CellBorderPx,
-            CellSizePx - CellBorderPx * 2, CellSizePx - CellBorderPx * 2);
+            CellSizePx - CellBorderPx, CellSizePx - CellBorderPx);
     }
 
     private void RenderScene(SpriteBatch spriteBatch)
