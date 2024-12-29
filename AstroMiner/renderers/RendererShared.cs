@@ -27,7 +27,8 @@ public class RendererShared(
         RenderRadialLightSource(spriteBatch, pos, Color.White, size, opacity);
     }
 
-    public void RenderDirectionalLightSource(SpriteBatch spriteBatch, Vector2 pos, Direction dir, int size = 512)
+    public void RenderDirectionalLightSource(SpriteBatch spriteBatch, Vector2 pos, Direction dir, int size = 512,
+        float opacity = 1)
     {
         var destinationRect = ViewHelpers.GetVisibleRectForObject(pos, size, size);
 
@@ -43,7 +44,7 @@ public class RendererShared(
 
         var origin = new Vector2(Textures["directional-light"].Width / 2f, Textures["directional-light"].Height);
 
-        spriteBatch.Draw(Textures["directional-light"], destinationRect, null, Color.White, radians, origin,
+        spriteBatch.Draw(Textures["directional-light"], destinationRect, null, Color.White * opacity, radians, origin,
             SpriteEffects.None, 0);
     }
 

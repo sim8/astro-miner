@@ -124,6 +124,13 @@ public class Renderer
         foreach (var entity in _gameState.ActiveEntitiesSortedByDistance)
             if (entity is ExplosionEntity explosionEntity)
                 _explosionRenderer.RenderAdditiveLightSource(spriteBatch, explosionEntity);
+
+        _shared.RenderDirectionalLightSource(spriteBatch, _gameState.Miner.GetDirectionalLightSource(),
+            _gameState.Miner.Direction, 192, 0.4f);
+
+        if (!_gameState.IsInMiner)
+            _shared.RenderDirectionalLightSource(spriteBatch, _gameState.Player.GetDirectionalLightSource(),
+                _gameState.Player.Direction, 128, 0.3f);
     }
 
     private void RenderLightingToRenderTarget(SpriteBatch spriteBatch)
