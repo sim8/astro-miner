@@ -7,9 +7,9 @@
         - lava - turn into rock
     - holes can appear under rock
 - lower level
-  - darker, fuzzy minimap?
-  - drive up / down
-  - collapsing ground
+    - darker, fuzzy minimap?
+    - drive up / down
+    - collapsing ground
 - Mystery box cell - similar design to explosive?
 - IS there a risk/reward element?
 - variable yield? skill based?
@@ -37,7 +37,7 @@
     - tools
 - Endgame state
     - Timer runs out
-      - serious consequences. Lose digger?
+        - serious consequences. Lose digger?
     - Drop off edge
 - player / miner health
 - Add zoom
@@ -59,7 +59,6 @@
 
 ## Rendering / art
 
-- Additive light pass for glares (bright lights, explosions)
 - Player animation
 - Ground tileset
 - Clouds / background animation

@@ -73,6 +73,11 @@ public class Renderer
         spriteBatch.Draw(_lightingRenderTarget, new Rectangle(0, 0, viewportWidth, viewportHeight), Color.White);
         spriteBatch.End();
 
+        // Additive lighting pass for glare (explosions, very brights lights)
+        spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp);
+        RenderAdditiveLighting(spriteBatch);
+        spriteBatch.End();
+
         // Lastly, draw UI
         spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
         _userInterfaceRenderer.RenderUserInterface(spriteBatch, _frameCounter);
@@ -112,6 +117,20 @@ public class Renderer
                 _dynamiteRenderer.RenderDynamite(spriteBatch, dynamiteEntity);
             else if (entity is ExplosionEntity explosionEntity)
                 _explosionRenderer.RenderExplosion(spriteBatch, explosionEntity);
+    }
+
+    private void RenderAdditiveLighting(SpriteBatch spriteBatch)
+    {
+        foreach (var entity in _gameState.ActiveEntitiesSortedByDistance)
+            if (entity is ExplosionEntity explosionEntity)
+                _explosionRenderer.RenderAdditiveLightSource(spriteBatch, explosionEntity);
+
+        _shared.RenderDirectionalLightSource(spriteBatch, _gameState.Miner.GetDirectionalLightSource(),
+            _gameState.Miner.Direction, 192, 0.4f);
+
+        if (!_gameState.IsInMiner)
+            _shared.RenderDirectionalLightSource(spriteBatch, _gameState.Player.GetDirectionalLightSource(),
+                _gameState.Player.Direction, 128, 0.3f);
     }
 
     private void RenderLightingToRenderTarget(SpriteBatch spriteBatch)

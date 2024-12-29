@@ -6,7 +6,7 @@ namespace AstroMiner;
 
 public class ExplosionEntity : Entity
 {
-    private const int _animationTime = 100;
+    private const int _animationTime = 300;
     private readonly GameState _gameState;
     private bool _hasExploded;
     private int TimeSinceExplosionMs;
@@ -24,7 +24,7 @@ public class ExplosionEntity : Entity
 
     private void ExplodeGrid()
     {
-        var explodedCells = GetCellsInRadius(Position.X, Position.Y, 1.3f);
+        var explodedCells = GetCellsInRadius(Position.X, Position.Y, 1.7f);
         foreach (var (x, y) in explodedCells) _gameState.Grid.DemolishCell(x, y);
         _hasExploded = true;
     }

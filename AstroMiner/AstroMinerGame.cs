@@ -55,6 +55,7 @@ public class AstroMinerGame : Game
         LoadTexture("radial-light");
         LoadTexture("directional-light");
         LoadTexture("dynamite");
+        LoadTexture("explosion");
     }
 
     protected override void Update(GameTime gameTime)
