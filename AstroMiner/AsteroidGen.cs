@@ -137,8 +137,6 @@ public static class AsteroidGen
 
             var floorRange = GetFloorRange(distance, radius);
 
-            Console.WriteLine(floorRange);
-
             if (distance <= radius)
             {
                 var noise1Value = perlinNoise1.Noise(x * Perlin1NoiseScale, y * Perlin1NoiseScale);
@@ -150,6 +148,7 @@ public static class AsteroidGen
                     cellType = CellType.Lava;
                 else if (withinLavaRadius && NoiseValWithinRange(noise2Value, LavaFloorPerimeterRange))
                     cellType = CellType.Floor;
+                // Use both ranges for gold - near lake but still high-ish frequency of noise1
                 else if (withinLavaRadius && NoiseValWithinRange(noise2Value, GoldRange2) &&
                          NoiseValWithinRange(noise1Value, GoldRange1))
                     cellType = CellType.Gold;
