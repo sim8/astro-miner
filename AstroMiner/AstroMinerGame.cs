@@ -5,17 +5,6 @@ using Microsoft.Xna.Framework.Input;
 
 namespace AstroMiner;
 
-public enum CellType
-{
-    Empty,
-    Floor,
-    Lava,
-    Rock,
-    SolidRock,
-    Diamond,
-    Ruby
-}
-
 public class AstroMinerGame : Game
 {
     // TODO these should live elsewhere but needed by a few places

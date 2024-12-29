@@ -7,8 +7,10 @@ public static class AsteroidGen
 {
     private const float DiamondsRadius = 0.2f;
     private const float AsteroidCoreRadius = 0.6f;
+    private const float LavaRadius = 0.4f;
+    private const float OuterWallRadius = 0.75f;
 
-    private const int AverageRadius = 30;
+    private const int AverageRadius = 60;
     private const int MaxDeviation = 12; // Adjusted for larger imperfections
     private const double MaxDelta = 9; // Adjusted for smoother transitions
     private const int AngleSegments = 140; // Adjusted for larger-scale variations
@@ -21,16 +23,19 @@ public static class AsteroidGen
     private const float Perlin1NoiseScale = 0.22f;
 
     // Much lower frequency for bigger, cleaner lakes
-    private const float Perlin2NoiseScale = 0.07f;
+    private const float Perlin2NoiseScale = 0.05f;
 
     // Perlin noise 1
     private static readonly (float, float) SolidRockRange = (0.55f, 1);
     private static readonly (float, float) DiamondRange = (0.65f, 1);
-    private static readonly (float, float) RubyRange = (0.41f, 0.42f);
+
+    private static readonly (float, float) RubyRange = (0.41f, 0.415f);
+    private static readonly (float, float) GoldRange1 = (0.42f, 0.43f);
 
     // Perlin noise 2
     private static readonly (float, float) LavaRange = (0.65f, 1);
     private static readonly (float, float) LavaFloorPerimeterRange = (0.58f, 0.65f);
+    private static readonly (float, float) GoldRange2 = (0.52f, 0.58f);
 
     public static (CellState[,], Vector2) InitializeGridAndStartingPos(int gridSize, int seed)
     {
@@ -130,22 +135,33 @@ public static class AsteroidGen
 
             CellType cellType;
 
+            var floorRange = GetFloorRange(distance, radius);
+
             if (distance <= radius)
             {
                 var noise1Value = perlinNoise1.Noise(x * Perlin1NoiseScale, y * Perlin1NoiseScale);
                 var noise2Value = perlinNoise2.Noise(x * Perlin2NoiseScale, y * Perlin2NoiseScale);
                 var withinCore = distance < radius * AsteroidCoreRadius;
+                var withinLavaRadius = distance < radius * LavaRadius;
 
-                if (withinCore && NoiseValWithinRange(noise2Value, LavaRange))
+                if (withinLavaRadius && NoiseValWithinRange(noise2Value, LavaRange))
                     cellType = CellType.Lava;
-                else if (withinCore && NoiseValWithinRange(noise2Value, LavaFloorPerimeterRange))
+                else if (withinLavaRadius && NoiseValWithinRange(noise2Value, LavaFloorPerimeterRange))
                     cellType = CellType.Floor;
+                // Use both ranges for gold - near lake but still high-ish frequency of noise1
+                else if (withinLavaRadius && NoiseValWithinRange(noise2Value, GoldRange2) &&
+                         NoiseValWithinRange(noise1Value, GoldRange1))
+                    cellType = CellType.Gold;
+
                 else if (withinCore && NoiseValWithinRange(noise1Value, SolidRockRange))
                     cellType = distance < radius * DiamondsRadius && NoiseValWithinRange(noise1Value, DiamondRange)
                         ? CellType.Diamond
                         : CellType.SolidRock;
+                else if (distance > radius * OuterWallRadius && NoiseValWithinRange(noise1Value,
+                             (floorRange.Item2 + 0.1f, floorRange.Item2 + 0.102f)))
+                    cellType = CellType.Nickel;
                 // Widen floor range relative to closeness to edge TODO make ramp clearer, especially near edges
-                else if (NoiseValWithinRange(noise1Value, GetFloorRange(distance, radius)))
+                else if (NoiseValWithinRange(noise1Value, floorRange))
                     cellType = CellType.Floor;
                 else
                     cellType = NoiseValWithinRange(noise1Value, RubyRange) ? CellType.Ruby : CellType.Rock;
