@@ -73,7 +73,7 @@ public class Renderer
         spriteBatch.Draw(_lightingRenderTarget, new Rectangle(0, 0, viewportWidth, viewportHeight), Color.White);
         spriteBatch.End();
 
-        // Additive lighting pass
+        // Additive lighting pass for glare (explosions, very brights lights)
         spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp);
         RenderAdditiveLighting(spriteBatch);
         spriteBatch.End();
