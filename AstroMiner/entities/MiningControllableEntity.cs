@@ -17,8 +17,6 @@ public class MiningControllableEntity : Entity
         { MiningControls.MoveLeft, Direction.Left }
     };
 
-    private readonly Dictionary<CellType, int> _drillTimesMs;
-
     private readonly GameState _gameState;
     private float _currentSpeed;
 
@@ -31,12 +29,6 @@ public class MiningControllableEntity : Entity
     {
         _gameState = gameState;
         Position = pos;
-        _drillTimesMs = new Dictionary<CellType, int>
-        {
-            { CellType.Rock, 600 },
-            { CellType.Ruby, 1800 },
-            { CellType.Diamond, 4000 }
-        };
     }
 
     protected virtual float MaxSpeed => 1f;
@@ -182,9 +174,9 @@ public class MiningControllableEntity : Entity
         if (!ViewHelpers.IsValidGridPosition(x, y))
             return;
 
-        var cellType = _gameState.Grid.GetCellType(x, y);
+        var cellTypeConfig = _gameState.Grid.GetCellConfig(x, y);
 
-        if (_drillTimesMs.TryGetValue(cellType, out var requiredTime) && _drillingMs > requiredTime)
+        if (cellTypeConfig.IsMineable && _drillingMs > cellTypeConfig.DrillTime)
             _gameState.Grid.DemolishCell(x, y, CanAddToInventory);
     }
 
