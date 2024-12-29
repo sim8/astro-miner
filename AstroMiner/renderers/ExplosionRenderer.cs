@@ -30,8 +30,7 @@ public class ExplosionRenderer(
 
     public void RenderAdditiveLightSource(SpriteBatch spriteBatch, ExplosionEntity explosionEntity)
     {
-        var frameIndex = (int)(explosionEntity.AnimationPercentage * AnimationFrames);
-        var opacity = FrameLightOpacity[frameIndex];
-        shared.RenderRadialLightSource(spriteBatch, explosionEntity.Position, 512, opacity);
+        // Same for now
+        RenderLightSource(spriteBatch, explosionEntity);
     }
 }
