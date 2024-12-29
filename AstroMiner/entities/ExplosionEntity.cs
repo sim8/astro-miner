@@ -6,7 +6,7 @@ namespace AstroMiner;
 
 public class ExplosionEntity : Entity
 {
-    private const int _animationTime = 100;
+    private const int _animationTime = 300;
     private readonly GameState _gameState;
     private bool _hasExploded;
     private int TimeSinceExplosionMs;
