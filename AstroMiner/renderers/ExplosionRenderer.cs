@@ -9,6 +9,8 @@ public class ExplosionRenderer(
     private const int SizePx = 96;
     private const int AnimationFrames = 10;
 
+    private static readonly float[] FrameLightOpacity = { 0.5f, 1f, 1f, 0.8f, 0.6f, 0.4f, 0.3f, 0.2f, 0.1f, 0.05f };
+
     public void RenderExplosion(SpriteBatch spriteBatch, ExplosionEntity explosionEntity)
     {
         var frameIndex = (int)(explosionEntity.AnimationPercentage * AnimationFrames);
@@ -21,8 +23,15 @@ public class ExplosionRenderer(
 
     public void RenderLightSource(SpriteBatch spriteBatch, ExplosionEntity explosionEntity)
     {
-        var lightSourcePos = explosionEntity.CenterPosition;
-        var opacity = 1f - explosionEntity.AnimationPercentage;
-        shared.RenderRadialLightSource(spriteBatch, lightSourcePos, 256, opacity);
+        var frameIndex = (int)(explosionEntity.AnimationPercentage * AnimationFrames);
+        var opacity = FrameLightOpacity[frameIndex];
+        shared.RenderRadialLightSource(spriteBatch, explosionEntity.Position, 512, opacity);
+    }
+
+    public void RenderAdditiveLightSource(SpriteBatch spriteBatch, ExplosionEntity explosionEntity)
+    {
+        var frameIndex = (int)(explosionEntity.AnimationPercentage * AnimationFrames);
+        var opacity = FrameLightOpacity[frameIndex];
+        shared.RenderRadialLightSource(spriteBatch, explosionEntity.Position, 512, opacity);
     }
 }

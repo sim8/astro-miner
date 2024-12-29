@@ -24,7 +24,7 @@ public class ExplosionEntity : Entity
 
     private void ExplodeGrid()
     {
-        var explodedCells = GetCellsInRadius(Position.X, Position.Y, 1.3f);
+        var explodedCells = GetCellsInRadius(Position.X, Position.Y, 1.7f);
         foreach (var (x, y) in explodedCells) _gameState.Grid.DemolishCell(x, y);
         _hasExploded = true;
     }
