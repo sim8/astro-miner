@@ -53,7 +53,9 @@ public static class Tilesets
         { CellType.Rock, 0 },
         { CellType.SolidRock, 1 },
         { CellType.Ruby, 2 },
-        { CellType.Diamond, 3 }
+        { CellType.Diamond, 3 },
+        { CellType.Gold, 4 },
+        { CellType.Nickel, 5 }
     };
 
 

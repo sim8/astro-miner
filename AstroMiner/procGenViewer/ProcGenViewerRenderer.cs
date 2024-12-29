@@ -6,7 +6,7 @@ namespace AstroMiner;
 
 public class ProcGenViewerRenderer
 {
-    private const int CellSizePx = 10;
+    private const int CellSizePx = 6;
     private const int CellBorderPx = 1;
 
     private readonly Dictionary<CellType, Color> _cellColors = new()

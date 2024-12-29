@@ -8,7 +8,7 @@ public static class AsteroidGen
     private const float DiamondsRadius = 0.2f;
     private const float AsteroidCoreRadius = 0.6f;
 
-    private const int AverageRadius = 30;
+    private const int AverageRadius = 60;
     private const int MaxDeviation = 12; // Adjusted for larger imperfections
     private const double MaxDelta = 9; // Adjusted for smoother transitions
     private const int AngleSegments = 140; // Adjusted for larger-scale variations

@@ -37,6 +37,11 @@ public class GridState(GameState gameState, CellState[,] grid)
         return GetCellState(x, y).Type;
     }
 
+    public CellTypeConfig GetCellConfig(int x, int y)
+    {
+        return CellTypes.GetConfig(GetCellState(x, y).Type);
+    }
+
     public void DemolishCell(int x, int y, bool addToInventory = false)
     {
         if (!ViewHelpers.IsValidGridPosition(x, y))
@@ -109,7 +114,7 @@ public class GridState(GameState gameState, CellState[,] grid)
                     queue.Enqueue((nx, ny));
                 }
                 // Set floor to outside connected if it adjoins with an edge piece or another outside connected floor
-                else if ((neighbour.Type == CellType.Floor || neighbour.Type == CellType.Lava) &&
+                else if (!CellTypes.GetConfig(neighbour.Type).IsCollideable && neighbour.Type != CellType.Empty &&
                          (current.Type == CellType.Empty || current.DistanceToOutsideConnectedFloor == 0) &&
                          neighbour.DistanceToOutsideConnectedFloor != 0)
                 {
