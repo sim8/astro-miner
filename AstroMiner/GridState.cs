@@ -50,8 +50,11 @@ public class GridState(GameState gameState, CellState[,] grid)
 
         if (!cellConfig.IsDestructible) return;
 
-        if (grid[y, x].Type == CellType.Ruby && addToInventory) gameState.Inventory.NumRubies++;
-        if (grid[y, x].Type == CellType.Diamond && addToInventory) gameState.Inventory.NumDiamonds++;
+        if (cellConfig is MineableCellConfig mineableConfig)
+        {
+            var drop = mineableConfig.Drop;
+            if (drop.HasValue) gameState.Inventory.AddResource(drop.Value);
+        }
 
         grid[y, x].Type = CellType.Floor;
 

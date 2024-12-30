@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -20,22 +21,30 @@ public class UserInterfaceRenderer(
             shared.RenderString(spriteBatch, 0, 0, minutes.ToString("D2") + " " + seconds.ToString("D2"), 6);
         }
 
-        shared.RenderString(spriteBatch, 0, 80, "DIAMOND " + shared.GameState.Inventory.NumDiamonds);
-        shared.RenderString(spriteBatch, 0, 120, "RUBY " + shared.GameState.Inventory.NumRubies);
+        var resourcesYOffset = 180;
+        var resourceLineHeight = 40;
+
+        foreach (var (inventoryResource, index) in shared.GameState.Inventory.resources.Select((r, i) => (r, i)))
+        {
+            var yOffset = resourcesYOffset + resourceLineHeight * index;
+            var resourceConfig = ResourceTypes.GetConfig(inventoryResource.Type);
+            shared.RenderString(spriteBatch, 5, yOffset,
+                resourceConfig.Name.ToUpper() + " " + inventoryResource.Count);
+        }
 
         RenderMinimap(spriteBatch);
 
 
-        shared.RenderString(spriteBatch, 0, 300, "FPS " + frameCounter.AverageFramesPerSecond.ToString("F0"));
+        shared.RenderString(spriteBatch, 1000, 0, "FPS " + frameCounter.AverageFramesPerSecond.ToString("F0"));
 
 
-        shared.RenderString(spriteBatch, 0, 340, "SEED " + shared.GameState.Seed);
+        shared.RenderString(spriteBatch, 1000, 40, "SEED " + shared.GameState.Seed);
     }
 
     private void RenderMinimap(SpriteBatch spriteBatch)
     {
         var xOffset = 10;
-        var yOffset = 180;
+        var yOffset = 70;
         var playerSize = 26;
         var scale = 0.5f;
         var asteroidLineThickness = 1;

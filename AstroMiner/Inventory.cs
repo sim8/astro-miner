@@ -1,7 +1,22 @@
+using System.Collections.Generic;
+
 namespace AstroMiner;
 
 public class Inventory
 {
-    public int NumDiamonds { get; set; } = 0;
-    public int NumRubies { get; set; } = 0;
+    public readonly List<(ResourceType Type, int Count)> resources = new();
+
+    public void AddResource(ResourceType type, int count = 1)
+    {
+        var existing = resources.FindIndex(r => r.Type == type);
+        if (existing >= 0)
+        {
+            var current = resources[existing];
+            resources[existing] = (current.Type, current.Count + count);
+        }
+        else
+        {
+            resources.Add((type, count));
+        }
+    }
 }
