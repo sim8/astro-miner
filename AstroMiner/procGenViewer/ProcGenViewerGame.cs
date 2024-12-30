@@ -41,6 +41,7 @@ public class ProcGenViewerGame : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         LoadTexture("white");
+        LoadTexture("dogica-font");
     }
 
     protected override void Update(GameTime gameTime)

@@ -55,7 +55,8 @@ public static class Tilesets
         { CellType.Ruby, 2 },
         { CellType.Diamond, 3 },
         { CellType.Gold, 4 },
-        { CellType.Nickel, 5 }
+        { CellType.Nickel, 5 },
+        { CellType.ExplosiveRock, 6 }
     };
 
 

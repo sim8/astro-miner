@@ -19,7 +19,8 @@ public class ProcGenViewerRenderer
         { CellType.Floor, new Color(240, 240, 240) },
         { CellType.Lava, Color.Orange },
         { CellType.Nickel, Color.DarkGreen },
-        { CellType.Gold, Color.Yellow }
+        { CellType.Gold, Color.Yellow },
+        { CellType.ExplosiveRock, Color.Purple }
     };
 
     private readonly GameState _gameState;
@@ -39,6 +40,7 @@ public class ProcGenViewerRenderer
     {
         spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
         RenderScene(spriteBatch);
+        RenderString(spriteBatch, 30, 30, "SEED " + _gameState.Seed);
         spriteBatch.End();
     }
 
@@ -57,6 +59,18 @@ public class ProcGenViewerRenderer
 
             spriteBatch.Draw(_textures["white"], GetGridCellRect(col, row),
                 _cellColors[cellState.Type]);
+        }
+    }
+
+    private void RenderString(SpriteBatch spriteBatch, int startX, int startY, string str, int scale = 3)
+    {
+        var linePxCount = 0;
+        foreach (var (x, y, width) in FontHelpers.TransformString(str))
+        {
+            var sourceRect = new Rectangle(x, y, width, 8);
+            var destRect = new Rectangle(startX + linePxCount * scale, startY + 10, width * scale, 8 * scale);
+            spriteBatch.Draw(_textures["dogica-font"], destRect, sourceRect, Color.LimeGreen);
+            linePxCount += width;
         }
     }
 }
