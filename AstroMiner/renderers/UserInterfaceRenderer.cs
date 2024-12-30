@@ -37,17 +37,70 @@ public class UserInterfaceRenderer(
         var xOffset = 10;
         var yOffset = 180;
         var playerSize = 26;
-        var asteroidLineThickness = 2;
+        var scale = 0.5f;
+        var asteroidLineThickness = 1;
+
+        var dividingLinesThickness = 1;
+        var dividingLines = 4;
+
+        var borderThickness = 2;
+
+        var minimapGridSizePx = (int)(GameConfig.GridSize * scale);
+        var minimapTotalSizePx = minimapGridSizePx + borderThickness * 2;
+
+        var gridColor = new Color(70, 125, 149);
+
+        // Top border
+        spriteBatch.Draw(shared.Textures["white"], new Rectangle(xOffset, yOffset, minimapTotalSizePx, borderThickness),
+            gridColor);
+        // Bottom border
+        spriteBatch.Draw(shared.Textures["white"],
+            new Rectangle(xOffset, yOffset + minimapGridSizePx + borderThickness, minimapTotalSizePx, borderThickness),
+            gridColor);
+        // Left border
+        spriteBatch.Draw(shared.Textures["white"],
+            new Rectangle(xOffset, yOffset, borderThickness, minimapTotalSizePx),
+            gridColor);
+        // Right border
+        spriteBatch.Draw(shared.Textures["white"],
+            new Rectangle(xOffset + minimapGridSizePx + borderThickness, yOffset, borderThickness, minimapTotalSizePx),
+            gridColor);
+
+        // Draw dividing lines
+        var cellWidth = minimapGridSizePx / (dividingLines + 1);
+        var cellHeight = minimapGridSizePx / (dividingLines + 1);
+
+        // Vertical dividing lines
+        for (var i = 1; i <= dividingLines; i++)
+        {
+            var x = xOffset + borderThickness + cellWidth * i;
+            spriteBatch.Draw(shared.Textures["white"],
+                new Rectangle(x, yOffset, dividingLinesThickness, minimapTotalSizePx),
+                gridColor);
+        }
+
+        // Horizontal dividing lines
+        for (var i = 1; i <= dividingLines; i++)
+        {
+            var y = yOffset + borderThickness + cellHeight * i;
+            spriteBatch.Draw(shared.Textures["white"],
+                new Rectangle(xOffset, y, minimapTotalSizePx, dividingLinesThickness),
+                gridColor);
+        }
+
         foreach (var gameStateEdgeCell in shared.GameState.EdgeCells)
         {
-            var edgeCellDestRect = new Rectangle(xOffset + gameStateEdgeCell.x, yOffset + gameStateEdgeCell.y,
+            var x = xOffset + gameStateEdgeCell.x * scale;
+            var y = yOffset + gameStateEdgeCell.y * scale;
+            var edgeCellDestRect = new Rectangle((int)x, (int)y,
                 asteroidLineThickness, asteroidLineThickness);
             spriteBatch.Draw(shared.Textures["white"], edgeCellDestRect, Color.White);
         }
 
         var playerGridPos = ViewHelpers.ToGridPosition(shared.GameState.ActiveControllableEntity.CenterPosition);
-        var playerDestRect = new Rectangle(xOffset + playerGridPos.x - playerSize / 2,
-            yOffset + playerGridPos.y - playerSize / 2, playerSize, playerSize);
+        var playerX = xOffset + playerGridPos.x * scale - playerSize / 2;
+        var playerY = yOffset + playerGridPos.y * scale - playerSize / 2;
+        var playerDestRect = new Rectangle((int)playerX, (int)playerY, playerSize, playerSize);
         spriteBatch.Draw(shared.Textures["radial-light"], playerDestRect, Color.Red);
     }
 }
