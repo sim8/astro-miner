@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace AstroMiner;
@@ -15,33 +16,51 @@ public enum CellType
     Nickel
 }
 
-public class CellTypeConfig(bool isMineable, bool isCollideable, int drillTime = -1) // TODO extend this for mineable?
+public abstract class CellTypeConfig(bool isDestructible, bool isCollideable)
 {
-    public readonly int DrillTime = drillTime;
-    public readonly bool IsCollideable = isCollideable;
-    public readonly bool IsMineable = isMineable;
+    public bool IsDestructible { get; } = isDestructible;
+    public bool IsCollideable { get; } = isCollideable;
+
+    public abstract bool IsMineable { get; }
+}
+
+public class MineableCellConfig(int drillTimeMs, ResourceType? drop = null) : CellTypeConfig(true, true)
+{
+    public int DrillTimeMs { get; } = drillTimeMs;
+    public ResourceType? Drop { get; } = drop;
+
+    public override bool IsMineable => true;
+}
+
+public class NonMineableCellConfig(bool isDestructible, bool isCollideable)
+    : CellTypeConfig(isDestructible, isCollideable)
+{
+    public override bool IsMineable => false;
 }
 
 public static class CellTypes
 {
-    public static readonly int DefaultDrillTime = 600;
+    private static readonly int DefaultDrillTime = 600;
 
-    private static readonly Dictionary<CellType, CellTypeConfig> AllCellTypeConfig =
-        new()
+    private static readonly IReadOnlyDictionary<CellType, CellTypeConfig> AllCellTypeConfig =
+        new Dictionary<CellType, CellTypeConfig>
         {
-            { CellType.Empty, new CellTypeConfig(false, false) },
-            { CellType.Floor, new CellTypeConfig(false, false) },
-            { CellType.Lava, new CellTypeConfig(false, false) },
-            { CellType.Rock, new CellTypeConfig(true, true, DefaultDrillTime) },
-            { CellType.SolidRock, new CellTypeConfig(false, true) },
-            { CellType.Diamond, new CellTypeConfig(true, true, 1200) },
-            { CellType.Ruby, new CellTypeConfig(true, true, 800) },
-            { CellType.Gold, new CellTypeConfig(true, true, 800) },
-            { CellType.Nickel, new CellTypeConfig(true, true, DefaultDrillTime) }
+            { CellType.Empty, new NonMineableCellConfig(false, false) },
+            { CellType.Floor, new NonMineableCellConfig(false, false) },
+            { CellType.Lava, new NonMineableCellConfig(false, false) },
+            { CellType.SolidRock, new NonMineableCellConfig(false, true) },
+            { CellType.Rock, new MineableCellConfig(DefaultDrillTime) },
+            { CellType.Diamond, new MineableCellConfig(1200, ResourceType.Diamond) },
+            { CellType.Ruby, new MineableCellConfig(800, ResourceType.Ruby) },
+            { CellType.Gold, new MineableCellConfig(800, ResourceType.Gold) },
+            { CellType.Nickel, new MineableCellConfig(DefaultDrillTime, ResourceType.Nickel) }
         };
 
     public static CellTypeConfig GetConfig(CellType cellType)
     {
-        return AllCellTypeConfig[cellType];
+        if (!AllCellTypeConfig.TryGetValue(cellType, out var config))
+            throw new ArgumentException($"No configuration found for CellType: {cellType}");
+
+        return config;
     }
 }
