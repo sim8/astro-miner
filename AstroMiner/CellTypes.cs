@@ -48,7 +48,7 @@ public static class CellTypes
             { CellType.Empty, new NonMineableCellConfig(false, false) },
             { CellType.Floor, new NonMineableCellConfig(false, false) },
             { CellType.Lava, new NonMineableCellConfig(false, false) },
-            { CellType.SolidRock, new NonMineableCellConfig(false, true) },
+            { CellType.SolidRock, new NonMineableCellConfig(true, true) },
             { CellType.Rock, new MineableCellConfig(DefaultDrillTime) },
             { CellType.Diamond, new MineableCellConfig(1200, ResourceType.Diamond) },
             { CellType.Ruby, new MineableCellConfig(800, ResourceType.Ruby) },

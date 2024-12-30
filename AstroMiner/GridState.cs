@@ -46,7 +46,9 @@ public class GridState(GameState gameState, CellState[,] grid)
     {
         if (!ViewHelpers.IsValidGridPosition(x, y))
             throw new IndexOutOfRangeException();
-        if (grid[y, x].Type == CellType.Empty) return;
+        var cellConfig = GetCellConfig(x, y);
+
+        if (!cellConfig.IsDestructible) return;
 
         if (grid[y, x].Type == CellType.Ruby && addToInventory) gameState.Inventory.NumRubies++;
         if (grid[y, x].Type == CellType.Diamond && addToInventory) gameState.Inventory.NumDiamonds++;
