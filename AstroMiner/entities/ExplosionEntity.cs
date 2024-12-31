@@ -24,8 +24,15 @@ public class ExplosionEntity : Entity
 
     private void ExplodeGrid()
     {
+        var gridPos = ViewHelpers.ToGridPosition(Position);
         var explodedCells = GetCellsInRadius(Position.X, Position.Y, 1.7f);
-        foreach (var (x, y) in explodedCells) _gameState.Grid.DemolishCell(x, y);
+        foreach (var (x, y) in explodedCells)
+            // If x,y = gridPos, already triggered explosion
+            if (_gameState.Grid.GetCellType(x, y) == CellType.ExplosiveRock && (x, y) != gridPos)
+                _gameState.Grid.ActivateCell(x, y, 300);
+            else
+                _gameState.Grid.ClearCell(x, y);
+
         _hasExploded = true;
     }
 

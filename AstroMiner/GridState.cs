@@ -26,10 +26,10 @@ public class GridState(GameState gameState, CellState[,] grid)
     public int Columns => grid.GetLength(0);
     public int Rows => grid.GetLength(1);
 
-    private void ActivateCell(int x, int y)
+    public void ActivateCell(int x, int y, int timeToExplodeMs = 3000)
     {
         if (_activeGridCells.ContainsKey((x, y))) return;
-        _activeGridCells.Add((x, y), new ActiveExplosiveRockCell(gameState, (x, y)));
+        _activeGridCells.Add((x, y), new ActiveExplosiveRockCell(gameState, (x, y), timeToExplodeMs));
     }
 
     public void DeactivateCell(int x, int y)
@@ -59,29 +59,30 @@ public class GridState(GameState gameState, CellState[,] grid)
         return CellTypes.GetConfig(GetCellState(x, y).Type);
     }
 
-    public void DemolishCell(int x, int y, bool addToInventory = false)
+    public void MineCell(int x, int y, bool addToInventory = false)
     {
-        if (!ViewHelpers.IsValidGridPosition(x, y))
-            throw new IndexOutOfRangeException();
         var cellConfig = GetCellConfig(x, y);
 
         if (!cellConfig.IsDestructible) return;
 
-        if (cellConfig is MineableCellConfig mineableConfig)
+        ClearCell(x, y);
+
+        if (cellConfig is MineableCellConfig mineableConfig && addToInventory)
         {
             var drop = mineableConfig.Drop;
             if (drop.HasValue) gameState.Inventory.AddResource(drop.Value);
         }
 
-        grid[y, x].Type = CellType.Floor;
-
-        DeactivateCell(x, y);
-
         MapNeighbors(x, y, (nx, ny) =>
         {
             if (grid[ny, nx].Type == CellType.ExplosiveRock) ActivateCell(nx, ny);
         });
+    }
 
+    public void ClearCell(int x, int y)
+    {
+        grid[y, x].Type = CellType.Floor;
+        DeactivateCell(x, y);
         MarkAllDistancesFromOutsideConnectedFloors(x, y);
     }
 
