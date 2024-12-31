@@ -22,8 +22,25 @@ public class GridState(GameState gameState, CellState[,] grid)
 {
     private static readonly int[] NeighbourXOffsets = { -1, 0, 1, 1, 1, 0, -1, -1 };
     private static readonly int[] NeighbourYOffsets = { -1, -1, -1, 0, 1, 1, 1, 0 };
+    public readonly Dictionary<(int x, int y), ActiveExplosiveRockCell> _activeGridCells = new();
     public int Columns => grid.GetLength(0);
     public int Rows => grid.GetLength(1);
+
+    private void ActivateCell(int x, int y)
+    {
+        if (_activeGridCells.ContainsKey((x, y))) return;
+        _activeGridCells.Add((x, y), new ActiveExplosiveRockCell(gameState, (x, y)));
+    }
+
+    public void DeactivateCell(int x, int y)
+    {
+        _activeGridCells.Remove((x, y));
+    }
+
+    public bool CellIsActive(int x, int y)
+    {
+        return _activeGridCells.ContainsKey((x, y));
+    }
 
     public CellState GetCellState(int x, int y)
     {
@@ -57,6 +74,13 @@ public class GridState(GameState gameState, CellState[,] grid)
         }
 
         grid[y, x].Type = CellType.Floor;
+
+        DeactivateCell(x, y);
+
+        MapNeighbors(x, y, (nx, ny) =>
+        {
+            if (grid[ny, nx].Type == CellType.ExplosiveRock) ActivateCell(nx, ny);
+        });
 
         MarkAllDistancesFromOutsideConnectedFloors(x, y);
     }

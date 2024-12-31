@@ -6,10 +6,7 @@ namespace AstroMiner;
 public class DynamiteEntity : Entity
 {
     private const int FuseTimeMs = 4000;
-    private const int explosionPeakMs = 100;
-    private const int explosionFinishedMs = 500;
     private readonly GameState _gameState;
-    private bool _hasExploded;
 
     public DynamiteEntity(GameState gameState, Vector2 pos)
     {

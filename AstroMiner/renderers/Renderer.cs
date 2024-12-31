@@ -95,7 +95,7 @@ public class Renderer
                         Tilesets.GetCellQuadrantSourceRect(_gameState, col, row, corner);
                     spriteBatch.Draw(_textures["tileset"],
                         _viewHelpers.GetVisibleRectForGridQuadrant(col, row, corner),
-                        dualTilesetSourceRect, Color.White);
+                        dualTilesetSourceRect, _gameState.Grid.CellIsActive(col, row) ? Color.Red : Color.White);
                 }
             else if (_gameState.Grid.GetCellType(col, row) == CellType.Floor)
                 spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
