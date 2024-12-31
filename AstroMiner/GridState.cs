@@ -28,7 +28,13 @@ public class GridState(GameState gameState, CellState[,] grid)
 
     public void ActivateCell(int x, int y, int timeToExplodeMs = 3000)
     {
-        if (_activeGridCells.ContainsKey((x, y))) return;
+        if (_activeGridCells.ContainsKey((x, y)))
+        {
+            _activeGridCells[(x, y)].TimeToExplodeMs =
+                Math.Min(_activeGridCells[(x, y)].TimeToExplodeMs, timeToExplodeMs);
+            return;
+        }
+
         _activeGridCells.Add((x, y), new ActiveExplosiveRockCell(gameState, (x, y), timeToExplodeMs));
     }
 
@@ -62,7 +68,6 @@ public class GridState(GameState gameState, CellState[,] grid)
     public void MineCell(int x, int y, bool addToInventory = false)
     {
         var cellConfig = GetCellConfig(x, y);
-
         if (!cellConfig.IsDestructible) return;
 
         ClearCell(x, y);
@@ -72,11 +77,6 @@ public class GridState(GameState gameState, CellState[,] grid)
             var drop = mineableConfig.Drop;
             if (drop.HasValue) gameState.Inventory.AddResource(drop.Value);
         }
-
-        MapNeighbors(x, y, (nx, ny) =>
-        {
-            if (grid[ny, nx].Type == CellType.ExplosiveRock) ActivateCell(nx, ny);
-        });
     }
 
     public void ClearCell(int x, int y)
@@ -84,6 +84,11 @@ public class GridState(GameState gameState, CellState[,] grid)
         grid[y, x].Type = CellType.Floor;
         DeactivateCell(x, y);
         MarkAllDistancesFromOutsideConnectedFloors(x, y);
+
+        MapNeighbors(x, y, (nx, ny) =>
+        {
+            if (grid[ny, nx].Type == CellType.ExplosiveRock) ActivateCell(nx, ny);
+        });
     }
 
     public bool CellHasNeighbourOfType(int x, int y, CellType cellType)

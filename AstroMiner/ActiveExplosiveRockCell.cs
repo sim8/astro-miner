@@ -5,7 +5,7 @@ namespace AstroMiner;
 public class ActiveExplosiveRockCell(GameState gameState, (int x, int y) gridPos, int timeToExplodeMs = 3000)
 {
     private readonly (int X, int Y) Position = gridPos;
-    private int TimeToExplodeMs = timeToExplodeMs;
+    public int TimeToExplodeMs = timeToExplodeMs;
 
     public void Update(int elapsedMs)
     {
