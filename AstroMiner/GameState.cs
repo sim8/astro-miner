@@ -16,7 +16,9 @@ public enum MiningControls
     EnterOrExit,
 
     // Player-only
-    PlaceDynamite
+    PlaceDynamite,
+
+    NewGame // TODO factor out
 }
 
 public enum Direction
@@ -43,6 +45,8 @@ public class GameState
     {
         Initialize();
     }
+
+    public bool IsDead { get; set; }
 
     public int Seed { get; private set; }
 
@@ -76,6 +80,7 @@ public class GameState
         _prevPressedEnterOrExit = false;
         _emptyMiningControls = new HashSet<MiningControls>();
         TimeUntilAsteroidExplodesMs = 5 * 60 * 1000;
+        IsDead = false;
     }
 
     private void SortActiveEntities()
@@ -95,6 +100,12 @@ public class GameState
 
     public void Update(HashSet<MiningControls> activeMiningControls, int elapsedMs)
     {
+        if (IsDead)
+        {
+            if (activeMiningControls.Contains(MiningControls.NewGame)) Initialize();
+            return;
+        }
+
         TimeUntilAsteroidExplodesMs -= elapsedMs;
 
         if (activeMiningControls.Contains(MiningControls.EnterOrExit))

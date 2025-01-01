@@ -51,6 +51,7 @@ public class MiningControllableEntity : Entity
     public void TakeDamage(int damage)
     {
         Health = Math.Max(0, Health - damage);
+        if (Health == 0 && _gameState.ActiveControllableEntity == this) _gameState.IsDead = true;
     }
 
     private Direction? GetDirectionFromActiveControls(HashSet<MiningControls> activeMiningControls)

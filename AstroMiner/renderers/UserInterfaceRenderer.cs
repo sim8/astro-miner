@@ -42,6 +42,8 @@ public class UserInterfaceRenderer(
 
 
         shared.RenderString(spriteBatch, 1000, 40, "SEED " + shared.GameState.Seed);
+
+        if (shared.GameState.IsDead) RenderNewGameScreen(spriteBatch);
     }
 
     private void RenderHealthBar(SpriteBatch spriteBatch, MiningControllableEntity entity, int xOffset, int yOffset)
@@ -121,5 +123,14 @@ public class UserInterfaceRenderer(
         var playerY = yOffset + playerGridPos.y * scale - playerSize / 2;
         var playerDestRect = new Rectangle((int)playerX, (int)playerY, playerSize, playerSize);
         spriteBatch.Draw(shared.Textures["radial-light"], playerDestRect, Color.Red);
+    }
+
+    private void RenderNewGameScreen(SpriteBatch spriteBatch)
+    {
+        var (viewportWidth, viewportHeight) = shared.ViewHelpers.GetViewportSize();
+        spriteBatch.Draw(shared.Textures["white"], new Rectangle(0, 0, viewportWidth, viewportHeight),
+            new Color(107, 7, 0) * 0.7f);
+        shared.RenderString(spriteBatch, 300, 500, "YOU WERE INJURED", 5);
+        shared.RenderString(spriteBatch, 300, 600, "PRESS N TO RESTART");
     }
 }
