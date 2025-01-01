@@ -21,6 +21,8 @@ public class ProcGenViewerGame : Game
         _graphics = new GraphicsDeviceManager(this);
         _graphics.PreferredBackBufferWidth = 1280;
         _graphics.PreferredBackBufferHeight = 1024;
+        _graphics.IsFullScreen = false;
+        Window.AllowUserResizing = true;
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
