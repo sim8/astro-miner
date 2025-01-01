@@ -29,7 +29,7 @@ public class ExplosionEntity : Entity
         foreach (var (x, y) in explodedCells)
             // If x,y = gridPos, already triggered explosion
             if (_gameState.Grid.GetCellType(x, y) == CellType.ExplosiveRock && (x, y) != gridPos)
-                _gameState.Grid.ActivateCell(x, y, 300);
+                _gameState.Grid.ActivateExplosiveRockCell(x, y, 300);
             else
                 _gameState.Grid.ClearCell(x, y);
 

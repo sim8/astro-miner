@@ -110,7 +110,8 @@ public class Renderer
                         Tilesets.GetCellQuadrantSourceRect(_gameState, col, row, corner);
                     spriteBatch.Draw(_textures["tileset"],
                         _viewHelpers.GetVisibleRectForGridQuadrant(col, row, corner),
-                        dualTilesetSourceRect, _gameState.Grid.CellIsActive(col, row) ? Color.Red : Color.White);
+                        dualTilesetSourceRect,
+                        _gameState.Grid.ExplosiveRockCellIsActive(col, row) ? Color.Red : Color.White);
                 }
             else if (_gameState.Grid.GetCellType(col, row) == CellType.Floor)
                 spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
@@ -150,13 +151,13 @@ public class Renderer
 
     private void RenderLightingToRenderTarget(SpriteBatch spriteBatch)
     {
-        // Get viewportWidth before changing render target
-        var (viewportWidth, viewportHeight) = _viewHelpers.GetViewportSize();
         _graphics.GraphicsDevice.SetRenderTarget(_lightingRenderTarget);
         _graphics.GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true };
 
         _graphics.GraphicsDevice.Clear(Color.White);
         spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
+        var (viewportWidth, viewportHeight) = _viewHelpers.GetViewportSize();
+        Console.WriteLine(viewportWidth);
         spriteBatch.Draw(_textures["white"], new Rectangle(0, 0, viewportWidth, viewportHeight),
             GradientOverlayRenderer.OverlayColor * 0.8f);
 

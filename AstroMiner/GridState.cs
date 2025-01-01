@@ -18,34 +18,41 @@ public class CellState(CellType type)
     public CellType Type = type;
 }
 
+/// <summary>
+///     Grid state is primarily 2d array of cell types.
+///     Cells can be "activated" to be called in Update loop
+/// </summary>
 public class GridState(GameState gameState, CellState[,] grid)
 {
     private static readonly int[] NeighbourXOffsets = { -1, 0, 1, 1, 1, 0, -1, -1 };
+
     private static readonly int[] NeighbourYOffsets = { -1, -1, -1, 0, 1, 1, 1, 0 };
-    public readonly Dictionary<(int x, int y), ActiveExplosiveRockCell> _activeGridCells = new();
+
+    // In future could be used for any active cell
+    public readonly Dictionary<(int x, int y), ActiveExplosiveRockCell> _activeExplosiveRockCells = new();
     public int Columns => grid.GetLength(0);
     public int Rows => grid.GetLength(1);
 
-    public void ActivateCell(int x, int y, int timeToExplodeMs = 2000)
+    public void ActivateExplosiveRockCell(int x, int y, int timeToExplodeMs = 2000)
     {
-        if (_activeGridCells.ContainsKey((x, y)))
+        if (_activeExplosiveRockCells.ContainsKey((x, y)))
         {
-            _activeGridCells[(x, y)].TimeToExplodeMs =
-                Math.Min(_activeGridCells[(x, y)].TimeToExplodeMs, timeToExplodeMs);
+            _activeExplosiveRockCells[(x, y)].TimeToExplodeMs =
+                Math.Min(_activeExplosiveRockCells[(x, y)].TimeToExplodeMs, timeToExplodeMs);
             return;
         }
 
-        _activeGridCells.Add((x, y), new ActiveExplosiveRockCell(gameState, (x, y), timeToExplodeMs));
+        _activeExplosiveRockCells.Add((x, y), new ActiveExplosiveRockCell(gameState, (x, y), timeToExplodeMs));
     }
 
-    public void DeactivateCell(int x, int y)
+    public void DeactivateExplosiveRockCell(int x, int y)
     {
-        _activeGridCells.Remove((x, y));
+        _activeExplosiveRockCells.Remove((x, y));
     }
 
-    public bool CellIsActive(int x, int y)
+    public bool ExplosiveRockCellIsActive(int x, int y)
     {
-        return _activeGridCells.ContainsKey((x, y));
+        return _activeExplosiveRockCells.ContainsKey((x, y));
     }
 
     public CellState GetCellState(int x, int y)
@@ -82,12 +89,12 @@ public class GridState(GameState gameState, CellState[,] grid)
     public void ClearCell(int x, int y)
     {
         grid[y, x].Type = CellType.Floor;
-        DeactivateCell(x, y);
+        DeactivateExplosiveRockCell(x, y);
         MarkAllDistancesFromOutsideConnectedFloors(x, y);
 
         MapNeighbors(x, y, (nx, ny) =>
         {
-            if (grid[ny, nx].Type == CellType.ExplosiveRock) ActivateCell(nx, ny);
+            if (grid[ny, nx].Type == CellType.ExplosiveRock) ActivateExplosiveRockCell(nx, ny);
         });
     }
 

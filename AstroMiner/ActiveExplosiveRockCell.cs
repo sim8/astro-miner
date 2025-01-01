@@ -15,7 +15,7 @@ public class ActiveExplosiveRockCell(GameState gameState, (int x, int y) gridPos
             var explosionPos = new Vector2(Position.X + 0.5f, Position.Y + 0.5f);
             var explosionEntity = new ExplosionEntity(gameState, explosionPos);
             gameState.ActivateEntity(explosionEntity);
-            gameState.Grid.DeactivateCell(Position.X, Position.Y);
+            gameState.Grid.DeactivateExplosiveRockCell(Position.X, Position.Y);
         }
     }
 }
