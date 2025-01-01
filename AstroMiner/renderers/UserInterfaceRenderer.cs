@@ -10,16 +10,9 @@ public class UserInterfaceRenderer(
     public void RenderUserInterface(SpriteBatch spriteBatch, FrameCounter frameCounter)
     {
         var timeLeft = shared.GameState.TimeUntilAsteroidExplodesMs;
-        if (timeLeft < 0)
-        {
-            shared.RenderString(spriteBatch, 0, 0, "UR DEAD");
-        }
-        else
-        {
-            var minutes = timeLeft / 60000;
-            var seconds = timeLeft % 60000 / 1000;
-            shared.RenderString(spriteBatch, 0, 0, minutes.ToString("D2") + " " + seconds.ToString("D2"), 6);
-        }
+        var minutes = timeLeft / 60000;
+        var seconds = timeLeft % 60000 / 1000;
+        shared.RenderString(spriteBatch, 0, 0, minutes.ToString("D2") + " " + seconds.ToString("D2"), 6);
 
         var resourcesYOffset = 225;
         var resourceLineHeight = 40;

@@ -106,7 +106,12 @@ public class GameState
             return;
         }
 
-        TimeUntilAsteroidExplodesMs -= elapsedMs;
+        TimeUntilAsteroidExplodesMs = Math.Max(TimeUntilAsteroidExplodesMs - elapsedMs, 0);
+        if (TimeUntilAsteroidExplodesMs == 0)
+        {
+            IsDead = true;
+            return;
+        }
 
         if (activeMiningControls.Contains(MiningControls.EnterOrExit))
         {
