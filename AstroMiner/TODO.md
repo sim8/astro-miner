@@ -2,16 +2,14 @@
 
 ## Gameplay - asteroid
 
-- Explosive pieces + chain reaction
-    - OR gas/lava holes/wells which bubble over
-        - lava - turn into rock
-    - holes can appear under rock
+- Collapsing floor
+    - Mining can trigger collapse 
+    - Turns to lava or hole to lower level
 - lower level
     - darker, fuzzy minimap?
-    - drive up / down
-    - collapsing ground
+    - drive up / down?
+    - Much more dangerous / better loot
 - Mystery box cell - similar design to explosive?
-- IS there a risk/reward element?
 - variable yield? skill based?
 - Make it clearer where center is - clearer sections?
 - Besides usual randomness, should we have different "types" of asteroid?
@@ -20,14 +18,14 @@
 ## Gameplay - other
 
 - In/out of miner needs balancing
-    - Miner doesn't mine?
-    - Better protection in miner?
-    - ~~Miner 2x2 (3x3?) - harder to navigate?~~
+    - Out of miner - no cell clear
 - Tools
     - grapple? human only!
     - rpg
     - depth charge - in hole. but only if not exploding!
     - big explosive
+      - Display timer - 10 seconds?
+      - Big white flash
     - scanner
 - fuel?
 - Upgrades
@@ -35,11 +33,11 @@
     - drill speed
     - color/design
     - tools
+    - Different "base" - hovercraft?
 - Endgame state
     - Timer runs out
         - serious consequences. Lose digger?
     - Drop off edge
-- player / miner health
 - Add zoom
 - NPC helpers
     - Recruit between digs
