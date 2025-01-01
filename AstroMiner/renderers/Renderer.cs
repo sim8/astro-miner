@@ -157,7 +157,6 @@ public class Renderer
         _graphics.GraphicsDevice.Clear(Color.White);
         spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
         var (viewportWidth, viewportHeight) = _viewHelpers.GetViewportSize();
-        Console.WriteLine(viewportWidth);
         spriteBatch.Draw(_textures["white"], new Rectangle(0, 0, viewportWidth, viewportHeight),
             GradientOverlayRenderer.OverlayColor * 0.8f);
 
