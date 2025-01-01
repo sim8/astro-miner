@@ -65,8 +65,10 @@ public class GameState
         var (grid, minerPos) = AsteroidGen.InitializeGridAndStartingPos(GameConfig.GridSize, Seed);
         Grid = new GridState(this, grid);
         Grid.MarkAllDistancesFromOutsideConnectedFloors();
-        Miner = new MinerEntity(this, minerPos);
-        Player = new PlayerEntity(this, minerPos);
+        Miner = new MinerEntity(this);
+        Miner.Initialize(minerPos);
+        Player = new PlayerEntity(this);
+        Player.Initialize(minerPos);
         Inventory = new Inventory();
         EdgeCells = UserInterfaceHelpers.GetAsteroidEdgeCells(Grid);
         Camera = new CameraState(this);

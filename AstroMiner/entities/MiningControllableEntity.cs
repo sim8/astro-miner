@@ -25,20 +25,28 @@ public class MiningControllableEntity : Entity
     // TODO is this needed?
     private (int x, int y)? _drillingPos;
 
-    public MiningControllableEntity(GameState gameState, Vector2 pos)
+    public MiningControllableEntity(GameState gameState)
     {
         _gameState = gameState;
-        Position = pos;
     }
+
+    public int Health { get; private set; }
 
     protected virtual float MaxSpeed => 1f;
     protected virtual int TimeToReachMaxSpeedMs { get; } = 0;
     protected virtual int TimeToStopMs { get; } = 0;
+    protected virtual int MaxHealth { get; } = 100;
     protected virtual float DrillingWidth { get; } = 0f;
     protected virtual bool CanAddToInventory { get; } = true;
 
 
     public Direction Direction { get; private set; } = Direction.Top;
+
+    public void Initialize(Vector2 pos)
+    {
+        Position = pos;
+        Health = MaxHealth;
+    }
 
     private Direction? GetDirectionFromActiveControls(HashSet<MiningControls> activeMiningControls)
     {

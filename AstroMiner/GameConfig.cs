@@ -13,6 +13,9 @@ public static class GameConfig
     // e.g. for a 7x7 block of rock, the center cell should be invisible
     public const int MaxUnexploredCellsVisible = 3;
 
+    public const int PlayerMaxHealth = 100;
+    public const int MinerMaxHealth = 200;
+
     // Derived consts
     public const float MinerSize = (float)MinerBoxSizePx / CellTextureSizePx;
 }

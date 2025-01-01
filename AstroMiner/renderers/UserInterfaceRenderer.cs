@@ -21,7 +21,7 @@ public class UserInterfaceRenderer(
             shared.RenderString(spriteBatch, 0, 0, minutes.ToString("D2") + " " + seconds.ToString("D2"), 6);
         }
 
-        var resourcesYOffset = 180;
+        var resourcesYOffset = 225;
         var resourceLineHeight = 40;
 
         foreach (var (inventoryResource, index) in shared.GameState.Inventory.resources.Select((r, i) => (r, i)))
@@ -34,11 +34,21 @@ public class UserInterfaceRenderer(
 
         RenderMinimap(spriteBatch);
 
+        RenderHealthBar(spriteBatch, shared.GameState.Miner, 10, 190);
+        RenderHealthBar(spriteBatch, shared.GameState.Player, 10, 205);
+
 
         shared.RenderString(spriteBatch, 1000, 0, "FPS " + frameCounter.AverageFramesPerSecond.ToString("F0"));
 
 
         shared.RenderString(spriteBatch, 1000, 40, "SEED " + shared.GameState.Seed);
+    }
+
+    private void RenderHealthBar(SpriteBatch spriteBatch, MiningControllableEntity entity, int xOffset, int yOffset)
+    {
+        spriteBatch.Draw(shared.Textures["white"],
+            new Rectangle(xOffset, yOffset, entity.Health, 3),
+            Color.LimeGreen);
     }
 
     private void RenderMinimap(SpriteBatch spriteBatch)
