@@ -16,6 +16,9 @@ public static class GameConfig
     public const int PlayerMaxHealth = 100;
     public const int MinerMaxHealth = 200;
 
+    // Damage ramps down to 0 based on distance from center + explosion radius
+    public const int ExplosionMaxDamage = 120;
+
     // Derived consts
     public const float MinerSize = (float)MinerBoxSizePx / CellTextureSizePx;
 }

@@ -48,6 +48,11 @@ public class MiningControllableEntity : Entity
         Health = MaxHealth;
     }
 
+    public void TakeDamage(int damage)
+    {
+        Health = Math.Max(0, Health - damage);
+    }
+
     private Direction? GetDirectionFromActiveControls(HashSet<MiningControls> activeMiningControls)
     {
         foreach (var control in activeMiningControls)

@@ -7,6 +7,7 @@ namespace AstroMiner;
 public class ExplosionEntity : Entity
 {
     private const int _animationTime = 300;
+    private readonly float _explosionRadius = 1.7f;
     private readonly GameState _gameState;
     private bool _hasExploded;
     private int TimeSinceExplosionMs;
@@ -25,7 +26,7 @@ public class ExplosionEntity : Entity
     private void ExplodeGrid()
     {
         var gridPos = ViewHelpers.ToGridPosition(Position);
-        var explodedCells = GetCellsInRadius(Position.X, Position.Y, 1.7f);
+        var explodedCells = GetCellsInRadius(Position.X, Position.Y, _explosionRadius);
         foreach (var (x, y) in explodedCells)
             // If x,y = gridPos, already triggered explosion
             if (_gameState.Grid.GetCellType(x, y) == CellType.ExplosiveRock && (x, y) != gridPos)
@@ -36,11 +37,25 @@ public class ExplosionEntity : Entity
         _hasExploded = true;
     }
 
+    private void calculateEntityDamage(MiningControllableEntity entity)
+    {
+        var distance = GetDistanceTo(entity);
+
+        if (distance < _explosionRadius)
+        {
+            var damagePercentage = 1f - distance / _explosionRadius;
+            var damage = (int)(GameConfig.ExplosionMaxDamage * damagePercentage);
+            entity.TakeDamage(damage);
+        }
+    }
+
     public override void Update(int elapsedMs, HashSet<MiningControls> activeMiningControls)
     {
         if (!_hasExploded)
         {
             ExplodeGrid();
+            calculateEntityDamage(_gameState.Miner);
+            if (!_gameState.IsInMiner) calculateEntityDamage(_gameState.Player);
             _hasExploded = true;
         }
         else
