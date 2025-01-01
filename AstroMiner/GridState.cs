@@ -26,7 +26,7 @@ public class GridState(GameState gameState, CellState[,] grid)
     public int Columns => grid.GetLength(0);
     public int Rows => grid.GetLength(1);
 
-    public void ActivateCell(int x, int y, int timeToExplodeMs = 3000)
+    public void ActivateCell(int x, int y, int timeToExplodeMs = 2000)
     {
         if (_activeGridCells.ContainsKey((x, y)))
         {

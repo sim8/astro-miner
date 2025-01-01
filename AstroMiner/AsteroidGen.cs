@@ -31,10 +31,13 @@ public static class AsteroidGen
     // Perlin noise 1
     private static readonly (float, float) SolidRockRange = (0.55f, 1);
     private static readonly (float, float) DiamondRange = (0.65f, 1);
-
     private static readonly (float, float) RubyRange = (0.41f, 0.415f);
+
     private static readonly (float, float) GoldRange1 = (0.42f, 0.43f);
-    private static readonly (float, float) ExplosiveRockRange1 = (0.36f, 0.4f);
+
+    // TODO two ranges for more granularity. Maybe better to have a new Perlin noise
+    private static readonly (float, float) ExplosiveRockRange1a = (0.36f, 0.4f);
+    private static readonly (float, float) ExplosiveRockRange1b = (0.3f, 0.34f);
 
     // Perlin noise 2
     private static readonly (float, float) LavaRange = (0.65f, 1);
@@ -158,7 +161,7 @@ public static class AsteroidGen
                          NoiseValWithinRange(noise1Value, GoldRange1))
                     cellType = CellType.Gold;
                 else if (withinCore && NoiseValWithinRange(noise2Value, ExplosiveRockRange2) &&
-                         NoiseValWithinRange(noise1Value, ExplosiveRockRange1))
+                         (NoiseValWithinRange(noise1Value, ExplosiveRockRange1a) || NoiseValWithinRange(noise1Value, ExplosiveRockRange1b)))
                     cellType = CellType.ExplosiveRock;
                 else if (withinCore && NoiseValWithinRange(noise1Value, SolidRockRange))
                     cellType = distance < radius * DiamondsRadius && NoiseValWithinRange(noise1Value, DiamondRange)
