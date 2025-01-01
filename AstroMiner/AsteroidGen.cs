@@ -17,8 +17,11 @@ public static class AsteroidGen
 
 
     // Two different layers of Perlin noise
-    // Layer 1 - All solid blocks
-    // Layer 2 - Lava lakes and their floor perimeters
+    // Layer 1 - Default layer, more granular
+    // Layer 2 - Lower frequency - used to define larger areas
+    //   - Lava lakes + adjoining floor
+    //   - Gold zones (near lava)
+    //   - Explosive rock regions
 
     private const float Perlin1NoiseScale = 0.22f;
 
@@ -28,14 +31,19 @@ public static class AsteroidGen
     // Perlin noise 1
     private static readonly (float, float) SolidRockRange = (0.55f, 1);
     private static readonly (float, float) DiamondRange = (0.65f, 1);
-
     private static readonly (float, float) RubyRange = (0.41f, 0.415f);
+
     private static readonly (float, float) GoldRange1 = (0.42f, 0.43f);
+
+    // TODO two ranges for more granularity. Maybe better to have a new Perlin noise
+    private static readonly (float, float) ExplosiveRockRange1a = (0.36f, 0.4f);
+    private static readonly (float, float) ExplosiveRockRange1b = (0.3f, 0.34f);
 
     // Perlin noise 2
     private static readonly (float, float) LavaRange = (0.65f, 1);
     private static readonly (float, float) LavaFloorPerimeterRange = (0.58f, 0.65f);
-    private static readonly (float, float) GoldRange2 = (0.52f, 0.58f);
+    private static readonly (float, float) GoldRange2 = (0.5f, 0.58f);
+    private static readonly (float, float) ExplosiveRockRange2 = (0.2f, 0.35f);
 
     public static (CellState[,], Vector2) InitializeGridAndStartingPos(int gridSize, int seed)
     {
@@ -152,7 +160,9 @@ public static class AsteroidGen
                 else if (withinLavaRadius && NoiseValWithinRange(noise2Value, GoldRange2) &&
                          NoiseValWithinRange(noise1Value, GoldRange1))
                     cellType = CellType.Gold;
-
+                else if (withinCore && NoiseValWithinRange(noise2Value, ExplosiveRockRange2) &&
+                         (NoiseValWithinRange(noise1Value, ExplosiveRockRange1a) || NoiseValWithinRange(noise1Value, ExplosiveRockRange1b)))
+                    cellType = CellType.ExplosiveRock;
                 else if (withinCore && NoiseValWithinRange(noise1Value, SolidRockRange))
                     cellType = distance < radius * DiamondsRadius && NoiseValWithinRange(noise1Value, DiamondRange)
                         ? CellType.Diamond

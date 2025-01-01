@@ -24,6 +24,8 @@ public class AstroMinerGame : Game
         _graphics = new GraphicsDeviceManager(this);
         _graphics.PreferredBackBufferWidth = 1280;
         _graphics.PreferredBackBufferHeight = 1024;
+        _graphics.IsFullScreen = false;
+        Window.AllowUserResizing = true;
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
@@ -32,6 +34,7 @@ public class AstroMinerGame : Game
     {
         _gameState = new GameState();
         _renderer = new Renderer(_graphics, _textures, _gameState, _frameCounter);
+        Window.ClientSizeChanged += _renderer.HandleWindowResize;
         base.Initialize();
     }
 

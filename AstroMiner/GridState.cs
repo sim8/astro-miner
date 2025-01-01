@@ -18,12 +18,42 @@ public class CellState(CellType type)
     public CellType Type = type;
 }
 
+/// <summary>
+///     Grid state is primarily 2d array of cell types.
+///     Cells can be "activated" to be called in Update loop
+/// </summary>
 public class GridState(GameState gameState, CellState[,] grid)
 {
     private static readonly int[] NeighbourXOffsets = { -1, 0, 1, 1, 1, 0, -1, -1 };
+
     private static readonly int[] NeighbourYOffsets = { -1, -1, -1, 0, 1, 1, 1, 0 };
+
+    // In future could be used for any active cell
+    public readonly Dictionary<(int x, int y), ActiveExplosiveRockCell> _activeExplosiveRockCells = new();
     public int Columns => grid.GetLength(0);
     public int Rows => grid.GetLength(1);
+
+    public void ActivateExplosiveRockCell(int x, int y, int timeToExplodeMs = 2000)
+    {
+        if (_activeExplosiveRockCells.ContainsKey((x, y)))
+        {
+            _activeExplosiveRockCells[(x, y)].TimeToExplodeMs =
+                Math.Min(_activeExplosiveRockCells[(x, y)].TimeToExplodeMs, timeToExplodeMs);
+            return;
+        }
+
+        _activeExplosiveRockCells.Add((x, y), new ActiveExplosiveRockCell(gameState, (x, y), timeToExplodeMs));
+    }
+
+    public void DeactivateExplosiveRockCell(int x, int y)
+    {
+        _activeExplosiveRockCells.Remove((x, y));
+    }
+
+    public bool ExplosiveRockCellIsActive(int x, int y)
+    {
+        return _activeExplosiveRockCells.ContainsKey((x, y));
+    }
 
     public CellState GetCellState(int x, int y)
     {
@@ -42,23 +72,30 @@ public class GridState(GameState gameState, CellState[,] grid)
         return CellTypes.GetConfig(GetCellState(x, y).Type);
     }
 
-    public void DemolishCell(int x, int y, bool addToInventory = false)
+    public void MineCell(int x, int y, bool addToInventory = false)
     {
-        if (!ViewHelpers.IsValidGridPosition(x, y))
-            throw new IndexOutOfRangeException();
         var cellConfig = GetCellConfig(x, y);
-
         if (!cellConfig.IsDestructible) return;
 
-        if (cellConfig is MineableCellConfig mineableConfig)
+        ClearCell(x, y);
+
+        if (cellConfig is MineableCellConfig mineableConfig && addToInventory)
         {
             var drop = mineableConfig.Drop;
             if (drop.HasValue) gameState.Inventory.AddResource(drop.Value);
         }
+    }
 
+    public void ClearCell(int x, int y)
+    {
         grid[y, x].Type = CellType.Floor;
-
+        DeactivateExplosiveRockCell(x, y);
         MarkAllDistancesFromOutsideConnectedFloors(x, y);
+
+        MapNeighbors(x, y, (nx, ny) =>
+        {
+            if (grid[ny, nx].Type == CellType.ExplosiveRock) ActivateExplosiveRockCell(nx, ny);
+        });
     }
 
     public bool CellHasNeighbourOfType(int x, int y, CellType cellType)

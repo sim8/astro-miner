@@ -125,6 +125,8 @@ public class GameState
             else
                 entity.Update(elapsedMs, _emptyMiningControls);
 
+        foreach (var cell in Grid._activeExplosiveRockCells) cell.Value.Update(elapsedMs);
+
 
         // Do last to reflect changes
         SortActiveEntities(); // TODO only call when needed? Seems error prone

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -17,7 +18,6 @@ public class Renderer
     private readonly GradientOverlayRenderer _gradientOverlayRenderer;
     private readonly GraphicsDeviceManager _graphics;
     private readonly Color _lavaLightColor = new(255, 231, 171);
-    private readonly RenderTarget2D _lightingRenderTarget;
     private readonly MinerRenderer _minerRenderer;
     private readonly BlendState _multiplyBlendState;
     private readonly PlayerRenderer _playerRenderer;
@@ -25,6 +25,7 @@ public class Renderer
     private readonly Dictionary<string, Texture2D> _textures;
     private readonly UserInterfaceRenderer _userInterfaceRenderer;
     private readonly ViewHelpers _viewHelpers;
+    private RenderTarget2D _lightingRenderTarget;
 
     public Renderer(
         GraphicsDeviceManager graphics,
@@ -49,13 +50,27 @@ public class Renderer
         _multiplyBlendState.ColorSourceBlend = Blend.DestinationColor;
         _multiplyBlendState.ColorDestinationBlend = Blend.Zero;
 
+        _initializeLightingRenderTarget();
+    }
+
+    private void _initializeLightingRenderTarget()
+    {
+        _lightingRenderTarget?.Dispose();
+
+        var (width, height) = _viewHelpers.GetViewportSize();
         _lightingRenderTarget = new RenderTarget2D(
-            graphics.GraphicsDevice,
-            graphics.GraphicsDevice.PresentationParameters.BackBufferWidth,
-            graphics.GraphicsDevice.PresentationParameters.BackBufferHeight,
+            _graphics.GraphicsDevice,
+            width,
+            height,
             false,
-            graphics.GraphicsDevice.PresentationParameters.BackBufferFormat,
+            _graphics.GraphicsDevice.PresentationParameters.BackBufferFormat,
             DepthFormat.Depth24);
+    }
+
+    public void HandleWindowResize(object sender, EventArgs e)
+    {
+        // RenderTarget2d can't change width/height after initialization. Re-init on window resize
+        _initializeLightingRenderTarget();
     }
 
     public void Render(SpriteBatch spriteBatch)
@@ -95,7 +110,8 @@ public class Renderer
                         Tilesets.GetCellQuadrantSourceRect(_gameState, col, row, corner);
                     spriteBatch.Draw(_textures["tileset"],
                         _viewHelpers.GetVisibleRectForGridQuadrant(col, row, corner),
-                        dualTilesetSourceRect, Color.White);
+                        dualTilesetSourceRect,
+                        _gameState.Grid.ExplosiveRockCellIsActive(col, row) ? Color.Red : Color.White);
                 }
             else if (_gameState.Grid.GetCellType(col, row) == CellType.Floor)
                 spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
@@ -141,6 +157,7 @@ public class Renderer
         _graphics.GraphicsDevice.Clear(Color.White);
         spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
         var (viewportWidth, viewportHeight) = _viewHelpers.GetViewportSize();
+        Console.WriteLine(viewportWidth);
         spriteBatch.Draw(_textures["white"], new Rectangle(0, 0, viewportWidth, viewportHeight),
             GradientOverlayRenderer.OverlayColor * 0.8f);
 

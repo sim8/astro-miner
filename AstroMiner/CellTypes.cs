@@ -13,7 +13,8 @@ public enum CellType
     Diamond,
     Ruby,
     Gold,
-    Nickel
+    Nickel,
+    ExplosiveRock
 }
 
 public abstract class CellTypeConfig(bool isDestructible, bool isCollideable)
@@ -53,7 +54,8 @@ public static class CellTypes
             { CellType.Diamond, new MineableCellConfig(1200, ResourceType.Diamond) },
             { CellType.Ruby, new MineableCellConfig(800, ResourceType.Ruby) },
             { CellType.Gold, new MineableCellConfig(800, ResourceType.Gold) },
-            { CellType.Nickel, new MineableCellConfig(DefaultDrillTime, ResourceType.Nickel) }
+            { CellType.Nickel, new MineableCellConfig(DefaultDrillTime, ResourceType.Nickel) },
+            { CellType.ExplosiveRock, new MineableCellConfig(DefaultDrillTime) }
         };
 
     public static CellTypeConfig GetConfig(CellType cellType)

@@ -177,7 +177,7 @@ public class MiningControllableEntity : Entity
         var cellTypeConfig = _gameState.Grid.GetCellConfig(x, y);
 
         if (cellTypeConfig is MineableCellConfig mineableConfig && _drillingMs > mineableConfig.DrillTimeMs)
-            _gameState.Grid.DemolishCell(x, y, CanAddToInventory);
+            _gameState.Grid.MineCell(x, y, CanAddToInventory);
     }
 
     private Vector2 GetDrillPosition()
