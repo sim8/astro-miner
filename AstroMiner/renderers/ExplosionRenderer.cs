@@ -6,6 +6,7 @@ namespace AstroMiner;
 public class ExplosionRenderer(
     RendererShared shared)
 {
+    private const int SourceSizePx = 96;
     private const int SizePx = 192;
     private const int AnimationFrames = 10;
 
@@ -15,7 +16,7 @@ public class ExplosionRenderer(
     {
         var frameIndex = (int)(explosionEntity.AnimationPercentage * AnimationFrames);
 
-        var sourceRectangle = new Rectangle(frameIndex * SizePx, 0, SizePx, SizePx);
+        var sourceRectangle = new Rectangle(frameIndex * SourceSizePx, 0, SourceSizePx, SourceSizePx);
         var destinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(explosionEntity.Position,
             SizePx, SizePx, -(SizePx / 2), -(SizePx / 2));
         spriteBatch.Draw(shared.Textures["explosion"], destinationRectangle, sourceRectangle, Color.White);
