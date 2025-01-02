@@ -30,12 +30,12 @@ public class MiningControllableEntity : Entity
         _gameState = gameState;
     }
 
-    public int Health { get; private set; }
+    public float Health { get; private set; }
 
     protected virtual float MaxSpeed => 1f;
     protected virtual int TimeToReachMaxSpeedMs { get; } = 0;
     protected virtual int TimeToStopMs { get; } = 0;
-    protected virtual int MaxHealth { get; } = 100;
+    protected virtual float MaxHealth { get; } = 100;
     protected virtual float DrillingWidth { get; } = 0f;
     protected virtual bool CanAddToInventory { get; } = true;
 
@@ -48,7 +48,7 @@ public class MiningControllableEntity : Entity
         Health = MaxHealth;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         Health = Math.Max(0, Health - damage);
         if (Health == 0 && _gameState.ActiveControllableEntity == this) _gameState.IsDead = true;
@@ -100,6 +100,8 @@ public class MiningControllableEntity : Entity
 
     public override void Update(int elapsedMs, HashSet<MiningControls> activeMiningControls)
     {
+        CheckIfShouldFallOrTakeDamage(elapsedMs);
+
         var direction = GetDirectionFromActiveControls(activeMiningControls);
         UpdateMinerPosAndSpeed(direction, elapsedMs);
 
@@ -107,6 +109,26 @@ public class MiningControllableEntity : Entity
             UseDrill(elapsedMs);
         else
             ResetDrill();
+    }
+
+    private void CheckIfShouldFallOrTakeDamage(int elapsedMs)
+    {
+        var (topLeftX, topLeftY) = ViewHelpers.ToGridPosition(Position);
+        var (bottomRightX, bottomRightY) = ViewHelpers.ToGridPosition(Position + new Vector2(GridBoxSize, GridBoxSize));
+
+        var allCellsAreEmpty = true;
+        var someCellsAreLava = false;
+
+        for (var x = topLeftX; x <= bottomRightX; x++)
+        for (var y = topLeftY; y <= bottomRightY; y++)
+        {
+            var cellType = _gameState.Grid.GetCellType(x, y);
+            if (cellType != CellType.Empty) allCellsAreEmpty = false;
+            if (cellType == CellType.Lava) someCellsAreLava = true;
+        }
+
+        if (someCellsAreLava) TakeDamage((float)GameConfig.LavaDamagePerSecond / 1000 * elapsedMs);
+        if (allCellsAreEmpty) _gameState.IsOffAsteroid = true;
     }
 
     private void UpdateMinerPosAndSpeed(Direction? selectedDirection, int elapsedGameTimeMs)

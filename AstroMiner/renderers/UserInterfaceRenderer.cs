@@ -14,16 +14,8 @@ public class UserInterfaceRenderer(
         var seconds = timeLeft % 60000 / 1000;
         shared.RenderString(spriteBatch, 0, 0, minutes.ToString("D2") + " " + seconds.ToString("D2"), 6);
 
-        var resourcesYOffset = 225;
-        var resourceLineHeight = 40;
+        RenderInventory(spriteBatch, 5, 225);
 
-        foreach (var (inventoryResource, index) in shared.GameState.Inventory.resources.Select((r, i) => (r, i)))
-        {
-            var yOffset = resourcesYOffset + resourceLineHeight * index;
-            var resourceConfig = ResourceTypes.GetConfig(inventoryResource.Type);
-            shared.RenderString(spriteBatch, 5, yOffset,
-                resourceConfig.Name.ToUpper() + " " + inventoryResource.Count);
-        }
 
         RenderMinimap(spriteBatch);
 
@@ -36,13 +28,27 @@ public class UserInterfaceRenderer(
 
         shared.RenderString(spriteBatch, 1000, 40, "SEED " + shared.GameState.Seed);
 
-        if (shared.GameState.IsDead) RenderNewGameScreen(spriteBatch);
+        if (shared.GameState.IsDead || shared.GameState.IsOffAsteroid)
+            RenderNewGameScreen(spriteBatch, shared.GameState.IsDead);
+    }
+
+    private void RenderInventory(SpriteBatch spriteBatch, int xOffset, int yoffset)
+    {
+        var resourceLineHeight = 40;
+
+        foreach (var (inventoryResource, index) in shared.GameState.Inventory.resources.Select((r, i) => (r, i)))
+        {
+            var lineYOffset = yoffset + resourceLineHeight * index;
+            var resourceConfig = ResourceTypes.GetConfig(inventoryResource.Type);
+            shared.RenderString(spriteBatch, xOffset, lineYOffset,
+                resourceConfig.Name.ToUpper() + " " + inventoryResource.Count);
+        }
     }
 
     private void RenderHealthBar(SpriteBatch spriteBatch, MiningControllableEntity entity, int xOffset, int yOffset)
     {
         spriteBatch.Draw(shared.Textures["white"],
-            new Rectangle(xOffset, yOffset, entity.Health, 3),
+            new Rectangle(xOffset, yOffset, (int)entity.Health, 3),
             Color.LimeGreen);
     }
 
@@ -118,12 +124,24 @@ public class UserInterfaceRenderer(
         spriteBatch.Draw(shared.Textures["radial-light"], playerDestRect, Color.Red);
     }
 
-    private void RenderNewGameScreen(SpriteBatch spriteBatch)
+    private void RenderNewGameScreen(SpriteBatch spriteBatch, bool isDead)
     {
         var (viewportWidth, viewportHeight) = shared.ViewHelpers.GetViewportSize();
         spriteBatch.Draw(shared.Textures["white"], new Rectangle(0, 0, viewportWidth, viewportHeight),
-            new Color(107, 7, 0) * 0.7f);
-        shared.RenderString(spriteBatch, 300, 500, "YOU WERE INJURED", 5);
-        shared.RenderString(spriteBatch, 300, 600, "PRESS N TO RESTART");
+            isDead ? new Color(107, 7, 0) * 0.7f : Color.DarkGreen);
+
+        if (isDead)
+        {
+            shared.RenderString(spriteBatch, 300, 400, "YOU WERE INJURED", 5);
+            shared.RenderString(spriteBatch, 300, 500, "PRESS N TO RESTART");
+        }
+        else
+        {
+            shared.RenderString(spriteBatch, 300, 400, "OFF THE ASTEROID", 5);
+            shared.RenderString(spriteBatch, 300, 500, "PRESS N TO RESTART");
+
+
+            RenderInventory(spriteBatch, 300, 600);
+        }
     }
 }

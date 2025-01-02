@@ -47,6 +47,7 @@ public class GameState
     }
 
     public bool IsDead { get; set; }
+    public bool IsOffAsteroid { get; set; }
 
     public int Seed { get; private set; }
 
@@ -81,6 +82,7 @@ public class GameState
         _emptyMiningControls = new HashSet<MiningControls>();
         TimeUntilAsteroidExplodesMs = 5 * 60 * 1000;
         IsDead = false;
+        IsOffAsteroid = false;
     }
 
     private void SortActiveEntities()
@@ -100,7 +102,7 @@ public class GameState
 
     public void Update(HashSet<MiningControls> activeMiningControls, int elapsedMs)
     {
-        if (IsDead)
+        if (IsDead || IsOffAsteroid)
         {
             if (activeMiningControls.Contains(MiningControls.NewGame)) Initialize();
             return;

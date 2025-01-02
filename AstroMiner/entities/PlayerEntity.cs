@@ -7,7 +7,7 @@ public class PlayerEntity(GameState gameState) : MiningControllableEntity(gameSt
 {
     private bool _prevPressedPlaceDynamite;
     protected override float MaxSpeed => 2f;
-    protected override int MaxHealth => GameConfig.PlayerMaxHealth;
+    protected override float MaxHealth => GameConfig.PlayerMaxHealth;
     protected override int BoxSizePx { get; } = GameConfig.PlayerBoxSizePx;
 
     public override void Update(int elapsedMs, HashSet<MiningControls> activeMiningControls)

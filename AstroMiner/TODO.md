@@ -3,7 +3,7 @@
 ## Gameplay - asteroid
 
 - Collapsing floor
-    - Mining can trigger collapse 
+    - Mining can trigger collapse
     - Turns to lava or hole to lower level
 - lower level
     - darker, fuzzy minimap?
@@ -24,8 +24,8 @@
     - rpg
     - depth charge - in hole. but only if not exploding!
     - big explosive
-      - Display timer - 10 seconds?
-      - Big white flash
+        - Display timer - 10 seconds?
+        - Big white flash
     - scanner
 - fuel?
 - Upgrades
@@ -34,10 +34,6 @@
     - color/design
     - tools
     - Different "base" - hovercraft?
-- Endgame state
-    - Timer runs out
-        - serious consequences. Lose digger?
-    - Drop off edge
 - Add zoom
 - NPC helpers
     - Recruit between digs

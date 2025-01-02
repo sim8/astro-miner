@@ -7,7 +7,7 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
     protected override bool CanAddToInventory { get; } = false;
     protected override float MaxSpeed => 3.2f;
     protected override int TimeToReachMaxSpeedMs { get; } = 1200;
-    protected override int MaxHealth => GameConfig.MinerMaxHealth;
+    protected override float MaxHealth => GameConfig.MinerMaxHealth;
     protected override int TimeToStopMs { get; } = 400;
     protected override int BoxSizePx { get; } = GameConfig.MinerBoxSizePx;
 

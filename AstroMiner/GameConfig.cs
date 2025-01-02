@@ -13,8 +13,10 @@ public static class GameConfig
     // e.g. for a 7x7 block of rock, the center cell should be invisible
     public const int MaxUnexploredCellsVisible = 3;
 
-    public const int PlayerMaxHealth = 100;
-    public const int MinerMaxHealth = 200;
+    public const float PlayerMaxHealth = 100;
+    public const float MinerMaxHealth = 200;
+
+    public const int LavaDamagePerSecond = 30;
 
     // Damage ramps down to 0 based on distance from center + explosion radius
     public const int ExplosionMaxDamage = 120;
