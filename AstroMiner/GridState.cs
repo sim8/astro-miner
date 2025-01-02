@@ -5,15 +5,14 @@ namespace AstroMiner;
 
 public class CellState(CellType type)
 {
-    public const int DistanceUninitializedOrAboveMax = -2;
-    public const int DistanceEmpty = -1;
+    public const int UninitializedOrAboveMax = -1;
 
     /**
      * -2: uninitialized or above max distance
      * -1: N/A (empty piece)
      * 0+ distance to floor with unbroken connection to edge
      */
-    public int DistanceToOutsideConnectedFloor = DistanceUninitializedOrAboveMax;
+    public int DistanceToExploredFloor = UninitializedOrAboveMax;
 
     public CellType Type = type;
 }
@@ -90,7 +89,7 @@ public class GridState(GameState gameState, CellState[,] grid)
     {
         grid[y, x].Type = CellType.Floor;
         DeactivateExplosiveRockCell(x, y);
-        MarkAllDistancesFromOutsideConnectedFloors(x, y);
+        MarkAllDistancesFromExploredFloor(x, y);
 
         MapNeighbors(x, y, (nx, ny) =>
         {
@@ -122,21 +121,21 @@ public class GridState(GameState gameState, CellState[,] grid)
         }
     }
 
-    // For the entire grid, either initializes distanceToOutsideConnectedFloor or ensures current values are correct.
-    // From the starting coordinates, run a BFS until all neighbours have correct values relative to the current cell.
-    // This means it can run on an uninitialized grid, as well as from a just-cleared cell during gameplay.
-    // Assumes that:
-    // - The asteroid has >= 1 floor piece on its perimeter
-    // - Top left cell of grid is empty
-    public void MarkAllDistancesFromOutsideConnectedFloors(int x = 0, int y = 0)
+    // Used for Fog of War. Recursively marks cells as either:
+    //   - Explored floor (is connected by floor to the player's position)
+    //   - Distance from explored floor, up to a max value
+    // From the starting coordinates, run a BFS until all neighbours are both initialized
+    // and have correct values relative to the current cell. This means it can run on an
+    // uninitialized grid, as well as from a just-cleared cell during gameplay.
+    public void MarkAllDistancesFromExploredFloor(int playerX, int playerY)
     {
         // The BFS assumes all cells in the queue have the correct distance. If running at 
         // startup (x,y == 0,0), assume it's an empty square (-1); otherwise a cell has been
         // cleared and is now floor (0)
-        grid[y, x].DistanceToOutsideConnectedFloor = x == 0 && y == 0 ? CellState.DistanceEmpty : 0;
+        grid[playerY, playerX].DistanceToExploredFloor = 0;
 
         Queue<(int x, int y)> queue = new();
-        queue.Enqueue((x, y));
+        queue.Enqueue((playerX, playerY));
 
         // BFS
         while (queue.Count > 0)
@@ -148,34 +147,24 @@ public class GridState(GameState gameState, CellState[,] grid)
             {
                 var neighbour = GetCellState(nx, ny);
 
-                // Always initialize empty cells
-                if (neighbour.Type == CellType.Empty &&
-                    neighbour.DistanceToOutsideConnectedFloor == CellState.DistanceUninitializedOrAboveMax)
+                // Set as connected if current distance is 0 and cell is floor or lava
+                if (!CellTypes.GetConfig(neighbour.Type).IsCollideable && neighbour.Type != CellType.Empty &&
+                    current.DistanceToExploredFloor == 0 &&
+                    neighbour.DistanceToExploredFloor != 0)
                 {
-                    neighbour.DistanceToOutsideConnectedFloor = CellState.DistanceEmpty;
+                    neighbour.DistanceToExploredFloor = 0;
                     queue.Enqueue((nx, ny));
                 }
-                // Set floor to outside connected if it adjoins with an edge piece or another outside connected floor
-                else if (!CellTypes.GetConfig(neighbour.Type).IsCollideable && neighbour.Type != CellType.Empty &&
-                         (current.Type == CellType.Empty || current.DistanceToOutsideConnectedFloor == 0) &&
-                         neighbour.DistanceToOutsideConnectedFloor != 0)
+
+                // Set distance from connected floor
+                else if (current.DistanceToExploredFloor < GameConfig.MaxUnexploredCellsVisible + 1)
                 {
-                    neighbour.DistanceToOutsideConnectedFloor = 0;
-                    queue.Enqueue((nx, ny));
-                }
-                // Set distance from connected floor. Skipped if current piece is empty,
-                // and by this check current has to be either solid or an unconnected floor
-                else if (neighbour.Type != CellType.Empty && current.Type != CellType.Empty &&
-                         current.DistanceToOutsideConnectedFloor <
-                         GameConfig.MaxUnexploredCellsVisible +
-                         1) // add one to get gradients for furthest visible cells
-                {
-                    var nextDistance = current.DistanceToOutsideConnectedFloor + 1;
-                    if (neighbour.DistanceToOutsideConnectedFloor == CellState.DistanceUninitializedOrAboveMax ||
-                        neighbour.DistanceToOutsideConnectedFloor >
+                    var nextDistance = current.DistanceToExploredFloor + 1;
+                    if (neighbour.DistanceToExploredFloor == CellState.UninitializedOrAboveMax ||
+                        neighbour.DistanceToExploredFloor >
                         nextDistance)
                     {
-                        neighbour.DistanceToOutsideConnectedFloor = nextDistance;
+                        neighbour.DistanceToExploredFloor = nextDistance;
                         queue.Enqueue((nx, ny));
                     }
                 }

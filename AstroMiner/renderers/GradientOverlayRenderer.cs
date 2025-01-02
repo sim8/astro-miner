@@ -12,9 +12,11 @@ public class GradientOverlayRenderer(RendererShared shared)
     {
         var cellState = shared.GameState.Grid.GetCellState(col, row);
 
-        if (cellState.DistanceToOutsideConnectedFloor >= showGradientsAtDistance ||
-            cellState.DistanceToOutsideConnectedFloor ==
-            CellState.DistanceUninitializedOrAboveMax)
+        if (cellState.Type == CellType.Empty) return;
+
+        if (cellState.DistanceToExploredFloor >= showGradientsAtDistance ||
+            cellState.DistanceToExploredFloor ==
+            CellState.UninitializedOrAboveMax)
         {
             var pos = new Vector2(col + 0.5f, row + 0.5f);
             shared.RenderRadialLightSource(spriteBatch, pos, OverlayColor, gradientSize);
