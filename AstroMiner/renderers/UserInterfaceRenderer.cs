@@ -28,8 +28,8 @@ public class UserInterfaceRenderer(
 
         shared.RenderString(spriteBatch, 1000, 40, "SEED " + shared.GameState.Seed);
 
-        if (shared.GameState.IsDead || shared.GameState.IsOffAsteroid)
-            RenderNewGameScreen(spriteBatch, shared.GameState.IsDead);
+        if (shared.GameState.ActiveControllableEntity.IsDead || shared.GameState.ActiveControllableEntity.IsOffAsteroid)
+            RenderNewGameScreen(spriteBatch, shared.GameState.ActiveControllableEntity.IsDead);
     }
 
     private void RenderInventory(SpriteBatch spriteBatch, int xOffset, int yoffset)

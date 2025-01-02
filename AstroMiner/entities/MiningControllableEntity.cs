@@ -39,6 +39,8 @@ public class MiningControllableEntity : Entity
     private int TimeSinceLastDamage { get; set; }
 
     public float Health { get; private set; }
+    public bool IsDead { get; set; }
+    public bool IsOffAsteroid { get; set; }
 
     protected virtual float MaxSpeed => 1f;
     protected virtual int TimeToReachMaxSpeedMs { get; } = 0;
@@ -54,12 +56,23 @@ public class MiningControllableEntity : Entity
     {
         Position = pos;
         Health = MaxHealth;
+        IsDead = false;
+        IsOffAsteroid = false;
+    }
+
+    protected virtual void OnDead()
+    {
     }
 
     public void TakeDamage(float damage)
     {
         Health = Math.Max(0, Health - damage);
-        if (Health == 0 && _gameState.ActiveControllableEntity == this) _gameState.IsDead = true;
+
+        if (Health == 0 && !IsDead)
+        {
+            IsDead = true;
+            OnDead();
+        }
 
         IsAnimatingDamage = true;
         TimeSinceLastDamage = 0;
@@ -152,7 +165,7 @@ public class MiningControllableEntity : Entity
         }
 
         if (someCellsAreLava) TakeDamage((float)GameConfig.LavaDamagePerSecond / 1000 * elapsedMs);
-        if (allCellsAreEmpty) _gameState.IsOffAsteroid = true;
+        if (allCellsAreEmpty) IsOffAsteroid = true;
     }
 
     private void UpdateMinerPosAndSpeed(Direction? selectedDirection, int elapsedGameTimeMs)

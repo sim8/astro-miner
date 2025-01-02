@@ -46,9 +46,6 @@ public class GameState
         Initialize();
     }
 
-    public bool IsDead { get; set; }
-    public bool IsOffAsteroid { get; set; }
-
     public int Seed { get; private set; }
 
     public int TimeUntilAsteroidExplodesMs { get; private set; }
@@ -81,8 +78,6 @@ public class GameState
         _prevPressedEnterOrExit = false;
         _emptyMiningControls = new HashSet<MiningControls>();
         TimeUntilAsteroidExplodesMs = 5 * 60 * 1000;
-        IsDead = false;
-        IsOffAsteroid = false;
     }
 
     private void SortActiveEntities()
@@ -102,7 +97,7 @@ public class GameState
 
     public void Update(HashSet<MiningControls> activeMiningControls, int elapsedMs)
     {
-        if (IsDead || IsOffAsteroid)
+        if (ActiveControllableEntity.IsDead || ActiveControllableEntity.IsOffAsteroid)
         {
             if (activeMiningControls.Contains(MiningControls.NewGame)) Initialize();
             return;
@@ -111,7 +106,7 @@ public class GameState
         TimeUntilAsteroidExplodesMs = Math.Max(TimeUntilAsteroidExplodesMs - elapsedMs, 0);
         if (TimeUntilAsteroidExplodesMs == 0)
         {
-            IsDead = true;
+            ActiveControllableEntity.IsDead = true;
             return;
         }
 
