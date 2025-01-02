@@ -24,4 +24,10 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
             _ => Position
         };
     }
+
+    protected override void OnDead()
+    {
+        var explosionEntity = new ExplosionEntity(gameState, CenterPosition);
+        gameState.ActivateEntity(explosionEntity);
+    }
 }

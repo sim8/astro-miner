@@ -116,7 +116,8 @@ public class GameState
             if (!_prevPressedEnterOrExit)
             {
                 ActiveControllableEntity.Disembark();
-                if (ActiveControllableEntity == Player && Player.GetDistanceTo(Miner) < GameConfig.MinEmbarkingDistance)
+                if (ActiveControllableEntity == Player && !Miner.IsDead &&
+                    Player.GetDistanceTo(Miner) < GameConfig.MinEmbarkingDistance)
                 {
                     DeactivateEntity(Player);
                 }
