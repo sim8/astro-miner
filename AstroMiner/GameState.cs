@@ -66,7 +66,9 @@ public class GameState
         InitSeed();
         var (grid, minerPos) = AsteroidGen.InitializeGridAndStartingPos(GameConfig.GridSize, Seed);
         Grid = new GridState(this, grid);
-        Grid.MarkAllDistancesFromOutsideConnectedFloors();
+
+        var (minerPosX, minerPosY) = ViewHelpers.ToGridPosition(minerPos);
+        Grid.MarkAllDistancesFromExploredFloor(minerPosX, minerPosY);
         Miner = new MinerEntity(this);
         Miner.Initialize(minerPos);
         Player = new PlayerEntity(this);
