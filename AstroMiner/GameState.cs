@@ -16,7 +16,9 @@ public enum MiningControls
     EnterOrExit,
 
     // Player-only
-    PlaceDynamite
+    PlaceDynamite,
+
+    NewGame // TODO factor out
 }
 
 public enum Direction
@@ -65,8 +67,10 @@ public class GameState
         var (grid, minerPos) = AsteroidGen.InitializeGridAndStartingPos(GameConfig.GridSize, Seed);
         Grid = new GridState(this, grid);
         Grid.MarkAllDistancesFromOutsideConnectedFloors();
-        Miner = new MinerEntity(this, minerPos);
-        Player = new PlayerEntity(this, minerPos);
+        Miner = new MinerEntity(this);
+        Miner.Initialize(minerPos);
+        Player = new PlayerEntity(this);
+        Player.Initialize(minerPos);
         Inventory = new Inventory();
         EdgeCells = UserInterfaceHelpers.GetAsteroidEdgeCells(Grid);
         Camera = new CameraState(this);
@@ -93,7 +97,18 @@ public class GameState
 
     public void Update(HashSet<MiningControls> activeMiningControls, int elapsedMs)
     {
-        TimeUntilAsteroidExplodesMs -= elapsedMs;
+        if (ActiveControllableEntity.IsDead || ActiveControllableEntity.IsOffAsteroid)
+        {
+            if (activeMiningControls.Contains(MiningControls.NewGame)) Initialize();
+            return;
+        }
+
+        TimeUntilAsteroidExplodesMs = Math.Max(TimeUntilAsteroidExplodesMs - elapsedMs, 0);
+        if (TimeUntilAsteroidExplodesMs == 0)
+        {
+            ActiveControllableEntity.IsDead = true;
+            return;
+        }
 
         if (activeMiningControls.Contains(MiningControls.EnterOrExit))
         {
@@ -101,7 +116,8 @@ public class GameState
             if (!_prevPressedEnterOrExit)
             {
                 ActiveControllableEntity.Disembark();
-                if (ActiveControllableEntity == Player && Player.GetDistanceTo(Miner) < GameConfig.MinEmbarkingDistance)
+                if (ActiveControllableEntity == Player && !Miner.IsDead &&
+                    Player.GetDistanceTo(Miner) < GameConfig.MinEmbarkingDistance)
                 {
                     DeactivateEntity(Player);
                 }

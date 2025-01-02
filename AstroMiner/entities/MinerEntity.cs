@@ -2,11 +2,12 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
 
-public class MinerEntity(GameState gameState, Vector2 pos) : MiningControllableEntity(gameState, pos)
+public class MinerEntity(GameState gameState) : MiningControllableEntity(gameState)
 {
     protected override bool CanAddToInventory { get; } = false;
     protected override float MaxSpeed => 3.2f;
     protected override int TimeToReachMaxSpeedMs { get; } = 1200;
+    protected override float MaxHealth => GameConfig.MinerMaxHealth;
     protected override int TimeToStopMs { get; } = 400;
     protected override int BoxSizePx { get; } = GameConfig.MinerBoxSizePx;
 
@@ -22,5 +23,11 @@ public class MinerEntity(GameState gameState, Vector2 pos) : MiningControllableE
             Direction.Left => Position + new Vector2(0.48f, -0.28f),
             _ => Position
         };
+    }
+
+    protected override void OnDead()
+    {
+        var explosionEntity = new ExplosionEntity(gameState, CenterPosition);
+        gameState.ActivateEntity(explosionEntity);
     }
 }

@@ -92,4 +92,14 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
     {
         return x >= 0 && x < GameConfig.GridSize && y >= 0 && y < GameConfig.GridSize;
     }
+
+    // Tint red if taking damage
+    public static Color GetEntityTintColor(MiningControllableEntity entity)
+    {
+        if (!entity.IsAnimatingDamage) return Color.White;
+
+        var flashFrame =
+            (int)(entity.TotalDamageAnimationTimeMs / (GameConfig.DamageAnimationTimeMs / 8.0f));
+        return flashFrame % 2 == 0 ? Color.Red : Color.White;
+    }
 }

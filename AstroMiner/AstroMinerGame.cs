@@ -85,6 +85,8 @@ public class AstroMinerGame : Game
             _activeMiningControls.Add(MiningControls.EnterOrExit);
         if (keyboardState.IsKeyDown(Keys.R))
             _activeMiningControls.Add(MiningControls.PlaceDynamite);
+        if (keyboardState.IsKeyDown(Keys.N))
+            _activeMiningControls.Add(MiningControls.NewGame);
 
         _gameState.Update(_activeMiningControls, gameTime.ElapsedGameTime.Milliseconds);
 

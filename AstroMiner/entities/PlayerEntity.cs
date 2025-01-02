@@ -3,10 +3,11 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
 
-public class PlayerEntity(GameState gameState, Vector2 pos) : MiningControllableEntity(gameState, pos)
+public class PlayerEntity(GameState gameState) : MiningControllableEntity(gameState)
 {
     private bool _prevPressedPlaceDynamite;
     protected override float MaxSpeed => 2f;
+    protected override float MaxHealth => GameConfig.PlayerMaxHealth;
     protected override int BoxSizePx { get; } = GameConfig.PlayerBoxSizePx;
 
     public override void Update(int elapsedMs, HashSet<MiningControls> activeMiningControls)

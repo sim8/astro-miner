@@ -25,20 +25,58 @@ public class MiningControllableEntity : Entity
     // TODO is this needed?
     private (int x, int y)? _drillingPos;
 
-    public MiningControllableEntity(GameState gameState, Vector2 pos)
+    public MiningControllableEntity(GameState gameState)
     {
         _gameState = gameState;
-        Position = pos;
     }
+
+    // Includes time taking damage + time since last damage
+    public int TotalDamageAnimationTimeMs { get; private set; }
+
+    public bool IsAnimatingDamage { get; private set; }
+
+    // Caps at GameConfig.DamageAnimationTimeMs
+    private int TimeSinceLastDamage { get; set; }
+
+    public float Health { get; private set; }
+    public bool IsDead { get; set; }
+    public bool IsOffAsteroid { get; set; }
 
     protected virtual float MaxSpeed => 1f;
     protected virtual int TimeToReachMaxSpeedMs { get; } = 0;
     protected virtual int TimeToStopMs { get; } = 0;
+    protected virtual float MaxHealth { get; } = 100;
     protected virtual float DrillingWidth { get; } = 0f;
     protected virtual bool CanAddToInventory { get; } = true;
 
 
     public Direction Direction { get; private set; } = Direction.Top;
+
+    public void Initialize(Vector2 pos)
+    {
+        Position = pos;
+        Health = MaxHealth;
+        IsDead = false;
+        IsOffAsteroid = false;
+    }
+
+    protected virtual void OnDead()
+    {
+    }
+
+    public void TakeDamage(float damage)
+    {
+        Health = Math.Max(0, Health - damage);
+
+        if (Health == 0 && !IsDead)
+        {
+            IsDead = true;
+            OnDead();
+        }
+
+        IsAnimatingDamage = true;
+        TimeSinceLastDamage = 0;
+    }
 
     private Direction? GetDirectionFromActiveControls(HashSet<MiningControls> activeMiningControls)
     {
@@ -86,6 +124,21 @@ public class MiningControllableEntity : Entity
 
     public override void Update(int elapsedMs, HashSet<MiningControls> activeMiningControls)
     {
+        CheckIfShouldFallOrTakeDamage(elapsedMs);
+
+        if (IsAnimatingDamage)
+        {
+            // We need total for smooth animation, and timeSinceLastDamage to know when to stop showing
+            TotalDamageAnimationTimeMs += elapsedMs;
+            TimeSinceLastDamage += elapsedMs;
+            if (TimeSinceLastDamage >= GameConfig.DamageAnimationTimeMs)
+            {
+                TotalDamageAnimationTimeMs = 0;
+                TimeSinceLastDamage = 0;
+                IsAnimatingDamage = false;
+            }
+        }
+
         var direction = GetDirectionFromActiveControls(activeMiningControls);
         UpdateMinerPosAndSpeed(direction, elapsedMs);
 
@@ -93,6 +146,26 @@ public class MiningControllableEntity : Entity
             UseDrill(elapsedMs);
         else
             ResetDrill();
+    }
+
+    private void CheckIfShouldFallOrTakeDamage(int elapsedMs)
+    {
+        var (topLeftX, topLeftY) = ViewHelpers.ToGridPosition(Position);
+        var (bottomRightX, bottomRightY) = ViewHelpers.ToGridPosition(Position + new Vector2(GridBoxSize, GridBoxSize));
+
+        var allCellsAreEmpty = true;
+        var someCellsAreLava = false;
+
+        for (var x = topLeftX; x <= bottomRightX; x++)
+        for (var y = topLeftY; y <= bottomRightY; y++)
+        {
+            var cellType = _gameState.Grid.GetCellType(x, y);
+            if (cellType != CellType.Empty) allCellsAreEmpty = false;
+            if (cellType == CellType.Lava) someCellsAreLava = true;
+        }
+
+        if (someCellsAreLava) TakeDamage((float)GameConfig.LavaDamagePerSecond / 1000 * elapsedMs);
+        if (allCellsAreEmpty) IsOffAsteroid = true;
     }
 
     private void UpdateMinerPosAndSpeed(Direction? selectedDirection, int elapsedGameTimeMs)
