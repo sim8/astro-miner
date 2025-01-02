@@ -8,8 +8,7 @@ public class CellState(CellType type)
     public const int UninitializedOrAboveMax = -1;
 
     /**
-     * -2: uninitialized or above max distance
-     * -1: N/A (empty piece)
+     * -1: uninitialized or above max distance
      * 0+ distance to floor with unbroken connection to edge
      */
     public int DistanceToExploredFloor = UninitializedOrAboveMax;
