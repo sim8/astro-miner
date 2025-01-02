@@ -24,8 +24,10 @@ public class MinerRenderer(
         var destinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(shared.GameState.Miner.Position,
             MinerTextureSize, MinerTextureSize, MinerBoxOffsetX, MinerBoxOffsetY);
 
-        spriteBatch.Draw(GetTracksTexture(), destinationRectangle, sourceRectangle, Color.White);
-        spriteBatch.Draw(shared.Textures["miner-no-tracks"], destinationRectangle, sourceRectangle, Color.White);
+        var tintColor = ViewHelpers.GetEntityTintColor(shared.GameState.Miner);
+
+        spriteBatch.Draw(GetTracksTexture(), destinationRectangle, sourceRectangle, tintColor);
+        spriteBatch.Draw(shared.Textures["miner-no-tracks"], destinationRectangle, sourceRectangle, tintColor);
     }
 
     private Texture2D GetTracksTexture()

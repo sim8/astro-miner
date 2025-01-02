@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -28,6 +27,8 @@ public class PlayerRenderer(
         var destinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(shared.GameState.Player.Position,
             PlayerTextureSizePx, PlayerTextureSizePx, PlayerBoxOffsetX, PlayerBoxOffsetY);
 
-        spriteBatch.Draw(shared.Textures["player"], destinationRectangle, sourceRectangle, Color.White);
+        var tintColor = ViewHelpers.GetEntityTintColor(shared.GameState.Player);
+
+        spriteBatch.Draw(shared.Textures["player"], destinationRectangle, sourceRectangle, tintColor);
     }
 }

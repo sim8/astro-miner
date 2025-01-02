@@ -30,6 +30,14 @@ public class MiningControllableEntity : Entity
         _gameState = gameState;
     }
 
+    // Includes time taking damage + time since last damage
+    public int TotalDamageAnimationTimeMs { get; private set; }
+
+    public bool IsAnimatingDamage { get; private set; }
+
+    // Caps at GameConfig.DamageAnimationTimeMs
+    private int TimeSinceLastDamage { get; set; }
+
     public float Health { get; private set; }
 
     protected virtual float MaxSpeed => 1f;
@@ -52,6 +60,9 @@ public class MiningControllableEntity : Entity
     {
         Health = Math.Max(0, Health - damage);
         if (Health == 0 && _gameState.ActiveControllableEntity == this) _gameState.IsDead = true;
+
+        IsAnimatingDamage = true;
+        TimeSinceLastDamage = 0;
     }
 
     private Direction? GetDirectionFromActiveControls(HashSet<MiningControls> activeMiningControls)
@@ -101,6 +112,19 @@ public class MiningControllableEntity : Entity
     public override void Update(int elapsedMs, HashSet<MiningControls> activeMiningControls)
     {
         CheckIfShouldFallOrTakeDamage(elapsedMs);
+
+        if (IsAnimatingDamage)
+        {
+            // We need total for smooth animation, and timeSinceLastDamage to know when to stop showing
+            TotalDamageAnimationTimeMs += elapsedMs;
+            TimeSinceLastDamage += elapsedMs;
+            if (TimeSinceLastDamage >= GameConfig.DamageAnimationTimeMs)
+            {
+                TotalDamageAnimationTimeMs = 0;
+                TimeSinceLastDamage = 0;
+                IsAnimatingDamage = false;
+            }
+        }
 
         var direction = GetDirectionFromActiveControls(activeMiningControls);
         UpdateMinerPosAndSpeed(direction, elapsedMs);

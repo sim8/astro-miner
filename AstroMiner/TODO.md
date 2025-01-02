@@ -10,15 +10,16 @@
     - drive up / down?
     - Much more dangerous / better loot
 - Mystery box cell - similar design to explosive?
-- variable yield? skill based?
 - Make it clearer where center is - clearer sections?
-- Besides usual randomness, should we have different "types" of asteroid?
-    - Asteroids don't really have characteristics
+- Different "types" of asteroid
+    - Higher concentration of lava/holes/explosive rock
+    - Different skins - ice?
 
 ## Gameplay - other
 
 - In/out of miner needs balancing
     - Out of miner - no cell clear
+- variable yield? skill based?
 - Tools
     - grapple? human only!
     - rpg
@@ -27,6 +28,8 @@
         - Display timer - 10 seconds?
         - Big white flash
     - scanner
+    - boost
+- Drift on miner
 - fuel?
 - Upgrades
     - speed

@@ -18,6 +18,8 @@ public static class GameConfig
 
     public const int LavaDamagePerSecond = 30;
 
+    public const int DamageAnimationTimeMs = 1000;
+
     // Damage ramps down to 0 based on distance from center + explosion radius
     public const int ExplosionMaxDamage = 120;
 
