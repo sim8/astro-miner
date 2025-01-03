@@ -55,6 +55,11 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         return gridUnits * GameConfig.CellTextureSizePx * gameState.Camera.ScaleMultiplier;
     }
 
+    private float ConvertVisiblePxToGridUnits(float visiblePx)
+    {
+        return visiblePx / (GameConfig.CellTextureSizePx * gameState.Camera.ScaleMultiplier);
+    }
+
     private float ConvertTexturePxToVisiblePx(int numToScale)
     {
         return numToScale * gameState.Camera.ScaleMultiplier;
@@ -103,5 +108,27 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         var flashFrame =
             (int)(entity.TotalDamageAnimationTimeMs / (GameConfig.DamageAnimationTimeMs / 8.0f));
         return flashFrame % 2 == 0 ? Color.Red : Color.White;
+    }
+
+    public (int startCol, int startRow, int endCol, int endRow) GetVisibleGrid(int padding = 0)
+    {
+        var cameraPos = gameState.ActiveControllableEntity.CenterPosition;
+        var (viewportWidthPx, viewportHeightPx) = GetViewportSize();
+
+        var viewportGridWidth = ConvertVisiblePxToGridUnits(viewportWidthPx);
+        var viewportGridHeight = ConvertVisiblePxToGridUnits(viewportHeightPx);
+
+        var startCol = (int)(cameraPos.X - viewportGridWidth / 2) - padding;
+        var startRow = (int)(cameraPos.Y - viewportGridHeight / 2) - padding;
+
+        var endCol = (int)Math.Ceiling(cameraPos.X + viewportGridWidth / 2) + padding;
+        var endRow = (int)Math.Ceiling(cameraPos.Y + viewportGridHeight / 2) + padding;
+
+        return (
+            Math.Max(0, startCol),
+            Math.Max(0, startRow),
+            Math.Min(GameConfig.GridSize, endCol),
+            Math.Min(GameConfig.GridSize, endRow)
+        );
     }
 }
