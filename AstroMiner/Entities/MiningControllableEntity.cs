@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using Microsoft.Xna.Framework;
 
-namespace AstroMiner.entities;
+namespace AstroMiner.Entities;
 
 public class MiningControllableEntity : Entity
 {

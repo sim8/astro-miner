@@ -1,9 +1,9 @@
 using System.Linq;
-using AstroMiner.entities;
+using AstroMiner.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace AstroMiner.renderers;
+namespace AstroMiner.Renderers;
 
 public class UserInterfaceRenderer(
     RendererShared shared)

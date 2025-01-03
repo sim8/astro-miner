@@ -1,6 +1,6 @@
 ﻿using System;
 using AstroMiner;
-using AstroMiner.procGenViewer;
+using AstroMiner.ProcGenViewer;
 
 if (Environment.GetEnvironmentVariable("PROC_GEN_VIEWER") == "true")
 {

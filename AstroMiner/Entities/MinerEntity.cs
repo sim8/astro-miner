@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
 
-namespace AstroMiner.entities;
+namespace AstroMiner.Entities;
 
 public class MinerEntity(GameState gameState) : MiningControllableEntity(gameState)
 {
