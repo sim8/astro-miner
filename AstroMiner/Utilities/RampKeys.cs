@@ -1,4 +1,4 @@
-namespace AstroMiner;
+namespace AstroMiner.Utilities;
 
 public enum Corner
 {

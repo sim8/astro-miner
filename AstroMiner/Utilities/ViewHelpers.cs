@@ -1,7 +1,9 @@
 using System;
+using AstroMiner.Definitions;
+using AstroMiner.Entities;
 using Microsoft.Xna.Framework;
 
-namespace AstroMiner;
+namespace AstroMiner.Utilities;
 
 public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
 {

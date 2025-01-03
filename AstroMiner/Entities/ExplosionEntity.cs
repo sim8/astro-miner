@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using AstroMiner.Definitions;
+using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 
-namespace AstroMiner;
+namespace AstroMiner.Entities;
 
 public class ExplosionEntity : Entity
 {

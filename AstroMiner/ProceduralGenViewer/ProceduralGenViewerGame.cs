@@ -3,20 +3,20 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace AstroMiner;
+namespace AstroMiner.ProceduralGenViewer;
 
-public class ProcGenViewerGame : Game
+public class ProceduralGenViewerGame : Game
 {
     private readonly GraphicsDeviceManager _graphics;
 
     private readonly Dictionary<string, Texture2D> _textures = new();
     private GameState _gameState;
-    private ProcGenViewerRenderer _renderer;
+    private ProceduralGenViewerRenderer _renderer;
     private SpriteBatch _spriteBatch;
     private bool prevPressedNew;
 
 
-    public ProcGenViewerGame()
+    public ProceduralGenViewerGame()
     {
         _graphics = new GraphicsDeviceManager(this);
         _graphics.PreferredBackBufferWidth = 1280;
@@ -30,7 +30,7 @@ public class ProcGenViewerGame : Game
     protected override void Initialize()
     {
         _gameState = new GameState();
-        _renderer = new ProcGenViewerRenderer(_textures, _gameState);
+        _renderer = new ProceduralGenViewerRenderer(_textures, _gameState);
         base.Initialize();
     }
 

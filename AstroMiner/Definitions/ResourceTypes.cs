@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace AstroMiner;
+namespace AstroMiner.Definitions;
 
 public enum ResourceType
 {

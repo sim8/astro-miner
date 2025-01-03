@@ -1,4 +1,4 @@
-namespace AstroMiner;
+namespace AstroMiner.Definitions;
 
 public static class GameConfig
 {

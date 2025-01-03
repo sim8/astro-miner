@@ -1,7 +1,8 @@
+using AstroMiner.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace AstroMiner;
+namespace AstroMiner.Renderers;
 
 public class ExplosionRenderer(
     RendererShared shared)
