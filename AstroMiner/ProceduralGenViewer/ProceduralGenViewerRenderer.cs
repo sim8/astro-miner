@@ -71,7 +71,7 @@ public class ProceduralGenViewerRenderer
             spriteBatch.Draw(_textures["white"], GetGridCellRect(col, row),
                 _cellColors[cellState.Type]);
 
-            if (cellState.Type != CellType.Empty && _proceduralGenViewerState.hasToggledView)
+            if (_proceduralGenViewerState.hasToggledView && cellState.Layer != AsteroidLayer.None)
                 spriteBatch.Draw(_textures["white"], GetGridCellRect(col, row),
                     _asteroidLayerColors[cellState.Layer] * 0.6f);
         }

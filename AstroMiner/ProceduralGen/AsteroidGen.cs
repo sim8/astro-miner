@@ -188,7 +188,8 @@ public static class AsteroidGen
             }
 
             var layer = distance < radius * 0.3 ? AsteroidLayer.Core :
-                distance < radius * 0.6 ? AsteroidLayer.Mantle : AsteroidLayer.Crust;
+                distance < radius * 0.6 ? AsteroidLayer.Mantle :
+                cellType != CellType.Empty ? AsteroidLayer.Crust : AsteroidLayer.None;
 
             grid[x, y] = new CellState(cellType, layer);
         }

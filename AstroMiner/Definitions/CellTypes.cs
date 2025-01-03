@@ -19,6 +19,7 @@ public enum CellType
 
 public enum AsteroidLayer
 {
+    None,
     Crust,
     Mantle,
     Core
