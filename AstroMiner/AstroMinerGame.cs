@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using AstroMiner.Renderers;
+using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;

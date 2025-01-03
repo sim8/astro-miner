@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AstroMiner.Definitions;
 using AstroMiner.Entities;
+using AstroMiner.ProceduralGen;
+using AstroMiner.Utilities;
 
 namespace AstroMiner;
 

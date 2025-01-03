@@ -1,6 +1,6 @@
 using System;
 
-namespace AstroMiner;
+namespace AstroMiner.ProceduralGen;
 
 public class PerlinNoiseGenerator
 {

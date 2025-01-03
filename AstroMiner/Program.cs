@@ -1,10 +1,10 @@
 ﻿using System;
 using AstroMiner;
-using AstroMiner.ProcGenViewer;
+using AstroMiner.ProceduralGenViewer;
 
 if (Environment.GetEnvironmentVariable("PROC_GEN_VIEWER") == "true")
 {
-    using var game = new ProcGenViewerGame();
+    using var game = new ProceduralGenViewerGame();
     game.Run();
 }
 else

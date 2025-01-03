@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using AstroMiner.Definitions;
+using AstroMiner.Utilities;
 
 namespace AstroMiner;
 

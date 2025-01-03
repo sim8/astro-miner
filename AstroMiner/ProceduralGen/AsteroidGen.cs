@@ -1,7 +1,8 @@
 using System;
+using AstroMiner.Definitions;
 using Microsoft.Xna.Framework;
 
-namespace AstroMiner;
+namespace AstroMiner.ProceduralGen;
 
 public static class AsteroidGen
 {
@@ -161,7 +162,8 @@ public static class AsteroidGen
                          NoiseValWithinRange(noise1Value, GoldRange1))
                     cellType = CellType.Gold;
                 else if (withinCore && NoiseValWithinRange(noise2Value, ExplosiveRockRange2) &&
-                         (NoiseValWithinRange(noise1Value, ExplosiveRockRange1a) || NoiseValWithinRange(noise1Value, ExplosiveRockRange1b)))
+                         (NoiseValWithinRange(noise1Value, ExplosiveRockRange1a) ||
+                          NoiseValWithinRange(noise1Value, ExplosiveRockRange1b)))
                     cellType = CellType.ExplosiveRock;
                 else if (withinCore && NoiseValWithinRange(noise1Value, SolidRockRange))
                     cellType = distance < radius * DiamondsRadius && NoiseValWithinRange(noise1Value, DiamondRange)

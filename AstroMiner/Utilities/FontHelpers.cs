@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace AstroMiner;
+namespace AstroMiner.Utilities;
 
 public static class FontHelpers
 {

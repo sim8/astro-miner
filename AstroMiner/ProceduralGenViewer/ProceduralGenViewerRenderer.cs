@@ -1,10 +1,12 @@
 using System.Collections.Generic;
+using AstroMiner.Definitions;
+using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace AstroMiner.ProcGenViewer;
+namespace AstroMiner.ProceduralGenViewer;
 
-public class ProcGenViewerRenderer
+public class ProceduralGenViewerRenderer
 {
     private const int CellSizePx = 6;
     private const int CellBorderPx = 1;
@@ -28,7 +30,7 @@ public class ProcGenViewerRenderer
 
     private readonly Dictionary<string, Texture2D> _textures;
 
-    public ProcGenViewerRenderer(
+    public ProceduralGenViewerRenderer(
         Dictionary<string, Texture2D> textures,
         GameState gameState)
     {

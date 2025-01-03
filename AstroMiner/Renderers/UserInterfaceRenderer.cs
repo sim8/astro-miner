@@ -1,5 +1,7 @@
 using System.Linq;
+using AstroMiner.Definitions;
 using AstroMiner.Entities;
+using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 

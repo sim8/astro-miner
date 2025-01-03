@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using AstroMiner.Definitions;
 using Microsoft.Xna.Framework;
 
-namespace AstroMiner;
+namespace AstroMiner.Utilities;
 
 /// <summary>
 ///     Based heavily on Dual Grid System https://x.com/OskSta/status/1448248658865049605

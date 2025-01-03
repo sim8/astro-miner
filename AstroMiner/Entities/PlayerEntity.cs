@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using AstroMiner.Definitions;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner.Entities;

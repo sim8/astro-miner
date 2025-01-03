@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AstroMiner;
+namespace AstroMiner.Utilities;
 
 // Credit https://stackoverflow.com/a/20679895
 public class FrameCounter
