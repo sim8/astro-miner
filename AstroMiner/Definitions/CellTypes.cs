@@ -17,6 +17,13 @@ public enum CellType
     ExplosiveRock
 }
 
+public enum AsteroidLayer
+{
+    Crust,
+    Mantle,
+    Core
+}
+
 public abstract class CellTypeConfig(bool isDestructible, bool isCollideable)
 {
     public bool IsDestructible { get; } = isDestructible;

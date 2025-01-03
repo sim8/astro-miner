@@ -5,9 +5,11 @@ using AstroMiner.Utilities;
 
 namespace AstroMiner;
 
-public class CellState(CellType type)
+public class CellState(CellType type, AsteroidLayer layer)
 {
     public const int UninitializedOrAboveMax = -1;
+
+    public readonly AsteroidLayer Layer = layer;
 
     /**
      * -1: uninitialized or above max distance

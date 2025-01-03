@@ -15,7 +15,11 @@ public class Renderer
 
     private readonly DynamiteRenderer _dynamiteRenderer;
     private readonly ExplosionRenderer _explosionRenderer;
-    private readonly Color _floorColor = new(212, 225, 227);
+
+    private readonly Color _floorColorCore = new(128, 138, 140);
+    private readonly Color _floorColorCrust = new(212, 225, 227);
+    private readonly Color _floorColorMantle = new(171, 182, 184);
+
     private readonly FrameCounter _frameCounter;
     private readonly GameState _gameState;
     private readonly GradientOverlayRenderer _gradientOverlayRenderer;
@@ -108,22 +112,31 @@ public class Renderer
             1, // Account for textures with vertical overlap
             (col, row) =>
             {
-                if (Tilesets.CellIsTilesetType(_gameState, col, row))
-                    foreach (var corner in _cornersInRenderOrder)
-                    {
-                        var dualTilesetSourceRect =
-                            Tilesets.GetCellQuadrantSourceRect(_gameState, col, row, corner);
-                        spriteBatch.Draw(_textures["tileset"],
-                            _viewHelpers.GetVisibleRectForGridQuadrant(col, row, corner),
-                            dualTilesetSourceRect,
-                            _gameState.Grid.ExplosiveRockCellIsActive(col, row) ? Color.Red : Color.White);
-                    }
-                else if (_gameState.Grid.GetCellType(col, row) == CellType.Floor)
-                    spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
-                        _floorColor);
-                else if (_gameState.Grid.GetCellType(col, row) == CellType.Lava)
-                    spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
-                        Color.Orange);
+if (Tilesets.CellIsTilesetType(_gameState, col, row))
+            {
+                foreach (var corner in _cornersInRenderOrder)
+                {
+                    var dualTilesetSourceRect =
+                        Tilesets.GetCellQuadrantSourceRect(_gameState, col, row, corner);
+                    spriteBatch.Draw(_textures["tileset"],
+                        _viewHelpers.GetVisibleRectForGridQuadrant(col, row, corner),
+                        dualTilesetSourceRect,
+                        _gameState.Grid.ExplosiveRockCellIsActive(col, row) ? Color.Red : Color.White);
+                }
+            }
+            else if (_gameState.Grid.GetCellType(col, row) == CellType.Floor)
+            {
+                var cellState = _gameState.Grid.GetCellState(col, row);
+                var floorColor = cellState.Layer == AsteroidLayer.Core ? _floorColorCore :
+                    cellState.Layer == AsteroidLayer.Mantle ? _floorColorMantle : _floorColorCrust;
+                spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
+                    floorColor);
+            }
+            else if (_gameState.Grid.GetCellType(col, row) == CellType.Lava)
+            {
+                spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
+                    Color.Orange);
+            }
             });
 
         LoopVisibleCells(GradientOverlayRenderer.OverlayGridRadius,
