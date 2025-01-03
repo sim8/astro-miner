@@ -5,15 +5,23 @@ using Microsoft.Xna.Framework.Input;
 
 namespace AstroMiner.ProceduralGenViewer;
 
+public class ProceduralGenViewerState
+{
+    public bool hasToggledView;
+}
+
 public class ProceduralGenViewerGame : Game
 {
     private readonly GraphicsDeviceManager _graphics;
+    private readonly ProceduralGenViewerState _proceduralGenViewerState = new();
 
     private readonly Dictionary<string, Texture2D> _textures = new();
     private GameState _gameState;
     private ProceduralGenViewerRenderer _renderer;
     private SpriteBatch _spriteBatch;
+    private bool hasToggledView;
     private bool prevPressedNew;
+    private bool prevPressedToggleView;
 
 
     public ProceduralGenViewerGame()
@@ -30,7 +38,7 @@ public class ProceduralGenViewerGame : Game
     protected override void Initialize()
     {
         _gameState = new GameState();
-        _renderer = new ProceduralGenViewerRenderer(_textures, _gameState);
+        _renderer = new ProceduralGenViewerRenderer(_textures, _gameState, _proceduralGenViewerState);
         base.Initialize();
     }
 
@@ -49,7 +57,6 @@ public class ProceduralGenViewerGame : Game
     protected override void Update(GameTime gameTime)
     {
         if (Keyboard.GetState().IsKeyDown(Keys.N))
-
         {
             if (!prevPressedNew) _gameState.Initialize();
 
@@ -58,6 +65,18 @@ public class ProceduralGenViewerGame : Game
         else
         {
             prevPressedNew = false;
+        }
+
+        if (Keyboard.GetState().IsKeyDown(Keys.T))
+        {
+            if (!prevPressedToggleView)
+                _proceduralGenViewerState.hasToggledView = !_proceduralGenViewerState.hasToggledView;
+
+            prevPressedToggleView = true;
+        }   
+        else
+        {
+            prevPressedToggleView = false;
         }
 
         base.Update(gameTime);
