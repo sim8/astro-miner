@@ -209,7 +209,6 @@ public class Renderer
     {
         var (startCol, startRow, endCol, endRow) = _viewHelpers.GetVisibleGrid(padding);
 
-
         for (var row = startRow; row < endRow; row++)
         for (var col = startCol; col < endCol; col++)
             cellAction(col, row);
