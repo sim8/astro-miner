@@ -2,7 +2,7 @@
 using AstroMiner;
 using AstroMiner.ProceduralGenViewer;
 
-if (Environment.GetEnvironmentVariable("PROC_GEN_VIEWER") == "true")
+if (Environment.GetEnvironmentVariable("PROCEDURAL_GEN_VIEWER") == "true")
 {
     using var game = new ProceduralGenViewerGame();
     game.Run();
