@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace AstroMiner;
+namespace AstroMiner.entities;
 
 public class PlayerEntity(GameState gameState) : MiningControllableEntity(gameState)
 {

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using Microsoft.Xna.Framework;
 
-namespace AstroMiner;
+namespace AstroMiner.entities;
 
 public class Entity
 {

@@ -1,4 +1,5 @@
 using System;
+using AstroMiner.entities;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner;

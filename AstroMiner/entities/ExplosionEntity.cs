@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace AstroMiner;
+namespace AstroMiner.entities;
 
 public class ExplosionEntity : Entity
 {

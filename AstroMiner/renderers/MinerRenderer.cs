@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace AstroMiner;
+namespace AstroMiner.renderers;
 
 public class MinerRenderer(
     RendererShared shared)

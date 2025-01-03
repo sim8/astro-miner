@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace AstroMiner;
+namespace AstroMiner.procGenViewer;
 
 public class ProcGenViewerGame : Game
 {
