@@ -112,8 +112,17 @@ public class Renderer
             1, // Account for textures with vertical overlap
             (col, row) =>
             {
-if (Tilesets.CellIsTilesetType(_gameState, col, row))
+            var cellState = _gameState.Grid.GetCellState(col, row);
+            if (cellState.Type != CellType.Empty)
             {
+                // Always render floor
+                var floorColor = cellState.Layer == AsteroidLayer.Core ? _floorColorCore :
+                    cellState.Layer == AsteroidLayer.Mantle ? _floorColorMantle : _floorColorCrust;
+                spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
+                    floorColor);
+            }
+
+            if (Tilesets.CellIsTilesetType(_gameState, col, row))
                 foreach (var corner in _cornersInRenderOrder)
                 {
                     var dualTilesetSourceRect =
@@ -123,17 +132,7 @@ if (Tilesets.CellIsTilesetType(_gameState, col, row))
                         dualTilesetSourceRect,
                         _gameState.Grid.ExplosiveRockCellIsActive(col, row) ? Color.Red : Color.White);
                 }
-            }
-            else if (_gameState.Grid.GetCellType(col, row) == CellType.Floor)
-            {
-                var cellState = _gameState.Grid.GetCellState(col, row);
-                var floorColor = cellState.Layer == AsteroidLayer.Core ? _floorColorCore :
-                    cellState.Layer == AsteroidLayer.Mantle ? _floorColorMantle : _floorColorCrust;
-                spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
-                    floorColor);
-            }
             else if (_gameState.Grid.GetCellType(col, row) == CellType.Lava)
-            {
                 spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
                     Color.Orange);
             }
