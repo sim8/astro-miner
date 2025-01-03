@@ -104,28 +104,31 @@ public class Renderer
 
     private void RenderScene(SpriteBatch spriteBatch)
     {
-        for (var row = 0; row < GameConfig.GridSize; row++)
-        for (var col = 0; col < GameConfig.GridSize; col++)
-            if (Tilesets.CellIsTilesetType(_gameState, col, row))
-                foreach (var corner in _cornersInRenderOrder)
-                {
-                    var dualTilesetSourceRect =
-                        Tilesets.GetCellQuadrantSourceRect(_gameState, col, row, corner);
-                    spriteBatch.Draw(_textures["tileset"],
-                        _viewHelpers.GetVisibleRectForGridQuadrant(col, row, corner),
-                        dualTilesetSourceRect,
-                        _gameState.Grid.ExplosiveRockCellIsActive(col, row) ? Color.Red : Color.White);
-                }
-            else if (_gameState.Grid.GetCellType(col, row) == CellType.Floor)
-                spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
-                    _floorColor);
-            else if (_gameState.Grid.GetCellType(col, row) == CellType.Lava)
-                spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
-                    Color.Orange);
+        LoopVisibleCells(
+            1, // Account for textures with vertical overlap
+            (col, row) =>
+            {
+                if (Tilesets.CellIsTilesetType(_gameState, col, row))
+                    foreach (var corner in _cornersInRenderOrder)
+                    {
+                        var dualTilesetSourceRect =
+                            Tilesets.GetCellQuadrantSourceRect(_gameState, col, row, corner);
+                        spriteBatch.Draw(_textures["tileset"],
+                            _viewHelpers.GetVisibleRectForGridQuadrant(col, row, corner),
+                            dualTilesetSourceRect,
+                            _gameState.Grid.ExplosiveRockCellIsActive(col, row) ? Color.Red : Color.White);
+                    }
+                else if (_gameState.Grid.GetCellType(col, row) == CellType.Floor)
+                    spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
+                        _floorColor);
+                else if (_gameState.Grid.GetCellType(col, row) == CellType.Lava)
+                    spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
+                        Color.Orange);
+            });
 
-        for (var row = 0; row < GameConfig.GridSize; row++)
-        for (var col = 0; col < GameConfig.GridSize; col++)
-            _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row);
+        LoopVisibleCells(GradientOverlayRenderer.OverlayGridRadius,
+            (col, row) => { _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row); }
+        );
 
         foreach (var entity in _gameState.ActiveEntitiesSortedByDistance)
             if (entity is MinerEntity)
@@ -181,22 +184,34 @@ public class Renderer
                 _explosionRenderer.RenderLightSource(spriteBatch, explosionEntity);
 
         // Render any grid-based light sources
-        for (var row = 0; row < GameConfig.GridSize; row++)
-        for (var col = 0; col < GameConfig.GridSize; col++)
-            if (_gameState.Grid.GetCellType(col, row) == CellType.Lava)
+        LoopVisibleCells(
+            1, // Only lava, small light source
+            (col, row) =>
             {
-                var pos = new Vector2(col + 0.5f, row + 0.5f);
-                _shared.RenderRadialLightSource(spriteBatch, pos, _lavaLightColor, 150, 0.6f);
-            }
+                if (_gameState.Grid.GetCellType(col, row) == CellType.Lava)
+                {
+                    var pos = new Vector2(col + 0.5f, row + 0.5f);
+                    _shared.RenderRadialLightSource(spriteBatch, pos, _lavaLightColor, 150, 0.6f);
+                }
+            });
 
         // Render overlay gradients in shadow color over lighting to block out light on unexplored cells
-        for (var row = 0; row < GameConfig.GridSize; row++)
-        for (var col = 0; col < GameConfig.GridSize; col++)
-            _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row, 2, 120);
+        LoopVisibleCells(GradientOverlayRenderer.OverlayGridRadius,
+            (col, row) => { _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row, 2, 120); });
 
         spriteBatch.End();
 
 
         _graphics.GraphicsDevice.SetRenderTarget(null);
+    }
+
+    private void LoopVisibleCells(int padding, Action<int, int> cellAction)
+    {
+        var (startCol, startRow, endCol, endRow) = _viewHelpers.GetVisibleGrid(padding);
+
+
+        for (var row = startRow; row < endRow; row++)
+        for (var col = startCol; col < endCol; col++)
+            cellAction(col, row);
     }
 }

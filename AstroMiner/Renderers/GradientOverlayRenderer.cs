@@ -7,6 +7,7 @@ namespace AstroMiner.Renderers;
 public class GradientOverlayRenderer(RendererShared shared)
 {
     public static readonly Color OverlayColor = new(37, 73, 99);
+    public static readonly int OverlayGridRadius = 2; // Roughly
 
     public void RenderGradientOverlay(SpriteBatch spriteBatch, int col, int row,
         int showGradientsAtDistance = 4, int gradientSize = 160)
