@@ -9,7 +9,8 @@ namespace AstroMiner.Entities;
 public class ExplosionEntity : Entity
 {
     private const int _animationTime = 400;
-    private readonly float _explosionRadius = 2.2f;
+    private readonly float _explodeRockRadius = 2.2f;
+    private readonly float _explosionRadius = 4f;
     private readonly GameState _gameState;
     private bool _hasExploded;
     private int TimeSinceExplosionMs;
@@ -28,7 +29,7 @@ public class ExplosionEntity : Entity
     private void ExplodeGrid()
     {
         var gridPos = ViewHelpers.ToGridPosition(Position);
-        var explodedCells = GetCellsInRadius(Position.X, Position.Y, _explosionRadius);
+        var explodedCells = GetCellsInRadius(Position.X, Position.Y, _explodeRockRadius);
         foreach (var (x, y) in explodedCells)
             // If x,y = gridPos, already triggered explosion
             if (_gameState.Grid.GetCellType(x, y) == CellType.ExplosiveRock && (x, y) != gridPos)

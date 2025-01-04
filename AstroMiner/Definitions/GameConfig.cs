@@ -21,7 +21,7 @@ public static class GameConfig
     public const int DamageAnimationTimeMs = 1000;
 
     // Damage ramps down to 0 based on distance from center + explosion radius
-    public const int ExplosionMaxDamage = 120;
+    public const int ExplosionMaxDamage = 180;
 
     // Derived consts
     public const float MinerSize = (float)MinerBoxSizePx / CellTextureSizePx;

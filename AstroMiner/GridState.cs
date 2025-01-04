@@ -35,7 +35,7 @@ public class GridState(GameState gameState, CellState[,] grid)
     public int Columns => grid.GetLength(0);
     public int Rows => grid.GetLength(1);
 
-    public void ActivateExplosiveRockCell(int x, int y, int timeToExplodeMs = 2000)
+    public void ActivateExplosiveRockCell(int x, int y, int timeToExplodeMs = 1100)
     {
         if (_activeExplosiveRockCells.ContainsKey((x, y)))
         {

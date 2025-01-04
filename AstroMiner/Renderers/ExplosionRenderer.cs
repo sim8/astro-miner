@@ -8,7 +8,7 @@ public class ExplosionRenderer(
     RendererShared shared)
 {
     private const int SourceSizePx = 96;
-    private const int SizePx = 192;
+    private const int SizePx = 360;
     private const int AnimationFrames = 10;
 
     private static readonly float[] FrameLightOpacity = { 0.7f, 1f, 1f, 0.8f, 0.5f, 0.3f, 0.2f, 0.15f, 0.1f, 0.05f };
@@ -27,7 +27,7 @@ public class ExplosionRenderer(
     {
         var frameIndex = (int)(explosionEntity.AnimationPercentage * AnimationFrames);
         var opacity = FrameLightOpacity[frameIndex];
-        shared.RenderRadialLightSource(spriteBatch, explosionEntity.Position, 512, opacity);
+        shared.RenderRadialLightSource(spriteBatch, explosionEntity.Position, 1024, opacity);
     }
 
     public void RenderAdditiveLightSource(SpriteBatch spriteBatch, ExplosionEntity explosionEntity)
