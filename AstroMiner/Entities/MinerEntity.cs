@@ -6,7 +6,7 @@ namespace AstroMiner.Entities;
 public class MinerEntity(GameState gameState) : MiningControllableEntity(gameState)
 {
     protected override bool CanAddToInventory { get; } = false;
-    protected override float MaxSpeed => 3.2f;
+    protected override float MaxSpeed => 5f;
     protected override int TimeToReachMaxSpeedMs { get; } = 1200;
     protected override float MaxHealth => GameConfig.MinerMaxHealth;
     protected override int TimeToStopMs { get; } = 400;

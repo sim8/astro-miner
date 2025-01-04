@@ -7,7 +7,7 @@ public static class GameConfig
     public const float ZoomLevelMiner = 2f;
     public const float ZoomLevelPlayer = 3f;
     public const int CellTextureSizePx = 32;
-    public const int GridSize = 180;
+    public const int GridSize = 200;
     public const float MinEmbarkingDistance = 1.2f;
 
     // e.g. for a 7x7 block of rock, the center cell should be invisible
@@ -16,7 +16,7 @@ public static class GameConfig
     public const float PlayerMaxHealth = 100;
     public const float MinerMaxHealth = 200;
 
-    public const int LavaDamagePerSecond = 30;
+    public const int LavaDamagePerSecond = 50;
 
     public const int DamageAnimationTimeMs = 1000;
 

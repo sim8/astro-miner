@@ -6,12 +6,13 @@ namespace AstroMiner.ProceduralGen;
 
 public static class AsteroidGen
 {
-    private const float DiamondsRadius = 0.2f;
-    private const float AsteroidCoreRadius = 0.6f;
-    private const float LavaRadius = 0.4f;
+    private const float MantleRadius = 0.7f;
+    private const float LavaRadius = MantleRadius - 0.1f;
+    private const float DiamondsRadius = 0.15f;
+    private const float CoreRadius = 0.27f;
     private const float OuterWallRadius = 0.75f;
 
-    private const int AverageRadius = 60;
+    private const int AverageRadius = 80;
     private const int MaxDeviation = 12; // Adjusted for larger imperfections
     private const double MaxDelta = 9; // Adjusted for smoother transitions
     private const int AngleSegments = 140; // Adjusted for larger-scale variations
@@ -26,25 +27,24 @@ public static class AsteroidGen
 
     private const float Perlin1NoiseScale = 0.22f;
 
-    // Much lower frequency for bigger, cleaner lakes
-    private const float Perlin2NoiseScale = 0.05f;
+    // Lower frequency for bigger, cleaner lakes
+    private const float Perlin2NoiseScale = 0.14f;
 
     // Perlin noise 1
-    private static readonly (float, float) SolidRockRange = (0.55f, 1);
-    private static readonly (float, float) DiamondRange = (0.65f, 1);
+    private static readonly (float, float) MantleSolidRockRange = (0.65f, 1);
+    private static readonly (float, float) CoreSolidRockRange = (0.56f, 1);
+    private static readonly (float, float) LavaFloorPerimeterRange1 = (0.4f, 0.6f);
+    private static readonly (float, float) DiamondRange = (0.7f, 1);
     private static readonly (float, float) RubyRange = (0.41f, 0.415f);
 
     private static readonly (float, float) GoldRange1 = (0.42f, 0.43f);
 
-    // TODO two ranges for more granularity. Maybe better to have a new Perlin noise
-    private static readonly (float, float) ExplosiveRockRange1a = (0.36f, 0.4f);
-    private static readonly (float, float) ExplosiveRockRange1b = (0.3f, 0.34f);
+    private static readonly (float, float) ExplosiveRockRange = (0.38f, 0.39f);
 
     // Perlin noise 2
-    private static readonly (float, float) LavaRange = (0.65f, 1);
-    private static readonly (float, float) LavaFloorPerimeterRange = (0.58f, 0.65f);
+    private static readonly (float, float) LavaRange = (0.55f, 1);
+    private static readonly (float, float) LavaFloorPerimeterRange2 = (0.42f, 0.55f);
     private static readonly (float, float) GoldRange2 = (0.5f, 0.58f);
-    private static readonly (float, float) ExplosiveRockRange2 = (0.2f, 0.35f);
 
     public static (CellState[,], Vector2) InitializeGridAndStartingPos(int gridSize, int seed)
     {
@@ -120,7 +120,7 @@ public static class AsteroidGen
 
         // Generate perimeter widths for each angle segment
         for (var i = 0; i < AngleSegments; i++)
-            perimeterWidths[i] = rand.Next(0, 4); // Random integer between 0 and 3 inclusive
+            perimeterWidths[i] = rand.Next(2, 6); // Random integer between 0 and 3 inclusive
 
         // Optionally smooth the perimeter widths
         perimeterWidths = SmoothPerimeterWidths(perimeterWidths, 2);
@@ -150,22 +150,26 @@ public static class AsteroidGen
             {
                 var noise1Value = perlinNoise1.Noise(x * Perlin1NoiseScale, y * Perlin1NoiseScale);
                 var noise2Value = perlinNoise2.Noise(x * Perlin2NoiseScale, y * Perlin2NoiseScale);
-                var withinCore = distance < radius * AsteroidCoreRadius;
-                var withinLavaRadius = distance < radius * LavaRadius;
+                var withinMantle = distance < radius * MantleRadius;
+                var withinCore = distance < radius * CoreRadius;
+                var isMantle = withinMantle && !withinCore;
+                var isLavaDistance = distance < radius * LavaRadius && !withinCore;
 
-                if (withinLavaRadius && NoiseValWithinRange(noise2Value, LavaRange))
+                if (isLavaDistance && NoiseValWithinRange(noise2Value, LavaRange))
                     cellType = CellType.Lava;
-                else if (withinLavaRadius && NoiseValWithinRange(noise2Value, LavaFloorPerimeterRange))
+                else if (isLavaDistance && NoiseValWithinRange(noise1Value, LavaFloorPerimeterRange1) &&
+                         NoiseValWithinRange(noise2Value, LavaFloorPerimeterRange2))
                     cellType = CellType.Floor;
                 // Use both ranges for gold - near lake but still high-ish frequency of noise1
-                else if (withinLavaRadius && NoiseValWithinRange(noise2Value, GoldRange2) &&
+                else if (isLavaDistance && NoiseValWithinRange(noise2Value, GoldRange2) &&
                          NoiseValWithinRange(noise1Value, GoldRange1))
                     cellType = CellType.Gold;
-                else if (withinCore && NoiseValWithinRange(noise2Value, ExplosiveRockRange2) &&
-                         (NoiseValWithinRange(noise1Value, ExplosiveRockRange1a) ||
-                          NoiseValWithinRange(noise1Value, ExplosiveRockRange1b)))
+
+                else if (withinCore &&
+                         NoiseValWithinRange(noise1Value, ExplosiveRockRange))
                     cellType = CellType.ExplosiveRock;
-                else if (withinCore && NoiseValWithinRange(noise1Value, SolidRockRange))
+                else if ((withinMantle && NoiseValWithinRange(noise1Value, MantleSolidRockRange)) ||
+                         (withinCore && NoiseValWithinRange(noise1Value, CoreSolidRockRange)))
                     cellType = distance < radius * DiamondsRadius && NoiseValWithinRange(noise1Value, DiamondRange)
                         ? CellType.Diamond
                         : CellType.SolidRock;
@@ -187,8 +191,8 @@ public static class AsteroidGen
                 cellType = CellType.Empty;
             }
 
-            var layer = distance < radius * 0.3 ? AsteroidLayer.Core :
-                distance < radius * 0.6 ? AsteroidLayer.Mantle :
+            var layer = distance < radius * CoreRadius ? AsteroidLayer.Core :
+                distance < radius * MantleRadius ? AsteroidLayer.Mantle :
                 cellType != CellType.Empty ? AsteroidLayer.Crust : AsteroidLayer.None;
 
             grid[x, y] = new CellState(cellType, layer);
@@ -208,7 +212,7 @@ public static class AsteroidGen
         var distanceFromCenterPercentage = (float)distanceFromCenter / (float)radius;
 
         // transform distanceFromCenter to a float that's 0 for most distances then ramping up a small amount
-        var widenBy = Math.Max(distanceFromCenterPercentage - 0.5f, 0) / 1.6f;
+        var widenBy = Math.Max(distanceFromCenterPercentage - 0.6f, 0) / 1.6f;
         return (baseLowerBound - widenBy, baseUpperBound + widenBy);
     }
 

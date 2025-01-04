@@ -7,7 +7,7 @@ namespace AstroMiner.Entities;
 public class PlayerEntity(GameState gameState) : MiningControllableEntity(gameState)
 {
     private bool _prevPressedPlaceDynamite;
-    protected override float MaxSpeed => 2f;
+    protected override float MaxSpeed => 3f;
     protected override float MaxHealth => GameConfig.PlayerMaxHealth;
     protected override int BoxSizePx { get; } = GameConfig.PlayerBoxSizePx;
 

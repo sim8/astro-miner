@@ -8,7 +8,7 @@ namespace AstroMiner.ProceduralGenViewer;
 
 public class ProceduralGenViewerRenderer
 {
-    private const int CellSizePx = 6;
+    private const int CellSizePx = 5;
     private const int CellBorderPx = 1;
 
     private readonly Dictionary<AsteroidLayer, Color> _asteroidLayerColors = new()
