@@ -40,49 +40,42 @@ public static class GameConfig
             //----------------------------------------------
             // CORE RULES
             //----------------------------------------------
-            new Rule(new RuleParams
+            new Rule(CellType.Diamond, new RuleOptions
             {
-                CellType = CellType.Diamond,
                 DistanceRange = (0f, CoreRadius),
                 Noise1Range = (0.7f, 1f)
             }),
-            new Rule(new RuleParams
+            new Rule(CellType.SolidRock, new RuleOptions
             {
-                CellType = CellType.SolidRock,
                 DistanceRange = (0f, CoreRadius),
                 Noise1Range = (0.56f, 1f)
             }),
-            new Rule(new RuleParams
+            new Rule(CellType.ExplosiveRock, new RuleOptions
             {
-                CellType = CellType.ExplosiveRock,
                 DistanceRange = (0f, CoreRadius),
                 Noise1Range = (0.38f, 0.39f)
             }),
             //----------------------------------------------
             // MANTLE RULES
             //----------------------------------------------
-            new Rule(new RuleParams
+            new Rule(CellType.Floor, new RuleOptions
             {
-                CellType = CellType.Floor,
                 DistanceRange = (CoreRadius, MantleRadius),
                 Noise1Range = (0.4f, 0.6f),
                 Noise2Range = (0.42f, 0.55f)
             }),
-            new Rule(new RuleParams
+            new Rule(CellType.Lava, new RuleOptions
             {
-                CellType = CellType.Lava,
                 DistanceRange = (CoreRadius, MantleRadius),
                 Noise2Range = (0.55f, 1f)
             }),
-            new Rule(new RuleParams
+            new Rule(CellType.SolidRock, new RuleOptions
             {
-                CellType = CellType.SolidRock,
                 DistanceRange = (CoreRadius, MantleRadius),
                 Noise1Range = (0.65f, 1f)
             }),
-            new Rule(new RuleParams
+            new Rule(CellType.Gold, new RuleOptions
             {
-                CellType = CellType.Gold,
                 DistanceRange = (CoreRadius - 0.1f, MantleRadius + 0.2f),
                 Noise1Range = (0.42f, 0.43f),
                 Noise2Range = (0.42f, 0.55f)
@@ -93,15 +86,13 @@ public static class GameConfig
             //----------------------------------------------
             // ALL LAYERS RULES
             //----------------------------------------------
-            new Rule(new RuleParams
+            new Rule(CellType.Ruby, new RuleOptions
             {
-                CellType = CellType.Ruby,
                 DistanceRange = (0f, 1f),
                 Noise1Range = (0.410f, 0.415f)
             }),
-            new Rule(new RuleParams
+            new Rule(CellType.Rock, new RuleOptions
             {
-                CellType = CellType.Rock,
                 DistanceRange = (0f, 1f)
             })
         };

@@ -15,9 +15,8 @@ public static class CellGenRules
     }
 }
 
-public class RuleParams
+public class RuleOptions
 {
-    public CellType CellType { get; set; }
     public (float start, float end) DistanceRange { get; set; }
     public (float start, float end)? Noise1Range { get; set; }
 
@@ -26,9 +25,10 @@ public class RuleParams
 }
 
 public class Rule(
-    RuleParams p)
+    CellType cellType,
+    RuleOptions p)
 {
-    public CellType CellType => p.CellType;
+    public CellType CellType => cellType;
 
     public bool Matches(float distancePerc, float noise1Value, float noise2Value)
     {
