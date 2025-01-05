@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using AstroMiner.ProceduralGen;
+
 namespace AstroMiner.Definitions;
 
 public static class GameConfig
@@ -30,5 +33,79 @@ public static class GameConfig
     {
         public const float MantleRadius = 0.7f;
         public const float CoreRadius = 0.27f;
+
+        // TODO consts for "borders" between two cell types
+        public static readonly List<Rule> OrderedRules = new()
+        {
+            //----------------------------------------------
+            // CORE RULES
+            //----------------------------------------------
+            new Rule(new RuleParams
+            {
+                CellType = CellType.Diamond,
+                EndDistance = CoreRadius,
+                Noise1Range = (0.7f, 1f)
+            }),
+            new Rule(new RuleParams
+            {
+                CellType = CellType.SolidRock,
+                EndDistance = CoreRadius,
+                Noise1Range = (0.56f, 1f)
+            }),
+            new Rule(new RuleParams
+            {
+                CellType = CellType.ExplosiveRock,
+                EndDistance = CoreRadius,
+                Noise1Range = (0.38f, 0.39f)
+            }),
+            //----------------------------------------------
+            // MANTLE RULES
+            //----------------------------------------------
+            new Rule(new RuleParams
+            {
+                CellType = CellType.Floor,
+                StartDistance = CoreRadius,
+                EndDistance = MantleRadius,
+                Noise1Range = (0.4f, 0.6f),
+                Noise2Range = (0.42f, 0.55f)
+            }),
+            new Rule(new RuleParams
+            {
+                CellType = CellType.Lava,
+                StartDistance = CoreRadius,
+                EndDistance = MantleRadius,
+                Noise2Range = (0.55f, 1f)
+            }),
+            new Rule(new RuleParams
+            {
+                CellType = CellType.SolidRock,
+                StartDistance = CoreRadius,
+                EndDistance = MantleRadius,
+                Noise1Range = (0.65f, 1f)
+            }),
+            new Rule(new RuleParams
+            {
+                CellType = CellType.Gold,
+                StartDistance = CoreRadius - 0.1f,
+                EndDistance = CoreRadius + 0.2f,
+                Noise1Range = (0.42f, 0.43f),
+                Noise2Range = (0.42f, 0.55f)
+            }),
+            //----------------------------------------------
+            // CRUST RULES
+            //----------------------------------------------
+            //----------------------------------------------
+            // ALL LAYERS RULES
+            //----------------------------------------------
+            new Rule(new RuleParams
+            {
+                CellType = CellType.Ruby,
+                Noise1Range = (0.410f, 0.415f)
+            }),
+            new Rule(new RuleParams
+            {
+                CellType = CellType.Rock
+            })
+        };
     }
 }
