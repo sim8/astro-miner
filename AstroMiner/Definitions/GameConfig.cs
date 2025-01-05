@@ -43,19 +43,19 @@ public static class GameConfig
             new Rule(new RuleParams
             {
                 CellType = CellType.Diamond,
-                EndDistance = CoreRadius,
+                DistanceRange = (0f, CoreRadius),
                 Noise1Range = (0.7f, 1f)
             }),
             new Rule(new RuleParams
             {
                 CellType = CellType.SolidRock,
-                EndDistance = CoreRadius,
+                DistanceRange = (0f, CoreRadius),
                 Noise1Range = (0.56f, 1f)
             }),
             new Rule(new RuleParams
             {
                 CellType = CellType.ExplosiveRock,
-                EndDistance = CoreRadius,
+                DistanceRange = (0f, CoreRadius),
                 Noise1Range = (0.38f, 0.39f)
             }),
             //----------------------------------------------
@@ -64,30 +64,26 @@ public static class GameConfig
             new Rule(new RuleParams
             {
                 CellType = CellType.Floor,
-                StartDistance = CoreRadius,
-                EndDistance = MantleRadius,
+                DistanceRange = (CoreRadius, MantleRadius),
                 Noise1Range = (0.4f, 0.6f),
                 Noise2Range = (0.42f, 0.55f)
             }),
             new Rule(new RuleParams
             {
                 CellType = CellType.Lava,
-                StartDistance = CoreRadius,
-                EndDistance = MantleRadius,
+                DistanceRange = (CoreRadius, MantleRadius),
                 Noise2Range = (0.55f, 1f)
             }),
             new Rule(new RuleParams
             {
                 CellType = CellType.SolidRock,
-                StartDistance = CoreRadius,
-                EndDistance = MantleRadius,
+                DistanceRange = (CoreRadius, MantleRadius),
                 Noise1Range = (0.65f, 1f)
             }),
             new Rule(new RuleParams
             {
                 CellType = CellType.Gold,
-                StartDistance = CoreRadius - 0.1f,
-                EndDistance = CoreRadius + 0.2f,
+                DistanceRange = (CoreRadius - 0.1f, MantleRadius + 0.2f),
                 Noise1Range = (0.42f, 0.43f),
                 Noise2Range = (0.42f, 0.55f)
             }),
@@ -100,11 +96,13 @@ public static class GameConfig
             new Rule(new RuleParams
             {
                 CellType = CellType.Ruby,
+                DistanceRange = (0f, 1f),
                 Noise1Range = (0.410f, 0.415f)
             }),
             new Rule(new RuleParams
             {
-                CellType = CellType.Rock
+                CellType = CellType.Rock,
+                DistanceRange = (0f, 1f)
             })
         };
     }

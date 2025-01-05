@@ -18,8 +18,7 @@ public static class CellGenRules
 public class RuleParams
 {
     public CellType CellType { get; set; }
-    public float? StartDistance { get; set; }
-    public float? EndDistance { get; set; }
+    public (float start, float end) DistanceRange { get; set; }
     public (float start, float end)? Noise1Range { get; set; }
 
     public (float start, float end)? Noise2Range { get; set; }
@@ -33,8 +32,7 @@ public class Rule(
 
     public bool Matches(float distancePerc, float noise1Value, float noise2Value)
     {
-        var startDistance = p.StartDistance ?? 0f;
-        var endDistance = p.EndDistance ?? 1f;
+        var (startDistance, endDistance) = p.DistanceRange;
 
         // Early return if distance out of bounds of current rule
         if (distancePerc < startDistance || distancePerc > endDistance) return false;
