@@ -25,4 +25,10 @@ public static class GameConfig
 
     // Derived consts
     public const float MinerSize = (float)MinerBoxSizePx / CellTextureSizePx;
+
+    public static class AsteroidGen
+    {
+        public const float MantleRadius = 0.7f;
+        public const float CoreRadius = 0.27f;
+    }
 }
