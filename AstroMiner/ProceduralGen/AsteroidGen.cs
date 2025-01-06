@@ -6,24 +6,6 @@ namespace AstroMiner.ProceduralGen;
 
 public static class AsteroidGen
 {
-    private const int AverageRadius = 80;
-    private const int MaxDeviation = 12; // Adjusted for larger imperfections
-    private const double MaxDelta = 9; // Adjusted for smoother transitions
-    private const int AngleSegments = 140; // Adjusted for larger-scale variations
-
-
-    // Two different layers of Perlin noise
-    // Layer 1 - Default layer, more granular
-    // Layer 2 - Lower frequency - used to define larger areas
-    //   - Lava lakes + adjoining floor
-    //   - Gold zones (near lava)
-    //   - Explosive rock regions
-
-    private const float Perlin1NoiseScale = 0.22f;
-
-    // Lower frequency for bigger, cleaner lakes
-    private const float Perlin2NoiseScale = 0.14f;
-
     public static (CellState[,], Vector2) InitializeGridAndStartingPos(int gridSize, int seed)
     {
         var perlinNoise1 = new PerlinNoiseGenerator(seed);
@@ -69,29 +51,30 @@ public static class AsteroidGen
         var grid = new CellState[gridSize, gridSize];
         var centerX = gridSize / 2;
         var centerY = gridSize / 2;
-        var radiusValues = new double[AngleSegments];
-        var perimeterWidths = new int[AngleSegments]; // New array for perimeter widths
+        var radiusValues = new double[GameConfig.AsteroidGen.AngleSegments];
+        var perimeterWidths = new int[GameConfig.AsteroidGen.AngleSegments]; // New array for perimeter widths
         var rand = new Random(seed);
 
         // Generate smooth radius values
-        radiusValues[0] = AverageRadius + rand.NextDouble() * MaxDeviation * 2 - MaxDeviation;
+        radiusValues[0] = GameConfig.AsteroidGen.AverageRadius +
+            rand.NextDouble() * GameConfig.AsteroidGen.MaxDeviation * 2 - GameConfig.AsteroidGen.MaxDeviation;
 
-        for (var i = 1; i < AngleSegments; i++)
+        for (var i = 1; i < GameConfig.AsteroidGen.AngleSegments; i++)
         {
             // Gradually change the radius to create smooth imperfections
-            var delta = rand.NextDouble() * MaxDelta * 2 - MaxDelta;
+            var delta = rand.NextDouble() * GameConfig.AsteroidGen.MaxDelta * 2 - GameConfig.AsteroidGen.MaxDelta;
             radiusValues[i] = radiusValues[i - 1] + delta;
 
             // Clamp the radius within [averageRadius - maxDeviation, averageRadius + maxDeviation]
-            radiusValues[i] = Math.Max(AverageRadius - MaxDeviation,
-                Math.Min(AverageRadius + MaxDeviation, radiusValues[i]));
+            radiusValues[i] = Math.Max(GameConfig.AsteroidGen.AverageRadius - GameConfig.AsteroidGen.MaxDeviation,
+                Math.Min(GameConfig.AsteroidGen.AverageRadius + GameConfig.AsteroidGen.MaxDeviation, radiusValues[i]));
         }
 
         // Optionally smooth the radius values further
         radiusValues = SmoothRadiusValues(radiusValues, 5);
 
         // Generate perimeter widths for each angle segment
-        for (var i = 0; i < AngleSegments; i++)
+        for (var i = 0; i < GameConfig.AsteroidGen.AngleSegments; i++)
             perimeterWidths[i] = rand.Next(2, 6); // Random integer between 0 and 3 inclusive
 
         // Optionally smooth the perimeter widths
@@ -109,14 +92,17 @@ public static class AsteroidGen
             var angle = Math.Atan2(dy, dx) * (180 / Math.PI);
             if (angle < 0) angle += 360;
 
-            var index = (int)Math.Round(angle * AngleSegments / 360.0) % AngleSegments;
+            var index = (int)Math.Round(angle * GameConfig.AsteroidGen.AngleSegments / 360.0) %
+                        GameConfig.AsteroidGen.AngleSegments;
             var radius = radiusValues[index];
             var perimeterWidth = perimeterWidths[index];
 
 
             var distancePerc = (float)(distance / (radius + perimeterWidth));
-            var noise1Value = perlinNoise1.Noise(x * Perlin1NoiseScale, y * Perlin1NoiseScale);
-            var noise2Value = perlinNoise2.Noise(x * Perlin2NoiseScale, y * Perlin2NoiseScale);
+            var noise1Value = perlinNoise1.Noise(x * GameConfig.AsteroidGen.Perlin1NoiseScale,
+                y * GameConfig.AsteroidGen.Perlin1NoiseScale);
+            var noise2Value = perlinNoise2.Noise(x * GameConfig.AsteroidGen.Perlin2NoiseScale,
+                y * GameConfig.AsteroidGen.Perlin2NoiseScale);
 
             var cellType = CellGenRules.EvaluateRules(distancePerc, noise1Value, noise2Value);
 

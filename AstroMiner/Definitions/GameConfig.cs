@@ -34,8 +34,30 @@ public static class GameConfig
     {
         public const float MantleRadius = 0.7f;
         public const float CoreRadius = 0.27f;
-        private const float _lavaNoise2Start = 0.55f;
 
+        public const int AverageRadius = 80;
+        public const int MaxDeviation = 12; // Adjusted for larger imperfections
+        public const double MaxDelta = 9; // Adjusted for smoother transitions
+        public const int AngleSegments = 140; // Adjusted for larger-scale variations
+
+
+        // Two different layers of Perlin noise
+        // Layer 1 - Default layer, more granular
+        // Layer 2 - Lower frequency - used to define larger areas
+        //   - Lava lakes + adjoining floor
+        //   - Gold zones (near lava)
+        public const float Perlin1NoiseScale = 0.22f;
+        public const float Perlin2NoiseScale = 0.14f;
+
+        /// <summary>
+        ///     Defines the ordered list of cell generation rules when populating the grid.
+        ///     Inputs to each rule are:
+        ///     - DistanceRange - values can be from 0f (center) to 1f (edge)
+        ///     - Noise1Range/Noise2Range - the range of noise values required to pass the
+        ///     rule. If both are present, both are required.
+        ///     - GetNoise1Range - can be specified instead of Noise1Range. Is passed the
+        ///     percentage distance from the start to end of current DistanceRange
+        /// </summary>
         public static readonly List<Rule> OrderedRules = new()
         {
             //----------------------------------------------
@@ -61,15 +83,15 @@ public static class GameConfig
             //----------------------------------------------
             new Rule(CellType.Lava, new RuleOptions
             {
-                DistanceRange = (CoreRadius, MantleRadius - 0.04f),
-                Noise2Range = (_lavaNoise2Start, 1f)
+                DistanceRange = (CoreRadius, MantleRadius - 0.03f),
+                Noise2Range = (0.55f, 1f)
             }),
             new Rule(CellType.Floor, new RuleOptions
             {
                 DistanceRange = (CoreRadius, MantleRadius),
-                // Noise1Range = (0f, 1f),
-                GetNoise1Range = distancePercentage => { return (0f, 0.65f - (1f - distancePercentage) / 4); },
-                Noise2Range = (_lavaNoise2Start - 0.13f, 1f)
+                GetNoise1Range = distancePercentage => // Taper off towards center
+                    (0f, 0.65f - (1f - distancePercentage) / 4),
+                Noise2Range = (0.42f, 1f) // Overlap with lava range so it borders
             }),
             new Rule(CellType.SolidRock, new RuleOptions
             {
@@ -110,7 +132,7 @@ public static class GameConfig
             }),
             new Rule(CellType.Rock, new RuleOptions
             {
-                DistanceRange = (0f, 1f)
+                DistanceRange = (0f, 1f) // Fill any remaining
             })
         };
     }
