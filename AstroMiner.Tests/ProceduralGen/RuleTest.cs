@@ -1,3 +1,4 @@
+using AstroMiner.Definitions;
 using AstroMiner.ProceduralGen;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -5,19 +6,18 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AstroMiner.Tests.ProceduralGen;
 
 [TestClass]
-[TestSubject(typeof(CellGenRules.Rule))]
+[TestSubject(typeof(Rule))]
 public class RuleTest
 {
     [TestMethod]
     public void Rule_BasicNoise1Rule()
     {
-        var rule = new CellGenRules.Rule(
-            new CellGenRules.RuleParams
+        var rule = new Rule(
+            CellType.Diamond,
+            new RuleOptions
             {
-                StartDistance = 0.3f,
-                EndDistance = 0.6f,
-                Noise1Target = 0.5f,
-                BaseAllowance = 0.05f
+                DistanceRange = (0.3f, 0.6f),
+                Noise1Range = (0.45f, 0.55f)
             }
         );
 
@@ -27,38 +27,15 @@ public class RuleTest
     }
 
     [TestMethod]
-    public void Rule_AllowanceIsSharedAcrossNoiseLayers()
-    {
-        var rule = new CellGenRules.Rule(
-            new CellGenRules.RuleParams
-            {
-                StartDistance = 0.3f,
-                EndDistance = 0.6f,
-                Noise1Target = 0.5f,
-                Noise2Target = 0.8f,
-                BaseAllowance = 0.05f
-            }
-        );
-
-        var negativeResult = rule.Matches(0.46f, 0.46f, 0.84f);
-        Assert.IsFalse(negativeResult);
-
-        var positiveResult = rule.Matches(0.46f, 0.48f, 0.82f);
-        Assert.IsTrue(positiveResult);
-    }
-
-    [TestMethod]
     public void Rule_AllowanceModifierWorks()
     {
-        var rule = new CellGenRules.Rule(
-            new CellGenRules.RuleParams
+        var rule = new Rule(
+            CellType.Diamond,
+            new RuleOptions
             {
-                StartDistance = 0.1f,
-                EndDistance = 0.2f,
-                Noise1Target = 0.5f,
-                BaseAllowance = 0f,
-                AllowanceModifier = (allowance, distanceFromStartOfRuleLayerPercentage) =>
-                    distanceFromStartOfRuleLayerPercentage > 0.8 ? 1f : 0f
+                DistanceRange = (0.1f, 0.2f),
+                GetNoise1Range = distanceFromStartOfRuleLayerPercentage =>
+                    distanceFromStartOfRuleLayerPercentage > 0.8 ? (0f, 1f) : (0f, 0f)
             }
         );
 
