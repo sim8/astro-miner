@@ -51,8 +51,6 @@
 
 ## Quality
 
-- dir structure
-- tests
 - Player placement when exiting
 - Control mapping
 - Test on Xbox?
@@ -82,7 +80,6 @@
 
 - Replace pos / boxsize with rectangle - avoid creating new
 - Move tileset stuff to update loop + cache?
-- Only render on-screen stuff
 - RenderTargets?
 
 ## Meta
