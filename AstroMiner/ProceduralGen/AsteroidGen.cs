@@ -6,46 +6,6 @@ namespace AstroMiner.ProceduralGen;
 
 public static class AsteroidGen
 {
-    private const float DiamondsRadius = 0.2f;
-    private const float AsteroidCoreRadius = 0.6f;
-    private const float LavaRadius = 0.4f;
-    private const float OuterWallRadius = 0.75f;
-
-    private const int AverageRadius = 60;
-    private const int MaxDeviation = 12; // Adjusted for larger imperfections
-    private const double MaxDelta = 9; // Adjusted for smoother transitions
-    private const int AngleSegments = 140; // Adjusted for larger-scale variations
-
-
-    // Two different layers of Perlin noise
-    // Layer 1 - Default layer, more granular
-    // Layer 2 - Lower frequency - used to define larger areas
-    //   - Lava lakes + adjoining floor
-    //   - Gold zones (near lava)
-    //   - Explosive rock regions
-
-    private const float Perlin1NoiseScale = 0.22f;
-
-    // Much lower frequency for bigger, cleaner lakes
-    private const float Perlin2NoiseScale = 0.05f;
-
-    // Perlin noise 1
-    private static readonly (float, float) SolidRockRange = (0.55f, 1);
-    private static readonly (float, float) DiamondRange = (0.65f, 1);
-    private static readonly (float, float) RubyRange = (0.41f, 0.415f);
-
-    private static readonly (float, float) GoldRange1 = (0.42f, 0.43f);
-
-    // TODO two ranges for more granularity. Maybe better to have a new Perlin noise
-    private static readonly (float, float) ExplosiveRockRange1a = (0.36f, 0.4f);
-    private static readonly (float, float) ExplosiveRockRange1b = (0.3f, 0.34f);
-
-    // Perlin noise 2
-    private static readonly (float, float) LavaRange = (0.65f, 1);
-    private static readonly (float, float) LavaFloorPerimeterRange = (0.58f, 0.65f);
-    private static readonly (float, float) GoldRange2 = (0.5f, 0.58f);
-    private static readonly (float, float) ExplosiveRockRange2 = (0.2f, 0.35f);
-
     public static (CellState[,], Vector2) InitializeGridAndStartingPos(int gridSize, int seed)
     {
         var perlinNoise1 = new PerlinNoiseGenerator(seed);
@@ -85,42 +45,37 @@ public static class AsteroidGen
         throw new Exception("No 3x1 solid blocks in grid");
     }
 
-    private static bool NoiseValWithinRange(float noiseValue, (float, float) range)
-    {
-        return noiseValue >= range.Item1 && noiseValue < range.Item2;
-    }
-
-
     private static CellState[,] InitializeGrid(int gridSize, PerlinNoiseGenerator perlinNoise1,
         PerlinNoiseGenerator perlinNoise2, int seed)
     {
         var grid = new CellState[gridSize, gridSize];
         var centerX = gridSize / 2;
         var centerY = gridSize / 2;
-        var radiusValues = new double[AngleSegments];
-        var perimeterWidths = new int[AngleSegments]; // New array for perimeter widths
+        var radiusValues = new double[GameConfig.AsteroidGen.AngleSegments];
+        var perimeterWidths = new int[GameConfig.AsteroidGen.AngleSegments]; // New array for perimeter widths
         var rand = new Random(seed);
 
         // Generate smooth radius values
-        radiusValues[0] = AverageRadius + rand.NextDouble() * MaxDeviation * 2 - MaxDeviation;
+        radiusValues[0] = GameConfig.AsteroidGen.AverageRadius +
+            rand.NextDouble() * GameConfig.AsteroidGen.MaxDeviation * 2 - GameConfig.AsteroidGen.MaxDeviation;
 
-        for (var i = 1; i < AngleSegments; i++)
+        for (var i = 1; i < GameConfig.AsteroidGen.AngleSegments; i++)
         {
             // Gradually change the radius to create smooth imperfections
-            var delta = rand.NextDouble() * MaxDelta * 2 - MaxDelta;
+            var delta = rand.NextDouble() * GameConfig.AsteroidGen.MaxDelta * 2 - GameConfig.AsteroidGen.MaxDelta;
             radiusValues[i] = radiusValues[i - 1] + delta;
 
             // Clamp the radius within [averageRadius - maxDeviation, averageRadius + maxDeviation]
-            radiusValues[i] = Math.Max(AverageRadius - MaxDeviation,
-                Math.Min(AverageRadius + MaxDeviation, radiusValues[i]));
+            radiusValues[i] = Math.Max(GameConfig.AsteroidGen.AverageRadius - GameConfig.AsteroidGen.MaxDeviation,
+                Math.Min(GameConfig.AsteroidGen.AverageRadius + GameConfig.AsteroidGen.MaxDeviation, radiusValues[i]));
         }
 
         // Optionally smooth the radius values further
         radiusValues = SmoothRadiusValues(radiusValues, 5);
 
         // Generate perimeter widths for each angle segment
-        for (var i = 0; i < AngleSegments; i++)
-            perimeterWidths[i] = rand.Next(0, 4); // Random integer between 0 and 3 inclusive
+        for (var i = 0; i < GameConfig.AsteroidGen.AngleSegments; i++)
+            perimeterWidths[i] = rand.Next(2, 6); // Random integer between 0 and 3 inclusive
 
         // Optionally smooth the perimeter widths
         perimeterWidths = SmoothPerimeterWidths(perimeterWidths, 2);
@@ -137,75 +92,28 @@ public static class AsteroidGen
             var angle = Math.Atan2(dy, dx) * (180 / Math.PI);
             if (angle < 0) angle += 360;
 
-            var index = (int)Math.Round(angle * AngleSegments / 360.0) % AngleSegments;
+            var index = (int)Math.Round(angle * GameConfig.AsteroidGen.AngleSegments / 360.0) %
+                        GameConfig.AsteroidGen.AngleSegments;
             var radius = radiusValues[index];
             var perimeterWidth = perimeterWidths[index];
 
 
-            CellType cellType;
+            var distancePerc = (float)(distance / (radius + perimeterWidth));
+            var noise1Value = perlinNoise1.Noise(x * GameConfig.AsteroidGen.Perlin1NoiseScale,
+                y * GameConfig.AsteroidGen.Perlin1NoiseScale);
+            var noise2Value = perlinNoise2.Noise(x * GameConfig.AsteroidGen.Perlin2NoiseScale,
+                y * GameConfig.AsteroidGen.Perlin2NoiseScale);
 
-            var floorRange = GetFloorRange(distance, radius);
+            var cellType = CellGenRules.EvaluateRules(distancePerc, noise1Value, noise2Value);
 
-            if (distance <= radius)
-            {
-                var noise1Value = perlinNoise1.Noise(x * Perlin1NoiseScale, y * Perlin1NoiseScale);
-                var noise2Value = perlinNoise2.Noise(x * Perlin2NoiseScale, y * Perlin2NoiseScale);
-                var withinCore = distance < radius * AsteroidCoreRadius;
-                var withinLavaRadius = distance < radius * LavaRadius;
+            var layer = distance < radius * GameConfig.AsteroidGen.CoreRadius ? AsteroidLayer.Core :
+                distance < radius * GameConfig.AsteroidGen.MantleRadius ? AsteroidLayer.Mantle :
+                cellType != CellType.Empty ? AsteroidLayer.Crust : AsteroidLayer.None;
 
-                if (withinLavaRadius && NoiseValWithinRange(noise2Value, LavaRange))
-                    cellType = CellType.Lava;
-                else if (withinLavaRadius && NoiseValWithinRange(noise2Value, LavaFloorPerimeterRange))
-                    cellType = CellType.Floor;
-                // Use both ranges for gold - near lake but still high-ish frequency of noise1
-                else if (withinLavaRadius && NoiseValWithinRange(noise2Value, GoldRange2) &&
-                         NoiseValWithinRange(noise1Value, GoldRange1))
-                    cellType = CellType.Gold;
-                else if (withinCore && NoiseValWithinRange(noise2Value, ExplosiveRockRange2) &&
-                         (NoiseValWithinRange(noise1Value, ExplosiveRockRange1a) ||
-                          NoiseValWithinRange(noise1Value, ExplosiveRockRange1b)))
-                    cellType = CellType.ExplosiveRock;
-                else if (withinCore && NoiseValWithinRange(noise1Value, SolidRockRange))
-                    cellType = distance < radius * DiamondsRadius && NoiseValWithinRange(noise1Value, DiamondRange)
-                        ? CellType.Diamond
-                        : CellType.SolidRock;
-                else if (distance > radius * OuterWallRadius && NoiseValWithinRange(noise1Value,
-                             (floorRange.Item2 + 0.1f, floorRange.Item2 + 0.102f)))
-                    cellType = CellType.Nickel;
-                // Widen floor range relative to closeness to edge TODO make ramp clearer, especially near edges
-                else if (NoiseValWithinRange(noise1Value, floorRange))
-                    cellType = CellType.Floor;
-                else
-                    cellType = NoiseValWithinRange(noise1Value, RubyRange) ? CellType.Ruby : CellType.Rock;
-            }
-            else if (distance <= radius + perimeterWidth)
-            {
-                cellType = CellType.Floor;
-            }
-            else
-            {
-                cellType = CellType.Empty;
-            }
-
-            grid[x, y] = new CellState(cellType);
+            grid[x, y] = new CellState(cellType, layer);
         }
 
         return grid;
-    }
-
-    // The floorspace should gradually disappear from outside -> inside.
-    // Make it appear natural by narrowing noise range for floor
-    private static (float, float) GetFloorRange(double distanceFromCenter, double radius)
-    {
-        // these are the min range
-        var baseLowerBound = 0.28f;
-        var baseUpperBound = 0.32f;
-
-        var distanceFromCenterPercentage = (float)distanceFromCenter / (float)radius;
-
-        // transform distanceFromCenter to a float that's 0 for most distances then ramping up a small amount
-        var widenBy = Math.Max(distanceFromCenterPercentage - 0.5f, 0) / 1.6f;
-        return (baseLowerBound - widenBy, baseUpperBound + widenBy);
     }
 
     // Function to smooth radius values

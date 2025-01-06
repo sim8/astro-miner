@@ -8,8 +8,15 @@ namespace AstroMiner.ProceduralGenViewer;
 
 public class ProceduralGenViewerRenderer
 {
-    private const int CellSizePx = 6;
+    private const int CellSizePx = 5;
     private const int CellBorderPx = 1;
+
+    private readonly Dictionary<AsteroidLayer, Color> _asteroidLayerColors = new()
+    {
+        { AsteroidLayer.Crust, Color.Yellow },
+        { AsteroidLayer.Mantle, Color.Orange },
+        { AsteroidLayer.Core, Color.Red }
+    };
 
     private readonly Dictionary<CellType, Color> _cellColors = new()
     {
@@ -26,16 +33,18 @@ public class ProceduralGenViewerRenderer
     };
 
     private readonly GameState _gameState;
+    private readonly ProceduralGenViewerState _proceduralGenViewerState;
 
 
     private readonly Dictionary<string, Texture2D> _textures;
 
     public ProceduralGenViewerRenderer(
         Dictionary<string, Texture2D> textures,
-        GameState gameState)
+        GameState gameState, ProceduralGenViewerState proceduralGenViewerState)
     {
         _gameState = gameState;
         _textures = textures;
+        _proceduralGenViewerState = proceduralGenViewerState;
     }
 
     public void Render(SpriteBatch spriteBatch)
@@ -61,6 +70,10 @@ public class ProceduralGenViewerRenderer
 
             spriteBatch.Draw(_textures["white"], GetGridCellRect(col, row),
                 _cellColors[cellState.Type]);
+
+            if (_proceduralGenViewerState.hasToggledView && cellState.Layer != AsteroidLayer.None)
+                spriteBatch.Draw(_textures["white"], GetGridCellRect(col, row),
+                    _asteroidLayerColors[cellState.Layer] * 0.6f);
         }
     }
 

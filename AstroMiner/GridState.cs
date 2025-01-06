@@ -5,9 +5,11 @@ using AstroMiner.Utilities;
 
 namespace AstroMiner;
 
-public class CellState(CellType type)
+public class CellState(CellType type, AsteroidLayer layer)
 {
     public const int UninitializedOrAboveMax = -1;
+
+    public readonly AsteroidLayer Layer = layer;
 
     /**
      * -1: uninitialized or above max distance
@@ -33,7 +35,7 @@ public class GridState(GameState gameState, CellState[,] grid)
     public int Columns => grid.GetLength(0);
     public int Rows => grid.GetLength(1);
 
-    public void ActivateExplosiveRockCell(int x, int y, int timeToExplodeMs = 2000)
+    public void ActivateExplosiveRockCell(int x, int y, int timeToExplodeMs = 1100)
     {
         if (_activeExplosiveRockCells.ContainsKey((x, y)))
         {

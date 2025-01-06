@@ -10,10 +10,13 @@
     - drive up / down?
     - Much more dangerous / better loot
 - Mystery box cell - similar design to explosive?
-- Make it clearer where center is - clearer sections?
 - Different "types" of asteroid
     - Higher concentration of lava/holes/explosive rock
     - Different skins - ice?
+- More gems!
+    - Base emerald/sapphire etc
+    - Gem clusters? Worth 10 or more?
+        - Could be a good "upsell" into better asteroids
 
 ## Gameplay - other
 
@@ -56,6 +59,9 @@
 
 ## Rendering / art
 
+- Fix zoom in/out!
+  - Have another go at pixel perfection
+  - Subpixel rendering? Movement is also kind of janky
 - Player animation
 - Ground tileset
 - Clouds / background animation
