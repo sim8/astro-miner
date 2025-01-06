@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using AstroMiner.ProceduralGen;
 
@@ -33,8 +34,8 @@ public static class GameConfig
     {
         public const float MantleRadius = 0.7f;
         public const float CoreRadius = 0.27f;
+        private const float _lavaNoise2Start = 0.55f;
 
-        // TODO consts for "borders" between two cell types
         public static readonly List<Rule> OrderedRules = new()
         {
             //----------------------------------------------
@@ -62,12 +63,12 @@ public static class GameConfig
             {
                 DistanceRange = (CoreRadius, MantleRadius),
                 Noise1Range = (0.4f, 0.6f),
-                Noise2Range = (0.42f, 0.55f)
+                Noise2Range = (0.42f, _lavaNoise2Start)
             }),
             new Rule(CellType.Lava, new RuleOptions
             {
                 DistanceRange = (CoreRadius, MantleRadius),
-                Noise2Range = (0.55f, 1f)
+                Noise2Range = (_lavaNoise2Start, 1f)
             }),
             new Rule(CellType.SolidRock, new RuleOptions
             {
@@ -76,13 +77,28 @@ public static class GameConfig
             }),
             new Rule(CellType.Gold, new RuleOptions
             {
-                DistanceRange = (CoreRadius - 0.1f, MantleRadius + 0.2f),
+                DistanceRange = (CoreRadius - 0.1f, CoreRadius + 0.2f),
                 Noise1Range = (0.42f, 0.43f),
                 Noise2Range = (0.42f, 0.55f)
             }),
             //----------------------------------------------
             // CRUST RULES
             //----------------------------------------------
+            new Rule(CellType.Floor, new RuleOptions
+            {
+                DistanceRange = (MantleRadius, 1f),
+                GetNoise1Range = distancePercentage =>
+                {
+                    var distanceToStartFadingToFloor = 0.3f;
+                    var amountToWidenBy = Math.Max(distancePercentage - distanceToStartFadingToFloor, 0f) / 3;
+                    return (0.49f - amountToWidenBy, 0.51f + amountToWidenBy);
+                }
+            }),
+            new Rule(CellType.Nickel, new RuleOptions
+            {
+                DistanceRange = (MantleRadius, 1f),
+                Noise1Range = (0f, 0.25f)
+            }),
             //----------------------------------------------
             // ALL LAYERS RULES
             //----------------------------------------------

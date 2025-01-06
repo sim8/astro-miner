@@ -1,4 +1,5 @@
 #nullable enable
+using System;
 using AstroMiner.Definitions;
 
 namespace AstroMiner.ProceduralGen;
@@ -21,7 +22,7 @@ public class RuleOptions
     public (float start, float end)? Noise1Range { get; set; }
 
     public (float start, float end)? Noise2Range { get; set; }
-    // public Func<float, float, bool>? CustomRangeCheck { get; set; }
+    public Func<float, (float start, float end)>? GetNoise1Range { get; set; }
 }
 
 public class Rule(
@@ -37,15 +38,18 @@ public class Rule(
         // Early return if distance out of bounds of current rule
         if (distancePerc < startDistance || distancePerc > endDistance) return false;
 
-        // if (p.CustomRangeCheck != null)
-        // {
-        //     var layerSize = endDistance - startDistance;
-        //     var distanceFromStartOfRuleLayer = distancePerc - startDistance;
-        //     var distanceFromStartOfRuleLayerPercentage = distanceFromStartOfRuleLayer / layerSize;
-        //     // Apply modifier to allowance
-        //     allowance = p.AllowanceModifier(allowance, distanceFromStartOfRuleLayerPercentage);
-        // }
-        if (p.Noise1Range is var (start1, end1) && (noise1Value < start1 || noise1Value > end1)) return false;
+        var noiseRange1 = p.Noise1Range;
+
+        if (p.GetNoise1Range != null)
+        {
+            var layerSize = endDistance - startDistance;
+            var distanceFromStartOfRuleLayer = distancePerc - startDistance;
+            var distanceFromStartOfRuleLayerPercentage = distanceFromStartOfRuleLayer / layerSize;
+            // Apply modifier to allowance
+            noiseRange1 = p.GetNoise1Range(distanceFromStartOfRuleLayerPercentage);
+        }
+
+        if (noiseRange1 is var (start1, end1) && (noise1Value < start1 || noise1Value > end1)) return false;
         if (p.Noise2Range is var (start2, end2) && (noise2Value < start2 || noise2Value > end2)) return false;
 
         return true;
