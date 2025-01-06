@@ -59,21 +59,22 @@ public static class GameConfig
             //----------------------------------------------
             // MANTLE RULES
             //----------------------------------------------
+            new Rule(CellType.Lava, new RuleOptions
+            {
+                DistanceRange = (CoreRadius, MantleRadius - 0.04f),
+                Noise2Range = (_lavaNoise2Start, 1f)
+            }),
             new Rule(CellType.Floor, new RuleOptions
             {
                 DistanceRange = (CoreRadius, MantleRadius),
-                Noise1Range = (0.4f, 0.6f),
-                Noise2Range = (0.42f, _lavaNoise2Start)
-            }),
-            new Rule(CellType.Lava, new RuleOptions
-            {
-                DistanceRange = (CoreRadius, MantleRadius),
-                Noise2Range = (_lavaNoise2Start, 1f)
+                // Noise1Range = (0f, 1f),
+                GetNoise1Range = distancePercentage => { return (0f, 0.65f - (1f - distancePercentage) / 4); },
+                Noise2Range = (_lavaNoise2Start - 0.13f, 1f)
             }),
             new Rule(CellType.SolidRock, new RuleOptions
             {
                 DistanceRange = (CoreRadius, MantleRadius),
-                Noise1Range = (0.65f, 1f)
+                Noise1Range = (0.67f, 1f)
             }),
             new Rule(CellType.Gold, new RuleOptions
             {
