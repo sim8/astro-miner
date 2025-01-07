@@ -104,6 +104,11 @@ public static class GameConfig
                 Noise1Range = (0.42f, 0.43f),
                 Noise2Range = (0.42f, 0.55f)
             }),
+            new Rule(CellType.LooseRock, new RuleOptions
+            {
+                DistanceRange = (CoreRadius, MantleRadius),
+                Noise1Range = (0.3f, 0.45f)
+            }),
             //----------------------------------------------
             // CRUST RULES
             //----------------------------------------------
@@ -121,6 +126,11 @@ public static class GameConfig
             {
                 DistanceRange = (MantleRadius, 1f),
                 Noise1Range = (0f, 0.25f)
+            }),
+            new Rule(CellType.LooseRock, new RuleOptions
+            {
+                DistanceRange = (MantleRadius, 1f),
+                Noise2Range = (0.4f, 0.55f)
             }),
             //----------------------------------------------
             // ALL LAYERS RULES

@@ -22,8 +22,9 @@ public class ProceduralGenViewerRenderer
     {
         { CellType.Diamond, new Color(144, 248, 255) },
         { CellType.Ruby, new Color(200, 0, 0) },
-        { CellType.SolidRock, new Color(100, 100, 100) },
-        { CellType.Rock, new Color(160, 160, 160) },
+        { CellType.SolidRock, new Color(60, 60, 60) },
+        { CellType.LooseRock, new Color(180, 180, 180) },
+        { CellType.Rock, new Color(120, 120, 120) },
         { CellType.Empty, new Color(0, 0, 0) },
         { CellType.Floor, new Color(240, 240, 240) },
         { CellType.Lava, Color.Orange },
