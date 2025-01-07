@@ -39,9 +39,12 @@ public class UserInterfaceRenderer(
     {
         var resourceLineHeight = 40;
 
+        shared.RenderString(spriteBatch, xOffset, yoffset,
+            "DYNAMITE " + shared.GameState.Inventory.numDynamite);
+
         foreach (var (inventoryResource, index) in shared.GameState.Inventory.resources.Select((r, i) => (r, i)))
         {
-            var lineYOffset = yoffset + resourceLineHeight * index;
+            var lineYOffset = yoffset + resourceLineHeight * (index + 1);
             var resourceConfig = ResourceTypes.GetConfig(inventoryResource.Type);
             shared.RenderString(spriteBatch, xOffset, lineYOffset,
                 resourceConfig.Name.ToUpper() + " " + inventoryResource.Count);
