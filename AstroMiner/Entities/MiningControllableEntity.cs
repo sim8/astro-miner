@@ -9,16 +9,12 @@ public class MiningControllableEntity(GameState gameState) : ControllableEntity(
 {
     private const float DrillDistance = 0.2f;
 
-    // NEW FIELDS:
-    // Keep track of all cells in the row/column that we're drilling,
-    // their total required time, and whether we've already mined them.
     private readonly List<(int x, int y)> _drillingCells = new();
 
     private bool _drillingCellsMined;
 
     private int _drillingMs;
 
-    // The position (grid cell) where we're currently drilling.
     private (int x, int y)? _drillingPos;
     private int _drillingTotalTimeRequired;
 
