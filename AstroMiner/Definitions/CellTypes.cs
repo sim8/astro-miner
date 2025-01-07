@@ -49,7 +49,7 @@ public class NonMineableCellConfig(bool isDestructible, bool isCollideable)
 
 public static class CellTypes
 {
-    private static readonly int DefaultDrillTime = 600;
+    private static readonly int DefaultDrillTime = 300;
 
     private static readonly IReadOnlyDictionary<CellType, CellTypeConfig> AllCellTypeConfig =
         new Dictionary<CellType, CellTypeConfig>
