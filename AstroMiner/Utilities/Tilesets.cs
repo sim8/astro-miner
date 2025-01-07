@@ -52,6 +52,7 @@ public static class Tilesets
     private static readonly Dictionary<CellType, int> WallTypeTextureIndex = new()
     {
         { CellType.Rock, 0 },
+        { CellType.LooseRock, 0 },
         { CellType.SolidRock, 1 },
         { CellType.Ruby, 2 },
         { CellType.Diamond, 3 },

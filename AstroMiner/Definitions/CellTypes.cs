@@ -10,6 +10,7 @@ public enum CellType
     Lava,
     Rock,
     SolidRock,
+    LooseRock,
     Diamond,
     Ruby,
     Gold,
@@ -49,7 +50,7 @@ public class NonMineableCellConfig(bool isDestructible, bool isCollideable)
 
 public static class CellTypes
 {
-    private static readonly int DefaultDrillTime = 600;
+    private static readonly int DefaultDrillTime = 300;
 
     private static readonly IReadOnlyDictionary<CellType, CellTypeConfig> AllCellTypeConfig =
         new Dictionary<CellType, CellTypeConfig>
@@ -58,6 +59,7 @@ public static class CellTypes
             { CellType.Floor, new NonMineableCellConfig(false, false) },
             { CellType.Lava, new NonMineableCellConfig(false, false) },
             { CellType.SolidRock, new NonMineableCellConfig(true, true) },
+            { CellType.LooseRock, new MineableCellConfig(1) },
             { CellType.Rock, new MineableCellConfig(DefaultDrillTime) },
             { CellType.Diamond, new MineableCellConfig(1200, ResourceType.Diamond) },
             { CellType.Ruby, new MineableCellConfig(800, ResourceType.Ruby) },

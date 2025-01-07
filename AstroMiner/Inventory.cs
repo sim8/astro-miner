@@ -6,6 +6,7 @@ namespace AstroMiner;
 public class Inventory
 {
     public readonly List<(ResourceType Type, int Count)> resources = new();
+    public int numDynamite { get; set; } = 3; // TODO make these a resource?
 
     public void AddResource(ResourceType type, int count = 1)
     {

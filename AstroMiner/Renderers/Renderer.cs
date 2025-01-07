@@ -127,10 +127,14 @@ public class Renderer
                     {
                         var dualTilesetSourceRect =
                             Tilesets.GetCellQuadrantSourceRect(_gameState, col, row, corner);
+
+                        var tintColor = _gameState.Grid.ExplosiveRockCellIsActive(col, row) ? Color.Red :
+                            cellState.Type == CellType.LooseRock ? Color.LightGreen : Color.White;
+
                         spriteBatch.Draw(_textures["tileset"],
                             _viewHelpers.GetVisibleRectForGridQuadrant(col, row, corner),
                             dualTilesetSourceRect,
-                            _gameState.Grid.ExplosiveRockCellIsActive(col, row) ? Color.Red : Color.White);
+                            tintColor);
                     }
                 else if (_gameState.Grid.GetCellType(col, row) == CellType.Lava)
                     spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),

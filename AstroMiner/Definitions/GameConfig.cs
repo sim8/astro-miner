@@ -65,13 +65,13 @@ public static class GameConfig
             //----------------------------------------------
             new Rule(CellType.Diamond, new RuleOptions
             {
-                DistanceRange = (0f, CoreRadius),
+                DistanceRange = (0f, 0.1f),
                 Noise1Range = (0.7f, 1f)
             }),
             new Rule(CellType.SolidRock, new RuleOptions
             {
                 DistanceRange = (0f, CoreRadius),
-                Noise1Range = (0.56f, 1f)
+                Noise1Range = (0.53f, 1f)
             }),
             new Rule(CellType.ExplosiveRock, new RuleOptions
             {
@@ -96,13 +96,18 @@ public static class GameConfig
             new Rule(CellType.SolidRock, new RuleOptions
             {
                 DistanceRange = (CoreRadius, MantleRadius),
-                Noise1Range = (0.67f, 1f)
+                Noise1Range = (0.59f, 0.65f)
             }),
             new Rule(CellType.Gold, new RuleOptions
             {
                 DistanceRange = (CoreRadius - 0.1f, CoreRadius + 0.2f),
                 Noise1Range = (0.42f, 0.43f),
                 Noise2Range = (0.42f, 0.55f)
+            }),
+            new Rule(CellType.LooseRock, new RuleOptions
+            {
+                DistanceRange = (CoreRadius, MantleRadius),
+                Noise1Range = (0.3f, 0.45f)
             }),
             //----------------------------------------------
             // CRUST RULES
@@ -121,6 +126,11 @@ public static class GameConfig
             {
                 DistanceRange = (MantleRadius, 1f),
                 Noise1Range = (0f, 0.25f)
+            }),
+            new Rule(CellType.LooseRock, new RuleOptions
+            {
+                DistanceRange = (MantleRadius, 1f),
+                Noise2Range = (0.4f, 0.55f)
             }),
             //----------------------------------------------
             // ALL LAYERS RULES

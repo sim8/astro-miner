@@ -1,5 +1,13 @@
 # TODO
 
+## RISK/REWARD IMPROVEMENTS
+
+- Max 3 dynamite
+- Explosive cells
+  - Try only explode if drill directly or within blast radius
+  - Almost invisible if not surfaced yet?
+  - See how that feels - could add timed random exploding
+
 ## Gameplay - asteroid
 
 - Collapsing floor

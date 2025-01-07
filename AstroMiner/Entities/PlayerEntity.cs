@@ -17,8 +17,9 @@ public class PlayerEntity(GameState gameState) : MiningControllableEntity(gameSt
         if (activeMiningControls.Contains(MiningControls.PlaceDynamite))
         {
             // Not continuous
-            if (!_prevPressedPlaceDynamite)
+            if (!_prevPressedPlaceDynamite && gameState.Inventory.numDynamite > 0)
             {
+                gameState.Inventory.numDynamite--;
                 var dynamiteEntity = new DynamiteEntity(gameState, CenterPosition);
                 dynamiteEntity.SetPositionRelativeToDirectionalEntity(this, Direction.Top);
                 gameState.ActiveEntitiesSortedByDistance.Add(dynamiteEntity);
