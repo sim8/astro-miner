@@ -98,7 +98,7 @@ public class MiningControllableEntity(GameState gameState) : ControllableEntity(
         {
             foreach (var (x, y) in _drillingCells)
             {
-                var wallTypeConfig = GameState.Grid.GetWallTypeConfig(gridPos.x, y);
+                var wallTypeConfig = GameState.Grid.GetWallTypeConfig(x, y);
                 if (wallTypeConfig != null && wallTypeConfig.IsMineable)
                     GameState.Grid.MineCell(x, y, CanAddToInventory);
             }
