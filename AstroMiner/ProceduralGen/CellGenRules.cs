@@ -6,13 +6,30 @@ namespace AstroMiner.ProceduralGen;
 
 public static class CellGenRules
 {
-    public static CellType EvaluateRules(float distancePerc, float noise1Value, float noise2Value)
+    public static (WallType?, FloorType?) EvaluateRules(float distancePerc, float noise1Value, float noise2Value)
     {
+        WallType? wallType = null;
+        var hasWallTypeMatch = false;
+        FloorType? floorType = null;
+        var hasFloorTypeMatch = false;
+
         foreach (var rule in GameConfig.AsteroidGen.OrderedRules)
             if (rule.Matches(distancePerc, noise1Value, noise2Value))
-                return rule.CellType;
+            {
+                if (!hasWallTypeMatch && rule is IWallRule wallRule)
+                {
+                    wallType = wallRule.GetWallType();
+                    hasWallTypeMatch = true;
+                }
 
-        return CellType.Empty;
+                if (!hasFloorTypeMatch && rule is IFloorRule floorRule)
+                {
+                    floorType = floorRule.GetFloorType();
+                    hasFloorTypeMatch = true;
+                }
+            }
+
+        return (wallType, floorType);
     }
 }
 
@@ -25,12 +42,8 @@ public class RuleOptions
     public Func<float, (float start, float end)>? GetNoise1Range { get; set; }
 }
 
-public class Rule(
-    CellType cellType,
-    RuleOptions p)
+public abstract class Rule(RuleOptions p)
 {
-    public CellType CellType => cellType;
-
     public bool Matches(float distancePerc, float noise1Value, float noise2Value)
     {
         var (startDistance, endDistance) = p.DistanceRange;
@@ -53,5 +66,45 @@ public class Rule(
         if (p.Noise2Range is var (start2, end2) && (noise2Value < start2 || noise2Value > end2)) return false;
 
         return true;
+    }
+}
+
+internal interface IWallRule
+{
+    public WallType? GetWallType();
+}
+
+public class WallRule(WallType wallType, RuleOptions ruleOptions) : Rule(ruleOptions), IWallRule
+{
+    public WallType? GetWallType()
+    {
+        return wallType;
+    }
+}
+
+internal interface IFloorRule
+{
+    public FloorType? GetFloorType();
+}
+
+public class FloorRule(FloorType floorType, RuleOptions ruleOptions) : Rule(ruleOptions), IFloorRule
+{
+    public FloorType? GetFloorType()
+    {
+        return floorType;
+    }
+}
+
+public class WallAndFloorRule(WallType? wallType, FloorType? floorType, RuleOptions ruleOptions)
+    : Rule(ruleOptions), IWallRule, IFloorRule
+{
+    public FloorType? GetFloorType()
+    {
+        return floorType;
+    }
+
+    public WallType? GetWallType()
+    {
+        return wallType;
     }
 }

@@ -12,8 +12,8 @@ public class RuleTest
     [TestMethod]
     public void Rule_BasicNoise1Rule()
     {
-        var rule = new Rule(
-            CellType.Diamond,
+        var rule = new WallRule(
+            WallType.Diamond,
             new RuleOptions
             {
                 DistanceRange = (0.3f, 0.6f),
@@ -29,8 +29,8 @@ public class RuleTest
     [TestMethod]
     public void Rule_AllowanceModifierWorks()
     {
-        var rule = new Rule(
-            CellType.Diamond,
+        var rule = new WallRule(
+            WallType.Diamond,
             new RuleOptions
             {
                 DistanceRange = (0.1f, 0.2f),

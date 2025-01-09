@@ -63,17 +63,17 @@ public static class GameConfig
             //----------------------------------------------
             // CORE RULES
             //----------------------------------------------
-            new Rule(CellType.Diamond, new RuleOptions
+            new WallRule(WallType.Diamond, new RuleOptions
             {
                 DistanceRange = (0f, 0.1f),
                 Noise1Range = (0.7f, 1f)
             }),
-            new Rule(CellType.SolidRock, new RuleOptions
+            new WallRule(WallType.SolidRock, new RuleOptions
             {
                 DistanceRange = (0f, CoreRadius),
                 Noise1Range = (0.53f, 1f)
             }),
-            new Rule(CellType.ExplosiveRock, new RuleOptions
+            new WallRule(WallType.ExplosiveRock, new RuleOptions
             {
                 DistanceRange = (0f, CoreRadius),
                 Noise1Range = (0.38f, 0.39f)
@@ -81,30 +81,30 @@ public static class GameConfig
             //----------------------------------------------
             // MANTLE RULES
             //----------------------------------------------
-            new Rule(CellType.Lava, new RuleOptions
+            new WallAndFloorRule(null, FloorType.Lava, new RuleOptions
             {
                 DistanceRange = (CoreRadius, MantleRadius - 0.03f),
                 Noise2Range = (0.55f, 1f)
             }),
-            new Rule(CellType.Floor, new RuleOptions
+            new WallAndFloorRule(null, FloorType.Floor, new RuleOptions
             {
                 DistanceRange = (CoreRadius, MantleRadius),
                 GetNoise1Range = distancePercentage => // Taper off towards center
                     (0f, 0.65f - (1f - distancePercentage) / 4),
                 Noise2Range = (0.42f, 1f) // Overlap with lava range so it borders
             }),
-            new Rule(CellType.SolidRock, new RuleOptions
+            new WallRule(WallType.SolidRock, new RuleOptions
             {
                 DistanceRange = (CoreRadius, MantleRadius),
                 Noise1Range = (0.59f, 0.65f)
             }),
-            new Rule(CellType.Gold, new RuleOptions
+            new WallRule(WallType.Gold, new RuleOptions
             {
                 DistanceRange = (CoreRadius - 0.1f, CoreRadius + 0.2f),
                 Noise1Range = (0.42f, 0.43f),
                 Noise2Range = (0.42f, 0.55f)
             }),
-            new Rule(CellType.LooseRock, new RuleOptions
+            new WallRule(WallType.LooseRock, new RuleOptions
             {
                 DistanceRange = (CoreRadius, MantleRadius),
                 Noise1Range = (0.3f, 0.45f)
@@ -112,7 +112,7 @@ public static class GameConfig
             //----------------------------------------------
             // CRUST RULES
             //----------------------------------------------
-            new Rule(CellType.Floor, new RuleOptions
+            new WallAndFloorRule(null, FloorType.Floor, new RuleOptions
             {
                 DistanceRange = (MantleRadius, 1f),
                 GetNoise1Range = distancePercentage =>
@@ -122,12 +122,12 @@ public static class GameConfig
                     return (0.49f - amountToWidenBy, 0.51f + amountToWidenBy);
                 }
             }),
-            new Rule(CellType.Nickel, new RuleOptions
+            new WallRule(WallType.Nickel, new RuleOptions
             {
                 DistanceRange = (MantleRadius, 1f),
                 Noise1Range = (0f, 0.25f)
             }),
-            new Rule(CellType.LooseRock, new RuleOptions
+            new WallRule(WallType.LooseRock, new RuleOptions
             {
                 DistanceRange = (MantleRadius, 1f),
                 Noise2Range = (0.4f, 0.55f)
@@ -135,12 +135,12 @@ public static class GameConfig
             //----------------------------------------------
             // ALL LAYERS RULES
             //----------------------------------------------
-            new Rule(CellType.Ruby, new RuleOptions
+            new WallRule(WallType.Ruby, new RuleOptions
             {
                 DistanceRange = (0f, 1f),
                 Noise1Range = (0.410f, 0.415f)
             }),
-            new Rule(CellType.Rock, new RuleOptions
+            new WallAndFloorRule(WallType.Rock, FloorType.Floor, new RuleOptions
             {
                 DistanceRange = (0f, 1f) // Fill any remaining
             })

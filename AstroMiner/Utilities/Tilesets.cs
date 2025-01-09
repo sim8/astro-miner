@@ -49,16 +49,16 @@ public static class Tilesets
         { RampKeys.DownRightWide, (3, 3) }
     };
 
-    private static readonly Dictionary<CellType, int> WallTypeTextureIndex = new()
+    private static readonly Dictionary<WallType, int> WallTypeTextureIndex = new()
     {
-        { CellType.Rock, 0 },
-        { CellType.LooseRock, 0 },
-        { CellType.SolidRock, 1 },
-        { CellType.Ruby, 2 },
-        { CellType.Diamond, 3 },
-        { CellType.Gold, 4 },
-        { CellType.Nickel, 5 },
-        { CellType.ExplosiveRock, 6 }
+        { WallType.Rock, 0 },
+        { WallType.LooseRock, 0 },
+        { WallType.SolidRock, 1 },
+        { WallType.Ruby, 2 },
+        { WallType.Diamond, 3 },
+        { WallType.Gold, 4 },
+        { WallType.Nickel, 5 },
+        { WallType.ExplosiveRock, 6 }
     };
 
 
@@ -73,7 +73,9 @@ public static class Tilesets
 
     public static bool CellIsTilesetType(GameState gameState, int x, int y)
     {
-        return WallTypeTextureIndex.ContainsKey(gameState.Grid.GetCellType(x, y));
+        var wallType = gameState.Grid.GetWallType(x, y);
+
+        return wallType != null && WallTypeTextureIndex.ContainsKey(wallType.Value);
     }
 
     // Find the tile to render based on corner's 3 neighbors
@@ -108,8 +110,9 @@ public static class Tilesets
         var (textureGridX, textureGridY) = RampKeyToTextureOffset[tileKey];
 
         // Get grid index of cellType tileset within main texture
-        var cellType = gameState.Grid.GetCellType(col, row);
-        var textureTilesetX = WallTypeTextureIndex[cellType] * TextureGridWidth;
+        var wallType = gameState.Grid.GetWallType(col, row)!.Value; // TODO should never be null here, fix types
+
+        var textureTilesetX = WallTypeTextureIndex[wallType] * TextureGridWidth;
 
         // Convert those to pixel x,y within the actual texture
         // NOTE y pos accounts for texture overlay space. Logic will need to change for floor tilesets

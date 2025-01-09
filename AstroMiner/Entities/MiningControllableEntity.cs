@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using AstroMiner.Definitions;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 
@@ -71,9 +70,9 @@ public class MiningControllableEntity(GameState gameState) : ControllableEntity(
 
                     _drillingCells.Add((iX, gridPos.y));
 
-                    var cellTypeConfig = GameState.Grid.GetCellConfig(iX, gridPos.y);
-                    if (cellTypeConfig is MineableCellConfig mineableConfig)
-                        _drillingTotalTimeRequired += mineableConfig.DrillTimeMs;
+                    var wallTypeConfig = GameState.Grid.GetWallTypeConfig(iX, gridPos.y);
+                    if (wallTypeConfig != null && wallTypeConfig.IsMineable)
+                        _drillingTotalTimeRequired += wallTypeConfig.DrillTimeMs;
                 }
             }
             else // Direction.Left or Direction.Right
@@ -87,9 +86,9 @@ public class MiningControllableEntity(GameState gameState) : ControllableEntity(
 
                     _drillingCells.Add((gridPos.x, iY));
 
-                    var cellTypeConfig = GameState.Grid.GetCellConfig(gridPos.x, iY);
-                    if (cellTypeConfig is MineableCellConfig mineableConfig)
-                        _drillingTotalTimeRequired += mineableConfig.DrillTimeMs;
+                    var wallTypeConfig = GameState.Grid.GetWallTypeConfig(gridPos.x, iY);
+                    if (wallTypeConfig != null && wallTypeConfig.IsMineable)
+                        _drillingTotalTimeRequired += wallTypeConfig.DrillTimeMs;
                 }
             }
         }
@@ -99,8 +98,8 @@ public class MiningControllableEntity(GameState gameState) : ControllableEntity(
         {
             foreach (var (x, y) in _drillingCells)
             {
-                var cellTypeConfig = GameState.Grid.GetCellConfig(x, y);
-                if (cellTypeConfig is MineableCellConfig)
+                var wallTypeConfig = GameState.Grid.GetWallTypeConfig(gridPos.x, y);
+                if (wallTypeConfig != null && wallTypeConfig.IsMineable)
                     GameState.Grid.MineCell(x, y, CanAddToInventory);
             }
 
