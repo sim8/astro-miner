@@ -20,8 +20,9 @@ public class ProceduralGenViewerRenderer
 
     private readonly Dictionary<FloorType, Color> _floorColors = new()
     {
-        { FloorType.Floor, new Color(240, 240, 240) },
-        { FloorType.Lava, Color.Orange }
+        { FloorType.Floor, Color.White },
+        { FloorType.Lava, Color.Orange },
+        { FloorType.LavaCracks, Color.Salmon }
     };
 
     private readonly GameState _gameState;

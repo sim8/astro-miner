@@ -87,6 +87,12 @@ public static class GameConfig
                 DistanceRange = (CoreRadius, MantleRadius - 0.03f),
                 Noise2Range = (0.55f, 1f)
             }),
+            new FloorRule(FloorType.LavaCracks, new RuleOptions
+            {
+                DistanceRange = (CoreRadius, MantleRadius - 0.03f),
+                Noise1Range = (0.5f, 0.9f),
+                Noise2Range = (0.4f, 1f) // Overlap with lava range so it borders
+            }),
             new WallAndFloorRule(WallType.Empty, FloorType.Floor, new RuleOptions
             {
                 DistanceRange = (CoreRadius, MantleRadius),

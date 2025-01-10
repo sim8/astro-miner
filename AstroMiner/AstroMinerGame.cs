@@ -65,6 +65,7 @@ public class AstroMinerGame : Game
         LoadTexture("dogica-font");
         LoadTexture("gradient-set");
         LoadTexture("white");
+        LoadTexture("cracks");
         LoadTexture("tileset");
         LoadTexture("player");
         LoadTexture("miner-no-tracks");

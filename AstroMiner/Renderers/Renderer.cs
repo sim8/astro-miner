@@ -123,6 +123,7 @@ public class Renderer
                 }
 
                 if (Tilesets.CellIsTilesetType(_gameState, col, row))
+                {
                     foreach (var corner in _cornersInRenderOrder)
                     {
                         var dualTilesetSourceRect =
@@ -136,9 +137,19 @@ public class Renderer
                             dualTilesetSourceRect,
                             tintColor);
                     }
+                }
                 else if (_gameState.Grid.GetFloorType(col, row) == FloorType.Lava)
+                {
                     spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
                         Color.Orange);
+                }
+                else if (_gameState.Grid.GetFloorType(col, row) == FloorType.LavaCracks)
+                {
+                    spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
+                        Color.White);
+                    spriteBatch.Draw(_textures["cracks"], _viewHelpers.GetVisibleRectForGridCell(col, row),
+                        Color.White);
+                }
             });
 
         LoopVisibleCells(GradientOverlayRenderer.OverlayGridRadius,
