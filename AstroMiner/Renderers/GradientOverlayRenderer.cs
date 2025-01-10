@@ -13,7 +13,7 @@ public class GradientOverlayRenderer(RendererShared shared)
     {
         var cellState = shared.GameState.Grid.GetCellState(col, row);
 
-        if (cellState.FloorType == null && cellState.WallType == null) return;
+        if (cellState.isEmpty) return;
 
         if (cellState.DistanceToExploredFloor >= showGradientsAtDistance ||
             cellState.DistanceToExploredFloor ==

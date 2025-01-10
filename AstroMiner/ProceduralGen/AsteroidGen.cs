@@ -29,15 +29,6 @@ public static class AsteroidGen
                 {
                     var minerCellOffset = 1f - GameConfig.MinerSize / 2;
                     var minerColIndex = col - flooredCellsInARow / 2 - 1; // -1 to account for miner being 2x cell size
-                    // Clear 2x4 landing area
-                    // grid[row, minerColIndex - 1].FloorType = FloorType.Floor;
-                    // grid[row, minerColIndex].FloorType = FloorType.Floor;
-                    // grid[row, minerColIndex + 1].FloorType = FloorType.Floor;
-                    // grid[row, minerColIndex + 2].FloorType = FloorType.Floor;
-                    // grid[row - 1, minerColIndex - 1].FloorType = FloorType.Floor;
-                    // grid[row - 1, minerColIndex].FloorType = FloorType.Floor;
-                    // grid[row - 1, minerColIndex + 1].FloorType = FloorType.Floor;
-                    // grid[row - 1, minerColIndex + 2].FloorType = FloorType.Floor;
 
                     // Clear 2x4 landing area
                     for (var r = row - 1; r <= row; r++) // Rows: one above and the current row

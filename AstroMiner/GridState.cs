@@ -20,6 +20,8 @@ public class CellState(WallType? wallType, FloorType? floorType, AsteroidLayer l
     public FloorType? FloorType = floorType;
 
     public WallType? WallType = wallType;
+
+    public bool isEmpty => WallType == null && FloorType == null;
 }
 
 /// <summary>
@@ -105,14 +107,14 @@ public class GridState(GameState gameState, CellState[,] grid)
         });
     }
 
-    public bool CellHasNeighborWithWallType(int x, int y, WallType? wallType)
+    public bool CheckNeighbors(int x, int y, Func<CellState, bool> cb)
     {
-        var hasNeighborWithWallType = false;
+        var neighborPassesCheck = false;
         MapNeighbors(x, y, (nx, ny) =>
         {
-            if (grid[ny, nx].WallType == wallType) hasNeighborWithWallType = true;
+            if (cb(grid[ny, nx])) neighborPassesCheck = true;
         });
-        return hasNeighborWithWallType;
+        return neighborPassesCheck;
     }
 
     private static void MapNeighbors(int cx, int cy, Action<int, int> neighborAction)
