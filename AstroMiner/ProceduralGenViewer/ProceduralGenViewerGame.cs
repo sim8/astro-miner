@@ -7,7 +7,8 @@ namespace AstroMiner.ProceduralGenViewer;
 
 public class ProceduralGenViewerState
 {
-    public bool hasToggledView;
+    public bool showLayers;
+    public bool showWalls = true;
 }
 
 public class ProceduralGenViewerGame : Game
@@ -19,9 +20,9 @@ public class ProceduralGenViewerGame : Game
     private GameState _gameState;
     private ProceduralGenViewerRenderer _renderer;
     private SpriteBatch _spriteBatch;
-    private bool hasToggledView;
     private bool prevPressedNew;
-    private bool prevPressedToggleView;
+    private bool prevPressedToggleLayers;
+    private bool prevPressedToggleWalls;
 
 
     public ProceduralGenViewerGame()
@@ -67,16 +68,28 @@ public class ProceduralGenViewerGame : Game
             prevPressedNew = false;
         }
 
-        if (Keyboard.GetState().IsKeyDown(Keys.T))
+        if (Keyboard.GetState().IsKeyDown(Keys.L))
         {
-            if (!prevPressedToggleView)
-                _proceduralGenViewerState.hasToggledView = !_proceduralGenViewerState.hasToggledView;
+            if (!prevPressedToggleLayers)
+                _proceduralGenViewerState.showLayers = !_proceduralGenViewerState.showLayers;
 
-            prevPressedToggleView = true;
-        }   
+            prevPressedToggleLayers = true;
+        }
         else
         {
-            prevPressedToggleView = false;
+            prevPressedToggleLayers = false;
+        }
+
+        if (Keyboard.GetState().IsKeyDown(Keys.W))
+        {
+            if (!prevPressedToggleWalls)
+                _proceduralGenViewerState.showWalls = !_proceduralGenViewerState.showWalls;
+        
+            prevPressedToggleWalls = true;
+        }
+        else
+        {
+            prevPressedToggleWalls = false;
         }
 
         base.Update(gameTime);

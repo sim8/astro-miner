@@ -76,11 +76,11 @@ public class ProceduralGenViewerRenderer
                 spriteBatch.Draw(_textures["white"], GetGridCellRect(col, row),
                     _floorColors[cellState.FloorType]);
 
-            if (cellState.WallType != WallType.Empty)
+            if (_proceduralGenViewerState.showWalls && cellState.WallType != WallType.Empty)
                 spriteBatch.Draw(_textures["white"], GetGridCellRect(col, row),
                     _wallColors[cellState.WallType]);
 
-            if (_proceduralGenViewerState.hasToggledView && cellState.Layer != AsteroidLayer.None)
+            if (_proceduralGenViewerState.showLayers && cellState.Layer != AsteroidLayer.None)
                 spriteBatch.Draw(_textures["white"], GetGridCellRect(col, row),
                     _asteroidLayerColors[cellState.Layer] * 0.6f);
         }
