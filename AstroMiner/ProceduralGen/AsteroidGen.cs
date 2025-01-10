@@ -20,7 +20,7 @@ public static class AsteroidGen
         {
             var flooredCellsInARow = 0;
             for (var col = 0; col < grid.GetLength(1); col++)
-                if (grid[row, col].FloorType != null)
+                if (grid[row, col].FloorType != FloorType.Empty)
                 {
                     flooredCellsInARow++;
                 }
@@ -35,7 +35,7 @@ public static class AsteroidGen
                     for (var c = minerColIndex - 1; c <= minerColIndex + 2; c++) // Columns: -1 to +2 from minerColIndex
                     {
                         grid[r, c].FloorType = FloorType.Floor;
-                        grid[r, c].WallType = null;
+                        grid[r, c].WallType = WallType.Empty;
                     }
 
 
@@ -109,7 +109,7 @@ public static class AsteroidGen
 
             var layer = distance < radius * GameConfig.AsteroidGen.CoreRadius ? AsteroidLayer.Core :
                 distance < radius * GameConfig.AsteroidGen.MantleRadius ? AsteroidLayer.Mantle :
-                floorType != null ? AsteroidLayer.Crust : AsteroidLayer.None;
+                floorType != FloorType.Empty ? AsteroidLayer.Crust : AsteroidLayer.None;
 
             grid[x, y] = new CellState(wallType, floorType, layer);
         }

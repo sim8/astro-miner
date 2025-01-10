@@ -35,7 +35,7 @@ public class ExplosionEntity : Entity
             if (_gameState.Grid.GetWallType(x, y) == WallType.ExplosiveRock && (x, y) != gridPos)
                 _gameState.Grid.ActivateExplosiveRockCell(x, y, 300);
             else
-                _gameState.Grid.ClearCell(x, y);
+                _gameState.Grid.ClearWall(x, y);
 
         _hasExploded = true;
     }

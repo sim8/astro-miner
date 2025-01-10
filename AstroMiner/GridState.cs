@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using AstroMiner.Definitions;
@@ -5,7 +6,7 @@ using AstroMiner.Utilities;
 
 namespace AstroMiner;
 
-public class CellState(WallType? wallType, FloorType? floorType, AsteroidLayer layer)
+public class CellState(WallType wallType, FloorType floorType, AsteroidLayer layer)
 {
     public const int UninitializedOrAboveMax = -1;
 
@@ -17,11 +18,11 @@ public class CellState(WallType? wallType, FloorType? floorType, AsteroidLayer l
      */
     public int DistanceToExploredFloor = UninitializedOrAboveMax;
 
-    public FloorType? FloorType = floorType;
+    public FloorType FloorType = floorType;
 
-    public WallType? WallType = wallType;
+    public WallType WallType = wallType;
 
-    public bool isEmpty => WallType == null && FloorType == null;
+    public bool isEmpty => WallType == WallType.Empty && FloorType == FloorType.Empty;
 }
 
 /// <summary>
@@ -68,12 +69,12 @@ public class GridState(GameState gameState, CellState[,] grid)
         return grid[y, x];
     }
 
-    public WallType? GetWallType(int x, int y)
+    public WallType GetWallType(int x, int y)
     {
         return GetCellState(x, y).WallType;
     }
 
-    public FloorType? GetFloorType(int x, int y)
+    public FloorType GetFloorType(int x, int y)
     {
         return GetCellState(x, y).FloorType;
     }
@@ -81,23 +82,23 @@ public class GridState(GameState gameState, CellState[,] grid)
     public WallTypeConfig? GetWallTypeConfig(int x, int y)
     {
         var wallType = GetCellState(x, y).WallType;
-        return wallType != null ? WallTypes.GetConfig(wallType.Value) : null;
+        return wallType != WallType.Empty ? WallTypes.GetConfig(wallType) : null;
     }
 
-    public void MineCell(int x, int y, bool addToInventory = false)
+    public void MineWall(int x, int y, bool addToInventory = false)
     {
         var wallConfig = GetWallTypeConfig(x, y);
         if (wallConfig is not { IsMineable: true }) return;
 
 
-        ClearCell(x, y);
+        ClearWall(x, y);
 
         if (wallConfig.Drop.HasValue && addToInventory) gameState.Inventory.AddResource(wallConfig.Drop.Value);
     }
 
-    public void ClearCell(int x, int y)
+    public void ClearWall(int x, int y)
     {
-        grid[y, x].WallType = null;
+        grid[y, x].WallType = WallType.Empty;
         DeactivateExplosiveRockCell(x, y);
         MarkAllDistancesFromExploredFloor(x, y);
 
@@ -158,7 +159,7 @@ public class GridState(GameState gameState, CellState[,] grid)
                 var neighbour = GetCellState(nx, ny);
 
                 // Set as connected if current distance is 0 and cell is floor or lava
-                if (neighbour.WallType == null && neighbour.FloorType != null &&
+                if (neighbour.WallType == WallType.Empty && neighbour.FloorType != FloorType.Empty &&
                     current.DistanceToExploredFloor == 0 &&
                     neighbour.DistanceToExploredFloor != 0)
                 {

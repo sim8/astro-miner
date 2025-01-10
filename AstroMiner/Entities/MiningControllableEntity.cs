@@ -71,7 +71,7 @@ public class MiningControllableEntity(GameState gameState) : ControllableEntity(
                     _drillingCells.Add((iX, gridPos.y));
 
                     var wallTypeConfig = GameState.Grid.GetWallTypeConfig(iX, gridPos.y);
-                    if (wallTypeConfig != null && wallTypeConfig.IsMineable)
+                    if (wallTypeConfig is { IsMineable: true })
                         _drillingTotalTimeRequired += wallTypeConfig.DrillTimeMs;
                 }
             }
@@ -87,7 +87,7 @@ public class MiningControllableEntity(GameState gameState) : ControllableEntity(
                     _drillingCells.Add((gridPos.x, iY));
 
                     var wallTypeConfig = GameState.Grid.GetWallTypeConfig(gridPos.x, iY);
-                    if (wallTypeConfig != null && wallTypeConfig.IsMineable)
+                    if (wallTypeConfig is { IsMineable: true })
                         _drillingTotalTimeRequired += wallTypeConfig.DrillTimeMs;
                 }
             }
@@ -99,8 +99,8 @@ public class MiningControllableEntity(GameState gameState) : ControllableEntity(
             foreach (var (x, y) in _drillingCells)
             {
                 var wallTypeConfig = GameState.Grid.GetWallTypeConfig(x, y);
-                if (wallTypeConfig != null && wallTypeConfig.IsMineable)
-                    GameState.Grid.MineCell(x, y, CanAddToInventory);
+                if (wallTypeConfig is { IsMineable: true })
+                    GameState.Grid.MineWall(x, y, CanAddToInventory);
             }
 
             _drillingCellsMined = true;

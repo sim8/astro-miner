@@ -74,8 +74,7 @@ public static class Tilesets
     public static bool CellIsTilesetType(GameState gameState, int x, int y)
     {
         var wallType = gameState.Grid.GetWallType(x, y);
-
-        return wallType != null && WallTypeTextureIndex.ContainsKey(wallType.Value);
+        return WallTypeTextureIndex.ContainsKey(wallType);
     }
 
     // Find the tile to render based on corner's 3 neighbors
@@ -110,7 +109,7 @@ public static class Tilesets
         var (textureGridX, textureGridY) = RampKeyToTextureOffset[tileKey];
 
         // Get grid index of cellType tileset within main texture
-        var wallType = gameState.Grid.GetWallType(col, row)!.Value; // TODO should never be null here, fix types
+        var wallType = gameState.Grid.GetWallType(col, row);
 
         var textureTilesetX = WallTypeTextureIndex[wallType] * TextureGridWidth;
 

@@ -57,6 +57,7 @@ public static class GameConfig
         ///     rule. If both are present, both are required.
         ///     - GetNoise1Range - can be specified instead of Noise1Range. Is passed the
         ///     percentage distance from the start to end of current DistanceRange
+        ///     Rules are iterated until both WallType and FloorType matched.
         /// </summary>
         public static readonly List<Rule> OrderedRules = new()
         {
@@ -81,12 +82,12 @@ public static class GameConfig
             //----------------------------------------------
             // MANTLE RULES
             //----------------------------------------------
-            new WallAndFloorRule(null, FloorType.Lava, new RuleOptions
+            new WallAndFloorRule(WallType.Empty, FloorType.Lava, new RuleOptions
             {
                 DistanceRange = (CoreRadius, MantleRadius - 0.03f),
                 Noise2Range = (0.55f, 1f)
             }),
-            new WallAndFloorRule(null, FloorType.Floor, new RuleOptions
+            new WallAndFloorRule(WallType.Empty, FloorType.Floor, new RuleOptions
             {
                 DistanceRange = (CoreRadius, MantleRadius),
                 GetNoise1Range = distancePercentage => // Taper off towards center
@@ -112,7 +113,7 @@ public static class GameConfig
             //----------------------------------------------
             // CRUST RULES
             //----------------------------------------------
-            new WallAndFloorRule(null, FloorType.Floor, new RuleOptions
+            new WallAndFloorRule(WallType.Empty, FloorType.Floor, new RuleOptions
             {
                 DistanceRange = (MantleRadius, 1f),
                 GetNoise1Range = distancePercentage =>

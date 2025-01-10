@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 using AstroMiner.Definitions;
 
@@ -6,11 +5,11 @@ namespace AstroMiner.ProceduralGen;
 
 public static class CellGenRules
 {
-    public static (WallType?, FloorType?) EvaluateRules(float distancePerc, float noise1Value, float noise2Value)
+    public static (WallType, FloorType) EvaluateRules(float distancePerc, float noise1Value, float noise2Value)
     {
-        WallType? wallType = null;
+        var wallType = WallType.Empty;
         var hasWallTypeMatch = false;
-        FloorType? floorType = null;
+        var floorType = FloorType.Empty;
         var hasFloorTypeMatch = false;
 
         foreach (var rule in GameConfig.AsteroidGen.OrderedRules)
@@ -71,12 +70,12 @@ public abstract class Rule(RuleOptions p)
 
 internal interface IWallRule
 {
-    public WallType? GetWallType();
+    public WallType GetWallType();
 }
 
 public class WallRule(WallType wallType, RuleOptions ruleOptions) : Rule(ruleOptions), IWallRule
 {
-    public WallType? GetWallType()
+    public WallType GetWallType()
     {
         return wallType;
     }
@@ -84,26 +83,26 @@ public class WallRule(WallType wallType, RuleOptions ruleOptions) : Rule(ruleOpt
 
 internal interface IFloorRule
 {
-    public FloorType? GetFloorType();
+    public FloorType GetFloorType();
 }
 
 public class FloorRule(FloorType floorType, RuleOptions ruleOptions) : Rule(ruleOptions), IFloorRule
 {
-    public FloorType? GetFloorType()
+    public FloorType GetFloorType()
     {
         return floorType;
     }
 }
 
-public class WallAndFloorRule(WallType? wallType, FloorType? floorType, RuleOptions ruleOptions)
+public class WallAndFloorRule(WallType wallType, FloorType floorType, RuleOptions ruleOptions)
     : Rule(ruleOptions), IWallRule, IFloorRule
 {
-    public FloorType? GetFloorType()
+    public FloorType GetFloorType()
     {
         return floorType;
     }
 
-    public WallType? GetWallType()
+    public WallType GetWallType()
     {
         return wallType;
     }

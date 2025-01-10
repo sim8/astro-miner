@@ -85,7 +85,7 @@ public class ControllableEntity : Entity
 
         for (var x = topLeftCell.x; x <= bottomRightCell.x; x++)
         for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
-            if (GameState.Grid.GetWallType(x, y) != null)
+            if (GameState.Grid.GetWallType(x, y) != WallType.Empty)
                 return true;
 
         return false;
@@ -142,7 +142,7 @@ public class ControllableEntity : Entity
         for (var y = topLeftY; y <= bottomRightY; y++)
         {
             var floorType = GameState.Grid.GetFloorType(x, y);
-            if (floorType != null) allCellsAreEmpty = false;
+            if (floorType != FloorType.Empty) allCellsAreEmpty = false;
             if (floorType == FloorType.Lava) someCellsAreLava = true;
         }
 

@@ -72,13 +72,13 @@ public class ProceduralGenViewerRenderer
         {
             var cellState = _gameState.Grid.GetCellState(col, row);
 
-            if (cellState.FloorType.HasValue)
+            if (cellState.FloorType != FloorType.Empty)
                 spriteBatch.Draw(_textures["white"], GetGridCellRect(col, row),
-                    _floorColors[cellState.FloorType.Value]);
+                    _floorColors[cellState.FloorType]);
 
-            if (cellState.WallType.HasValue)
+            if (cellState.WallType != WallType.Empty)
                 spriteBatch.Draw(_textures["white"], GetGridCellRect(col, row),
-                    _wallColors[cellState.WallType.Value]);
+                    _wallColors[cellState.WallType]);
 
             if (_proceduralGenViewerState.hasToggledView && cellState.Layer != AsteroidLayer.None)
                 spriteBatch.Draw(_textures["white"], GetGridCellRect(col, row),

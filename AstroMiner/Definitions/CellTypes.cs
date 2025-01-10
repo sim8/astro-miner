@@ -5,6 +5,7 @@ namespace AstroMiner.Definitions;
 
 public enum WallType
 {
+    Empty,
     Rock,
     SolidRock,
     LooseRock,
@@ -17,6 +18,7 @@ public enum WallType
 
 public enum FloorType
 {
+    Empty,
     Floor,
     Lava,
     LavaCracks

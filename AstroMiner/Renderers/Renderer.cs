@@ -113,7 +113,7 @@ public class Renderer
             (col, row) =>
             {
                 var cellState = _gameState.Grid.GetCellState(col, row);
-                if (cellState.FloorType != null)
+                if (cellState.FloorType != FloorType.Empty)
                 {
                     // Always render floor
                     var floorColor = cellState.Layer == AsteroidLayer.Core ? _floorColorCore :
