@@ -6,7 +6,6 @@ namespace AstroMiner.Entities;
 
 public class PlayerEntity(GameState gameState) : MiningControllableEntity(gameState)
 {
-    private bool _prevPressedPlaceDynamite;
     protected override float MaxSpeed => 3f;
     protected override float MaxHealth => GameConfig.PlayerMaxHealth;
     protected override int BoxSizePx { get; } = GameConfig.PlayerBoxSizePx;
@@ -16,19 +15,10 @@ public class PlayerEntity(GameState gameState) : MiningControllableEntity(gameSt
         base.Update(elapsedMs, activeMiningControls);
         if (activeMiningControls.Contains(MiningControls.PlaceDynamite))
         {
-            // Not continuous
-            if (!_prevPressedPlaceDynamite && gameState.Inventory.numDynamite > 0)
-            {
-                gameState.Inventory.numDynamite--;
-                var dynamiteEntity = new DynamiteEntity(gameState, CenterPosition);
-                dynamiteEntity.SetPositionRelativeToDirectionalEntity(this, Direction.Top);
-                gameState.ActiveEntitiesSortedByDistance.Add(dynamiteEntity);
-                _prevPressedPlaceDynamite = true;
-            }
-        }
-        else
-        {
-            _prevPressedPlaceDynamite = false;
+            gameState.Inventory.numDynamite--;
+            var dynamiteEntity = new DynamiteEntity(gameState, CenterPosition);
+            dynamiteEntity.SetPositionRelativeToDirectionalEntity(this, Direction.Top);
+            gameState.ActiveEntitiesSortedByDistance.Add(dynamiteEntity);
         }
     }
 

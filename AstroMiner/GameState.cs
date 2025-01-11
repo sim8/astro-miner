@@ -36,7 +36,6 @@ public enum Direction
 public class GameState
 {
     private HashSet<MiningControls> _emptyMiningControls;
-    private bool _prevPressedEnterOrExit;
     public List<Entity> ActiveEntitiesSortedByDistance;
     public CameraState Camera;
     public List<(int x, int y)> EdgeCells;
@@ -81,7 +80,6 @@ public class GameState
         EdgeCells = UserInterfaceHelpers.GetAsteroidEdgeCells(Grid);
         Camera = new CameraState(this);
         ActiveEntitiesSortedByDistance = [Miner];
-        _prevPressedEnterOrExit = false;
         _emptyMiningControls = new HashSet<MiningControls>();
         TimeUntilAsteroidExplodesMs = 5 * 60 * 1000;
     }
@@ -118,27 +116,17 @@ public class GameState
 
         if (activeMiningControls.Contains(MiningControls.EnterOrExit))
         {
-            // Not continuous
-            if (!_prevPressedEnterOrExit)
+            ActiveControllableEntity.Disembark();
+            if (ActiveControllableEntity == Player && !Miner.IsDead &&
+                Player.GetDistanceTo(Miner) < GameConfig.MinEmbarkingDistance)
             {
-                ActiveControllableEntity.Disembark();
-                if (ActiveControllableEntity == Player && !Miner.IsDead &&
-                    Player.GetDistanceTo(Miner) < GameConfig.MinEmbarkingDistance)
-                {
-                    DeactivateEntity(Player);
-                }
-                else if (ActiveControllableEntity == Miner)
-                {
-                    Player.Position = Miner.Position;
-                    ActivateEntity(Player);
-                }
-
-                _prevPressedEnterOrExit = true;
+                DeactivateEntity(Player);
             }
-        }
-        else
-        {
-            _prevPressedEnterOrExit = false;
+            else if (ActiveControllableEntity == Miner)
+            {
+                Player.Position = Miner.Position;
+                ActivateEntity(Player);
+            }
         }
 
         foreach (var entity in ActiveEntitiesSortedByDistance.ToList())

@@ -9,14 +9,13 @@ namespace AstroMiner;
 
 public class AstroMinerGame : Game
 {
-    // TODO these should live elsewhere but needed by a few places
-    private readonly HashSet<MiningControls> _activeMiningControls = new();
     private readonly FrameCounter _frameCounter = new();
 
     private readonly GraphicsDeviceManager _graphics;
 
     private readonly Dictionary<string, Texture2D> _textures = new();
     private GameState _gameState;
+    private ControlMapper<MiningControls> _miningControlMapper;
     private Renderer _renderer;
     private SpriteBatch _spriteBatch;
 
@@ -37,7 +36,22 @@ public class AstroMinerGame : Game
         _gameState = new GameState();
         _renderer = new Renderer(_graphics, _textures, _gameState, _frameCounter);
         Window.ClientSizeChanged += _renderer.HandleWindowResize;
+        InitializeMiningControls();
         base.Initialize();
+    }
+
+    private void InitializeMiningControls()
+    {
+        _miningControlMapper = new ControlMapper<MiningControls>();
+
+        _miningControlMapper.AddMapping(MiningControls.MoveUp, Keys.W, true);
+        _miningControlMapper.AddMapping(MiningControls.MoveRight, Keys.D, true);
+        _miningControlMapper.AddMapping(MiningControls.MoveDown, Keys.S, true);
+        _miningControlMapper.AddMapping(MiningControls.MoveLeft, Keys.A, true);
+        _miningControlMapper.AddMapping(MiningControls.Drill, Keys.Space, true);
+        _miningControlMapper.AddMapping(MiningControls.EnterOrExit, Keys.E, false);
+        _miningControlMapper.AddMapping(MiningControls.PlaceDynamite, Keys.R, false);
+        _miningControlMapper.AddMapping(MiningControls.NewGame, Keys.N, false);
     }
 
     private void LoadTexture(string name)
@@ -65,32 +79,15 @@ public class AstroMinerGame : Game
 
     protected override void Update(GameTime gameTime)
     {
-        _activeMiningControls.Clear();
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
         var keyboardState = Keyboard.GetState();
 
-        // TODO use a map for this instead?
-        if (keyboardState.IsKeyDown(Keys.W))
-            _activeMiningControls.Add(MiningControls.MoveUp);
-        if (keyboardState.IsKeyDown(Keys.D))
-            _activeMiningControls.Add(MiningControls.MoveRight);
-        if (keyboardState.IsKeyDown(Keys.S))
-            _activeMiningControls.Add(MiningControls.MoveDown);
-        if (keyboardState.IsKeyDown(Keys.A))
-            _activeMiningControls.Add(MiningControls.MoveLeft);
-        if (keyboardState.IsKeyDown(Keys.Space))
-            _activeMiningControls.Add(MiningControls.Drill);
-        if (keyboardState.IsKeyDown(Keys.E))
-            _activeMiningControls.Add(MiningControls.EnterOrExit);
-        if (keyboardState.IsKeyDown(Keys.R))
-            _activeMiningControls.Add(MiningControls.PlaceDynamite);
-        if (keyboardState.IsKeyDown(Keys.N))
-            _activeMiningControls.Add(MiningControls.NewGame);
+        var activeMiningControls = _miningControlMapper.GetActiveControls(keyboardState);
 
-        _gameState.Update(_activeMiningControls, gameTime.ElapsedGameTime.Milliseconds);
+        _gameState.Update(activeMiningControls, gameTime.ElapsedGameTime.Milliseconds);
 
         base.Update(gameTime);
     }
