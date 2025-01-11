@@ -136,6 +136,7 @@ public class GameState
                 entity.Update(elapsedMs, _emptyMiningControls);
 
         foreach (var cell in Grid._activeExplosiveRockCells) cell.Value.Update(elapsedMs);
+        foreach (var cell in Grid._activeCollapsingFloorCells.Values.ToList()) cell.Update(elapsedMs);
 
 
         // Do last to reflect changes

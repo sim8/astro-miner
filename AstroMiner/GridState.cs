@@ -31,11 +31,19 @@ public class CellState(WallType wallType, FloorType floorType, AsteroidLayer lay
 /// </summary>
 public class GridState(GameState gameState, CellState[,] grid)
 {
-    private static readonly int[] NeighbourXOffsets = { -1, 0, 1, 1, 1, 0, -1, -1 };
+    private static readonly (int[], int[]) Neighbour8Offsets = (
+        new[] { -1, 0, 1, 1, 1, 0, -1, -1 },
+        new[] { -1, -1, -1, 0, 1, 1, 1, 0 }
+    );
 
-    private static readonly int[] NeighbourYOffsets = { -1, -1, -1, 0, 1, 1, 1, 0 };
+    private static readonly (int[], int[]) Neighbour4Offsets = (
+        new[] { 0, 1, 0, -1 },
+        new[] { -1, 0, 1, 0 }
+    );
 
-    // In future could be used for any active cell
+    // TODO nice way to combine these + other effects?
+    // Would be nice if cell classes had a nice deactive method
+    public readonly Dictionary<(int x, int y), ActiveCollapsingFloorCell> _activeCollapsingFloorCells = new();
     public readonly Dictionary<(int x, int y), ActiveExplosiveRockCell> _activeExplosiveRockCells = new();
     public int Columns => grid.GetLength(0);
     public int Rows => grid.GetLength(1);
@@ -52,9 +60,23 @@ public class GridState(GameState gameState, CellState[,] grid)
         _activeExplosiveRockCells.Add((x, y), new ActiveExplosiveRockCell(gameState, (x, y), timeToExplodeMs));
     }
 
+    public void ActivateCollapsingFloorCell(int x, int y)
+    {
+        // Only spread if neighbor has empty wall
+        if (_activeCollapsingFloorCells.ContainsKey((x, y)) || GetFloorType(x, y) != FloorType.LavaCracks ||
+            GetWallType(x, y) != WallType.Empty) return;
+
+        _activeCollapsingFloorCells.Add((x, y), new ActiveCollapsingFloorCell(gameState, (x, y)));
+    }
+
     public void DeactivateExplosiveRockCell(int x, int y)
     {
         _activeExplosiveRockCells.Remove((x, y));
+    }
+
+    public void DeactiveCollapsingFloorCell(int x, int y)
+    {
+        _activeCollapsingFloorCells.Remove((x, y));
     }
 
     public bool ExplosiveRockCellIsActive(int x, int y)
@@ -102,28 +124,40 @@ public class GridState(GameState gameState, CellState[,] grid)
         DeactivateExplosiveRockCell(x, y);
         MarkAllDistancesFromExploredFloor(x, y);
 
-        MapNeighbors(x, y, (nx, ny) =>
+        Map8Neighbors(x, y, (nx, ny) =>
         {
             if (grid[ny, nx].WallType == WallType.ExplosiveRock) ActivateExplosiveRockCell(nx, ny);
         });
+        ActivateCollapsingFloorCell(x, y);
     }
 
     public bool CheckNeighbors(int x, int y, Func<CellState, bool> cb)
     {
         var neighborPassesCheck = false;
-        MapNeighbors(x, y, (nx, ny) =>
+        Map8Neighbors(x, y, (nx, ny) =>
         {
             if (cb(grid[ny, nx])) neighborPassesCheck = true;
         });
         return neighborPassesCheck;
     }
 
-    private static void MapNeighbors(int cx, int cy, Action<int, int> neighborAction)
+    public static void Map8Neighbors(int cx, int cy, Action<int, int> neighborAction)
     {
-        for (var i = 0; i < NeighbourXOffsets.Length; i++)
+        MapNeighbors(Neighbour8Offsets, cx, cy, neighborAction);
+    }
+
+    public static void Map4Neighbors(int cx, int cy, Action<int, int> neighborAction)
+    {
+        MapNeighbors(Neighbour4Offsets, cx, cy, neighborAction);
+    }
+
+    private static void MapNeighbors((int[], int[]) neighborOffsets, int cx, int cy, Action<int, int> neighborAction)
+    {
+        var (neighborXOffsets, neighborYOffsets) = neighborOffsets;
+        for (var i = 0; i < neighborXOffsets.Length; i++)
         {
-            var nx = cx + NeighbourXOffsets[i];
-            var ny = cy + NeighbourYOffsets[i];
+            var nx = cx + neighborXOffsets[i];
+            var ny = cy + neighborYOffsets[i];
 
             if (nx < 0 || nx >= GameConfig.GridSize || ny < 0 || ny >= GameConfig.GridSize)
                 continue;
@@ -154,7 +188,7 @@ public class GridState(GameState gameState, CellState[,] grid)
             var (cx, cy) = queue.Dequeue();
             var current = GetCellState(cx, cy);
 
-            MapNeighbors(cx, cy, (nx, ny) =>
+            Map8Neighbors(cx, cy, (nx, ny) =>
             {
                 var neighbour = GetCellState(nx, ny);
 

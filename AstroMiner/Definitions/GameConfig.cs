@@ -24,6 +24,8 @@ public static class GameConfig
 
     public const int DamageAnimationTimeMs = 1000;
 
+    public const int CollapsingFloorSpreadTime = 300;
+
     // Damage ramps down to 0 based on distance from center + explosion radius
     public const int ExplosionMaxDamage = 180;
 
