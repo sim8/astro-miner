@@ -11,18 +11,23 @@ public class ProceduralGenViewerState
     public bool showWalls = true;
 }
 
+public enum ViewerControls
+{
+    NewAsteroid,
+    ToggleLayers,
+    ToggleWalls
+}
+
 public class ProceduralGenViewerGame : Game
 {
     private readonly GraphicsDeviceManager _graphics;
     private readonly ProceduralGenViewerState _proceduralGenViewerState = new();
 
     private readonly Dictionary<string, Texture2D> _textures = new();
+    private readonly ControlMapper<ViewerControls> _viewerControlsMapper = new();
     private GameState _gameState;
     private ProceduralGenViewerRenderer _renderer;
     private SpriteBatch _spriteBatch;
-    private bool prevPressedNew;
-    private bool prevPressedToggleLayers;
-    private bool prevPressedToggleWalls;
 
 
     public ProceduralGenViewerGame()
@@ -40,7 +45,15 @@ public class ProceduralGenViewerGame : Game
     {
         _gameState = new GameState();
         _renderer = new ProceduralGenViewerRenderer(_textures, _gameState, _proceduralGenViewerState);
+        InitializeControls();
         base.Initialize();
+    }
+
+    private void InitializeControls()
+    {
+        _viewerControlsMapper.AddMapping(ViewerControls.NewAsteroid, Keys.N, false);
+        _viewerControlsMapper.AddMapping(ViewerControls.ToggleLayers, Keys.L, false);
+        _viewerControlsMapper.AddMapping(ViewerControls.ToggleWalls, Keys.W, false);
     }
 
     private void LoadTexture(string name)
@@ -57,40 +70,14 @@ public class ProceduralGenViewerGame : Game
 
     protected override void Update(GameTime gameTime)
     {
-        if (Keyboard.GetState().IsKeyDown(Keys.N))
-        {
-            if (!prevPressedNew) _gameState.Initialize();
+        var keyboardState = Keyboard.GetState();
+        var activeControls = _viewerControlsMapper.GetActiveControls(keyboardState);
 
-            prevPressedNew = true;
-        }
-        else
-        {
-            prevPressedNew = false;
-        }
-
-        if (Keyboard.GetState().IsKeyDown(Keys.L))
-        {
-            if (!prevPressedToggleLayers)
-                _proceduralGenViewerState.showLayers = !_proceduralGenViewerState.showLayers;
-
-            prevPressedToggleLayers = true;
-        }
-        else
-        {
-            prevPressedToggleLayers = false;
-        }
-
-        if (Keyboard.GetState().IsKeyDown(Keys.W))
-        {
-            if (!prevPressedToggleWalls)
-                _proceduralGenViewerState.showWalls = !_proceduralGenViewerState.showWalls;
-        
-            prevPressedToggleWalls = true;
-        }
-        else
-        {
-            prevPressedToggleWalls = false;
-        }
+        if (activeControls.Contains(ViewerControls.NewAsteroid)) _gameState.Initialize();
+        if (activeControls.Contains(ViewerControls.ToggleWalls))
+            _proceduralGenViewerState.showWalls = !_proceduralGenViewerState.showWalls;
+        if (activeControls.Contains(ViewerControls.ToggleLayers))
+            _proceduralGenViewerState.showLayers = !_proceduralGenViewerState.showLayers;
 
         base.Update(gameTime);
     }
