@@ -32,10 +32,10 @@ public class ExplosionEntity : Entity
         var explodedCells = GetCellsInRadius(Position.X, Position.Y, _explodeRockRadius);
         foreach (var (x, y) in explodedCells)
             // If x,y = gridPos, already triggered explosion
-            if (_gameState.Grid.GetCellType(x, y) == CellType.ExplosiveRock && (x, y) != gridPos)
+            if (_gameState.Grid.GetWallType(x, y) == WallType.ExplosiveRock && (x, y) != gridPos)
                 _gameState.Grid.ActivateExplosiveRockCell(x, y, 300);
             else
-                _gameState.Grid.ClearCell(x, y);
+                _gameState.Grid.ClearWall(x, y);
 
         _hasExploded = true;
     }

@@ -3,11 +3,9 @@ using System.Collections.Generic;
 
 namespace AstroMiner.Definitions;
 
-public enum CellType
+public enum WallType
 {
     Empty,
-    Floor,
-    Lava,
     Rock,
     SolidRock,
     LooseRock,
@@ -18,6 +16,14 @@ public enum CellType
     ExplosiveRock
 }
 
+public enum FloorType
+{
+    Empty,
+    Floor,
+    Lava,
+    LavaCracks
+}
+
 public enum AsteroidLayer
 {
     None,
@@ -26,52 +32,32 @@ public enum AsteroidLayer
     Core
 }
 
-public abstract class CellTypeConfig(bool isDestructible, bool isCollideable)
+public class WallTypeConfig(bool isMineable, ResourceType? drop = null, int drillTimeMs = 300) // TODO make const
 {
-    public bool IsDestructible { get; } = isDestructible;
-    public bool IsCollideable { get; } = isCollideable;
-
-    public abstract bool IsMineable { get; }
-}
-
-public class MineableCellConfig(int drillTimeMs, ResourceType? drop = null) : CellTypeConfig(true, true)
-{
+    public bool IsMineable { get; } = isMineable;
     public int DrillTimeMs { get; } = drillTimeMs;
     public ResourceType? Drop { get; } = drop;
-
-    public override bool IsMineable => true;
 }
 
-public class NonMineableCellConfig(bool isDestructible, bool isCollideable)
-    : CellTypeConfig(isDestructible, isCollideable)
+public static class WallTypes
 {
-    public override bool IsMineable => false;
-}
-
-public static class CellTypes
-{
-    private static readonly int DefaultDrillTime = 300;
-
-    private static readonly IReadOnlyDictionary<CellType, CellTypeConfig> AllCellTypeConfig =
-        new Dictionary<CellType, CellTypeConfig>
+    private static readonly IReadOnlyDictionary<WallType, WallTypeConfig> WallTypeConfigs =
+        new Dictionary<WallType, WallTypeConfig>
         {
-            { CellType.Empty, new NonMineableCellConfig(false, false) },
-            { CellType.Floor, new NonMineableCellConfig(false, false) },
-            { CellType.Lava, new NonMineableCellConfig(false, false) },
-            { CellType.SolidRock, new NonMineableCellConfig(true, true) },
-            { CellType.LooseRock, new MineableCellConfig(1) },
-            { CellType.Rock, new MineableCellConfig(DefaultDrillTime) },
-            { CellType.Diamond, new MineableCellConfig(1200, ResourceType.Diamond) },
-            { CellType.Ruby, new MineableCellConfig(800, ResourceType.Ruby) },
-            { CellType.Gold, new MineableCellConfig(800, ResourceType.Gold) },
-            { CellType.Nickel, new MineableCellConfig(DefaultDrillTime, ResourceType.Nickel) },
-            { CellType.ExplosiveRock, new MineableCellConfig(DefaultDrillTime) }
+            { WallType.SolidRock, new WallTypeConfig(false) },
+            { WallType.LooseRock, new WallTypeConfig(true, null, 1) },
+            { WallType.Rock, new WallTypeConfig(true) },
+            { WallType.Diamond, new WallTypeConfig(true, ResourceType.Diamond, 1200) },
+            { WallType.Ruby, new WallTypeConfig(true, ResourceType.Ruby, 800) },
+            { WallType.Gold, new WallTypeConfig(true, ResourceType.Gold, 800) },
+            { WallType.Nickel, new WallTypeConfig(true, ResourceType.Nickel) },
+            { WallType.ExplosiveRock, new WallTypeConfig(true) }
         };
 
-    public static CellTypeConfig GetConfig(CellType cellType)
+    public static WallTypeConfig GetConfig(WallType wallType)
     {
-        if (!AllCellTypeConfig.TryGetValue(cellType, out var config))
-            throw new ArgumentException($"No configuration found for CellType: {cellType}");
+        if (!WallTypeConfigs.TryGetValue(wallType, out var config))
+            throw new ArgumentException($"No configuration found for WallType: {wallType}");
 
         return config;
     }

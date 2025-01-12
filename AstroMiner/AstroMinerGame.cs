@@ -15,7 +15,7 @@ public class AstroMinerGame : Game
 
     private readonly Dictionary<string, Texture2D> _textures = new();
     private GameState _gameState;
-    private ControlMapper<MiningControls> _miningControlMapper;
+    private readonly ControlMapper<MiningControls> _miningControlMapper = new();
     private Renderer _renderer;
     private SpriteBatch _spriteBatch;
 
@@ -42,8 +42,6 @@ public class AstroMinerGame : Game
 
     private void InitializeMiningControls()
     {
-        _miningControlMapper = new ControlMapper<MiningControls>();
-
         _miningControlMapper.AddMapping(MiningControls.MoveUp, Keys.W, true);
         _miningControlMapper.AddMapping(MiningControls.MoveRight, Keys.D, true);
         _miningControlMapper.AddMapping(MiningControls.MoveDown, Keys.S, true);
@@ -65,6 +63,7 @@ public class AstroMinerGame : Game
         LoadTexture("dogica-font");
         LoadTexture("gradient-set");
         LoadTexture("white");
+        LoadTexture("cracks");
         LoadTexture("tileset");
         LoadTexture("player");
         LoadTexture("miner-no-tracks");

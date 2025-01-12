@@ -85,7 +85,7 @@ public class ControllableEntity : Entity
 
         for (var x = topLeftCell.x; x <= bottomRightCell.x; x++)
         for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
-            if (GameState.Grid.GetCellConfig(x, y).IsCollideable)
+            if (GameState.Grid.GetWallType(x, y) != WallType.Empty)
                 return true;
 
         return false;
@@ -141,9 +141,9 @@ public class ControllableEntity : Entity
         for (var x = topLeftX; x <= bottomRightX; x++)
         for (var y = topLeftY; y <= bottomRightY; y++)
         {
-            var cellType = GameState.Grid.GetCellType(x, y);
-            if (cellType != CellType.Empty) allCellsAreEmpty = false;
-            if (cellType == CellType.Lava) someCellsAreLava = true;
+            var floorType = GameState.Grid.GetFloorType(x, y);
+            if (floorType != FloorType.Empty) allCellsAreEmpty = false;
+            if (floorType == FloorType.Lava) someCellsAreLava = true;
         }
 
         if (someCellsAreLava) TakeDamage((float)GameConfig.LavaDamagePerSecond / 1000 * elapsedMs);

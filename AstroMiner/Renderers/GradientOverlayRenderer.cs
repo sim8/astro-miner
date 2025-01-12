@@ -1,4 +1,3 @@
-using AstroMiner.Definitions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -14,7 +13,7 @@ public class GradientOverlayRenderer(RendererShared shared)
     {
         var cellState = shared.GameState.Grid.GetCellState(col, row);
 
-        if (cellState.Type == CellType.Empty) return;
+        if (cellState.isEmpty) return;
 
         if (cellState.DistanceToExploredFloor >= showGradientsAtDistance ||
             cellState.DistanceToExploredFloor ==

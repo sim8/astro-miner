@@ -113,7 +113,7 @@ public class Renderer
             (col, row) =>
             {
                 var cellState = _gameState.Grid.GetCellState(col, row);
-                if (cellState.Type != CellType.Empty)
+                if (cellState.FloorType != FloorType.Empty)
                 {
                     // Always render floor
                     var floorColor = cellState.Layer == AsteroidLayer.Core ? _floorColorCore :
@@ -129,16 +129,19 @@ public class Renderer
                             Tilesets.GetCellQuadrantSourceRect(_gameState, col, row, corner);
 
                         var tintColor = _gameState.Grid.ExplosiveRockCellIsActive(col, row) ? Color.Red :
-                            cellState.Type == CellType.LooseRock ? Color.LightGreen : Color.White;
+                            cellState.WallType == WallType.LooseRock ? Color.LightGreen : Color.White;
 
                         spriteBatch.Draw(_textures["tileset"],
                             _viewHelpers.GetVisibleRectForGridQuadrant(col, row, corner),
                             dualTilesetSourceRect,
                             tintColor);
                     }
-                else if (_gameState.Grid.GetCellType(col, row) == CellType.Lava)
+                else if (_gameState.Grid.GetFloorType(col, row) == FloorType.Lava)
                     spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
                         Color.Orange);
+                else if (_gameState.Grid.GetFloorType(col, row) == FloorType.LavaCracks)
+                    spriteBatch.Draw(_textures["cracks"], _viewHelpers.GetVisibleRectForGridCell(col, row),
+                        Color.White);
             });
 
         LoopVisibleCells(GradientOverlayRenderer.OverlayGridRadius,
@@ -203,7 +206,7 @@ public class Renderer
             1, // Only lava, small light source
             (col, row) =>
             {
-                if (_gameState.Grid.GetCellType(col, row) == CellType.Lava)
+                if (_gameState.Grid.GetFloorType(col, row) == FloorType.Lava)
                 {
                     var pos = new Vector2(col + 0.5f, row + 0.5f);
                     _shared.RenderRadialLightSource(spriteBatch, pos, _lavaLightColor, 150, 0.6f);

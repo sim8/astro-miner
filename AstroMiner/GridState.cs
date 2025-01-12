@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using AstroMiner.Definitions;
@@ -5,7 +6,7 @@ using AstroMiner.Utilities;
 
 namespace AstroMiner;
 
-public class CellState(CellType type, AsteroidLayer layer)
+public class CellState(WallType wallType, FloorType floorType, AsteroidLayer layer)
 {
     public const int UninitializedOrAboveMax = -1;
 
@@ -17,7 +18,11 @@ public class CellState(CellType type, AsteroidLayer layer)
      */
     public int DistanceToExploredFloor = UninitializedOrAboveMax;
 
-    public CellType Type = type;
+    public FloorType FloorType = floorType;
+
+    public WallType WallType = wallType;
+
+    public bool isEmpty => WallType == WallType.Empty && FloorType == FloorType.Empty;
 }
 
 /// <summary>
@@ -26,11 +31,19 @@ public class CellState(CellType type, AsteroidLayer layer)
 /// </summary>
 public class GridState(GameState gameState, CellState[,] grid)
 {
-    private static readonly int[] NeighbourXOffsets = { -1, 0, 1, 1, 1, 0, -1, -1 };
+    private static readonly (int[], int[]) Neighbour8Offsets = (
+        new[] { -1, 0, 1, 1, 1, 0, -1, -1 },
+        new[] { -1, -1, -1, 0, 1, 1, 1, 0 }
+    );
 
-    private static readonly int[] NeighbourYOffsets = { -1, -1, -1, 0, 1, 1, 1, 0 };
+    private static readonly (int[], int[]) Neighbour4Offsets = (
+        new[] { 0, 1, 0, -1 },
+        new[] { -1, 0, 1, 0 }
+    );
 
-    // In future could be used for any active cell
+    // TODO nice way to combine these + other effects?
+    // Would be nice if cell classes had a nice deactive method
+    public readonly Dictionary<(int x, int y), ActiveCollapsingFloorCell> _activeCollapsingFloorCells = new();
     public readonly Dictionary<(int x, int y), ActiveExplosiveRockCell> _activeExplosiveRockCells = new();
     public int Columns => grid.GetLength(0);
     public int Rows => grid.GetLength(1);
@@ -47,9 +60,23 @@ public class GridState(GameState gameState, CellState[,] grid)
         _activeExplosiveRockCells.Add((x, y), new ActiveExplosiveRockCell(gameState, (x, y), timeToExplodeMs));
     }
 
+    public void ActivateCollapsingFloorCell(int x, int y)
+    {
+        // Only spread if neighbor has empty wall
+        if (_activeCollapsingFloorCells.ContainsKey((x, y)) || GetFloorType(x, y) != FloorType.LavaCracks ||
+            GetWallType(x, y) != WallType.Empty) return;
+
+        _activeCollapsingFloorCells.Add((x, y), new ActiveCollapsingFloorCell(gameState, (x, y)));
+    }
+
     public void DeactivateExplosiveRockCell(int x, int y)
     {
         _activeExplosiveRockCells.Remove((x, y));
+    }
+
+    public void DeactiveCollapsingFloorCell(int x, int y)
+    {
+        _activeCollapsingFloorCells.Remove((x, y));
     }
 
     public bool ExplosiveRockCellIsActive(int x, int y)
@@ -64,58 +91,73 @@ public class GridState(GameState gameState, CellState[,] grid)
         return grid[y, x];
     }
 
-    public CellType GetCellType(int x, int y)
+    public WallType GetWallType(int x, int y)
     {
-        return GetCellState(x, y).Type;
+        return GetCellState(x, y).WallType;
     }
 
-    public CellTypeConfig GetCellConfig(int x, int y)
+    public FloorType GetFloorType(int x, int y)
     {
-        return CellTypes.GetConfig(GetCellState(x, y).Type);
+        return GetCellState(x, y).FloorType;
     }
 
-    public void MineCell(int x, int y, bool addToInventory = false)
+    public WallTypeConfig? GetWallTypeConfig(int x, int y)
     {
-        var cellConfig = GetCellConfig(x, y);
-        if (!cellConfig.IsDestructible) return;
-
-        ClearCell(x, y);
-
-        if (cellConfig is MineableCellConfig mineableConfig && addToInventory)
-        {
-            var drop = mineableConfig.Drop;
-            if (drop.HasValue) gameState.Inventory.AddResource(drop.Value);
-        }
+        var wallType = GetCellState(x, y).WallType;
+        return wallType != WallType.Empty ? WallTypes.GetConfig(wallType) : null;
     }
 
-    public void ClearCell(int x, int y)
+    public void MineWall(int x, int y, bool addToInventory = false)
     {
-        grid[y, x].Type = CellType.Floor;
+        var wallConfig = GetWallTypeConfig(x, y);
+        if (wallConfig is not { IsMineable: true }) return;
+
+
+        ClearWall(x, y);
+
+        if (wallConfig.Drop.HasValue && addToInventory) gameState.Inventory.AddResource(wallConfig.Drop.Value);
+    }
+
+    public void ClearWall(int x, int y)
+    {
+        grid[y, x].WallType = WallType.Empty;
         DeactivateExplosiveRockCell(x, y);
         MarkAllDistancesFromExploredFloor(x, y);
 
-        MapNeighbors(x, y, (nx, ny) =>
+        Map8Neighbors(x, y, (nx, ny) =>
         {
-            if (grid[ny, nx].Type == CellType.ExplosiveRock) ActivateExplosiveRockCell(nx, ny);
+            if (grid[ny, nx].WallType == WallType.ExplosiveRock) ActivateExplosiveRockCell(nx, ny);
         });
+        ActivateCollapsingFloorCell(x, y);
     }
 
-    public bool CellHasNeighbourOfType(int x, int y, CellType cellType)
+    public bool CheckNeighbors(int x, int y, Func<CellState, bool> cb)
     {
-        var hasNeighbourOfType = false;
-        MapNeighbors(x, y, (nx, ny) =>
+        var neighborPassesCheck = false;
+        Map8Neighbors(x, y, (nx, ny) =>
         {
-            if (grid[ny, nx].Type == cellType) hasNeighbourOfType = true;
+            if (cb(grid[ny, nx])) neighborPassesCheck = true;
         });
-        return hasNeighbourOfType;
+        return neighborPassesCheck;
     }
 
-    private static void MapNeighbors(int cx, int cy, Action<int, int> neighborAction)
+    public static void Map8Neighbors(int cx, int cy, Action<int, int> neighborAction)
     {
-        for (var i = 0; i < NeighbourXOffsets.Length; i++)
+        MapNeighbors(Neighbour8Offsets, cx, cy, neighborAction);
+    }
+
+    public static void Map4Neighbors(int cx, int cy, Action<int, int> neighborAction)
+    {
+        MapNeighbors(Neighbour4Offsets, cx, cy, neighborAction);
+    }
+
+    private static void MapNeighbors((int[], int[]) neighborOffsets, int cx, int cy, Action<int, int> neighborAction)
+    {
+        var (neighborXOffsets, neighborYOffsets) = neighborOffsets;
+        for (var i = 0; i < neighborXOffsets.Length; i++)
         {
-            var nx = cx + NeighbourXOffsets[i];
-            var ny = cy + NeighbourYOffsets[i];
+            var nx = cx + neighborXOffsets[i];
+            var ny = cy + neighborYOffsets[i];
 
             if (nx < 0 || nx >= GameConfig.GridSize || ny < 0 || ny >= GameConfig.GridSize)
                 continue;
@@ -146,12 +188,12 @@ public class GridState(GameState gameState, CellState[,] grid)
             var (cx, cy) = queue.Dequeue();
             var current = GetCellState(cx, cy);
 
-            MapNeighbors(cx, cy, (nx, ny) =>
+            Map8Neighbors(cx, cy, (nx, ny) =>
             {
                 var neighbour = GetCellState(nx, ny);
 
                 // Set as connected if current distance is 0 and cell is floor or lava
-                if (!CellTypes.GetConfig(neighbour.Type).IsCollideable && neighbour.Type != CellType.Empty &&
+                if (neighbour.WallType == WallType.Empty && neighbour.FloorType != FloorType.Empty &&
                     current.DistanceToExploredFloor == 0 &&
                     neighbour.DistanceToExploredFloor != 0)
                 {

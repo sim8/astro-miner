@@ -18,19 +18,11 @@ public class ProceduralGenViewerRenderer
         { AsteroidLayer.Core, Color.Red }
     };
 
-    private readonly Dictionary<CellType, Color> _cellColors = new()
+    private readonly Dictionary<FloorType, Color> _floorColors = new()
     {
-        { CellType.Diamond, new Color(144, 248, 255) },
-        { CellType.Ruby, new Color(200, 0, 0) },
-        { CellType.SolidRock, new Color(60, 60, 60) },
-        { CellType.LooseRock, new Color(180, 180, 180) },
-        { CellType.Rock, new Color(120, 120, 120) },
-        { CellType.Empty, new Color(0, 0, 0) },
-        { CellType.Floor, new Color(240, 240, 240) },
-        { CellType.Lava, Color.Orange },
-        { CellType.Nickel, Color.DarkGreen },
-        { CellType.Gold, Color.Yellow },
-        { CellType.ExplosiveRock, Color.Purple }
+        { FloorType.Floor, Color.White },
+        { FloorType.Lava, Color.Orange },
+        { FloorType.LavaCracks, Color.Salmon }
     };
 
     private readonly GameState _gameState;
@@ -38,6 +30,18 @@ public class ProceduralGenViewerRenderer
 
 
     private readonly Dictionary<string, Texture2D> _textures;
+
+    private readonly Dictionary<WallType, Color> _wallColors = new()
+    {
+        { WallType.Diamond, new Color(144, 248, 255) },
+        { WallType.Ruby, new Color(200, 0, 0) },
+        { WallType.SolidRock, new Color(60, 60, 60) },
+        { WallType.LooseRock, new Color(180, 180, 180) },
+        { WallType.Rock, new Color(120, 120, 120) },
+        { WallType.Nickel, Color.DarkGreen },
+        { WallType.Gold, Color.Yellow },
+        { WallType.ExplosiveRock, Color.Purple }
+    };
 
     public ProceduralGenViewerRenderer(
         Dictionary<string, Texture2D> textures,
@@ -69,10 +73,15 @@ public class ProceduralGenViewerRenderer
         {
             var cellState = _gameState.Grid.GetCellState(col, row);
 
-            spriteBatch.Draw(_textures["white"], GetGridCellRect(col, row),
-                _cellColors[cellState.Type]);
+            if (cellState.FloorType != FloorType.Empty)
+                spriteBatch.Draw(_textures["white"], GetGridCellRect(col, row),
+                    _floorColors[cellState.FloorType]);
 
-            if (_proceduralGenViewerState.hasToggledView && cellState.Layer != AsteroidLayer.None)
+            if (_proceduralGenViewerState.showWalls && cellState.WallType != WallType.Empty)
+                spriteBatch.Draw(_textures["white"], GetGridCellRect(col, row),
+                    _wallColors[cellState.WallType]);
+
+            if (_proceduralGenViewerState.showLayers && cellState.Layer != AsteroidLayer.None)
                 spriteBatch.Draw(_textures["white"], GetGridCellRect(col, row),
                     _asteroidLayerColors[cellState.Layer] * 0.6f);
         }
