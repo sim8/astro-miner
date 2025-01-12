@@ -113,33 +113,42 @@ public class Renderer
             (col, row) =>
             {
                 var cellState = _gameState.Grid.GetCellState(col, row);
-                if (cellState.FloorType != FloorType.Empty)
-                {
-                    // Always render floor
-                    var floorColor = cellState.Layer == AsteroidLayer.Core ? _floorColorCore :
-                        cellState.Layer == AsteroidLayer.Mantle ? _floorColorMantle : _floorColorCrust;
-                    spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
-                        floorColor);
-                }
+                // if (cellState.FloorType != FloorType.Empty)
+                // {
+                //     // Always render floor
+                //     var floorColor = cellState.Layer == AsteroidLayer.Core ? _floorColorCore :
+                //         cellState.Layer == AsteroidLayer.Mantle ? _floorColorMantle : _floorColorCrust;
+                //     spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
+                //         floorColor);
+                // }
 
-                if (Tilesets.CellIsTilesetType(_gameState, col, row))
-                    foreach (var corner in _cornersInRenderOrder)
+                foreach (var corner in _cornersInRenderOrder)
+                {
+                    // Render floor
+                    var floorQuadrantSourceRect =
+                        Tilesets.GetFloorQuadrantSourceRect(_gameState, col, row, corner);
+                    spriteBatch.Draw(_textures["tileset"],
+                        _viewHelpers.GetVisibleRectForFloorQuadrant(col, row, corner),
+                        floorQuadrantSourceRect,
+                        Color.White);
+
+                    // Render wall
+                    if (Tilesets.CellIsTilesetType(_gameState, col, row))
                     {
                         var dualTilesetSourceRect =
-                            Tilesets.GetCellQuadrantSourceRect(_gameState, col, row, corner);
+                            Tilesets.GetWallQuadrantSourceRect(_gameState, col, row, corner);
 
                         var tintColor = _gameState.Grid.ExplosiveRockCellIsActive(col, row) ? Color.Red :
                             cellState.WallType == WallType.LooseRock ? Color.LightGreen : Color.White;
 
                         spriteBatch.Draw(_textures["tileset"],
-                            _viewHelpers.GetVisibleRectForGridQuadrant(col, row, corner),
+                            _viewHelpers.GetVisibleRectForWallQuadrant(col, row, corner),
                             dualTilesetSourceRect,
                             tintColor);
                     }
-                else if (_gameState.Grid.GetFloorType(col, row) == FloorType.Lava)
-                    spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
-                        Color.Orange);
-                else if (_gameState.Grid.GetFloorType(col, row) == FloorType.LavaCracks)
+                }
+
+                if (_gameState.Grid.GetFloorType(col, row) == FloorType.LavaCracks)
                     spriteBatch.Draw(_textures["cracks"], _viewHelpers.GetVisibleRectForGridCell(col, row),
                         Color.White);
             });

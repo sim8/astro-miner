@@ -20,6 +20,7 @@ public static class Tilesets
     private const int QuadrantTextureSizePx = GameConfig.CellTextureSizePx / 2;
 
     private const int TextureGridWidth = 4;
+    private const int WallTextureGridHeight = 8;
 
     // Define coordinates for each
     private static readonly Dictionary<int, (int, int)> RampKeyToTextureOffset = new()
@@ -78,7 +79,7 @@ public static class Tilesets
     }
 
     // Find the tile to render based on corner's 3 neighbors
-    private static int GetCellQuadrantTileKey(GameState gameState, int x, int y, Corner corner)
+    private static int GetWallQuadrantTileKey(GameState gameState, int x, int y, Corner corner)
     {
         var (topLeftXOffset, topLeftYOffset) = GetTopLeftOffsetFor2X2[corner];
 
@@ -94,16 +95,54 @@ public static class Tilesets
             isBottomRightTileset);
     }
 
+    // Find the tile to render based on corner's 3 neighbors + return texture index within Tileset.png
+    private static (int, int) GetFloorQuadrantTileKeyAndTextureIndex(GameState gameState, int x, int y, Corner corner)
+    {
+        var (topLeftXOffset, topLeftYOffset) = GetTopLeftOffsetFor2X2[corner];
+
+        var twoByTwoX = x + topLeftXOffset;
+        var twoByTwoY = y + topLeftYOffset;
+
+        var topLeft = gameState.Grid.GetFloorType(twoByTwoX, twoByTwoY);
+        var topRight = gameState.Grid.GetFloorType(twoByTwoX + 1, twoByTwoY);
+        var bottomLeft = gameState.Grid.GetFloorType(twoByTwoX, twoByTwoY + 1);
+        var bottomRight = gameState.Grid.GetFloorType(twoByTwoX + 1, twoByTwoY + 1);
+
+        // Dual grid system doesn't normally allow for > 2 textures adjoining. Deriving the texture to use from the neighbors.
+        // When adding more floor types will likely need a priority order for textures + try and ensure they don't adjoin
+        var textureOffset = topLeft == FloorType.Lava || topRight == FloorType.Lava || bottomLeft == FloorType.Lava ||
+                            bottomRight == FloorType.Lava
+            ? 1
+            : 0;
+
+        return (RampKeys.CreateKey( // Needs to take cracks into account. Floor-like?
+            !IsFloorLikeTileset(topLeft),
+            !IsFloorLikeTileset(topRight),
+            !IsFloorLikeTileset(bottomLeft),
+            !IsFloorLikeTileset(bottomRight)
+        ), textureOffset);
+    }
+
+    // TODO a bit weird as we use floor texture for lava cracks (cracks rendered separately)
+    private static bool IsFloorLikeTileset(FloorType floorType)
+    {
+        return floorType == FloorType.Floor || floorType == FloorType.LavaCracks;
+    }
+
+    // High level steps
+    // - get tile key (floor == empty on main tileset)
+    // - choose texture based on if any neighbors are lava
+
     // Find px offset within main texture for a given quadrant
     // TODO save this to CellState
-    private static (int, int) GetCellQuadrantTextureOffset(GameState gameState, int col, int row, Corner corner)
+    private static (int, int) GetWallQuadrantTextureOffset(GameState gameState, int col, int row, Corner corner)
     {
         // Walls tileset has one quadrant's space above each actual quadrant for overlaying texture.
         // Each quadrant is rendered at double height, overlaying the one behind it
         // // TODO - change/centralize this logic? Will need doing for floor tilesets
 
         // For the cell quadrant, work out which tile to use
-        var tileKey = GetCellQuadrantTileKey(gameState, col, row, corner);
+        var tileKey = GetWallQuadrantTileKey(gameState, col, row, corner);
 
         // Get the grid x,y of that tile within the default dual tileset
         var (textureGridX, textureGridY) = RampKeyToTextureOffset[tileKey];
@@ -127,12 +166,43 @@ public static class Tilesets
         return (quadrantX, quadrantY);
     }
 
-    public static Rectangle GetCellQuadrantSourceRect(GameState gameState, int col, int row, Corner corner)
+    private static (int, int) GetFloorQuadrantTextureOffset(GameState gameState, int col, int row, Corner corner)
     {
-        var (x, y) = GetCellQuadrantTextureOffset(gameState, col, row, corner);
+        // Walls tileset has one quadrant's space above each actual quadrant for overlaying texture.
+        // Each quadrant is rendered at double height, overlaying the one behind it
+        // // TODO - change/centralize this logic? Will need doing for floor tilesets
+
+        // For the cell quadrant, work out which tile to use
+        var (tileKey, textureIndex) = GetFloorQuadrantTileKeyAndTextureIndex(gameState, col, row, corner);
+
+        // Get the grid x,y of that tile within the default dual tileset
+        var (textureGridX, textureGridY) = RampKeyToTextureOffset[tileKey];
+
+        var textureTilesetX = textureIndex * TextureGridWidth;
+
+        // Convert those to pixel x,y within the actual texture
+        var tileTexturePxX = (textureTilesetX + textureGridX) * GameConfig.CellTextureSizePx;
+        var tileTexturePxY = (WallTextureGridHeight + textureGridY) * GameConfig.CellTextureSizePx;
+
+        var quadrantX = tileTexturePxX +
+                        (corner is Corner.TopLeft or Corner.BottomLeft ? QuadrantTextureSizePx : 0);
+        var quadrantY = tileTexturePxY +
+                        (corner is Corner.TopLeft or Corner.TopRight ? QuadrantTextureSizePx : 0);
+
+        return (quadrantX, quadrantY);
+    }
+
+    public static Rectangle GetWallQuadrantSourceRect(GameState gameState, int col, int row, Corner corner)
+    {
+        var (x, y) = GetWallQuadrantTextureOffset(gameState, col, row, corner);
 
         // Each tile quadrant has one quadrant above it in texture for any overlaying visuals. Render at double height
-        // TODO - change/centralize this logic? Will need doing for floor tilesets
-        return new Rectangle(x, y, QuadrantTextureSizePx, GameConfig.CellTextureSizePx);
+        return new Rectangle(x, y, QuadrantTextureSizePx, QuadrantTextureSizePx * 2);
+    }
+
+    public static Rectangle GetFloorQuadrantSourceRect(GameState gameState, int col, int row, Corner corner)
+    {
+        var (x, y) = GetFloorQuadrantTextureOffset(gameState, col, row, corner);
+        return new Rectangle(x, y, QuadrantTextureSizePx, QuadrantTextureSizePx);
     }
 }
