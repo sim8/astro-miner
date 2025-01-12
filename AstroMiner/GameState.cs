@@ -51,7 +51,7 @@ public class GameState
 
     public int Seed { get; private set; }
 
-    public int TimeUntilAsteroidExplodesMs { get; private set; }
+    public long MsSinceStart { get; private set; }
 
     public bool IsInMiner => !ActiveEntitiesSortedByDistance.Contains(Player);
 
@@ -81,7 +81,7 @@ public class GameState
         Camera = new CameraState(this);
         ActiveEntitiesSortedByDistance = [Miner];
         _emptyMiningControls = new HashSet<MiningControls>();
-        TimeUntilAsteroidExplodesMs = 5 * 60 * 1000;
+        MsSinceStart = 0;
     }
 
     private void SortActiveEntities()
@@ -107,8 +107,9 @@ public class GameState
             return;
         }
 
-        TimeUntilAsteroidExplodesMs = Math.Max(TimeUntilAsteroidExplodesMs - elapsedMs, 0);
-        if (TimeUntilAsteroidExplodesMs == 0)
+        MsSinceStart += elapsedMs;
+
+        if (MsSinceStart > GameConfig.AsteroidExplodeTimeMs)
         {
             ActiveControllableEntity.IsDead = true;
             return;
