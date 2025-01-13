@@ -1,11 +1,9 @@
-using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace AstroMiner.Renderers;
 
-public class ScrollingBackgroundRenderer(
-    RendererShared shared)
+public class ScrollingBackgroundRenderer
 {
     private const int TextureWidthPx = 64;
     private const int TextureHeightPx = 64;
@@ -16,18 +14,39 @@ public class ScrollingBackgroundRenderer(
     private const int RenderedHeight = TextureHeightPx * Scale;
 
     private const int AnimationTime = 1000;
+    private readonly RendererShared shared;
+
+    public ScrollingBackgroundRenderer(RendererShared shared)
+    {
+        this.shared = shared;
+    }
 
     public void RenderBackground(SpriteBatch spriteBatch)
     {
         var (viewportWidth, viewportHeight) = shared.ViewHelpers.GetViewportSize();
+
         var percentComplete = shared.GameState.MsSinceStart % AnimationTime / (float)AnimationTime;
 
-        Console.WriteLine(percentComplete);
+        var currentOffset = (int)(RenderedHeight * (1f - percentComplete));
 
-        var currentOffset = (int)(RenderedHeight * percentComplete);
+        var numCols = viewportWidth / RenderedWidth + 1;
+        var numRows = viewportHeight / RenderedHeight + 1;
 
-        spriteBatch.Draw(shared.Textures["land-background"],
-            new Rectangle(0, currentOffset, RenderedWidth, RenderedHeight),
-            Color.White);
+        var startY = -currentOffset;
+
+        for (var row = 0; row < numRows; row++)
+        {
+            var yPos = startY + row * RenderedHeight;
+
+            for (var col = 0; col < numCols; col++)
+            {
+                var xPos = col * RenderedWidth;
+                spriteBatch.Draw(
+                    shared.Textures["land-background"],
+                    new Rectangle(xPos, yPos, RenderedWidth, RenderedHeight),
+                    Color.White
+                );
+            }
+        }
     }
 }
