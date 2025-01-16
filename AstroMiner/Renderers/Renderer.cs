@@ -113,14 +113,6 @@ public class Renderer
             (col, row) =>
             {
                 var cellState = _gameState.Grid.GetCellState(col, row);
-                // if (cellState.FloorType != FloorType.Empty)
-                // {
-                //     // Always render floor
-                //     var floorColor = cellState.Layer == AsteroidLayer.Core ? _floorColorCore :
-                //         cellState.Layer == AsteroidLayer.Mantle ? _floorColorMantle : _floorColorCrust;
-                //     spriteBatch.Draw(_textures["white"], _viewHelpers.GetVisibleRectForGridCell(col, row),
-                //         floorColor);
-                // }
 
                 foreach (var corner in _cornersInRenderOrder)
                 {

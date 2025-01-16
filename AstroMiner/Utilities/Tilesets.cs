@@ -9,10 +9,10 @@ namespace AstroMiner.Utilities;
 ///     High level steps of rendering:
 ///     1. Iterate each cell (back to front) and each corner of the cell (back to front)
 ///     2. Find the tile to render based on corner's 3 neighbors
-///     3. Render single quadrant (corner of cell)
+///     3. Render single floor + wall quadrant (corner of cell)
 ///     - Only quadrant rendered as opposed to whole tile, as neighboring cell
 ///     might be different type (but shares based rock design)
-///     - Each quadrant rendered two quadrants high, leaving room for overlaying
+///     - Each wall quadrant rendered two quadrants high, leaving room for overlaying
 ///     texture at the top
 /// </summary>
 public static class Tilesets
