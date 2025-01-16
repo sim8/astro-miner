@@ -5,13 +5,16 @@ namespace AstroMiner.Renderers;
 
 public class ScrollingBackgroundRenderer
 {
-    private const int TextureWidthPx = 64;
-    private const int TextureHeightPx = 64;
+    private const int LandTextureWidthPx = 64;
+    private const int LandTextureHeightPx = 64;
+
+    private const int CloudTextureWidthPx = 128;
+    private const int CloudTextureHeightPx = 128;
 
     private const int Scale = 4;
 
-    private const int RenderedWidth = TextureWidthPx * Scale;
-    private const int RenderedHeight = TextureHeightPx * Scale;
+    private const int RenderedWidth = LandTextureWidthPx * Scale;
+    private const int RenderedHeight = LandTextureHeightPx * Scale;
 
     private const int AnimationTime = 1000;
     private readonly RendererShared shared;
