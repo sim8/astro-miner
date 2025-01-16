@@ -4,9 +4,9 @@
 
 - Max 3 dynamite
 - Explosive cells
-  - Try only explode if drill directly or within blast radius
-  - Almost invisible if not surfaced yet?
-  - See how that feels - could add timed random exploding
+    - Try only explode if drill directly or within blast radius
+    - Almost invisible if not surfaced yet?
+    - See how that feels - could add timed random exploding
 
 ## Gameplay - asteroid
 
@@ -66,10 +66,9 @@
 ## Rendering / art
 
 - Fix zoom in/out!
-  - Have another go at pixel perfection
-  - Subpixel rendering? Movement is also kind of janky
+    - Have another go at pixel perfection
+    - Subpixel rendering? Movement is also kind of janky
 - Player animation
-- Ground tileset
 - Clouds / background animation
 - Drilling animation
 - Darker overlay near center

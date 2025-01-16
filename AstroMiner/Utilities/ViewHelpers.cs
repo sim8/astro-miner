@@ -39,7 +39,7 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
             ConvertGridUnitsToVisiblePx(heightOnGrid));
     }
 
-    public Rectangle GetVisibleRectForGridQuadrant(int gridX, int gridY, Corner corner)
+    public Rectangle GetVisibleRectForWallQuadrant(int gridX, int gridY, Corner corner)
     {
         // Quadrants are rendered at double height, with top half overlaying quadrant behind
         var isTopQuadrant = corner is Corner.TopLeft or Corner.TopRight;
@@ -48,6 +48,14 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         // All quadrants rendered - .5 y to account for space in texture
         var quadrantY = isTopQuadrant ? gridY - 0.5f : gridY;
         return GetVisibleRectForGridCell(quadrantX, quadrantY, 0.5f);
+    }
+
+    public Rectangle GetVisibleRectForFloorQuadrant(int gridX, int gridY, Corner corner)
+    {
+        var quadrantX = corner is Corner.TopRight or Corner.BottomRight ? gridX + 0.5f : gridX;
+        var quadrantY = corner is Corner.TopLeft or Corner.TopRight ? gridY : gridY + 0.5f;
+
+        return GetVisibleRectForGridCell(quadrantX, quadrantY, 0.5f, 0.5f);
     }
 
     private float ConvertGridUnitsToVisiblePx(float gridUnits)

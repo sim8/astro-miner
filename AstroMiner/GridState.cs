@@ -31,6 +31,8 @@ public class CellState(WallType wallType, FloorType floorType, AsteroidLayer lay
 /// </summary>
 public class GridState(GameState gameState, CellState[,] grid)
 {
+    private static readonly CellState _outOfBoundsCell = new(WallType.Empty, FloorType.Empty, AsteroidLayer.None);
+
     private static readonly (int[], int[]) Neighbour8Offsets = (
         new[] { -1, 0, 1, 1, 1, 0, -1, -1 },
         new[] { -1, -1, -1, 0, 1, 1, 1, 0 }
@@ -87,7 +89,7 @@ public class GridState(GameState gameState, CellState[,] grid)
     public CellState GetCellState(int x, int y)
     {
         if (!ViewHelpers.IsValidGridPosition(x, y))
-            throw new IndexOutOfRangeException();
+            return _outOfBoundsCell;
         return grid[y, x];
     }
 
