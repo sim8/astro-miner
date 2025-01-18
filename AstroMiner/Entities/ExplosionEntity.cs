@@ -33,9 +33,14 @@ public class ExplosionEntity : Entity
         foreach (var (x, y) in explodedCells)
             // If x,y = gridPos, already triggered explosion
             if (_gameState.Grid.GetWallType(x, y) == WallType.ExplosiveRock && (x, y) != gridPos)
+            {
                 _gameState.Grid.ActivateExplosiveRockCell(x, y, 300);
+            }
             else
+            {
                 _gameState.Grid.ClearWall(x, y);
+                _gameState.Grid.ActivateCollapsingFloorCell(x, y);
+            }
 
         _hasExploded = true;
     }

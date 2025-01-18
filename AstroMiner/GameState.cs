@@ -41,6 +41,7 @@ public class GameState
     public List<Entity> ActiveEntitiesSortedByDistance;
     public CameraState Camera;
     public CloudManager CloudManager;
+    public CollapsingFloorTriggerer CollapsingFloorTriggerer;
     public List<(int x, int y)> EdgeCells;
     public GridState Grid;
     public Inventory Inventory;
@@ -84,6 +85,7 @@ public class GameState
         Inventory = new Inventory();
         EdgeCells = UserInterfaceHelpers.GetAsteroidEdgeCells(Grid);
         Camera = new CameraState(this);
+        CollapsingFloorTriggerer = new CollapsingFloorTriggerer(this);
         ActiveEntitiesSortedByDistance = [Miner];
         _emptyMiningControls = new HashSet<MiningControls>();
         MsSinceStart = 0;
@@ -152,5 +154,7 @@ public class GameState
         Camera.Update(elapsedMs);
 
         CloudManager.Update(elapsedMs);
+
+        CollapsingFloorTriggerer.Update(elapsedMs);
     }
 }

@@ -130,13 +130,12 @@ public class GridState(GameState gameState, CellState[,] grid)
         {
             if (grid[ny, nx].WallType == WallType.ExplosiveRock) ActivateExplosiveRockCell(nx, ny);
         });
-        ActivateCollapsingFloorCell(x, y);
     }
 
     public bool CheckNeighbors(int x, int y, Func<CellState, bool> cb)
     {
         var neighborPassesCheck = false;
-        Map8Neighbors(x, y, (nx, ny) =>
+        Map4Neighbors(x, y, (nx, ny) =>
         {
             if (cb(grid[ny, nx])) neighborPassesCheck = true;
         });
