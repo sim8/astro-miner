@@ -5,6 +5,7 @@ using AstroMiner.Definitions;
 using AstroMiner.Entities;
 using AstroMiner.ProceduralGen;
 using AstroMiner.Utilities;
+using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
 
@@ -35,23 +36,27 @@ public enum Direction
 
 public class GameState
 {
+    public readonly GraphicsDeviceManager Graphics;
     private HashSet<MiningControls> _emptyMiningControls;
     public List<Entity> ActiveEntitiesSortedByDistance;
     public CameraState Camera;
+    public CloudManager CloudManager;
     public List<(int x, int y)> EdgeCells;
     public GridState Grid;
     public Inventory Inventory;
     public MinerEntity Miner;
     public PlayerEntity Player;
 
-    public GameState()
+    public GameState(
+        GraphicsDeviceManager graphics)
     {
+        Graphics = graphics;
         Initialize();
     }
 
     public int Seed { get; private set; }
 
-    public int TimeUntilAsteroidExplodesMs { get; private set; }
+    public long MsSinceStart { get; private set; }
 
     public bool IsInMiner => !ActiveEntitiesSortedByDistance.Contains(Player);
 
@@ -81,7 +86,8 @@ public class GameState
         Camera = new CameraState(this);
         ActiveEntitiesSortedByDistance = [Miner];
         _emptyMiningControls = new HashSet<MiningControls>();
-        TimeUntilAsteroidExplodesMs = 5 * 60 * 1000;
+        MsSinceStart = 0;
+        CloudManager = new CloudManager(this);
     }
 
     private void SortActiveEntities()
@@ -107,8 +113,9 @@ public class GameState
             return;
         }
 
-        TimeUntilAsteroidExplodesMs = Math.Max(TimeUntilAsteroidExplodesMs - elapsedMs, 0);
-        if (TimeUntilAsteroidExplodesMs == 0)
+        MsSinceStart += elapsedMs;
+
+        if (MsSinceStart > GameConfig.AsteroidExplodeTimeMs)
         {
             ActiveControllableEntity.IsDead = true;
             return;
@@ -143,5 +150,7 @@ public class GameState
         SortActiveEntities(); // TODO only call when needed? Seems error prone
 
         Camera.Update(elapsedMs);
+
+        CloudManager.Update(elapsedMs);
     }
 }

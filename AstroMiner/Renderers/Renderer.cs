@@ -28,6 +28,7 @@ public class Renderer
     private readonly MinerRenderer _minerRenderer;
     private readonly BlendState _multiplyBlendState;
     private readonly PlayerRenderer _playerRenderer;
+    private readonly ScrollingBackgroundRenderer _scrollingBackgroundRenderer;
     private readonly RendererShared _shared;
     private readonly Dictionary<string, Texture2D> _textures;
     private readonly UserInterfaceRenderer _userInterfaceRenderer;
@@ -52,6 +53,7 @@ public class Renderer
         _explosionRenderer = new ExplosionRenderer(_shared);
         _userInterfaceRenderer = new UserInterfaceRenderer(_shared);
         _gradientOverlayRenderer = new GradientOverlayRenderer(_shared);
+        _scrollingBackgroundRenderer = new ScrollingBackgroundRenderer(_shared);
         _multiplyBlendState = new BlendState();
         _multiplyBlendState.ColorBlendFunction = BlendFunction.Add;
         _multiplyBlendState.ColorSourceBlend = Blend.DestinationColor;
@@ -108,6 +110,8 @@ public class Renderer
 
     private void RenderScene(SpriteBatch spriteBatch)
     {
+        _scrollingBackgroundRenderer.RenderBackground(spriteBatch);
+
         LoopVisibleCells(
             1, // Account for textures with vertical overlap
             (col, row) =>

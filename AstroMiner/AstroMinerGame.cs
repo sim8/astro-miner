@@ -12,10 +12,10 @@ public class AstroMinerGame : Game
     private readonly FrameCounter _frameCounter = new();
 
     private readonly GraphicsDeviceManager _graphics;
+    private readonly ControlMapper<MiningControls> _miningControlMapper = new();
 
     private readonly Dictionary<string, Texture2D> _textures = new();
     private GameState _gameState;
-    private readonly ControlMapper<MiningControls> _miningControlMapper = new();
     private Renderer _renderer;
     private SpriteBatch _spriteBatch;
 
@@ -33,7 +33,7 @@ public class AstroMinerGame : Game
 
     protected override void Initialize()
     {
-        _gameState = new GameState();
+        _gameState = new GameState(_graphics);
         _renderer = new Renderer(_graphics, _textures, _gameState, _frameCounter);
         Window.ClientSizeChanged += _renderer.HandleWindowResize;
         InitializeMiningControls();
@@ -74,6 +74,8 @@ public class AstroMinerGame : Game
         LoadTexture("directional-light");
         LoadTexture("dynamite");
         LoadTexture("explosion");
+        LoadTexture("cloud-background");
+        LoadTexture("land-background");
     }
 
     protected override void Update(GameTime gameTime)

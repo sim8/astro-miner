@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using AstroMiner.Definitions;
 using AstroMiner.Entities;
@@ -12,7 +13,7 @@ public class UserInterfaceRenderer(
 {
     public void RenderUserInterface(SpriteBatch spriteBatch, FrameCounter frameCounter)
     {
-        var timeLeft = shared.GameState.TimeUntilAsteroidExplodesMs;
+        var timeLeft = Math.Max(GameConfig.AsteroidExplodeTimeMs - shared.GameState.MsSinceStart, 0);
         var minutes = timeLeft / 60000;
         var seconds = timeLeft % 60000 / 1000;
         shared.RenderString(spriteBatch, 0, 0, minutes.ToString("D2") + " " + seconds.ToString("D2"), 6);
