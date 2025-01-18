@@ -33,7 +33,7 @@ public class AstroMinerGame : Game
 
     protected override void Initialize()
     {
-        _gameState = new GameState();
+        _gameState = new GameState(_graphics);
         _renderer = new Renderer(_graphics, _textures, _gameState, _frameCounter);
         Window.ClientSizeChanged += _renderer.HandleWindowResize;
         InitializeMiningControls();

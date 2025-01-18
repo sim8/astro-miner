@@ -5,6 +5,7 @@ using AstroMiner.Definitions;
 using AstroMiner.Entities;
 using AstroMiner.ProceduralGen;
 using AstroMiner.Utilities;
+using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
 
@@ -35,17 +36,21 @@ public enum Direction
 
 public class GameState
 {
+    public readonly GraphicsDeviceManager Graphics;
     private HashSet<MiningControls> _emptyMiningControls;
     public List<Entity> ActiveEntitiesSortedByDistance;
     public CameraState Camera;
+    public CloudManager CloudManager;
     public List<(int x, int y)> EdgeCells;
     public GridState Grid;
     public Inventory Inventory;
     public MinerEntity Miner;
     public PlayerEntity Player;
 
-    public GameState()
+    public GameState(
+        GraphicsDeviceManager graphics)
     {
+        Graphics = graphics;
         Initialize();
     }
 
@@ -82,6 +87,7 @@ public class GameState
         ActiveEntitiesSortedByDistance = [Miner];
         _emptyMiningControls = new HashSet<MiningControls>();
         MsSinceStart = 0;
+        CloudManager = new CloudManager(this);
     }
 
     private void SortActiveEntities()
@@ -144,5 +150,7 @@ public class GameState
         SortActiveEntities(); // TODO only call when needed? Seems error prone
 
         Camera.Update(elapsedMs);
+
+        CloudManager.Update(elapsedMs);
     }
 }

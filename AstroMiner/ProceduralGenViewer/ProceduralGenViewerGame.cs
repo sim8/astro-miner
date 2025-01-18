@@ -43,7 +43,7 @@ public class ProceduralGenViewerGame : Game
 
     protected override void Initialize()
     {
-        _gameState = new GameState();
+        _gameState = new GameState(_graphics);
         _renderer = new ProceduralGenViewerRenderer(_textures, _gameState, _proceduralGenViewerState);
         InitializeControls();
         base.Initialize();

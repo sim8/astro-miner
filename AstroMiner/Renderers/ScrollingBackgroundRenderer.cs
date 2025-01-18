@@ -1,28 +1,20 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace AstroMiner.Renderers;
 
-public class ScrollingBackgroundRenderer
+public class ScrollingBackgroundRenderer(RendererShared shared)
 {
     private const int LandTextureWidthPx = 64;
     private const int LandTextureHeightPx = 64;
-
-    private const int CloudTextureWidthPx = 128;
-    private const int CloudTextureHeightPx = 128;
 
     private const int Scale = 4;
 
     private const int RenderedWidth = LandTextureWidthPx * Scale;
     private const int RenderedHeight = LandTextureHeightPx * Scale;
 
-    private const int AnimationTime = 1000;
-    private readonly RendererShared shared;
-
-    public ScrollingBackgroundRenderer(RendererShared shared)
-    {
-        this.shared = shared;
-    }
+    private const int AnimationTime = 1300;
 
     public void RenderBackground(SpriteBatch spriteBatch)
     {
@@ -32,8 +24,8 @@ public class ScrollingBackgroundRenderer
 
         var currentOffset = (int)(RenderedHeight * (1f - percentComplete));
 
-        var numCols = viewportWidth / RenderedWidth + 1;
-        var numRows = viewportHeight / RenderedHeight + 1;
+        var numCols = (int)Math.Ceiling(viewportWidth / (double)RenderedWidth) + 1;
+        var numRows = (int)Math.Ceiling(viewportHeight / (double)RenderedHeight) + 1;
 
         var startY = -currentOffset;
 
@@ -51,5 +43,25 @@ public class ScrollingBackgroundRenderer
                 );
             }
         }
+
+        RenderClouds(spriteBatch);
+    }
+
+    private void RenderClouds(SpriteBatch spriteBatch)
+    {
+        foreach (var cloud in shared.GameState.CloudManager.CloudsBg)
+            spriteBatch.Draw(
+                shared.Textures["cloud-background"],
+                new Rectangle((int)cloud.X, (int)cloud.Y, CloudManager.BackgroundCloudSizePx,
+                    CloudManager.BackgroundCloudSizePx),
+                Color.White
+            );
+        foreach (var cloud in shared.GameState.CloudManager.CloudsFg)
+            spriteBatch.Draw(
+                shared.Textures["cloud-background"],
+                new Rectangle((int)cloud.X, (int)cloud.Y, CloudManager.ForegroundCloudSizePx,
+                    CloudManager.ForegroundCloudSizePx),
+                Color.White
+            );
     }
 }
