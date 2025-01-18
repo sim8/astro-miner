@@ -84,7 +84,6 @@ public class CloudManager
     {
         var size = isForeground ? ForegroundCloudSizePx : BackgroundCloudSizePx;
         var xPos = (float)(_rng.NextDouble() * (_gameState.Graphics.GraphicsDevice.Viewport.Width + size)) - size;
-        Console.WriteLine(xPos);
 
         var yPos = -size;
 
