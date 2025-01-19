@@ -7,7 +7,8 @@ namespace AstroMiner.Entities;
 
 public class MinerEntity(GameState gameState) : MiningControllableEntity(gameState)
 {
-    private const float ReelingMaxSpeed = 13f;
+    private const float ReelingBaseSpeed = 8f;
+    private const float ReelingMaxSpeed = 16f;
     private bool _grappleTargetIsValid;
 
     private bool _prevPressedUsedGrapple;
@@ -75,9 +76,16 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
     protected override void UpdateSpeed(Direction? selectedDirection, int elapsedGameTimeMs)
     {
         if (IsReelingIn)
-            CurrentSpeed = ReelingMaxSpeed;
+        {
+            CurrentSpeed = Math.Max(ReelingBaseSpeed, CurrentSpeed);
+            // Gradually ramp up to max reeling speed
+            var speedIncrease = (ReelingMaxSpeed - ReelingBaseSpeed) * (elapsedGameTimeMs / 5000f);
+            CurrentSpeed = Math.Min(ReelingMaxSpeed, CurrentSpeed + speedIncrease);
+        }
         else
+        {
             base.UpdateSpeed(selectedDirection, elapsedGameTimeMs);
+        }
     }
 
     public override void Update(int elapsedMs, HashSet<MiningControls> activeMiningControls)
