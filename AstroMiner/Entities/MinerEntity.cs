@@ -27,7 +27,7 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
 
     public float DistanceToTarget => GrappleTarget.HasValue ? Vector2.Distance(FrontPosition, GrappleTarget.Value) : 0f;
 
-    private bool IsReelingIn => GrapplePercentToTarget == 1f;
+    private bool IsReelingIn => GrapplePercentToTarget == 1f && _grappleTargetIsValid;
 
     public override void Disembark()
     {
@@ -89,6 +89,8 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
             var grappleTravelDistance = elapsedMs / 20f;
             GrapplePercentToTarget =
                 Math.Min(1f, GrapplePercentToTarget + grappleTravelDistance / DistanceToTarget);
+
+            if (GrapplePercentToTarget == 1f && !_grappleTargetIsValid) ResetGrapple();
         }
         else if (DistanceToTarget < 0.1f)
         {
