@@ -62,7 +62,6 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
                 // TODO set to far side of cell (if under max)
                 _grappleTargetIsValid = true;
                 GrappleTarget = targetToCheck;
-                Console.WriteLine(GrappleTarget);
             }
 
             // If no valid grapple targets, still use GrappleTarget for animation
