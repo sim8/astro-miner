@@ -44,6 +44,8 @@ public class ControllableEntity : Entity
 
     public Direction Direction { get; private set; } = Direction.Top;
 
+    public Vector2 FrontPosition => CenterPosition + GetDirectionalVector(GridBoxSize / 2f, Direction);
+
     public void Initialize(Vector2 pos)
     {
         Position = pos;

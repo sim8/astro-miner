@@ -83,6 +83,14 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
             ConvertTexturePxToVisiblePx(textureHeight));
     }
 
+    public Rectangle GetVisibleRectForObject(Vector2 objectPos, float gridWidth, float gridHeight)
+    {
+        var (xPx, yPx) = GridPosToDisplayedPx(objectPos);
+        var width = ConvertGridUnitsToVisiblePx(gridWidth);
+        var height = ConvertGridUnitsToVisiblePx(gridHeight);
+        return AdjustRectForCamera(xPx, yPx, width, height);
+    }
+
     private (float, float) GridPosToDisplayedPx(Vector2 gridPos)
     {
         return (ConvertGridUnitsToVisiblePx(gridPos.X), ConvertGridUnitsToVisiblePx(gridPos.Y));

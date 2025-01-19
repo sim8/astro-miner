@@ -7,11 +7,11 @@ namespace AstroMiner.Entities;
 
 public class MinerEntity(GameState gameState) : MiningControllableEntity(gameState)
 {
-    private float _grapplePercentToTarget;
-    private Vector2? _grappleTarget;
     private bool _grappleTargetIsValid;
 
     private bool _prevPressedUsedGrapple;
+    public float GrapplePercentToTarget;
+    public Vector2? GrappleTarget;
     protected override bool CanAddToInventory { get; } = false;
     protected override float MaxSpeed => 5f;
     protected override int TimeToReachMaxSpeedMs { get; } = 1200;
@@ -21,7 +21,9 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
 
     protected override float DrillingWidth { get; } = 0.9f;
 
-    private bool IsReelingIn => _grapplePercentToTarget == 1f;
+    public float DistanceToTarget => GrappleTarget.HasValue ? Vector2.Distance(Position, GrappleTarget.Value) : 0f;
+
+    private bool IsReelingIn => GrapplePercentToTarget == 1f;
 
     public override void Disembark()
     {
@@ -31,16 +33,16 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
 
     private void ResetGrapple()
     {
-        _grappleTarget = null;
+        GrappleTarget = null;
         _grappleTargetIsValid = false;
-        _grapplePercentToTarget = 0f;
+        GrapplePercentToTarget = 0f;
     }
 
     private void SetGrappleTarget()
     {
         // TODO collision detection etc. Should "walk" until max or wall and return max
         var offset = GetDirectionalVector(GameConfig.MaxGrappleLength, Direction);
-        _grappleTarget = Position + offset;
+        GrappleTarget = Position + offset;
         _grappleTargetIsValid = true;
     }
 
@@ -48,24 +50,22 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
     {
         if (!_prevPressedUsedGrapple) SetGrappleTarget();
 
-        if (!_grappleTarget.HasValue) return;
+        if (!GrappleTarget.HasValue) return;
 
-        if (_grappleTarget.Value.X != Position.X && _grappleTarget.Value.Y != Position.Y)
+        if (GrappleTarget.Value.X != Position.X && GrappleTarget.Value.Y != Position.Y)
         {
             // Has diverged from straight line
             ResetGrapple();
             return;
         }
 
-        var distanceToTarget = Vector2.Distance(Position, _grappleTarget.Value);
-
         if (!IsReelingIn)
         {
-            var grappleTravelDistance = elapsedMs / 100f;
-            _grapplePercentToTarget =
-                Math.Min(1f, _grapplePercentToTarget + grappleTravelDistance / distanceToTarget);
+            var grappleTravelDistance = elapsedMs / 20f;
+            GrapplePercentToTarget =
+                Math.Min(1f, GrapplePercentToTarget + grappleTravelDistance / DistanceToTarget);
         }
-        else if (distanceToTarget < 0.1f)
+        else if (DistanceToTarget < 0.1f)
         {
             ResetGrapple();
         }
