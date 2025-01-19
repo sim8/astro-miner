@@ -62,3 +62,12 @@ public static class WallTypes
         return config;
     }
 }
+
+public static class FloorTypes
+{
+    // TODO move into config?
+    public static bool IsFloorLikeTileset(FloorType floorType)
+    {
+        return floorType == FloorType.Floor || floorType == FloorType.LavaCracks;
+    }
+}

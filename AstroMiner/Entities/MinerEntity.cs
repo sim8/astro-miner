@@ -25,7 +25,7 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
 
     protected override float DrillingWidth { get; } = 0.9f;
 
-    public float DistanceToTarget => GrappleTarget.HasValue ? Vector2.Distance(Position, GrappleTarget.Value) : 0f;
+    public float DistanceToTarget => GrappleTarget.HasValue ? Vector2.Distance(FrontPosition, GrappleTarget.Value) : 0f;
 
     private bool IsReelingIn => GrapplePercentToTarget == 1f;
 
@@ -45,11 +45,30 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
 
     private void SetGrappleTarget()
     {
-        // TODO collision detection etc. Should "walk" until max or wall and return max
-        var offset = DirectionHelpers.GetDirectionalVector(GameConfig.MaxGrappleLength, Direction);
-        GrappleTarget = Position + offset;
+        var minGrappleLength = 1;
         _grappleDirection = Direction;
-        _grappleTargetIsValid = true;
+
+        for (var i = minGrappleLength; i <= GameConfig.MaxGrappleLength; i++)
+        {
+            var targetToCheck = FrontPosition + DirectionHelpers.GetDirectionalVector(i, Direction);
+            var cellState = gameState.Grid.GetCellState(targetToCheck);
+
+            // Collision, early return
+            if (cellState.WallType != WallType.Empty) return;
+
+            // If is valid target, set target
+            if (FloorTypes.IsFloorLikeTileset(cellState.FloorType))
+            {
+                // TODO set to far side of cell (if under max)
+                _grappleTargetIsValid = true;
+                GrappleTarget = targetToCheck;
+                Console.WriteLine(GrappleTarget);
+            }
+
+            // If no valid grapple targets, still use GrappleTarget for animation
+            // to show checked cells
+            if (!_grappleTargetIsValid) GrappleTarget = targetToCheck;
+        }
     }
 
     private void UseGrapple(int elapsedMs)

@@ -10,7 +10,7 @@ namespace AstroMiner.Entities;
 public class ControllableEntity : Entity
 {
     // If speed exceeds max, gradually ramp back down
-    private const float ExcessSpeedLossPerSecond = 1f;
+    private const float ExcessSpeedLossPerSecond = 3f;
 
     private readonly Dictionary<MiningControls, Direction> _directionsControlsMapping = new()
     {
