@@ -17,7 +17,7 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
     public float GrapplePercentToTarget;
     public Vector2? GrappleTarget;
     protected override bool CanAddToInventory { get; } = false;
-    protected override float MaxSpeed => 5f;
+    protected override float MaxSpeed => 4f;
     protected override int TimeToReachMaxSpeedMs { get; } = 1200;
     protected override float MaxHealth => GameConfig.MinerMaxHealth;
     protected override int TimeToStopMs { get; } = 400;
