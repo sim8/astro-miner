@@ -10,6 +10,7 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
 {
     private const float ReelingBaseSpeed = 8f;
     private const float ReelingMaxSpeed = 16f;
+    private Direction? _grappleDirection;
     private bool _grappleTargetIsValid;
 
     private bool _prevPressedUsedGrapple;
@@ -37,6 +38,7 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
     private void ResetGrapple()
     {
         GrappleTarget = null;
+        _grappleDirection = null;
         _grappleTargetIsValid = false;
         GrapplePercentToTarget = 0f;
     }
@@ -46,6 +48,7 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
         // TODO collision detection etc. Should "walk" until max or wall and return max
         var offset = DirectionHelpers.GetDirectionalVector(GameConfig.MaxGrappleLength, Direction);
         GrappleTarget = Position + offset;
+        _grappleDirection = Direction;
         _grappleTargetIsValid = true;
     }
 
@@ -55,7 +58,7 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
 
         if (!GrappleTarget.HasValue) return;
 
-        if (GrappleTarget.Value.X != Position.X && GrappleTarget.Value.Y != Position.Y)
+        if (Direction != _grappleDirection)
         {
             // Has diverged from straight line
             ResetGrapple();
