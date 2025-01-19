@@ -18,7 +18,7 @@ public class ControllableEntity : Entity
     };
 
     protected readonly GameState GameState;
-    private float _currentSpeed;
+    protected float CurrentSpeed;
 
     public ControllableEntity(GameState gameState)
     {
@@ -91,6 +91,8 @@ public class ControllableEntity : Entity
         return false;
     }
 
+    // TODO move to entity
+    // Spin up entity in 
     private bool ApplyVectorToPosIfNoCollisions(Vector2 vector)
     {
         var newVector = Position + vector;
@@ -126,8 +128,10 @@ public class ControllableEntity : Entity
             }
         }
 
-        var direction = GetDirectionFromActiveControls(activeMiningControls);
-        UpdateMinerPosAndSpeed(direction, elapsedMs);
+        var selectedDirection = GetDirectionFromActiveControls(activeMiningControls);
+        Direction = selectedDirection ?? Direction;
+        UpdateSpeed(selectedDirection, elapsedMs);
+        UpdatePos(elapsedMs);
     }
 
     private void CheckIfShouldFallOrTakeDamage(int elapsedMs)
@@ -150,32 +154,35 @@ public class ControllableEntity : Entity
         if (allCellsAreEmpty) IsOffAsteroid = true;
     }
 
-    private void UpdateMinerPosAndSpeed(Direction? selectedDirection, int elapsedGameTimeMs)
+    protected virtual void UpdateSpeed(Direction? selectedDirection, int elapsedGameTimeMs)
     {
-        Direction = selectedDirection ?? Direction;
-
         // Decelerate if nothing pressed
-        if (!selectedDirection.HasValue && _currentSpeed > 0)
-            _currentSpeed = Math.Max(0,
-                _currentSpeed - MaxSpeed * (elapsedGameTimeMs / (float)TimeToStopMs));
+        if (!selectedDirection.HasValue && CurrentSpeed > 0)
+            CurrentSpeed = Math.Max(0,
+                CurrentSpeed - MaxSpeed * (elapsedGameTimeMs / (float)TimeToStopMs));
 
-        if (_currentSpeed > 0 || selectedDirection.HasValue)
+        if ((CurrentSpeed > 0 || selectedDirection.HasValue) && selectedDirection.HasValue)
+            CurrentSpeed = Math.Min(MaxSpeed,
+                CurrentSpeed + MaxSpeed * (elapsedGameTimeMs / (float)TimeToReachMaxSpeedMs));
+    }
+
+    private void UpdatePos(int elapsedGameTimeMs)
+    {
+        if (CurrentSpeed > 0)
         {
-            var hasCollisions = UpdateMinerPos(elapsedGameTimeMs);
+            var distance = CurrentSpeed * (elapsedGameTimeMs / 1000f);
+            var movement = GetDirectionalVector(distance, Direction);
+
+            var hasCollisions = !ApplyVectorToPosIfNoCollisions(movement);
             if (hasCollisions)
-                _currentSpeed = 0;
-            // Accelerate if direction pressed
-            else if (selectedDirection.HasValue)
-                _currentSpeed = Math.Min(MaxSpeed,
-                    _currentSpeed + MaxSpeed * (elapsedGameTimeMs / (float)TimeToReachMaxSpeedMs));
+                CurrentSpeed = 0;
         }
     }
 
-    private bool UpdateMinerPos(int elapsedGameTimeMs)
+    // TODO move to util?
+    public static Vector2 GetDirectionalVector(float distance, Direction direction)
     {
-        var distance = _currentSpeed * (elapsedGameTimeMs / 1000f);
-
-        var movement = Direction switch
+        return direction switch
         {
             Direction.Top => new Vector2(0, -distance),
             Direction.Right => new Vector2(distance, 0),
@@ -183,10 +190,7 @@ public class ControllableEntity : Entity
             Direction.Left => new Vector2(-distance, 0),
             _ => Vector2.Zero
         };
-
-        return !ApplyVectorToPosIfNoCollisions(movement);
     }
-
 
     public Direction GetRotatedDirection(Direction rotation)
     {

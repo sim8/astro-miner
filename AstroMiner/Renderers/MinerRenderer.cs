@@ -46,4 +46,9 @@ public class MinerRenderer(
 
         return shared.Textures["tracks-1"];
     }
+
+    private void RenderGrapple()
+    {
+        // if ()
+    }
 }

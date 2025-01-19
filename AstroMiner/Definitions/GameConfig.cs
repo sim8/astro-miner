@@ -13,6 +13,7 @@ public static class GameConfig
     public const int CellTextureSizePx = 32;
     public const int GridSize = 200;
     public const float MinEmbarkingDistance = 1.2f;
+    public const float MaxGrappleLength = 4f;
 
     public const int AsteroidExplodeTimeMs = 1000 * 60 * 5 + 999;
 
