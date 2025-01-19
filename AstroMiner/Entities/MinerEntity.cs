@@ -48,9 +48,21 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
         var minGrappleLength = 1;
         _grappleDirection = Direction;
 
+        var distanceToEdgeOfCell = Direction switch
+        {
+            Direction.Top => FrontPosition.Y - (int)FrontPosition.Y,
+            Direction.Right => (int)FrontPosition.X + 1 - FrontPosition.X,
+            Direction.Bottom => (int)FrontPosition.Y + 1 - FrontPosition.Y,
+            Direction.Left => FrontPosition.X - (int)FrontPosition.X,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
         for (var i = minGrappleLength; i <= GameConfig.MaxGrappleLength; i++)
         {
-            var targetToCheck = FrontPosition + DirectionHelpers.GetDirectionalVector(i, Direction);
+            var distanceToNearEdgeOfCell = Math.Max(0, distanceToEdgeOfCell - 0.1f);
+            var distance = Math.Min(GameConfig.MaxGrappleLength, i + distanceToNearEdgeOfCell);
+
+            var targetToCheck = FrontPosition + DirectionHelpers.GetDirectionalVector(distance, Direction);
             var cellState = gameState.Grid.GetCellState(targetToCheck);
 
             // Collision, early return
