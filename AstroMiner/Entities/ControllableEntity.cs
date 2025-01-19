@@ -47,7 +47,7 @@ public class ControllableEntity : Entity
 
     public Direction Direction { get; private set; } = Direction.Top;
 
-    public Vector2 FrontPosition => CenterPosition + GetDirectionalVector(GridBoxSize / 2f, Direction);
+    public Vector2 FrontPosition => CenterPosition + DirectionHelpers.GetDirectionalVector(GridBoxSize / 2f, Direction);
 
     public void Initialize(Vector2 pos)
     {
@@ -134,6 +134,10 @@ public class ControllableEntity : Entity
         }
 
         var selectedDirection = GetDirectionFromActiveControls(activeMiningControls);
+
+        // zero speed if turn 180
+        if (selectedDirection.HasValue && selectedDirection.Value == DirectionHelpers.GetOppositeDirection(Direction))
+            CurrentSpeed = 0f;
         Direction = selectedDirection ?? Direction;
         UpdateSpeed(selectedDirection, elapsedMs);
         UpdatePos(elapsedMs);
@@ -183,7 +187,7 @@ public class ControllableEntity : Entity
         if (CurrentSpeed > 0)
         {
             var distance = CurrentSpeed * (elapsedGameTimeMs / 1000f);
-            var movement = GetDirectionalVector(distance, Direction);
+            var movement = DirectionHelpers.GetDirectionalVector(distance, Direction);
 
             var hasCollisions = !ApplyVectorToPosIfNoCollisions(movement);
             if (hasCollisions)
@@ -191,18 +195,6 @@ public class ControllableEntity : Entity
         }
     }
 
-    // TODO move to util?
-    public static Vector2 GetDirectionalVector(float distance, Direction direction)
-    {
-        return direction switch
-        {
-            Direction.Top => new Vector2(0, -distance),
-            Direction.Right => new Vector2(distance, 0),
-            Direction.Bottom => new Vector2(0, distance),
-            Direction.Left => new Vector2(-distance, 0),
-            _ => Vector2.Zero
-        };
-    }
 
     public Direction GetRotatedDirection(Direction rotation)
     {

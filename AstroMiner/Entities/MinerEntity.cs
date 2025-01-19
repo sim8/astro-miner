@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using AstroMiner.Definitions;
+using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner.Entities;
@@ -43,7 +44,7 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
     private void SetGrappleTarget()
     {
         // TODO collision detection etc. Should "walk" until max or wall and return max
-        var offset = GetDirectionalVector(GameConfig.MaxGrappleLength, Direction);
+        var offset = DirectionHelpers.GetDirectionalVector(GameConfig.MaxGrappleLength, Direction);
         GrappleTarget = Position + offset;
         _grappleTargetIsValid = true;
     }

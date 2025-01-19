@@ -110,7 +110,7 @@ public class MiningControllableEntity(GameState gameState) : ControllableEntity(
     private Vector2 GetDrillPosition()
     {
         var drillDistanceFromCenter = GridBoxSize / 2 + DrillDistance;
-        return CenterPosition + GetDirectionalVector(drillDistanceFromCenter, Direction);
+        return CenterPosition + DirectionHelpers.GetDirectionalVector(drillDistanceFromCenter, Direction);
     }
 
     public Direction GetRotatedDirection(Direction rotation)
