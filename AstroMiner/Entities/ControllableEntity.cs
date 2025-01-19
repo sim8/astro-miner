@@ -9,6 +9,9 @@ namespace AstroMiner.Entities;
 
 public class ControllableEntity : Entity
 {
+    // If speed exceeds max, gradually ramp back down
+    private const int TimeToSlowToMax = 2000;
+
     private readonly Dictionary<MiningControls, Direction> _directionsControlsMapping = new()
     {
         { MiningControls.MoveUp, Direction.Top },
@@ -158,7 +161,15 @@ public class ControllableEntity : Entity
 
     protected virtual void UpdateSpeed(Direction? selectedDirection, int elapsedGameTimeMs)
     {
-        // Decelerate if nothing pressed
+        // If speed exceeds MaxSpeed, slowly ramp it down
+        if (CurrentSpeed > MaxSpeed)
+        {
+            CurrentSpeed = Math.Max(MaxSpeed,
+                CurrentSpeed - MaxSpeed * (elapsedGameTimeMs / (float)TimeToSlowToMax));
+            return;
+        }
+
+        // Existing speed update logic
         if (!selectedDirection.HasValue && CurrentSpeed > 0)
             CurrentSpeed = Math.Max(0,
                 CurrentSpeed - MaxSpeed * (elapsedGameTimeMs / (float)TimeToStopMs));
