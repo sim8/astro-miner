@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using AstroMiner.Definitions;
 
 namespace AstroMiner;
@@ -8,6 +9,7 @@ public class CameraState
     private const int ZoomTransitionMs = 800;
     private readonly GameState _gameState;
     private float _endScale;
+    private float _selectedZoom = 2f; // Default zoom level
 
     // Fields for handling transitions
     private float _startScale;
@@ -23,14 +25,19 @@ public class CameraState
         _zoomTransitionElapsed = 0;
     }
 
-    private float BaseScaleMultiplier => _gameState.IsInMiner ? GameConfig.ZoomLevelMiner : GameConfig.ZoomLevelPlayer;
-
     public float ScaleMultiplier { get; private set; }
 
-    public void Update(int elapsedMs)
+    public void Update(int elapsedMs, HashSet<MiningControls> activeMiningControls)
     {
+        if (activeMiningControls.Contains(MiningControls.CycleZoom))
+            _selectedZoom = _selectedZoom switch
+            {
+                2f => 3f,
+                3f => 2f
+            };
+
         // Check if target scale changed (e.g., player switched from miner to player or vice versa)
-        var currentTarget = BaseScaleMultiplier;
+        var currentTarget = _selectedZoom;
         if (Math.Abs(currentTarget - _endScale) > 0.0001f)
         {
             // Start a new transition towards the new target

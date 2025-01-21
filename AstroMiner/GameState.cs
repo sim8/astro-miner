@@ -23,6 +23,7 @@ public enum MiningControls
     // Player-only
     PlaceDynamite,
 
+    CycleZoom,
     NewGame // TODO factor out
 }
 
@@ -151,7 +152,7 @@ public class GameState
         // Do last to reflect changes
         SortActiveEntities(); // TODO only call when needed? Seems error prone
 
-        Camera.Update(elapsedMs);
+        Camera.Update(elapsedMs, activeMiningControls);
 
         CloudManager.Update(elapsedMs);
 
