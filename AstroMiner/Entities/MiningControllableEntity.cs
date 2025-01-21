@@ -35,6 +35,18 @@ public class MiningControllableEntity(GameState gameState) : ControllableEntity(
             ResetDrill();
     }
 
+    private void UseDrillOnCell(int x, int y)
+    {
+        if (!ViewHelpers.IsValidGridPosition(x, y))
+            return;
+
+        _drillingCells.Add((x, y));
+
+        var wallTypeConfig = GameState.Grid.GetWallTypeConfig(x, y);
+        if (wallTypeConfig is { IsMineable: true })
+            _drillingTotalTimeRequired += wallTypeConfig.DrillTimeMs;
+    }
+
     /// <summary>
     ///     Drills a row or column of cells. All cells in that row/column have their
     ///     drill times summed. Once <see cref="_drillingMs" /> meets/exceeds that sum,
@@ -63,33 +75,13 @@ public class MiningControllableEntity(GameState gameState) : ControllableEntity(
             {
                 var leftX = ViewHelpers.ToXorYCoordinate(drillPos.X - DrillingWidth / 2);
                 var rightX = ViewHelpers.ToXorYCoordinate(drillPos.X + DrillingWidth / 2);
-                for (var iX = leftX; iX <= rightX; iX++)
-                {
-                    if (!ViewHelpers.IsValidGridPosition(iX, gridPos.y))
-                        continue;
-
-                    _drillingCells.Add((iX, gridPos.y));
-
-                    var wallTypeConfig = GameState.Grid.GetWallTypeConfig(iX, gridPos.y);
-                    if (wallTypeConfig is { IsMineable: true })
-                        _drillingTotalTimeRequired += wallTypeConfig.DrillTimeMs;
-                }
+                for (var iX = leftX; iX <= rightX; iX++) UseDrillOnCell(iX, gridPos.y);
             }
             else // Direction.Left or Direction.Right
             {
                 var topY = ViewHelpers.ToXorYCoordinate(drillPos.Y - DrillingWidth / 2);
                 var bottomY = ViewHelpers.ToXorYCoordinate(drillPos.Y + DrillingWidth / 2);
-                for (var iY = topY; iY <= bottomY; iY++)
-                {
-                    if (!ViewHelpers.IsValidGridPosition(gridPos.x, iY))
-                        continue;
-
-                    _drillingCells.Add((gridPos.x, iY));
-
-                    var wallTypeConfig = GameState.Grid.GetWallTypeConfig(gridPos.x, iY);
-                    if (wallTypeConfig is { IsMineable: true })
-                        _drillingTotalTimeRequired += wallTypeConfig.DrillTimeMs;
-                }
+                for (var iY = topY; iY <= bottomY; iY++) UseDrillOnCell(gridPos.x, iY);
             }
         }
 
