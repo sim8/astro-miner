@@ -19,7 +19,7 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
     public Vector2? GrappleTarget;
     protected override bool CanAddToInventory { get; } = false;
     protected override float MaxSpeed => 4f;
-    protected override int TimeToReachMaxSpeedMs { get; } = 1200;
+    protected override int TimeToReachMaxSpeedMs { get; } = 600;
     protected override float MaxHealth => GameConfig.MinerMaxHealth;
     protected override int TimeToStopMs { get; } = 400;
     protected override int BoxSizePx { get; } = GameConfig.MinerBoxSizePx;
@@ -144,7 +144,6 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
         else
         {
             ResetGrapple();
-            if (_prevPressedUsedGrapple) Console.WriteLine("Here");
             _prevPressedUsedGrapple = false;
         }
     }

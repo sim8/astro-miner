@@ -23,6 +23,9 @@ public class ControllableEntity : Entity
     protected readonly GameState GameState;
     protected float CurrentSpeed;
 
+    private int _timeOnLavaMs;
+    private const int LavaDamageDelayMs = 1000; // 1 second delay before taking damage
+
     public ControllableEntity(GameState gameState)
     {
         GameState = gameState;
@@ -159,7 +162,17 @@ public class ControllableEntity : Entity
             if (floorType == FloorType.Lava) someCellsAreLava = true;
         }
 
-        if (someCellsAreLava) TakeDamage((float)GameConfig.LavaDamagePerSecond / 1000 * elapsedMs);
+        if (someCellsAreLava)
+        {
+            _timeOnLavaMs += elapsedMs;
+            if (_timeOnLavaMs >= LavaDamageDelayMs)
+                TakeDamage((float)GameConfig.LavaDamagePerSecond / 1000 * elapsedMs);
+        }
+        else
+        {
+            _timeOnLavaMs = 0; // Reset timer when not on lava
+        }
+
         if (allCellsAreEmpty) IsOffAsteroid = true;
     }
 
