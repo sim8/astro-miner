@@ -11,6 +11,7 @@ public class ControllableEntity : Entity
 {
     // If speed exceeds max, gradually ramp back down
     private const float ExcessSpeedLossPerSecond = 3f;
+    private const int LavaDamageDelayMs = 1000; // 1 second delay before taking damage
 
     private readonly Dictionary<MiningControls, Direction> _directionsControlsMapping = new()
     {
@@ -21,15 +22,16 @@ public class ControllableEntity : Entity
     };
 
     protected readonly GameState GameState;
-    protected float CurrentSpeed;
 
     private int _timeOnLavaMs;
-    private const int LavaDamageDelayMs = 1000; // 1 second delay before taking damage
+    protected float CurrentSpeed;
 
     public ControllableEntity(GameState gameState)
     {
         GameState = gameState;
     }
+
+    public float LavaTimePercentToTakingDamage => _timeOnLavaMs / (float)LavaDamageDelayMs;
 
     // Includes time taking damage + time since last damage
     public int TotalDamageAnimationTimeMs { get; private set; }
@@ -168,9 +170,9 @@ public class ControllableEntity : Entity
             if (_timeOnLavaMs >= LavaDamageDelayMs)
                 TakeDamage((float)GameConfig.LavaDamagePerSecond / 1000 * elapsedMs);
         }
-        else
+        else if (_timeOnLavaMs > 0)
         {
-            _timeOnLavaMs = 0; // Reset timer when not on lava
+            _timeOnLavaMs = Math.Max(0, _timeOnLavaMs - elapsedMs);
         }
 
         if (allCellsAreEmpty) IsOffAsteroid = true;
