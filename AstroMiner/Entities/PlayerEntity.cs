@@ -13,7 +13,7 @@ public class PlayerEntity(GameState gameState) : MiningControllableEntity(gameSt
     public override void Update(int elapsedMs, HashSet<MiningControls> activeMiningControls)
     {
         base.Update(elapsedMs, activeMiningControls);
-        if (activeMiningControls.Contains(MiningControls.PlaceDynamite))
+        if (activeMiningControls.Contains(MiningControls.PlaceDynamite) && gameState.Inventory.numDynamite > 0)
         {
             gameState.Inventory.numDynamite--;
             var dynamiteEntity = new DynamiteEntity(gameState, CenterPosition);
