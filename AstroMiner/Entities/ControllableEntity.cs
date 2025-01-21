@@ -21,6 +21,8 @@ public class ControllableEntity : Entity
         { MiningControls.MoveLeft, Direction.Left }
     };
 
+    private readonly List<MiningControls> _activeControlsOrder = new();
+
     protected readonly GameState GameState;
 
     private int _timeOnLavaMs;
@@ -82,9 +84,27 @@ public class ControllableEntity : Entity
 
     private Direction? GetDirectionFromActiveControls(HashSet<MiningControls> activeMiningControls)
     {
+        // Remove any controls that are no longer active
+        _activeControlsOrder.RemoveAll(control => !activeMiningControls.Contains(control));
+        
+        // Add any new controls to the end of the list
         foreach (var control in activeMiningControls)
-            if (_directionsControlsMapping.TryGetValue(control, out var direction))
+        {
+            if (!_activeControlsOrder.Contains(control))
+            {
+                _activeControlsOrder.Add(control);
+            }
+        }
+
+        // Return the direction of the most recently pressed control
+        for (int i = _activeControlsOrder.Count - 1; i >= 0; i--)
+        {
+            if (_directionsControlsMapping.TryGetValue(_activeControlsOrder[i], out var direction))
+            {
                 return direction;
+            }
+        }
+
         return null;
     }
 
