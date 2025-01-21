@@ -9,6 +9,10 @@ namespace AstroMiner.Entities;
 
 public class ControllableEntity : Entity
 {
+    // If speed exceeds max, gradually ramp back down
+    private const float ExcessSpeedLossPerSecond = 3f;
+    private const int LavaDamageDelayMs = 1000; // 1 second delay before taking damage
+
     private readonly Dictionary<MiningControls, Direction> _directionsControlsMapping = new()
     {
         { MiningControls.MoveUp, Direction.Top },
@@ -18,12 +22,16 @@ public class ControllableEntity : Entity
     };
 
     protected readonly GameState GameState;
-    private float _currentSpeed;
+
+    private int _timeOnLavaMs;
+    protected float CurrentSpeed;
 
     public ControllableEntity(GameState gameState)
     {
         GameState = gameState;
     }
+
+    public float LavaTimePercentToTakingDamage => _timeOnLavaMs / (float)LavaDamageDelayMs;
 
     // Includes time taking damage + time since last damage
     public int TotalDamageAnimationTimeMs { get; private set; }
@@ -43,6 +51,8 @@ public class ControllableEntity : Entity
     protected virtual float MaxHealth { get; } = 100;
 
     public Direction Direction { get; private set; } = Direction.Top;
+
+    public Vector2 FrontPosition => CenterPosition + DirectionHelpers.GetDirectionalVector(GridBoxSize / 2f, Direction);
 
     public void Initialize(Vector2 pos)
     {
@@ -126,8 +136,14 @@ public class ControllableEntity : Entity
             }
         }
 
-        var direction = GetDirectionFromActiveControls(activeMiningControls);
-        UpdateMinerPosAndSpeed(direction, elapsedMs);
+        var selectedDirection = GetDirectionFromActiveControls(activeMiningControls);
+
+        // zero speed if turn 180
+        if (selectedDirection.HasValue && selectedDirection.Value == DirectionHelpers.GetOppositeDirection(Direction))
+            CurrentSpeed = 0f;
+        Direction = selectedDirection ?? Direction;
+        UpdateSpeed(selectedDirection, elapsedMs);
+        UpdatePos(elapsedMs);
     }
 
     private void CheckIfShouldFallOrTakeDamage(int elapsedMs)
@@ -146,45 +162,50 @@ public class ControllableEntity : Entity
             if (floorType == FloorType.Lava) someCellsAreLava = true;
         }
 
-        if (someCellsAreLava) TakeDamage((float)GameConfig.LavaDamagePerSecond / 1000 * elapsedMs);
+        if (someCellsAreLava)
+        {
+            _timeOnLavaMs += elapsedMs;
+            if (_timeOnLavaMs >= LavaDamageDelayMs)
+                TakeDamage((float)GameConfig.LavaDamagePerSecond / 1000 * elapsedMs);
+        }
+        else if (_timeOnLavaMs > 0)
+        {
+            _timeOnLavaMs = Math.Max(0, _timeOnLavaMs - elapsedMs);
+        }
+
         if (allCellsAreEmpty) IsOffAsteroid = true;
     }
 
-    private void UpdateMinerPosAndSpeed(Direction? selectedDirection, int elapsedGameTimeMs)
+    protected virtual void UpdateSpeed(Direction? selectedDirection, int elapsedGameTimeMs)
     {
-        Direction = selectedDirection ?? Direction;
-
-        // Decelerate if nothing pressed
-        if (!selectedDirection.HasValue && _currentSpeed > 0)
-            _currentSpeed = Math.Max(0,
-                _currentSpeed - MaxSpeed * (elapsedGameTimeMs / (float)TimeToStopMs));
-
-        if (_currentSpeed > 0 || selectedDirection.HasValue)
+        if (CurrentSpeed > MaxSpeed)
         {
-            var hasCollisions = UpdateMinerPos(elapsedGameTimeMs);
-            if (hasCollisions)
-                _currentSpeed = 0;
-            // Accelerate if direction pressed
-            else if (selectedDirection.HasValue)
-                _currentSpeed = Math.Min(MaxSpeed,
-                    _currentSpeed + MaxSpeed * (elapsedGameTimeMs / (float)TimeToReachMaxSpeedMs));
+            CurrentSpeed = Math.Max(MaxSpeed,
+                CurrentSpeed - ExcessSpeedLossPerSecond * (elapsedGameTimeMs / 1000f));
+            return;
         }
+
+        // Existing speed update logic
+        if (!selectedDirection.HasValue && CurrentSpeed > 0)
+            CurrentSpeed = Math.Max(0,
+                CurrentSpeed - MaxSpeed * (elapsedGameTimeMs / (float)TimeToStopMs));
+
+        if ((CurrentSpeed > 0 || selectedDirection.HasValue) && selectedDirection.HasValue)
+            CurrentSpeed = Math.Min(MaxSpeed,
+                CurrentSpeed + MaxSpeed * (elapsedGameTimeMs / (float)TimeToReachMaxSpeedMs));
     }
 
-    private bool UpdateMinerPos(int elapsedGameTimeMs)
+    private void UpdatePos(int elapsedGameTimeMs)
     {
-        var distance = _currentSpeed * (elapsedGameTimeMs / 1000f);
-
-        var movement = Direction switch
+        if (CurrentSpeed > 0)
         {
-            Direction.Top => new Vector2(0, -distance),
-            Direction.Right => new Vector2(distance, 0),
-            Direction.Bottom => new Vector2(0, distance),
-            Direction.Left => new Vector2(-distance, 0),
-            _ => Vector2.Zero
-        };
+            var distance = CurrentSpeed * (elapsedGameTimeMs / 1000f);
+            var movement = DirectionHelpers.GetDirectionalVector(distance, Direction);
 
-        return !ApplyVectorToPosIfNoCollisions(movement);
+            var hasCollisions = !ApplyVectorToPosIfNoCollisions(movement);
+            if (hasCollisions)
+                CurrentSpeed = 0;
+        }
     }
 
 

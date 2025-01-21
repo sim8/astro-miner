@@ -116,17 +116,11 @@ public static class Tilesets
             : 0;
 
         return (RampKeys.CreateKey( // Needs to take cracks into account. Floor-like?
-            !IsFloorLikeTileset(topLeft),
-            !IsFloorLikeTileset(topRight),
-            !IsFloorLikeTileset(bottomLeft),
-            !IsFloorLikeTileset(bottomRight)
+            !FloorTypes.IsFloorLikeTileset(topLeft),
+            !FloorTypes.IsFloorLikeTileset(topRight),
+            !FloorTypes.IsFloorLikeTileset(bottomLeft),
+            !FloorTypes.IsFloorLikeTileset(bottomRight)
         ), textureOffset);
-    }
-
-    // TODO a bit weird as we use floor texture for lava cracks (cracks rendered separately)
-    private static bool IsFloorLikeTileset(FloorType floorType)
-    {
-        return floorType == FloorType.Floor || floorType == FloorType.LavaCracks;
     }
 
     // High level steps

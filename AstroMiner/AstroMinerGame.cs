@@ -49,6 +49,7 @@ public class AstroMinerGame : Game
         _miningControlMapper.AddMapping(MiningControls.Drill, Keys.Space, true);
         _miningControlMapper.AddMapping(MiningControls.EnterOrExit, Keys.E, false);
         _miningControlMapper.AddMapping(MiningControls.PlaceDynamite, Keys.R, false);
+        _miningControlMapper.AddMapping(MiningControls.UseGrapple, Keys.G, true);
         _miningControlMapper.AddMapping(MiningControls.NewGame, Keys.N, false);
         _miningControlMapper.AddMapping(MiningControls.CycleZoom, Keys.Z, false);
     }
@@ -77,6 +78,7 @@ public class AstroMinerGame : Game
         LoadTexture("explosion");
         LoadTexture("cloud-background");
         LoadTexture("land-background");
+        LoadTexture("grapple-icon");
     }
 
     protected override void Update(GameTime gameTime)

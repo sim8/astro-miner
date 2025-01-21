@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using AstroMiner.Definitions;
 using AstroMiner.Utilities;
+using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
 
@@ -84,6 +85,13 @@ public class GridState(GameState gameState, CellState[,] grid)
     public bool ExplosiveRockCellIsActive(int x, int y)
     {
         return _activeExplosiveRockCells.ContainsKey((x, y));
+    }
+
+
+    public CellState GetCellState(Vector2 position)
+    {
+        var (x, y) = ViewHelpers.ToGridPosition(position);
+        return GetCellState(x, y);
     }
 
     public CellState GetCellState(int x, int y)

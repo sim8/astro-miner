@@ -11,6 +11,8 @@ namespace AstroMiner.Renderers;
 public class UserInterfaceRenderer(
     RendererShared shared)
 {
+    private readonly Color _gridColor = new(70, 125, 149);
+
     public void RenderUserInterface(SpriteBatch spriteBatch, FrameCounter frameCounter)
     {
         var timeLeft = Math.Max(GameConfig.AsteroidExplodeTimeMs - shared.GameState.MsSinceStart, 0);
@@ -23,8 +25,10 @@ public class UserInterfaceRenderer(
 
         RenderMinimap(spriteBatch);
 
-        RenderHealthBar(spriteBatch, shared.GameState.Miner, 10, 190);
-        RenderHealthBar(spriteBatch, shared.GameState.Player, 10, 205);
+        RenderGrappleIcon(spriteBatch);
+
+        RenderHealthBar(spriteBatch, shared.GameState.Miner, 50, 192);
+        RenderHealthBar(spriteBatch, shared.GameState.Player, 50, 207);
 
 
         shared.RenderString(spriteBatch, 1000, 0, "FPS " + frameCounter.AverageFramesPerSecond.ToString("F0"));
@@ -59,6 +63,16 @@ public class UserInterfaceRenderer(
             Color.LimeGreen);
     }
 
+    private void RenderGrappleIcon(SpriteBatch spriteBatch)
+    {
+        var color = shared.GameState.Miner.GrappleAvailable
+            ? Color.LimeGreen
+            : _gridColor;
+        spriteBatch.Draw(shared.Textures["grapple-icon"],
+            new Rectangle(10, 185, 32, 32),
+            color);
+    }
+
     private void RenderMinimap(SpriteBatch spriteBatch)
     {
         var xOffset = 10;
@@ -75,23 +89,22 @@ public class UserInterfaceRenderer(
         var minimapGridSizePx = (int)(GameConfig.GridSize * scale);
         var minimapTotalSizePx = minimapGridSizePx + borderThickness * 2;
 
-        var gridColor = new Color(70, 125, 149);
 
         // Top border
         spriteBatch.Draw(shared.Textures["white"], new Rectangle(xOffset, yOffset, minimapTotalSizePx, borderThickness),
-            gridColor);
+            _gridColor);
         // Bottom border
         spriteBatch.Draw(shared.Textures["white"],
             new Rectangle(xOffset, yOffset + minimapGridSizePx + borderThickness, minimapTotalSizePx, borderThickness),
-            gridColor);
+            _gridColor);
         // Left border
         spriteBatch.Draw(shared.Textures["white"],
             new Rectangle(xOffset, yOffset, borderThickness, minimapTotalSizePx),
-            gridColor);
+            _gridColor);
         // Right border
         spriteBatch.Draw(shared.Textures["white"],
             new Rectangle(xOffset + minimapGridSizePx + borderThickness, yOffset, borderThickness, minimapTotalSizePx),
-            gridColor);
+            _gridColor);
 
         // Draw dividing lines
         var cellWidth = minimapGridSizePx / (dividingLines + 1);
@@ -103,7 +116,7 @@ public class UserInterfaceRenderer(
             var x = xOffset + borderThickness + cellWidth * i;
             spriteBatch.Draw(shared.Textures["white"],
                 new Rectangle(x, yOffset, dividingLinesThickness, minimapTotalSizePx),
-                gridColor);
+                _gridColor);
         }
 
         // Horizontal dividing lines
@@ -112,7 +125,7 @@ public class UserInterfaceRenderer(
             var y = yOffset + borderThickness + cellHeight * i;
             spriteBatch.Draw(shared.Textures["white"],
                 new Rectangle(xOffset, y, minimapTotalSizePx, dividingLinesThickness),
-                gridColor);
+                _gridColor);
         }
 
         foreach (var gameStateEdgeCell in shared.GameState.EdgeCells)

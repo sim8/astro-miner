@@ -21,7 +21,7 @@ public class MiningControllableEntity(GameState gameState) : ControllableEntity(
     protected virtual float DrillingWidth { get; } = 0f;
     protected virtual bool CanAddToInventory { get; } = true;
 
-    public void Disembark()
+    public virtual void Disembark()
     {
         _drillingMs = 0;
     }
@@ -110,14 +110,7 @@ public class MiningControllableEntity(GameState gameState) : ControllableEntity(
     private Vector2 GetDrillPosition()
     {
         var drillDistanceFromCenter = GridBoxSize / 2 + DrillDistance;
-        return Direction switch
-        {
-            Direction.Top => CenterPosition + new Vector2(0, -drillDistanceFromCenter),
-            Direction.Right => CenterPosition + new Vector2(drillDistanceFromCenter, 0),
-            Direction.Bottom => CenterPosition + new Vector2(0, drillDistanceFromCenter),
-            Direction.Left => CenterPosition + new Vector2(-drillDistanceFromCenter, 0),
-            _ => Position
-        };
+        return CenterPosition + DirectionHelpers.GetDirectionalVector(drillDistanceFromCenter, Direction);
     }
 
     public Direction GetRotatedDirection(Direction rotation)

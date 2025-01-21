@@ -83,6 +83,14 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
             ConvertTexturePxToVisiblePx(textureHeight));
     }
 
+    public Rectangle GetVisibleRectForObject(Vector2 objectPos, float gridWidth, float gridHeight)
+    {
+        var (xPx, yPx) = GridPosToDisplayedPx(objectPos);
+        var width = ConvertGridUnitsToVisiblePx(gridWidth);
+        var height = ConvertGridUnitsToVisiblePx(gridHeight);
+        return AdjustRectForCamera(xPx, yPx, width, height);
+    }
+
     private (float, float) GridPosToDisplayedPx(Vector2 gridPos)
     {
         return (ConvertGridUnitsToVisiblePx(gridPos.X), ConvertGridUnitsToVisiblePx(gridPos.Y));
@@ -111,7 +119,16 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
     // Tint red if taking damage
     public static Color GetEntityTintColor(MiningControllableEntity entity)
     {
-        if (!entity.IsAnimatingDamage) return Color.White;
+        if (!entity.IsAnimatingDamage)
+        {
+            if (entity.LavaTimePercentToTakingDamage > 0f)
+            {
+                var gb = (int)(255 * (1f - entity.LavaTimePercentToTakingDamage));
+                return new Color(255, gb, gb, 255);
+            }
+
+            return Color.White;
+        }
 
         var flashFrame =
             (int)(entity.TotalDamageAnimationTimeMs / (GameConfig.DamageAnimationTimeMs / 8.0f));

@@ -23,6 +23,9 @@ public enum MiningControls
     // Player-only
     PlaceDynamite,
 
+    // Miner-only
+    UseGrapple,
+
     CycleZoom,
     NewGame // TODO factor out
 }
