@@ -125,11 +125,6 @@ public class GridState(GameState gameState, CellState[,] grid)
         grid[y, x].WallType = WallType.Empty;
         DeactivateExplosiveRockCell(x, y);
         MarkAllDistancesFromExploredFloor(x, y);
-
-        Map8Neighbors(x, y, (nx, ny) =>
-        {
-            if (grid[ny, nx].WallType == WallType.ExplosiveRock) ActivateExplosiveRockCell(nx, ny);
-        });
     }
 
     public bool CheckNeighbors(int x, int y, Func<CellState, bool> cb)

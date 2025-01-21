@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using AstroMiner.Definitions;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 
@@ -40,11 +41,18 @@ public class MiningControllableEntity(GameState gameState) : ControllableEntity(
         if (!ViewHelpers.IsValidGridPosition(x, y))
             return;
 
-        _drillingCells.Add((x, y));
+        var wallType = GameState.Grid.GetWallType(x, y);
+
+        if (wallType == WallType.ExplosiveRock)
+        {
+            GameState.Grid.ActivateExplosiveRockCell(x, y, 100);
+            return; // No point adding to drilling time
+        }
 
         var wallTypeConfig = GameState.Grid.GetWallTypeConfig(x, y);
         if (wallTypeConfig is { IsMineable: true })
             _drillingTotalTimeRequired += wallTypeConfig.DrillTimeMs;
+        _drillingCells.Add((x, y));
     }
 
     /// <summary>
