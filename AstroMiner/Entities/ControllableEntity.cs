@@ -101,8 +101,6 @@ public class ControllableEntity : Entity
         return false;
     }
 
-    // TODO move to entity
-    // Spin up entity in 
     private bool ApplyVectorToPosIfNoCollisions(Vector2 vector)
     {
         var newVector = Position + vector;
