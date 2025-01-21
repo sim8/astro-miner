@@ -10,6 +10,7 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
 {
     private const float ReelingBaseSpeed = 7f;
     private const float ReelingMaxSpeed = 11f;
+    public const float GrapplesWidth = 0.4f;
     private int _grappleCooldownRemaining;
 
     private Direction? _grappleDirection;
@@ -60,28 +61,49 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
             _ => throw new ArgumentOutOfRangeException()
         };
 
+        // Calculate offset vectors for the two grapples
+        var perpendicularDir = Direction switch
+        {
+            Direction.Top or Direction.Bottom => new Vector2(1, 0),
+            Direction.Left or Direction.Right => new Vector2(0, 1),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        var leftGrappleOffset = -perpendicularDir * (GrapplesWidth / 2);
+        var rightGrappleOffset = perpendicularDir * (GrapplesWidth / 2);
+        var leftGrappleStart = FrontPosition + leftGrappleOffset;
+        var rightGrappleStart = FrontPosition + rightGrappleOffset;
+
         for (var i = minGrappleLength; i <= GameConfig.MaxGrappleLength; i++)
         {
             var distanceToNearEdgeOfCell = Math.Max(0, distanceToEdgeOfCell - 0.1f);
             var distance = Math.Min(GameConfig.MaxGrappleLength, i + distanceToNearEdgeOfCell);
 
-            var targetToCheck = FrontPosition + DirectionHelpers.GetDirectionalVector(distance, Direction);
-            var cellState = gameState.Grid.GetCellState(targetToCheck);
+            var leftTargetToCheck = leftGrappleStart + DirectionHelpers.GetDirectionalVector(distance, Direction);
+            var rightTargetToCheck = rightGrappleStart + DirectionHelpers.GetDirectionalVector(distance, Direction);
+            
+            var leftCellState = gameState.Grid.GetCellState(leftTargetToCheck);
+            var rightCellState = gameState.Grid.GetCellState(rightTargetToCheck);
 
-            // Collision, early return
-            if (cellState.WallType != WallType.Empty) break;
+            // If either grapple hits a wall, break
+            if (leftCellState.WallType != WallType.Empty || rightCellState.WallType != WallType.Empty) break;
 
-            // If is valid target, set target
-            if (FloorTypes.IsFloorLikeTileset(cellState.FloorType))
+            // Only valid if both grapples hit valid floor
+            var bothHitValidFloor = FloorTypes.IsFloorLikeTileset(leftCellState.FloorType) && 
+                                  FloorTypes.IsFloorLikeTileset(rightCellState.FloorType);
+
+            if (bothHitValidFloor)
             {
-                // TODO set to far side of cell (if under max)
                 _grappleTargetIsValid = true;
-                GrappleTarget = targetToCheck;
+                // Use the midpoint between the two grapples as the target
+                GrappleTarget = (leftTargetToCheck + rightTargetToCheck) / 2;
             }
 
             // If no valid grapple targets, still use GrappleTarget for animation
             // to show checked cells
-            if (!_grappleTargetIsValid) GrappleTarget = targetToCheck;
+            if (!_grappleTargetIsValid) 
+            {
+                GrappleTarget = (leftTargetToCheck + rightTargetToCheck) / 2;
+            }
         }
 
         if (_grappleTargetIsValid) _grappleCooldownRemaining = GameConfig.GrappleCooldownMs;

@@ -58,29 +58,61 @@ public class MinerRenderer(
             var grappleVisibleGridLength = Miner.DistanceToTarget * Miner.GrapplePercentToTarget;
             var grappleVisibleGridWidth = 0.03f;
 
-            var destRect = Miner.Direction switch
+            // Calculate perpendicular offset for the two grapples
+            var perpendicularDir = Miner.Direction switch
             {
-                Direction.Top => shared.ViewHelpers.GetVisibleRectForObject(
-                    Miner.FrontPosition + new Vector2(-(grappleVisibleGridWidth / 2), -grappleVisibleGridLength),
-                    grappleVisibleGridWidth,
-                    grappleVisibleGridLength),
-                Direction.Right
-                    => shared.ViewHelpers.GetVisibleRectForObject(
-                        Miner.FrontPosition + new Vector2(0, -(grappleVisibleGridWidth / 2)), grappleVisibleGridLength,
-                        grappleVisibleGridWidth),
-                Direction.Bottom => shared.ViewHelpers.GetVisibleRectForObject(
-                    Miner.FrontPosition + new Vector2(-(grappleVisibleGridWidth / 2), 0),
-                    grappleVisibleGridWidth,
-                    grappleVisibleGridLength),
-
-                Direction.Left => shared.ViewHelpers.GetVisibleRectForObject(
-                    Miner.FrontPosition + new Vector2(-grappleVisibleGridLength, -(grappleVisibleGridWidth / 2)),
-                    grappleVisibleGridLength,
-                    grappleVisibleGridWidth),
-
+                Direction.Top or Direction.Bottom => new Vector2(1, 0),
+                Direction.Left or Direction.Right => new Vector2(0, 1),
                 _ => throw new ArgumentOutOfRangeException()
             };
-            spriteBatch.Draw(shared.Textures["white"], destRect, Color.Black);
+            var leftGrappleOffset = -perpendicularDir * (MinerEntity.GrapplesWidth / 2);
+            var rightGrappleOffset = perpendicularDir * (MinerEntity.GrapplesWidth / 2);
+
+            // Render left grapple
+            var leftDestRect = Miner.Direction switch
+            {
+                Direction.Top => shared.ViewHelpers.GetVisibleRectForObject(
+                    Miner.FrontPosition + leftGrappleOffset + new Vector2(-(grappleVisibleGridWidth / 2), -grappleVisibleGridLength),
+                    grappleVisibleGridWidth,
+                    grappleVisibleGridLength),
+                Direction.Right => shared.ViewHelpers.GetVisibleRectForObject(
+                    Miner.FrontPosition + leftGrappleOffset + new Vector2(0, -(grappleVisibleGridWidth / 2)),
+                    grappleVisibleGridLength,
+                    grappleVisibleGridWidth),
+                Direction.Bottom => shared.ViewHelpers.GetVisibleRectForObject(
+                    Miner.FrontPosition + leftGrappleOffset + new Vector2(-(grappleVisibleGridWidth / 2), 0),
+                    grappleVisibleGridWidth,
+                    grappleVisibleGridLength),
+                Direction.Left => shared.ViewHelpers.GetVisibleRectForObject(
+                    Miner.FrontPosition + leftGrappleOffset + new Vector2(-grappleVisibleGridLength, -(grappleVisibleGridWidth / 2)),
+                    grappleVisibleGridLength,
+                    grappleVisibleGridWidth),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            spriteBatch.Draw(shared.Textures["white"], leftDestRect, Color.Black);
+
+            // Render right grapple
+            var rightDestRect = Miner.Direction switch
+            {
+                Direction.Top => shared.ViewHelpers.GetVisibleRectForObject(
+                    Miner.FrontPosition + rightGrappleOffset + new Vector2(-(grappleVisibleGridWidth / 2), -grappleVisibleGridLength),
+                    grappleVisibleGridWidth,
+                    grappleVisibleGridLength),
+                Direction.Right => shared.ViewHelpers.GetVisibleRectForObject(
+                    Miner.FrontPosition + rightGrappleOffset + new Vector2(0, -(grappleVisibleGridWidth / 2)),
+                    grappleVisibleGridLength,
+                    grappleVisibleGridWidth),
+                Direction.Bottom => shared.ViewHelpers.GetVisibleRectForObject(
+                    Miner.FrontPosition + rightGrappleOffset + new Vector2(-(grappleVisibleGridWidth / 2), 0),
+                    grappleVisibleGridWidth,
+                    grappleVisibleGridLength),
+                Direction.Left => shared.ViewHelpers.GetVisibleRectForObject(
+                    Miner.FrontPosition + rightGrappleOffset + new Vector2(-grappleVisibleGridLength, -(grappleVisibleGridWidth / 2)),
+                    grappleVisibleGridLength,
+                    grappleVisibleGridWidth),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            spriteBatch.Draw(shared.Textures["white"], rightDestRect, Color.Black);
         }
     }
 }
