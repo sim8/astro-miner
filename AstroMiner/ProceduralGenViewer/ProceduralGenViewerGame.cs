@@ -51,9 +51,9 @@ public class ProceduralGenViewerGame : Game
 
     private void InitializeControls()
     {
-        _viewerControlsMapper.AddMapping(ViewerControls.NewAsteroid, Keys.N, false);
-        _viewerControlsMapper.AddMapping(ViewerControls.ToggleLayers, Keys.L, false);
-        _viewerControlsMapper.AddMapping(ViewerControls.ToggleWalls, Keys.W, false);
+        _viewerControlsMapper.AddMapping(ViewerControls.NewAsteroid, Keys.N, Buttons.A, false);
+        _viewerControlsMapper.AddMapping(ViewerControls.ToggleLayers, Keys.L, Buttons.RightShoulder, false);
+        _viewerControlsMapper.AddMapping(ViewerControls.ToggleWalls, Keys.W, Buttons.LeftShoulder, false);
     }
 
     private void LoadTexture(string name)
@@ -71,7 +71,8 @@ public class ProceduralGenViewerGame : Game
     protected override void Update(GameTime gameTime)
     {
         var keyboardState = Keyboard.GetState();
-        var activeControls = _viewerControlsMapper.GetActiveControls(keyboardState);
+        var gamePadState = GamePad.GetState(PlayerIndex.One);
+        var activeControls = _viewerControlsMapper.GetActiveControls(keyboardState, gamePadState);
 
         if (activeControls.Contains(ViewerControls.NewAsteroid)) _gameState.Initialize();
         if (activeControls.Contains(ViewerControls.ToggleWalls))

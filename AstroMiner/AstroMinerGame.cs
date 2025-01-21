@@ -42,16 +42,16 @@ public class AstroMinerGame : Game
 
     private void InitializeMiningControls()
     {
-        _miningControlMapper.AddMapping(MiningControls.MoveUp, Keys.W, true);
-        _miningControlMapper.AddMapping(MiningControls.MoveRight, Keys.D, true);
-        _miningControlMapper.AddMapping(MiningControls.MoveDown, Keys.S, true);
-        _miningControlMapper.AddMapping(MiningControls.MoveLeft, Keys.A, true);
-        _miningControlMapper.AddMapping(MiningControls.Drill, Keys.Space, true);
-        _miningControlMapper.AddMapping(MiningControls.EnterOrExit, Keys.E, false);
-        _miningControlMapper.AddMapping(MiningControls.PlaceDynamite, Keys.R, false);
-        _miningControlMapper.AddMapping(MiningControls.UseGrapple, Keys.G, true);
-        _miningControlMapper.AddMapping(MiningControls.NewGame, Keys.N, false);
-        _miningControlMapper.AddMapping(MiningControls.CycleZoom, Keys.Z, false);
+        _miningControlMapper.AddMapping(MiningControls.MoveUp, Keys.W, Buttons.LeftThumbstickUp, true);
+        _miningControlMapper.AddMapping(MiningControls.MoveRight, Keys.D, Buttons.LeftThumbstickRight, true);
+        _miningControlMapper.AddMapping(MiningControls.MoveDown, Keys.S, Buttons.LeftThumbstickDown, true);
+        _miningControlMapper.AddMapping(MiningControls.MoveLeft, Keys.A, Buttons.LeftThumbstickLeft, true);
+        _miningControlMapper.AddMapping(MiningControls.Drill, Keys.Space, Buttons.RightTrigger, true);
+        _miningControlMapper.AddMapping(MiningControls.EnterOrExit, Keys.E, Buttons.Y, false);
+        _miningControlMapper.AddMapping(MiningControls.PlaceDynamite, Keys.R, Buttons.RightShoulder, false);
+        _miningControlMapper.AddMapping(MiningControls.UseGrapple, Keys.G, Buttons.LeftTrigger, true);
+        _miningControlMapper.AddMapping(MiningControls.NewGame, Keys.N, Buttons.Start, false);
+        _miningControlMapper.AddMapping(MiningControls.CycleZoom, Keys.Z, Buttons.Back, false);
     }
 
     private void LoadTexture(string name)
@@ -83,13 +83,10 @@ public class AstroMinerGame : Game
 
     protected override void Update(GameTime gameTime)
     {
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-            Keyboard.GetState().IsKeyDown(Keys.Escape))
-            Exit();
-
         var keyboardState = Keyboard.GetState();
+        var gamePadState = GamePad.GetState(PlayerIndex.One);
 
-        var activeMiningControls = _miningControlMapper.GetActiveControls(keyboardState);
+        var activeMiningControls = _miningControlMapper.GetActiveControls(keyboardState, gamePadState);
 
         _gameState.Update(activeMiningControls, gameTime.ElapsedGameTime.Milliseconds);
 

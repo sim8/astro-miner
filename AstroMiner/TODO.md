@@ -2,21 +2,17 @@
 
 ## RISK/REWARD IMPROVEMENTS
 
-- Max 3 dynamite
 - Explosive cells
-    - Try only explode if drill directly or within blast radius
     - Almost invisible if not surfaced yet?
     - See how that feels - could add timed random exploding
 
 ## Gameplay - asteroid
 
-- Collapsing floor
-    - Mining can trigger collapse
-    - Turns to lava or hole to lower level
 - lower level
     - darker, fuzzy minimap?
     - drive up / down?
     - Much more dangerous / better loot
+    - Collapsing floor
 - Mystery box cell - similar design to explosive?
 - Different "types" of asteroid
     - Higher concentration of lava/holes/explosive rock
@@ -40,7 +36,6 @@
         - Big white flash
     - scanner
     - boost
-- Drift on miner
 - fuel?
 - Upgrades
     - speed
@@ -48,7 +43,6 @@
     - color/design
     - tools
     - Different "base" - hovercraft?
-- Add zoom
 - NPC helpers
     - Recruit between digs
     - Give tasks
@@ -60,7 +54,6 @@
 ## Quality
 
 - Player placement when exiting
-- Control mapping
 - Test on Xbox?
 
 ## Rendering / art
@@ -68,8 +61,6 @@
 - Fix zoom in/out!
     - Have another go at pixel perfection
     - Subpixel rendering? Movement is also kind of janky
-- Player animation
-- Clouds / background animation
 - Drilling animation
 - Darker overlay near center
 - Gem entities (collectable)
@@ -87,7 +78,6 @@
 
 - Replace pos / boxsize with rectangle - avoid creating new
 - Move tileset stuff to update loop + cache?
-- RenderTargets?
 
 ## Meta
 
