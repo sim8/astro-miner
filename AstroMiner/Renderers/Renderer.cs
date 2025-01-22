@@ -220,7 +220,7 @@ public class Renderer
 
         // Render overlay gradients in shadow color over lighting to block out light on unexplored cells
         LoopVisibleCells(FogOfWarRenderer.FogGradientGridRadius,
-            (col, row) => { _fogOfWarRenderer.RenderFogOfWar(spriteBatch, col, row, 2, 120); });
+            (col, row) => { _fogOfWarRenderer.RenderFogOfWar(spriteBatch, col, row, 200); });
 
         spriteBatch.End();
 

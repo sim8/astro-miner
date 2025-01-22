@@ -21,6 +21,8 @@ public class CellState(WallType wallType, FloorType floorType, AsteroidLayer lay
 
     public FloorType FloorType = floorType;
 
+    public float FogOpacity = 1f; // Assume fog
+
     public WallType WallType = wallType;
 
     public bool isEmpty => WallType == WallType.Empty && FloorType == FloorType.Empty;
@@ -170,18 +172,36 @@ public class GridState(GameState gameState, CellState[,] grid)
         }
     }
 
+    private void UpdateCellDistanceToExploredFloor(int x, int y, int value, bool isInitializing)
+    {
+        var cellState = GetCellState(x, y);
+        var oldDistance = cellState.DistanceToExploredFloor;
+
+        if (value < GameConfig.ShowGradientsAtDistance)
+        {
+            if (!isInitializing && (oldDistance >= GameConfig.ShowGradientsAtDistance ||
+                                    oldDistance == CellState.UninitializedOrAboveMax))
+                gameState.FogAnimationManager.AddFadingCell(x, y);
+            else
+                cellState.FogOpacity = 0f;
+        }
+
+
+        cellState.DistanceToExploredFloor = value;
+    }
+
     // Used for Fog of War. Recursively marks cells as either:
     //   - Explored floor (is connected by floor to the player's position)
     //   - Distance from explored floor, up to a max value
     // From the starting coordinates, run a BFS until all neighbours are both initialized
     // and have correct values relative to the current cell. This means it can run on an
     // uninitialized grid, as well as from a just-cleared cell during gameplay.
-    public void MarkAllDistancesFromExploredFloor(int playerX, int playerY)
+    public void MarkAllDistancesFromExploredFloor(int playerX, int playerY, bool isInitializing = false)
     {
         // The BFS assumes all cells in the queue have the correct distance. If running at 
         // startup (x,y == 0,0), assume it's an empty square (-1); otherwise a cell has been
         // cleared and is now floor (0)
-        grid[playerY, playerX].DistanceToExploredFloor = 0;
+        UpdateCellDistanceToExploredFloor(playerX, playerY, 0, isInitializing);
 
         Queue<(int x, int y)> queue = new();
         queue.Enqueue((playerX, playerY));
@@ -201,7 +221,7 @@ public class GridState(GameState gameState, CellState[,] grid)
                     current.DistanceToExploredFloor == 0 &&
                     neighbour.DistanceToExploredFloor != 0)
                 {
-                    neighbour.DistanceToExploredFloor = 0;
+                    UpdateCellDistanceToExploredFloor(nx, ny, 0, isInitializing);
                     queue.Enqueue((nx, ny));
                 }
 
@@ -210,10 +230,9 @@ public class GridState(GameState gameState, CellState[,] grid)
                 {
                     var nextDistance = current.DistanceToExploredFloor + 1;
                     if (neighbour.DistanceToExploredFloor == CellState.UninitializedOrAboveMax ||
-                        neighbour.DistanceToExploredFloor >
-                        nextDistance)
+                        neighbour.DistanceToExploredFloor > nextDistance)
                     {
-                        neighbour.DistanceToExploredFloor = nextDistance;
+                        UpdateCellDistanceToExploredFloor(nx, ny, nextDistance, isInitializing);
                         queue.Enqueue((nx, ny));
                     }
                 }

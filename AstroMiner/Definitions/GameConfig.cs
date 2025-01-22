@@ -21,6 +21,9 @@ public static class GameConfig
     // e.g. for a 7x7 block of rock, the center cell should be invisible
     public const int MaxUnexploredCellsVisible = 3;
 
+    // Distance threshold for showing fog of war gradients
+    public const int ShowGradientsAtDistance = 4;
+
     public const float PlayerMaxHealth = 100;
     public const float MinerMaxHealth = 200;
 
