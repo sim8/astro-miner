@@ -3,12 +3,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace AstroMiner.Renderers;
 
-public class GradientOverlayRenderer(RendererShared shared)
+public class FogOfWarRenderer(RendererShared shared)
 {
-    public static readonly Color OverlayColor = new(37, 73, 99);
-    public static readonly int OverlayGridRadius = 2; // Roughly
+    public static readonly Color FogColor = new(37, 73, 99);
+    public static readonly int FogGradientGridRadius = 2; // Roughly
 
-    public void RenderGradientOverlay(SpriteBatch spriteBatch, int col, int row,
+    public void RenderFogOfWar(SpriteBatch spriteBatch, int col, int row,
         int showGradientsAtDistance = 4, int gradientSize = 160)
     {
         var cellState = shared.GameState.Grid.GetCellState(col, row);
@@ -20,7 +20,7 @@ public class GradientOverlayRenderer(RendererShared shared)
             CellState.UninitializedOrAboveMax)
         {
             var pos = new Vector2(col + 0.5f, row + 0.5f);
-            shared.RenderRadialLightSource(spriteBatch, pos, OverlayColor, gradientSize);
+            shared.RenderRadialLightSource(spriteBatch, pos, FogColor, gradientSize);
         }
     }
 }

@@ -19,10 +19,10 @@ public class Renderer
     private readonly Color _floorColorCore = new(128, 138, 140);
     private readonly Color _floorColorCrust = new(212, 225, 227);
     private readonly Color _floorColorMantle = new(171, 182, 184);
+    private readonly FogOfWarRenderer _fogOfWarRenderer;
 
     private readonly FrameCounter _frameCounter;
     private readonly GameState _gameState;
-    private readonly GradientOverlayRenderer _gradientOverlayRenderer;
     private readonly GraphicsDeviceManager _graphics;
     private readonly Color _lavaLightColor = new(255, 231, 171);
     private readonly MinerRenderer _minerRenderer;
@@ -52,7 +52,7 @@ public class Renderer
         _dynamiteRenderer = new DynamiteRenderer(_shared);
         _explosionRenderer = new ExplosionRenderer(_shared);
         _userInterfaceRenderer = new UserInterfaceRenderer(_shared);
-        _gradientOverlayRenderer = new GradientOverlayRenderer(_shared);
+        _fogOfWarRenderer = new FogOfWarRenderer(_shared);
         _scrollingBackgroundRenderer = new ScrollingBackgroundRenderer(_shared);
         _multiplyBlendState = new BlendState();
         _multiplyBlendState.ColorBlendFunction = BlendFunction.Add;
@@ -149,8 +149,8 @@ public class Renderer
                         Color.White);
             });
 
-        LoopVisibleCells(GradientOverlayRenderer.OverlayGridRadius,
-            (col, row) => { _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row); }
+        LoopVisibleCells(FogOfWarRenderer.FogGradientGridRadius,
+            (col, row) => { _fogOfWarRenderer.RenderFogOfWar(spriteBatch, col, row); }
         );
 
         foreach (var entity in _gameState.ActiveEntitiesSortedByDistance)
@@ -187,7 +187,7 @@ public class Renderer
         spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
         var (viewportWidth, viewportHeight) = _viewHelpers.GetViewportSize();
         spriteBatch.Draw(_textures["white"], new Rectangle(0, 0, viewportWidth, viewportHeight),
-            GradientOverlayRenderer.OverlayColor * 0.8f);
+            FogOfWarRenderer.FogColor * 0.8f);
 
 
         _shared.RenderDirectionalLightSource(spriteBatch, _gameState.Miner.GetDirectionalLightSource(),
@@ -219,8 +219,8 @@ public class Renderer
             });
 
         // Render overlay gradients in shadow color over lighting to block out light on unexplored cells
-        LoopVisibleCells(GradientOverlayRenderer.OverlayGridRadius,
-            (col, row) => { _gradientOverlayRenderer.RenderGradientOverlay(spriteBatch, col, row, 2, 120); });
+        LoopVisibleCells(FogOfWarRenderer.FogGradientGridRadius,
+            (col, row) => { _fogOfWarRenderer.RenderFogOfWar(spriteBatch, col, row, 2, 120); });
 
         spriteBatch.End();
 
