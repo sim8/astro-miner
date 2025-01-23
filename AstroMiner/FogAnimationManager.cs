@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
 
 public class FogAnimationManager
 {
-    private const float FadeOutDurationMs = 600f;
+    private const float BaseFadeOutDurationMs = 200f;
     private readonly HashSet<(int x, int y)> _activeFadingCells = new();
     private readonly GameState _gameState;
 
@@ -27,7 +28,11 @@ public class FogAnimationManager
         {
             var cell = _gameState.Grid.GetCellState(x, y);
 
-            cell.FogOpacity = Math.Max(0, cell.FogOpacity - elapsedMs / FadeOutDurationMs);
+
+            var distanceFromPlayer = Vector2.Distance(new Vector2(x + 0.5f, y + 0.5f),
+                _gameState.ActiveControllableEntity.CenterPosition);
+
+            cell.FogOpacity = Math.Max(0, cell.FogOpacity - elapsedMs / (BaseFadeOutDurationMs * distanceFromPlayer));
             if (cell.FogOpacity <= 0) completedCells.Add((x, y));
         }
 
