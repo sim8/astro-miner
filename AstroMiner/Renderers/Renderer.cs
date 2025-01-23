@@ -226,8 +226,8 @@ public class Renderer
                 var showOverlay = cellState.DistanceToExploredFloor >= 2 ||
                                   cellState.DistanceToExploredFloor ==
                                   CellState.UninitializedOrAboveMax;
+                // At least match FogOpacity to smooth out FOW animation
                 var overlayOpacity = showOverlay ? 1f : cellState.FogOpacity;
-                // If fog opacity fading out, match that for smoothness
                 if (overlayOpacity > 0f)
                     _fogOfWarRenderer.RenderGradientOverlay(spriteBatch, col, row, 120, overlayOpacity);
             });
