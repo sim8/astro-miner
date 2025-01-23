@@ -6,7 +6,7 @@ namespace AstroMiner;
 
 public class FogAnimationManager
 {
-    private const float BaseFadeOutDurationMs = 100f;
+    private const float BaseFadeOutDurationMs = 70f;
     private readonly HashSet<(int x, int y)> _activeFadingCells = new();
     private readonly GameState _gameState;
 
