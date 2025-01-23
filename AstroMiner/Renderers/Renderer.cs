@@ -223,10 +223,13 @@ public class Renderer
             (col, row) =>
             {
                 var cellState = _gameState.Grid.GetCellState(col, row);
-                if (cellState.DistanceToExploredFloor >= 2 ||
-                    cellState.DistanceToExploredFloor ==
-                    CellState.UninitializedOrAboveMax)
-                    _fogOfWarRenderer.RenderGradientOverlay(spriteBatch, col, row, 120);
+                var showOverlay = cellState.DistanceToExploredFloor >= 2 ||
+                                  cellState.DistanceToExploredFloor ==
+                                  CellState.UninitializedOrAboveMax;
+                var overlayOpacity = showOverlay ? 1f : cellState.FogOpacity;
+                // If fog opacity fading out, match that for smoothness
+                if (overlayOpacity > 0f)
+                    _fogOfWarRenderer.RenderGradientOverlay(spriteBatch, col, row, 120, overlayOpacity);
             });
 
         spriteBatch.End();

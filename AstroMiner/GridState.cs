@@ -175,15 +175,12 @@ public class GridState(GameState gameState, CellState[,] grid)
     private void UpdateCellDistanceToExploredFloor(int x, int y, int value, bool isInitializing)
     {
         var cellState = GetCellState(x, y);
-        var oldDistance = cellState.DistanceToExploredFloor;
 
         if (value < GameConfig.ShowGradientsAtDistance)
         {
-            if (!isInitializing && (oldDistance >= GameConfig.ShowGradientsAtDistance ||
-                                    oldDistance == CellState.UninitializedOrAboveMax))
-                gameState.FogAnimationManager.AddFadingCell(x, y);
-            else
+            if (isInitializing)
                 cellState.FogOpacity = 0f;
+            else if (cellState.FogOpacity > 0f) gameState.FogAnimationManager.AddFadingCell(x, y);
         }
 
 
