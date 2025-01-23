@@ -51,6 +51,7 @@ public class GameState
     public Inventory Inventory;
     public MinerEntity Miner;
     public PlayerEntity Player;
+    public FogAnimationManager FogAnimationManager;
 
     public GameState(
         GraphicsDeviceManager graphics)
@@ -81,7 +82,7 @@ public class GameState
         Grid = new GridState(this, grid);
 
         var (minerPosX, minerPosY) = ViewHelpers.ToGridPosition(minerPos);
-        Grid.MarkAllDistancesFromExploredFloor(minerPosX, minerPosY);
+        Grid.MarkAllDistancesFromExploredFloor(minerPosX, minerPosY, true);
         Miner = new MinerEntity(this);
         Miner.Initialize(minerPos);
         Player = new PlayerEntity(this);
@@ -94,6 +95,7 @@ public class GameState
         _emptyMiningControls = new HashSet<MiningControls>();
         MsSinceStart = 0;
         CloudManager = new CloudManager(this);
+        FogAnimationManager = new FogAnimationManager(this);
     }
 
     private void SortActiveEntities()
@@ -160,5 +162,7 @@ public class GameState
         CloudManager.Update(elapsedMs);
 
         CollapsingFloorTriggerer.Update(elapsedMs);
+        
+        FogAnimationManager.Update(elapsedMs);
     }
 }
