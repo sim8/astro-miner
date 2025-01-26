@@ -32,14 +32,14 @@ public class ExplosionEntity : Entity
         var explodedCells = GetCellsInRadius(Position.X, Position.Y, _explodeRockRadius);
         foreach (var (x, y) in explodedCells)
             // If x,y = gridPos, already triggered explosion
-            if (_gameState.Grid.GetWallType(x, y) == WallType.ExplosiveRock && (x, y) != gridPos)
+            if (_gameState.Asteroid.Grid.GetWallType(x, y) == WallType.ExplosiveRock && (x, y) != gridPos)
             {
-                _gameState.Grid.ActivateExplosiveRockCell(x, y, 300);
+                _gameState.Asteroid.Grid.ActivateExplosiveRockCell(x, y, 300);
             }
             else
             {
-                _gameState.Grid.ClearWall(x, y);
-                _gameState.Grid.ActivateCollapsingFloorCell(x, y);
+                _gameState.Asteroid.Grid.ClearWall(x, y);
+                _gameState.Asteroid.Grid.ActivateCollapsingFloorCell(x, y);
             }
 
         _hasExploded = true;
@@ -62,8 +62,8 @@ public class ExplosionEntity : Entity
         if (!_hasExploded)
         {
             ExplodeGrid();
-            calculateEntityDamage(_gameState.Miner);
-            if (!_gameState.IsInMiner) calculateEntityDamage(_gameState.Player);
+            calculateEntityDamage(_gameState.Asteroid.Miner);
+            if (!_gameState.Asteroid.IsInMiner) calculateEntityDamage(_gameState.Asteroid.Player);
             _hasExploded = true;
         }
         else
@@ -71,7 +71,7 @@ public class ExplosionEntity : Entity
             TimeSinceExplosionMs += elapsedMs;
         }
 
-        if (TimeSinceExplosionMs >= _animationTime) _gameState.DeactivateEntity(this);
+        if (TimeSinceExplosionMs >= _animationTime) _gameState.Asteroid.DeactivateEntity(this);
     }
 
     private List<(int x, int y)> GetCellsInRadius(float centerX, float centerY, float radius)
@@ -80,9 +80,9 @@ public class ExplosionEntity : Entity
 
         // Calculate the bounds to iterate over, based on the radius
         var startX = Math.Max(0, (int)Math.Floor(centerX - radius));
-        var endX = Math.Min(_gameState.Grid.Columns - 1, (int)Math.Ceiling(centerX + radius));
+        var endX = Math.Min(_gameState.Asteroid.Grid.Columns - 1, (int)Math.Ceiling(centerX + radius));
         var startY = Math.Max(0, (int)Math.Floor(centerY - radius));
-        var endY = Math.Min(_gameState.Grid.Rows - 1, (int)Math.Ceiling(centerY + radius));
+        var endY = Math.Min(_gameState.Asteroid.Grid.Rows - 1, (int)Math.Ceiling(centerY + radius));
 
         // Iterate through the grid cells within these bounds
         for (var i = startX; i <= endX; i++)

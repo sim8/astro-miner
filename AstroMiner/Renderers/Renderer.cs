@@ -116,7 +116,7 @@ public class Renderer
             1, // Account for textures with vertical overlap
             (col, row) =>
             {
-                var cellState = _gameState.Grid.GetCellState(col, row);
+                var cellState = _gameState.Asteroid.Grid.GetCellState(col, row);
 
                 foreach (var corner in _cornersInRenderOrder)
                 {
@@ -134,7 +134,7 @@ public class Renderer
                         var dualTilesetSourceRect =
                             Tilesets.GetWallQuadrantSourceRect(_gameState, col, row, corner);
 
-                        var tintColor = _gameState.Grid.ExplosiveRockCellIsActive(col, row) ? Color.Red :
+                        var tintColor = _gameState.Asteroid.Grid.ExplosiveRockCellIsActive(col, row) ? Color.Red :
                             cellState.WallType == WallType.LooseRock ? Color.LightGreen : Color.White;
 
                         spriteBatch.Draw(_textures["tileset"],
@@ -144,7 +144,7 @@ public class Renderer
                     }
                 }
 
-                if (_gameState.Grid.GetFloorType(col, row) == FloorType.LavaCracks)
+                if (_gameState.Asteroid.Grid.GetFloorType(col, row) == FloorType.LavaCracks)
                     spriteBatch.Draw(_textures["cracks"], _viewHelpers.GetVisibleRectForGridCell(col, row),
                         Color.White);
             });
@@ -153,7 +153,7 @@ public class Renderer
             (col, row) => { _fogOfWarRenderer.RenderFogOfWar(spriteBatch, col, row); }
         );
 
-        foreach (var entity in _gameState.ActiveEntitiesSortedByDistance)
+        foreach (var entity in _gameState.Asteroid.ActiveEntitiesSortedByDistance)
             if (entity is MinerEntity)
                 _minerRenderer.RenderMiner(spriteBatch);
             else if (entity is PlayerEntity)
@@ -166,16 +166,16 @@ public class Renderer
 
     private void RenderAdditiveLighting(SpriteBatch spriteBatch)
     {
-        foreach (var entity in _gameState.ActiveEntitiesSortedByDistance)
+        foreach (var entity in _gameState.Asteroid.ActiveEntitiesSortedByDistance)
             if (entity is ExplosionEntity explosionEntity)
                 _explosionRenderer.RenderAdditiveLightSource(spriteBatch, explosionEntity);
 
-        _shared.RenderDirectionalLightSource(spriteBatch, _gameState.Miner.GetDirectionalLightSource(),
-            _gameState.Miner.Direction, 192, 0.4f);
+        _shared.RenderDirectionalLightSource(spriteBatch, _gameState.Asteroid.Miner.GetDirectionalLightSource(),
+            _gameState.Asteroid.Miner.Direction, 192, 0.4f);
 
-        if (!_gameState.IsInMiner)
-            _shared.RenderDirectionalLightSource(spriteBatch, _gameState.Player.GetDirectionalLightSource(),
-                _gameState.Player.Direction, 128, 0.3f);
+        if (!_gameState.Asteroid.IsInMiner)
+            _shared.RenderDirectionalLightSource(spriteBatch, _gameState.Asteroid.Player.GetDirectionalLightSource(),
+                _gameState.Asteroid.Player.Direction, 128, 0.3f);
     }
 
     private void RenderLightingToRenderTarget(SpriteBatch spriteBatch)
@@ -190,17 +190,19 @@ public class Renderer
             FogOfWarRenderer.FogColor * 0.8f);
 
 
-        _shared.RenderDirectionalLightSource(spriteBatch, _gameState.Miner.GetDirectionalLightSource(),
-            _gameState.Miner.Direction);
+        _shared.RenderDirectionalLightSource(spriteBatch, _gameState.Asteroid.Miner.GetDirectionalLightSource(),
+            _gameState.Asteroid.Miner.Direction);
 
-        if (!_gameState.IsInMiner)
-            _shared.RenderDirectionalLightSource(spriteBatch, _gameState.Player.GetDirectionalLightSource(),
-                _gameState.Player.Direction, 256);
+        if (!_gameState.Asteroid.IsInMiner)
+            _shared.RenderDirectionalLightSource(spriteBatch, _gameState.Asteroid.Player.GetDirectionalLightSource(),
+                _gameState.Asteroid.Player.Direction, 256);
 
         _shared.RenderRadialLightSource(spriteBatch,
-            _gameState.IsInMiner ? _gameState.Miner.CenterPosition : _gameState.Player.CenterPosition, 512, 0.4f);
+            _gameState.Asteroid.IsInMiner
+                ? _gameState.Asteroid.Miner.CenterPosition
+                : _gameState.Asteroid.Player.CenterPosition, 512, 0.4f);
 
-        foreach (var entity in _gameState.ActiveEntitiesSortedByDistance)
+        foreach (var entity in _gameState.Asteroid.ActiveEntitiesSortedByDistance)
             if (entity is DynamiteEntity dynamiteEntity)
                 _dynamiteRenderer.RenderLightSource(spriteBatch, dynamiteEntity);
             else if (entity is ExplosionEntity explosionEntity)
@@ -211,7 +213,7 @@ public class Renderer
             1, // Only lava, small light source
             (col, row) =>
             {
-                if (_gameState.Grid.GetFloorType(col, row) == FloorType.Lava)
+                if (_gameState.Asteroid.Grid.GetFloorType(col, row) == FloorType.Lava)
                 {
                     var pos = new Vector2(col + 0.5f, row + 0.5f);
                     _shared.RenderRadialLightSource(spriteBatch, pos, _lavaLightColor, 150, 0.6f);
@@ -222,7 +224,7 @@ public class Renderer
         LoopVisibleCells(FogOfWarRenderer.FogGradientGridRadius,
             (col, row) =>
             {
-                var cellState = _gameState.Grid.GetCellState(col, row);
+                var cellState = _gameState.Asteroid.Grid.GetCellState(col, row);
                 var showOverlay = cellState.DistanceToExploredFloor >= 2 ||
                                   cellState.DistanceToExploredFloor ==
                                   CellState.UninitializedOrAboveMax;

@@ -13,7 +13,7 @@ public class PlayerRenderer(
 
     public void RenderPlayer(SpriteBatch spriteBatch)
     {
-        var textureFrameOffsetX = shared.GameState.Player.Direction switch
+        var textureFrameOffsetX = shared.GameState.Asteroid.Player.Direction switch
         {
             Direction.Bottom => 0,
             Direction.Left => PlayerTextureSizePx * 1,
@@ -25,10 +25,10 @@ public class PlayerRenderer(
             textureFrameOffsetX, 0,
             PlayerTextureSizePx,
             PlayerTextureSizePx);
-        var destinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(shared.GameState.Player.Position,
+        var destinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(shared.GameState.Asteroid.Player.Position,
             PlayerTextureSizePx, PlayerTextureSizePx, PlayerBoxOffsetX, PlayerBoxOffsetY);
 
-        var tintColor = ViewHelpers.GetEntityTintColor(shared.GameState.Player);
+        var tintColor = ViewHelpers.GetEntityTintColor(shared.GameState.Asteroid.Player);
 
         spriteBatch.Draw(shared.Textures["player"], destinationRectangle, sourceRectangle, tintColor);
     }

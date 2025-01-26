@@ -1,5 +1,17 @@
 # TODO
 
+## HOME WORLD
+
+### Basics
+
+- Setup hardcoded grid + entities?
+- Launch/base cycle
+- Interior spaces
+
+###
+
+- Launch animation
+
 ## RISK/REWARD IMPROVEMENTS
 
 - Explosive cells
@@ -55,6 +67,7 @@
 
 - Player placement when exiting
 - Test on Xbox?
+    - Is state serializable for things like saving?
 
 ## Rendering / art
 
@@ -81,4 +94,5 @@
 
 ## Meta
 
-- Do I release this?
+- Bit more of a release plan
+- Learn shaders!

@@ -13,6 +13,8 @@ public class ControllableEntity : Entity
     private const float ExcessSpeedLossPerSecond = 3f;
     private const int LavaDamageDelayMs = 1000; // 1 second delay before taking damage
 
+    private readonly List<MiningControls> _activeControlsOrder = new();
+
     private readonly Dictionary<MiningControls, Direction> _directionsControlsMapping = new()
     {
         { MiningControls.MoveUp, Direction.Top },
@@ -20,8 +22,6 @@ public class ControllableEntity : Entity
         { MiningControls.MoveDown, Direction.Bottom },
         { MiningControls.MoveLeft, Direction.Left }
     };
-
-    private readonly List<MiningControls> _activeControlsOrder = new();
 
     protected readonly GameState GameState;
 
@@ -86,24 +86,16 @@ public class ControllableEntity : Entity
     {
         // Remove any controls that are no longer active
         _activeControlsOrder.RemoveAll(control => !activeMiningControls.Contains(control));
-        
+
         // Add any new controls to the end of the list
         foreach (var control in activeMiningControls)
-        {
             if (!_activeControlsOrder.Contains(control))
-            {
                 _activeControlsOrder.Add(control);
-            }
-        }
 
         // Return the direction of the most recently pressed control
-        for (int i = _activeControlsOrder.Count - 1; i >= 0; i--)
-        {
+        for (var i = _activeControlsOrder.Count - 1; i >= 0; i--)
             if (_directionsControlsMapping.TryGetValue(_activeControlsOrder[i], out var direction))
-            {
                 return direction;
-            }
-        }
 
         return null;
     }
@@ -115,7 +107,7 @@ public class ControllableEntity : Entity
 
         for (var x = topLeftCell.x; x <= bottomRightCell.x; x++)
         for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
-            if (GameState.Grid.GetWallType(x, y) != WallType.Empty)
+            if (GameState.Asteroid.Grid.GetWallType(x, y) != WallType.Empty)
                 return true;
 
         return false;
@@ -130,7 +122,7 @@ public class ControllableEntity : Entity
 
         var newRectangle = new RectangleF(newVector.X, newVector.Y, GridBoxSize, GridBoxSize);
 
-        foreach (var entity in GameState.ActiveEntitiesSortedByDistance)
+        foreach (var entity in GameState.Asteroid.ActiveEntitiesSortedByDistance)
             if (entity != this && entity.CanCollide && newRectangle.IntersectsWith(entity.Rectangle) &&
                 !Rectangle.IntersectsWith(entity.Rectangle)) // Allow movement if currently clipping
                 return false;
@@ -177,7 +169,7 @@ public class ControllableEntity : Entity
         for (var x = topLeftX; x <= bottomRightX; x++)
         for (var y = topLeftY; y <= bottomRightY; y++)
         {
-            var floorType = GameState.Grid.GetFloorType(x, y);
+            var floorType = GameState.Asteroid.Grid.GetFloorType(x, y);
             if (floorType != FloorType.Empty) allCellsAreEmpty = false;
             if (floorType == FloorType.Lava) someCellsAreLava = true;
         }

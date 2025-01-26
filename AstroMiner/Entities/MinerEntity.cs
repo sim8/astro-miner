@@ -80,16 +80,16 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
 
             var leftTargetToCheck = leftGrappleStart + DirectionHelpers.GetDirectionalVector(distance, Direction);
             var rightTargetToCheck = rightGrappleStart + DirectionHelpers.GetDirectionalVector(distance, Direction);
-            
-            var leftCellState = gameState.Grid.GetCellState(leftTargetToCheck);
-            var rightCellState = gameState.Grid.GetCellState(rightTargetToCheck);
+
+            var leftCellState = gameState.Asteroid.Grid.GetCellState(leftTargetToCheck);
+            var rightCellState = gameState.Asteroid.Grid.GetCellState(rightTargetToCheck);
 
             // If either grapple hits a wall, break
             if (leftCellState.WallType != WallType.Empty || rightCellState.WallType != WallType.Empty) break;
 
             // Only valid if both grapples hit valid floor
-            var bothHitValidFloor = FloorTypes.IsFloorLikeTileset(leftCellState.FloorType) && 
-                                  FloorTypes.IsFloorLikeTileset(rightCellState.FloorType);
+            var bothHitValidFloor = FloorTypes.IsFloorLikeTileset(leftCellState.FloorType) &&
+                                    FloorTypes.IsFloorLikeTileset(rightCellState.FloorType);
 
             if (bothHitValidFloor)
             {
@@ -100,10 +100,7 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
 
             // If no valid grapple targets, still use GrappleTarget for animation
             // to show checked cells
-            if (!_grappleTargetIsValid) 
-            {
-                GrappleTarget = (leftTargetToCheck + rightTargetToCheck) / 2;
-            }
+            if (!_grappleTargetIsValid) GrappleTarget = (leftTargetToCheck + rightTargetToCheck) / 2;
         }
 
         if (_grappleTargetIsValid) _grappleCooldownRemaining = GameConfig.GrappleCooldownMs;
@@ -185,6 +182,6 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
     protected override void OnDead()
     {
         var explosionEntity = new ExplosionEntity(gameState, CenterPosition);
-        gameState.ActivateEntity(explosionEntity);
+        gameState.Asteroid.ActivateEntity(explosionEntity);
     }
 }

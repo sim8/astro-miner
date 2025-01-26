@@ -27,17 +27,18 @@ public class UserInterfaceRenderer(
 
         RenderGrappleIcon(spriteBatch);
 
-        RenderHealthBar(spriteBatch, shared.GameState.Miner, 50, 192);
-        RenderHealthBar(spriteBatch, shared.GameState.Player, 50, 207);
+        RenderHealthBar(spriteBatch, shared.GameState.Asteroid.Miner, 50, 192);
+        RenderHealthBar(spriteBatch, shared.GameState.Asteroid.Player, 50, 207);
 
 
         shared.RenderString(spriteBatch, 1000, 0, "FPS " + frameCounter.AverageFramesPerSecond.ToString("F0"));
 
 
-        shared.RenderString(spriteBatch, 1000, 40, "SEED " + shared.GameState.Seed);
+        shared.RenderString(spriteBatch, 1000, 40, "SEED " + shared.GameState.Asteroid.Seed);
 
-        if (shared.GameState.ActiveControllableEntity.IsDead || shared.GameState.ActiveControllableEntity.IsOffAsteroid)
-            RenderNewGameScreen(spriteBatch, shared.GameState.ActiveControllableEntity.IsDead);
+        if (shared.GameState.Asteroid.ActiveControllableEntity.IsDead ||
+            shared.GameState.Asteroid.ActiveControllableEntity.IsOffAsteroid)
+            RenderNewGameScreen(spriteBatch, shared.GameState.Asteroid.ActiveControllableEntity.IsDead);
     }
 
     private void RenderInventory(SpriteBatch spriteBatch, int xOffset, int yoffset)
@@ -65,7 +66,7 @@ public class UserInterfaceRenderer(
 
     private void RenderGrappleIcon(SpriteBatch spriteBatch)
     {
-        var color = shared.GameState.Miner.GrappleAvailable
+        var color = shared.GameState.Asteroid.Miner.GrappleAvailable
             ? Color.LimeGreen
             : _gridColor;
         spriteBatch.Draw(shared.Textures["grapple-icon"],
@@ -128,7 +129,7 @@ public class UserInterfaceRenderer(
                 _gridColor);
         }
 
-        foreach (var gameStateEdgeCell in shared.GameState.EdgeCells)
+        foreach (var gameStateEdgeCell in shared.GameState.Asteroid.EdgeCells)
         {
             var x = xOffset + gameStateEdgeCell.x * scale;
             var y = yOffset + gameStateEdgeCell.y * scale;
@@ -137,7 +138,8 @@ public class UserInterfaceRenderer(
             spriteBatch.Draw(shared.Textures["white"], edgeCellDestRect, Color.White);
         }
 
-        var playerGridPos = ViewHelpers.ToGridPosition(shared.GameState.ActiveControllableEntity.CenterPosition);
+        var playerGridPos =
+            ViewHelpers.ToGridPosition(shared.GameState.Asteroid.ActiveControllableEntity.CenterPosition);
         var playerX = xOffset + playerGridPos.x * scale - playerSize / 2;
         var playerY = yOffset + playerGridPos.y * scale - playerSize / 2;
         var playerDestRect = new Rectangle((int)playerX, (int)playerY, playerSize, playerSize);
