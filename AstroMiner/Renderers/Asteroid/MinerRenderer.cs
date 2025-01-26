@@ -4,7 +4,7 @@ using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace AstroMiner.Renderers;
+namespace AstroMiner.Renderers.Asteroid;
 
 public class MinerRenderer(
     RendererShared shared)
