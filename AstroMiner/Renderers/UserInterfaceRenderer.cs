@@ -13,7 +13,7 @@ public class UserInterfaceRenderer(
 {
     private readonly Color _gridColor = new(70, 125, 149);
 
-    public void RenderUserInterface(SpriteBatch spriteBatch, FrameCounter frameCounter)
+    public void RenderUserInterface(SpriteBatch spriteBatch)
     {
         var timeLeft = Math.Max(GameConfig.AsteroidExplodeTimeMs - shared.GameState.MsSinceStart, 0);
         var minutes = timeLeft / 60000;
@@ -29,12 +29,6 @@ public class UserInterfaceRenderer(
 
         RenderHealthBar(spriteBatch, shared.GameState.Asteroid.Miner, 50, 192);
         RenderHealthBar(spriteBatch, shared.GameState.Asteroid.Player, 50, 207);
-
-
-        shared.RenderString(spriteBatch, 1000, 0, "FPS " + frameCounter.AverageFramesPerSecond.ToString("F0"));
-
-
-        shared.RenderString(spriteBatch, 1000, 40, "SEED " + shared.GameState.Asteroid.Seed);
 
         if (shared.GameState.Asteroid.ActiveControllableEntity.IsDead ||
             shared.GameState.Asteroid.ActiveControllableEntity.IsOffAsteroid)
