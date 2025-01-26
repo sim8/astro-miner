@@ -1,4 +1,5 @@
 using AstroMiner.Definitions;
+using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
 
@@ -6,9 +7,9 @@ public class ActiveCollapsingFloorCell(GameState gameState, (int x, int y) gridP
 {
     public int TimeToCollapse = GameConfig.CollapsingFloorSpreadTime;
 
-    public void Update(int elapsedMs)
+    public void Update(GameTime gameTime)
     {
-        TimeToCollapse -= elapsedMs;
+        TimeToCollapse -= gameTime.ElapsedGameTime.Milliseconds;
         if (TimeToCollapse <= 0)
         {
             GridState.Map4Neighbors(gridPos.x, gridPos.y,

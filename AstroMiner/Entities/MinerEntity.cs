@@ -106,7 +106,7 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
         if (_grappleTargetIsValid) _grappleCooldownRemaining = GameConfig.GrappleCooldownMs;
     }
 
-    private void UseGrapple(int elapsedMs)
+    private void UseGrapple(GameTime gameTime)
     {
         if (!_prevPressedUsedGrapple && GrappleAvailable) SetGrappleTarget();
 
@@ -125,7 +125,7 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
         }
         else // Firing grapple
         {
-            var grappleTravelDistance = elapsedMs / 20f;
+            var grappleTravelDistance = gameTime.ElapsedGameTime.Milliseconds / 20f;
             GrapplePercentToTarget =
                 Math.Min(1f, GrapplePercentToTarget + grappleTravelDistance / DistanceToTarget);
 
@@ -133,31 +133,31 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
         }
     }
 
-    protected override void UpdateSpeed(Direction? selectedDirection, int elapsedGameTimeMs)
+    protected override void UpdateSpeed(Direction? selectedDirection, GameTime gameTime)
     {
         if (IsReelingIn)
         {
             CurrentSpeed = Math.Max(ReelingBaseSpeed, CurrentSpeed);
             // Gradually ramp up to max reeling speed
-            var speedIncrease = (ReelingMaxSpeed - ReelingBaseSpeed) * (elapsedGameTimeMs / 5000f);
+            var speedIncrease = (ReelingMaxSpeed - ReelingBaseSpeed) * (gameTime.ElapsedGameTime.Milliseconds / 5000f);
             CurrentSpeed = Math.Min(ReelingMaxSpeed, CurrentSpeed + speedIncrease);
         }
         else
         {
-            base.UpdateSpeed(selectedDirection, elapsedGameTimeMs);
+            base.UpdateSpeed(selectedDirection, gameTime);
         }
     }
 
-    public override void Update(int elapsedMs, HashSet<MiningControls> activeMiningControls)
+    public override void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
     {
-        base.Update(elapsedMs, activeMiningControls);
+        base.Update(gameTime, activeMiningControls);
 
         // Update cooldown
-        _grappleCooldownRemaining = Math.Max(0, _grappleCooldownRemaining - elapsedMs);
+        _grappleCooldownRemaining = Math.Max(0, _grappleCooldownRemaining - gameTime.ElapsedGameTime.Milliseconds);
 
         if (activeMiningControls.Contains(MiningControls.UseGrapple))
         {
-            UseGrapple(elapsedMs);
+            UseGrapple(gameTime);
             _prevPressedUsedGrapple = true;
         }
         else

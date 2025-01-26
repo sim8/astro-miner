@@ -131,15 +131,15 @@ public class ControllableEntity : Entity
         return true;
     }
 
-    public override void Update(int elapsedMs, HashSet<MiningControls> activeMiningControls)
+    public override void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
     {
-        CheckIfShouldFallOrTakeDamage(elapsedMs);
+        CheckIfShouldFallOrTakeDamage(gameTime);
 
         if (IsAnimatingDamage)
         {
             // We need total for smooth animation, and timeSinceLastDamage to know when to stop showing
-            TotalDamageAnimationTimeMs += elapsedMs;
-            TimeSinceLastDamage += elapsedMs;
+            TotalDamageAnimationTimeMs += gameTime.ElapsedGameTime.Milliseconds;
+            TimeSinceLastDamage += gameTime.ElapsedGameTime.Milliseconds;
             if (TimeSinceLastDamage >= GameConfig.DamageAnimationTimeMs)
             {
                 TotalDamageAnimationTimeMs = 0;
@@ -154,11 +154,11 @@ public class ControllableEntity : Entity
         if (selectedDirection.HasValue && selectedDirection.Value == DirectionHelpers.GetOppositeDirection(Direction))
             CurrentSpeed = 0f;
         Direction = selectedDirection ?? Direction;
-        UpdateSpeed(selectedDirection, elapsedMs);
-        UpdatePos(elapsedMs);
+        UpdateSpeed(selectedDirection, gameTime);
+        UpdatePos(gameTime);
     }
 
-    private void CheckIfShouldFallOrTakeDamage(int elapsedMs)
+    private void CheckIfShouldFallOrTakeDamage(GameTime gameTime)
     {
         var (topLeftX, topLeftY) = ViewHelpers.ToGridPosition(Position);
         var (bottomRightX, bottomRightY) = ViewHelpers.ToGridPosition(Position + new Vector2(GridBoxSize, GridBoxSize));
@@ -176,42 +176,42 @@ public class ControllableEntity : Entity
 
         if (someCellsAreLava)
         {
-            _timeOnLavaMs += elapsedMs;
+            _timeOnLavaMs += gameTime.ElapsedGameTime.Milliseconds;
             if (_timeOnLavaMs >= LavaDamageDelayMs)
-                TakeDamage((float)GameConfig.LavaDamagePerSecond / 1000 * elapsedMs);
+                TakeDamage((float)GameConfig.LavaDamagePerSecond / 1000 * gameTime.ElapsedGameTime.Milliseconds);
         }
         else if (_timeOnLavaMs > 0)
         {
-            _timeOnLavaMs = Math.Max(0, _timeOnLavaMs - elapsedMs);
+            _timeOnLavaMs = Math.Max(0, _timeOnLavaMs - gameTime.ElapsedGameTime.Milliseconds);
         }
 
         if (allCellsAreEmpty) IsOffAsteroid = true;
     }
 
-    protected virtual void UpdateSpeed(Direction? selectedDirection, int elapsedGameTimeMs)
+    protected virtual void UpdateSpeed(Direction? selectedDirection, GameTime gameTime)
     {
         if (CurrentSpeed > MaxSpeed)
         {
             CurrentSpeed = Math.Max(MaxSpeed,
-                CurrentSpeed - ExcessSpeedLossPerSecond * (elapsedGameTimeMs / 1000f));
+                CurrentSpeed - ExcessSpeedLossPerSecond * (gameTime.ElapsedGameTime.Milliseconds / 1000f));
             return;
         }
 
         // Existing speed update logic
         if (!selectedDirection.HasValue && CurrentSpeed > 0)
             CurrentSpeed = Math.Max(0,
-                CurrentSpeed - MaxSpeed * (elapsedGameTimeMs / (float)TimeToStopMs));
+                CurrentSpeed - MaxSpeed * (gameTime.ElapsedGameTime.Milliseconds / (float)TimeToStopMs));
 
         if ((CurrentSpeed > 0 || selectedDirection.HasValue) && selectedDirection.HasValue)
             CurrentSpeed = Math.Min(MaxSpeed,
-                CurrentSpeed + MaxSpeed * (elapsedGameTimeMs / (float)TimeToReachMaxSpeedMs));
+                CurrentSpeed + MaxSpeed * (gameTime.ElapsedGameTime.Milliseconds / (float)TimeToReachMaxSpeedMs));
     }
 
-    private void UpdatePos(int elapsedGameTimeMs)
+    private void UpdatePos(GameTime gameTime)
     {
         if (CurrentSpeed > 0)
         {
-            var distance = CurrentSpeed * (elapsedGameTimeMs / 1000f);
+            var distance = CurrentSpeed * (gameTime.ElapsedGameTime.Milliseconds / 1000f);
             var movement = DirectionHelpers.GetDirectionalVector(distance, Direction);
 
             var hasCollisions = !ApplyVectorToPosIfNoCollisions(movement);

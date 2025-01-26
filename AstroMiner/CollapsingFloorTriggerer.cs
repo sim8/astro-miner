@@ -1,6 +1,7 @@
 using System;
 using AstroMiner.Definitions;
 using AstroMiner.Utilities;
+using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
 
@@ -30,9 +31,9 @@ public class CollapsingFloorTriggerer(GameState gameState)
             }
     }
 
-    public void Update(int elapsedMs)
+    public void Update(GameTime gameTime)
     {
-        _elapsedTimeAccumulator += elapsedMs;
+        _elapsedTimeAccumulator += gameTime.ElapsedGameTime.Milliseconds;
 
         // Check if the interval has been reached or exceeded
         if (_elapsedTimeAccumulator >= TriggerIntervalMs)

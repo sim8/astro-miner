@@ -88,7 +88,7 @@ public class AstroMinerGame : Game
 
         var activeMiningControls = _miningControlMapper.GetActiveControls(keyboardState, gamePadState);
 
-        _gameState.Update(activeMiningControls, gameTime.ElapsedGameTime.Milliseconds);
+        _gameState.Update(activeMiningControls, gameTime);
 
         base.Update(gameTime);
     }

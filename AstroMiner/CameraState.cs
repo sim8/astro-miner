@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using AstroMiner.Definitions;
+using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
 
@@ -27,7 +28,7 @@ public class CameraState
 
     public float ScaleMultiplier { get; private set; }
 
-    public void Update(int elapsedMs, HashSet<MiningControls> activeMiningControls)
+    public void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
     {
         if (activeMiningControls.Contains(MiningControls.CycleZoom))
             _selectedZoom = _selectedZoom switch
@@ -59,7 +60,7 @@ public class CameraState
         }
 
         // Accumulate elapsed time
-        _zoomTransitionElapsed += elapsedMs;
+        _zoomTransitionElapsed += gameTime.ElapsedGameTime.Milliseconds;
 
         // Calculate how far along we are from 0 to 1
         var fraction = (float)_zoomTransitionElapsed / ZoomTransitionMs;

@@ -68,12 +68,12 @@ public class GameState
         IsOnAsteroid = false;
     }
 
-    public void Update(HashSet<MiningControls> activeMiningControls, int elapsedMs)
+    public void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
     {
-        if (IsOnAsteroid) Asteroid.Update(activeMiningControls, elapsedMs);
+        if (IsOnAsteroid) Asteroid.Update(activeMiningControls, gameTime);
 
-        Camera.Update(elapsedMs, activeMiningControls);
+        Camera.Update(gameTime, activeMiningControls);
 
-        CloudManager.Update(elapsedMs);
+        CloudManager.Update(gameTime);
     }
 }

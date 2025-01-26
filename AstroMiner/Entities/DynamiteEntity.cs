@@ -22,9 +22,9 @@ public class DynamiteEntity : Entity
 
     public int TimeToExplodeMs { get; private set; }
 
-    public override void Update(int elapsedMs, HashSet<MiningControls> activeMiningControls)
+    public override void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
     {
-        TimeToExplodeMs -= elapsedMs;
+        TimeToExplodeMs -= gameTime.ElapsedGameTime.Milliseconds;
         if (TimeToExplodeMs <= 0)
         {
             var explosionEntity = new ExplosionEntity(_gameState, CenterPosition);

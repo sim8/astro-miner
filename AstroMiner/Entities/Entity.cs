@@ -24,7 +24,7 @@ public class Entity
         return Vector2.Distance(CenterPosition, entity.CenterPosition);
     }
 
-    public virtual void Update(int elapsedMs, HashSet<MiningControls> activeMiningControls)
+    public virtual void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
     {
     }
 

@@ -5,12 +5,12 @@ using AstroMiner.Definitions;
 using AstroMiner.Entities;
 using AstroMiner.ProceduralGen;
 using AstroMiner.Utilities;
+using Microsoft.Xna.Framework;
 
 namespace AstroMiner.Asteroid;
 
-public class AsteroidState
+public class AsteroidState(GameState gameState)
 {
-    private readonly GameState _gameState;
     private HashSet<MiningControls> _emptyMiningControls;
     public List<Entity> ActiveEntitiesSortedByDistance;
     public CollapsingFloorTriggerer CollapsingFloorTriggerer;
@@ -19,13 +19,6 @@ public class AsteroidState
     public GridState Grid;
     public MinerEntity Miner;
     public PlayerEntity Player;
-
-    public AsteroidState(
-        GameState gameState)
-    {
-        _gameState = gameState;
-        Initialize();
-    }
 
     public int Seed { get; private set; }
 
@@ -46,20 +39,20 @@ public class AsteroidState
     {
         InitSeed();
         var (grid, minerPos) = AsteroidGen.InitializeGridAndStartingPos(GameConfig.GridSize, Seed);
-        Grid = new GridState(_gameState, grid);
+        Grid = new GridState(gameState, grid);
 
         var (minerPosX, minerPosY) = ViewHelpers.ToGridPosition(minerPos);
         Grid.MarkAllDistancesFromExploredFloor(minerPosX, minerPosY, true);
-        Miner = new MinerEntity(_gameState);
+        Miner = new MinerEntity(gameState);
         _emptyMiningControls = new HashSet<MiningControls>();
         Miner.Initialize(minerPos);
-        Player = new PlayerEntity(_gameState);
+        Player = new PlayerEntity(gameState);
         Player.Initialize(minerPos);
         EdgeCells = UserInterfaceHelpers.GetAsteroidEdgeCells(Grid);
-        CollapsingFloorTriggerer = new CollapsingFloorTriggerer(_gameState);
+        CollapsingFloorTriggerer = new CollapsingFloorTriggerer(gameState);
         ActiveEntitiesSortedByDistance = [Miner];
         MsSinceStart = 0;
-        FogAnimationManager = new FogAnimationManager(_gameState);
+        FogAnimationManager = new FogAnimationManager(gameState);
     }
 
     private void SortActiveEntities()
@@ -77,7 +70,7 @@ public class AsteroidState
         ActiveEntitiesSortedByDistance.Remove(entity);
     }
 
-    public void Update(HashSet<MiningControls> activeMiningControls, int elapsedMs)
+    public void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
     {
         if (ActiveControllableEntity.IsDead || ActiveControllableEntity.IsOffAsteroid)
         {
@@ -85,7 +78,7 @@ public class AsteroidState
             return;
         }
 
-        MsSinceStart += elapsedMs;
+        MsSinceStart += gameTime.ElapsedGameTime.Milliseconds;
 
         if (MsSinceStart > GameConfig.AsteroidExplodeTimeMs)
         {
@@ -110,19 +103,19 @@ public class AsteroidState
 
         foreach (var entity in ActiveEntitiesSortedByDistance.ToList())
             if (entity is MiningControllableEntity && entity == ActiveControllableEntity)
-                entity.Update(elapsedMs, activeMiningControls);
+                entity.Update(gameTime, activeMiningControls);
             else
-                entity.Update(elapsedMs, _emptyMiningControls);
+                entity.Update(gameTime, _emptyMiningControls);
 
-        foreach (var cell in Grid._activeExplosiveRockCells) cell.Value.Update(elapsedMs);
-        foreach (var cell in Grid._activeCollapsingFloorCells.Values.ToList()) cell.Update(elapsedMs);
+        foreach (var cell in Grid._activeExplosiveRockCells) cell.Value.Update(gameTime);
+        foreach (var cell in Grid._activeCollapsingFloorCells.Values.ToList()) cell.Update(gameTime);
 
 
         // Do last to reflect changes
         SortActiveEntities(); // TODO only call when needed? Seems error prone
 
-        CollapsingFloorTriggerer.Update(elapsedMs);
+        CollapsingFloorTriggerer.Update(gameTime);
 
-        FogAnimationManager.Update(elapsedMs);
+        FogAnimationManager.Update(gameTime);
     }
 }

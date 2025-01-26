@@ -20,7 +20,7 @@ public class FogAnimationManager
         _activeFadingCells.Add((x, y));
     }
 
-    public void Update(float elapsedMs)
+    public void Update(GameTime gameTime)
     {
         var completedCells = new List<(int x, int y)>();
 
@@ -32,7 +32,8 @@ public class FogAnimationManager
             var distanceFromPlayer = Vector2.Distance(new Vector2(x + 0.5f, y + 0.5f),
                 _gameState.Asteroid.ActiveControllableEntity.CenterPosition);
 
-            cell.FogOpacity = Math.Max(0, cell.FogOpacity - elapsedMs / (BaseFadeOutDurationMs * distanceFromPlayer));
+            cell.FogOpacity = Math.Max(0,
+                cell.FogOpacity - gameTime.ElapsedGameTime.Milliseconds / (BaseFadeOutDurationMs * distanceFromPlayer));
             if (cell.FogOpacity <= 0) completedCells.Add((x, y));
         }
 

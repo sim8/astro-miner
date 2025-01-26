@@ -26,12 +26,12 @@ public class MiningControllableEntity(GameState gameState) : ControllableEntity(
         _drillingMs = 0;
     }
 
-    public override void Update(int elapsedMs, HashSet<MiningControls> activeMiningControls)
+    public override void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
     {
-        base.Update(elapsedMs, activeMiningControls);
+        base.Update(gameTime, activeMiningControls);
 
         if (activeMiningControls.Contains(MiningControls.Drill))
-            UseDrill(elapsedMs);
+            UseDrill(gameTime);
         else
             ResetDrill();
     }
@@ -60,7 +60,7 @@ public class MiningControllableEntity(GameState gameState) : ControllableEntity(
     ///     drill times summed. Once <see cref="_drillingMs" /> meets/exceeds that sum,
     ///     they are all mined simultaneously.
     /// </summary>
-    private void UseDrill(int elapsedGameTimeMs)
+    private void UseDrill(GameTime gameTime)
     {
         var drillPos = GetDrillPosition();
         var gridPos = ViewHelpers.ToGridPosition(drillPos);
@@ -68,13 +68,13 @@ public class MiningControllableEntity(GameState gameState) : ControllableEntity(
         // If we're still drilling the same row/column as last time, just accumulate time.
         if (gridPos == _drillingPos)
         {
-            _drillingMs += elapsedGameTimeMs;
+            _drillingMs += gameTime.ElapsedGameTime.Milliseconds;
         }
         else
         {
             // Starting to drill a new row/column
             _drillingPos = gridPos;
-            _drillingMs = elapsedGameTimeMs;
+            _drillingMs = gameTime.ElapsedGameTime.Milliseconds;
             _drillingCellsMined = false;
             _drillingCells.Clear();
             _drillingTotalTimeRequired = 0;

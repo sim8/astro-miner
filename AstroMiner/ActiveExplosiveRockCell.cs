@@ -8,9 +8,9 @@ public class ActiveExplosiveRockCell(GameState gameState, (int x, int y) gridPos
     private readonly (int X, int Y) Position = gridPos;
     public int TimeToExplodeMs = timeToExplodeMs;
 
-    public void Update(int elapsedMs)
+    public void Update(GameTime gameTime)
     {
-        TimeToExplodeMs -= elapsedMs;
+        TimeToExplodeMs -= gameTime.ElapsedGameTime.Milliseconds;
         if (TimeToExplodeMs <= 0)
         {
             var explosionPos = new Vector2(Position.X + 0.5f, Position.Y + 0.5f);

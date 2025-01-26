@@ -10,9 +10,9 @@ public class PlayerEntity(GameState gameState) : MiningControllableEntity(gameSt
     protected override float MaxHealth => GameConfig.PlayerMaxHealth;
     protected override int BoxSizePx { get; } = GameConfig.PlayerBoxSizePx;
 
-    public override void Update(int elapsedMs, HashSet<MiningControls> activeMiningControls)
+    public override void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
     {
-        base.Update(elapsedMs, activeMiningControls);
+        base.Update(gameTime, activeMiningControls);
         if (activeMiningControls.Contains(MiningControls.PlaceDynamite) && gameState.Inventory.numDynamite > 0)
         {
             gameState.Inventory.numDynamite--;

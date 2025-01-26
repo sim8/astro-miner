@@ -57,7 +57,7 @@ public class ExplosionEntity : Entity
         }
     }
 
-    public override void Update(int elapsedMs, HashSet<MiningControls> activeMiningControls)
+    public override void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
     {
         if (!_hasExploded)
         {
@@ -68,7 +68,7 @@ public class ExplosionEntity : Entity
         }
         else
         {
-            TimeSinceExplosionMs += elapsedMs;
+            TimeSinceExplosionMs += gameTime.ElapsedGameTime.Milliseconds;
         }
 
         if (TimeSinceExplosionMs >= _animationTime) _gameState.Asteroid.DeactivateEntity(this);
