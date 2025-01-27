@@ -79,7 +79,10 @@ public class GameState
 
     public void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
     {
-        if (IsOnAsteroid) Asteroid.Update(activeMiningControls, gameTime);
+        if (IsOnAsteroid)
+            Asteroid.Update(activeMiningControls, gameTime);
+        else
+            World.Update(activeMiningControls, gameTime);
 
         Camera.Update(gameTime, activeMiningControls);
 

@@ -13,7 +13,7 @@ public static class WorldGrid
                                       X,-,-,-,-,-,X
                                       X,-,-,-,-,-,X
                                       X,X,X,X,X,-,X
-                                      -,-,-,-,X,-,X
+                                      -,-,-,-,X,X,X
                                       """;
 
     private static WorldCellType[,] ParseWorld(string world)

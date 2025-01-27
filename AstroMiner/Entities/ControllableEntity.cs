@@ -107,9 +107,10 @@ public class ControllableEntity : Entity
 
         for (var x = topLeftCell.x; x <= bottomRightCell.x; x++)
         for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
-            if (GameState.Asteroid.Grid.GetWallType(x, y) != WallType.Empty)
+            if (GameState.IsOnAsteroid && GameState.Asteroid.Grid.GetWallType(x, y) != WallType.Empty)
                 return true;
-
+            else if (!GameState.IsOnAsteroid && GameState.World.Grid[y, x] == WorldCellType.Filled)
+                return true;
         return false;
     }
 
@@ -122,7 +123,11 @@ public class ControllableEntity : Entity
 
         var newRectangle = new RectangleF(newVector.X, newVector.Y, GridBoxSize, GridBoxSize);
 
-        foreach (var entity in GameState.Asteroid.ActiveEntitiesSortedByDistance)
+        var activeEntities = GameState.IsOnAsteroid
+            ? GameState.Asteroid.ActiveEntitiesSortedByDistance
+            : GameState.World.ActiveEntitiesSortedByDistance;
+
+        foreach (var entity in activeEntities)
             if (entity != this && entity.CanCollide && newRectangle.IntersectsWith(entity.Rectangle) &&
                 !Rectangle.IntersectsWith(entity.Rectangle)) // Allow movement if currently clipping
                 return false;
@@ -160,6 +165,9 @@ public class ControllableEntity : Entity
 
     private void CheckIfShouldFallOrTakeDamage(GameTime gameTime)
     {
+        // TODO remove
+        if (!GameState.IsOnAsteroid) return;
+
         var (topLeftX, topLeftY) = ViewHelpers.ToGridPosition(Position);
         var (bottomRightX, bottomRightY) = ViewHelpers.ToGridPosition(Position + new Vector2(GridBoxSize, GridBoxSize));
 
