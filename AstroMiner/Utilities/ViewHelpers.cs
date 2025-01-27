@@ -16,10 +16,7 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
 
     private Rectangle AdjustRectForCamera(float x, float y, float width, float height)
     {
-        Console.WriteLine("here");
-        Console.WriteLine(gameState.IsOnAsteroid);
         var (xPx, yPx) = GridPosToDisplayedPx(gameState.ActiveControllableEntity.CenterPosition);
-        Console.WriteLine("here1");
         var adjustedX = x - xPx + graphics.GraphicsDevice.Viewport.Width / 2f;
         var adjustedY = y - yPx + graphics.GraphicsDevice.Viewport.Height / 2f;
         return new Rectangle(

@@ -16,7 +16,7 @@ public static class WorldGrid
                                       -,-,-,-,X,-,X
                                       """;
 
-    public static WorldCellType[,] ParseWorld(string world)
+    private static WorldCellType[,] ParseWorld(string world)
     {
         var rows = world.Trim().Split('\n');
 
