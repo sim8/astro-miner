@@ -30,9 +30,9 @@ public class UserInterfaceRenderer(
         RenderHealthBar(spriteBatch, shared.GameState.Asteroid.Miner, 50, 192);
         RenderHealthBar(spriteBatch, shared.GameState.Asteroid.Player, 50, 207);
 
-        if (shared.GameState.Asteroid.ActiveControllableEntity.IsDead ||
-            shared.GameState.Asteroid.ActiveControllableEntity.IsOffAsteroid)
-            RenderNewGameScreen(spriteBatch, shared.GameState.Asteroid.ActiveControllableEntity.IsDead);
+        if (shared.GameState.ActiveControllableEntity.IsDead ||
+            shared.GameState.ActiveControllableEntity.IsOffAsteroid)
+            RenderNewGameScreen(spriteBatch, shared.GameState.ActiveControllableEntity.IsDead);
     }
 
     private void RenderInventory(SpriteBatch spriteBatch, int xOffset, int yoffset)
@@ -133,7 +133,7 @@ public class UserInterfaceRenderer(
         }
 
         var playerGridPos =
-            ViewHelpers.ToGridPosition(shared.GameState.Asteroid.ActiveControllableEntity.CenterPosition);
+            ViewHelpers.ToGridPosition(shared.GameState.ActiveControllableEntity.CenterPosition);
         var playerX = xOffset + playerGridPos.x * scale - playerSize / 2;
         var playerY = yOffset + playerGridPos.y * scale - playerSize / 2;
         var playerDestRect = new Rectangle((int)playerX, (int)playerY, playerSize, playerSize);

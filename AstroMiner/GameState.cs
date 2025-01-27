@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using AstroMiner.Asteroid;
+using AstroMiner.Entities;
+using AstroMiner.World;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
@@ -41,16 +43,22 @@ public class GameState
     public CloudManager CloudManager;
     public Inventory Inventory;
     public bool IsOnAsteroid;
+    public WorldState World;
 
     public GameState(
         GraphicsDeviceManager graphics)
     {
         Graphics = graphics;
         Initialize();
-        InitializeAsteroid();
+        // InitializeAsteroid();
+        World.Initialize();
     }
 
     public long MsSinceStart { get; private set; }
+
+    // TODO improve this
+    public MiningControllableEntity ActiveControllableEntity =>
+        !IsOnAsteroid ? World.Player : Asteroid.IsInMiner ? Asteroid.Miner : Asteroid.Player;
 
     public void InitializeAsteroid()
     {
@@ -64,6 +72,7 @@ public class GameState
         Camera = new CameraState(this);
         MsSinceStart = 0;
         Asteroid = new AsteroidState(this);
+        World = new WorldState(this);
         CloudManager = new CloudManager(this);
         IsOnAsteroid = false;
     }

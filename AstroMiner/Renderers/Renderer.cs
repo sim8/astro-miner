@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using AstroMiner.Renderers.Asteroid;
+using AstroMiner.Renderers.World;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,6 +13,7 @@ public class Renderer
     private readonly GameState _gameState;
     private readonly RendererShared _shared;
     public readonly AsteroidRenderer AsteroidRenderer;
+    public readonly WorldRenderer WorldRenderer;
 
     public Renderer(
         GraphicsDeviceManager graphics,
@@ -23,12 +25,15 @@ public class Renderer
         _gameState = gameState;
         _frameCounter = frameCounter;
         AsteroidRenderer = new AsteroidRenderer(_shared);
+        WorldRenderer = new WorldRenderer(_shared);
     }
 
 
     public void Render(SpriteBatch spriteBatch)
     {
         if (_gameState.IsOnAsteroid) AsteroidRenderer.Render(spriteBatch);
+        else
+            WorldRenderer.Render(spriteBatch);
 
         RenderDebug(spriteBatch);
     }
