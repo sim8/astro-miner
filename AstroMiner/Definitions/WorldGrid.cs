@@ -12,7 +12,7 @@ public static class WorldGrid
                                       X,X,X,X,X,X,X
                                       X,-,-,-,-,-,X
                                       X,-,-,-,-,-,X
-                                      X,X,X,X,X.-,X
+                                      X,X,X,X,X,-,X
                                       -,-,-,-,X,-,X
                                       """;
 
