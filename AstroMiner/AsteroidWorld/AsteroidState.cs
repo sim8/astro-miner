@@ -7,7 +7,7 @@ using AstroMiner.ProceduralGen;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 
-namespace AstroMiner.Asteroid;
+namespace AstroMiner.AsteroidWorld;
 
 public class AsteroidState(GameState gameState)
 {

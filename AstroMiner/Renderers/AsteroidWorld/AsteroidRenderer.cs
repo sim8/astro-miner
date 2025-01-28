@@ -1,11 +1,12 @@
 using System;
+using AstroMiner.AsteroidWorld;
 using AstroMiner.Definitions;
 using AstroMiner.Entities;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace AstroMiner.Renderers.Asteroid;
+namespace AstroMiner.Renderers.AsteroidWorld;
 
 public class AsteroidRenderer
 {

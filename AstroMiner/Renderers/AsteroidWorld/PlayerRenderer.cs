@@ -2,7 +2,7 @@ using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace AstroMiner.Renderers.Asteroid;
+namespace AstroMiner.Renderers.AsteroidWorld;
 
 public class PlayerRenderer(
     RendererShared shared)
@@ -15,7 +15,7 @@ public class PlayerRenderer(
     {
         var player = shared.GameState.IsOnAsteroid
             ? shared.GameState.Asteroid.Player
-            : shared.GameState.World.Player;
+            : shared.GameState.HomeWorld.Player;
 
         var textureFrameOffsetX = player.Direction switch
         {

@@ -109,7 +109,7 @@ public class ControllableEntity : Entity
         for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
             if (GameState.IsOnAsteroid && GameState.Asteroid.Grid.GetWallType(x, y) != WallType.Empty)
                 return true;
-            else if (!GameState.IsOnAsteroid && GameState.World.Grid[y, x] == WorldCellType.Filled)
+            else if (!GameState.IsOnAsteroid && GameState.HomeWorld.Grid[y, x] == WorldCellType.Filled)
                 return true;
         return false;
     }
@@ -125,7 +125,7 @@ public class ControllableEntity : Entity
 
         var activeEntities = GameState.IsOnAsteroid
             ? GameState.Asteroid.ActiveEntitiesSortedByDistance
-            : GameState.World.ActiveEntitiesSortedByDistance;
+            : GameState.HomeWorld.ActiveEntitiesSortedByDistance;
 
         foreach (var entity in activeEntities)
             if (entity != this && entity.CanCollide && newRectangle.IntersectsWith(entity.Rectangle) &&

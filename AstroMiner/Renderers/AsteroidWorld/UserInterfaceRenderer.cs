@@ -6,7 +6,7 @@ using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace AstroMiner.Renderers.Asteroid;
+namespace AstroMiner.Renderers.AsteroidWorld;
 
 public class UserInterfaceRenderer(
     RendererShared shared)

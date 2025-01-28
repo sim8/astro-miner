@@ -5,7 +5,7 @@ using AstroMiner.Definitions;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 
-namespace AstroMiner;
+namespace AstroMiner.AsteroidWorld;
 
 public class CellState(WallType wallType, FloorType floorType, AsteroidLayer layer)
 {

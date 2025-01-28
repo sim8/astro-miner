@@ -1,0 +1,22 @@
+# BIG REFACTOR PLAN
+
+- Keep grid!
+  - Have a virtual "world" class
+  - Some abstraction for interacting with each grid
+  - Override logic for things like collisions
+  - Look through the code, check that makes sense
+- In the short term, keep separate entities, focus on keeping code tidy
+
+
+Separate PR:
+
+- Full blown performant ECS for everything else, including active cells
+  - start with entities shared between both worlds
+  - Start with just one entity (e.g. dynamite)
+  - Aim to remove old active entities
+  - Aim to move active cells into entities
+
+Future looking
+
+- InteriorsWorld?
+- Sub layer of asteroid world?

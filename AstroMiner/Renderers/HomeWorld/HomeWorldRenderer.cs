@@ -1,17 +1,17 @@
 using AstroMiner.Definitions;
 using AstroMiner.Entities;
-using AstroMiner.Renderers.Asteroid;
+using AstroMiner.Renderers.AsteroidWorld;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace AstroMiner.Renderers.World;
+namespace AstroMiner.Renderers.HomeWorld;
 
-public class WorldRenderer
+public class HomeWorldRenderer
 {
     private readonly PlayerRenderer _playerRenderer;
     private readonly RendererShared _shared;
 
-    public WorldRenderer(RendererShared shared)
+    public HomeWorldRenderer(RendererShared shared)
     {
         _shared = shared;
         _playerRenderer = new PlayerRenderer(_shared);
@@ -26,14 +26,14 @@ public class WorldRenderer
 
     public void RenderScene(SpriteBatch spriteBatch)
     {
-        for (var row = 0; row < _shared.GameState.World.Grid.GetLength(0); row++)
-        for (var col = 0; col < _shared.GameState.World.Grid.GetLength(1); col++)
-            if (_shared.GameState.World.Grid[row, col] == WorldCellType.Filled)
+        for (var row = 0; row < _shared.GameState.HomeWorld.Grid.GetLength(0); row++)
+        for (var col = 0; col < _shared.GameState.HomeWorld.Grid.GetLength(1); col++)
+            if (_shared.GameState.HomeWorld.Grid[row, col] == WorldCellType.Filled)
                 spriteBatch.Draw(_shared.Textures["white"],
                     _shared.ViewHelpers.GetVisibleRectForGridCell(col, row),
                     Color.White);
 
-        foreach (var entity in _shared.GameState.World.ActiveEntitiesSortedByDistance)
+        foreach (var entity in _shared.GameState.HomeWorld.ActiveEntitiesSortedByDistance)
             if (entity is PlayerEntity)
                 _playerRenderer.RenderPlayer(spriteBatch);
     }

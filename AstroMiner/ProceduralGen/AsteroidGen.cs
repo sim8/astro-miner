@@ -1,4 +1,5 @@
 using System;
+using AstroMiner.AsteroidWorld;
 using AstroMiner.Definitions;
 using Microsoft.Xna.Framework;
 

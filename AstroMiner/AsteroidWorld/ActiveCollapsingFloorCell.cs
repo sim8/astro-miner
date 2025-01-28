@@ -1,7 +1,7 @@
 using AstroMiner.Definitions;
 using Microsoft.Xna.Framework;
 
-namespace AstroMiner;
+namespace AstroMiner.AsteroidWorld;
 
 public class ActiveCollapsingFloorCell(GameState gameState, (int x, int y) gridPos)
 {

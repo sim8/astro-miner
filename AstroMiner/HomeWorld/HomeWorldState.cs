@@ -4,9 +4,9 @@ using AstroMiner.Definitions;
 using AstroMiner.Entities;
 using Microsoft.Xna.Framework;
 
-namespace AstroMiner.World;
+namespace AstroMiner.HomeWorld;
 
-public class WorldState(GameState gameState)
+public class HomeWorldState(GameState gameState)
 {
     private HashSet<MiningControls> _emptyMiningControls;
     public List<Entity> ActiveEntitiesSortedByDistance;

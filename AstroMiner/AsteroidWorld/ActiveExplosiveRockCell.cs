@@ -1,7 +1,7 @@
 using AstroMiner.Entities;
 using Microsoft.Xna.Framework;
 
-namespace AstroMiner;
+namespace AstroMiner.AsteroidWorld;
 
 public class ActiveExplosiveRockCell(GameState gameState, (int x, int y) gridPos, int timeToExplodeMs = 3000)
 {
