@@ -90,4 +90,9 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
 
         FogAnimationManager.Update(gameTime);
     }
+
+    public override bool CellIsCollideable(int x, int y)
+    {
+        return Grid.GetWallType(x, y) != WallType.Empty;
+    }
 }

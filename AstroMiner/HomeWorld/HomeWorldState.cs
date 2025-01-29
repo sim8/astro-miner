@@ -24,4 +24,12 @@ public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
 
         base.Update(activeMiningControls, gameTime);
     }
+
+    public override bool CellIsCollideable(int x, int y)
+    {
+        // TODO centralize out of bounds checks
+        if (x < 0 || x >= Grid.GetLength(1) || y < 0 ||
+            y >= Grid.GetLength(0)) return false;
+        return Grid[y, x] == WorldCellType.Filled;
+    }
 }

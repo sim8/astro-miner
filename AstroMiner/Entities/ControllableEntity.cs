@@ -107,9 +107,7 @@ public class ControllableEntity : Entity
 
         for (var x = topLeftCell.x; x <= bottomRightCell.x; x++)
         for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
-            if (GameState.IsOnAsteroid && GameState.AsteroidWorld.Grid.GetWallType(x, y) != WallType.Empty)
-                return true;
-            else if (!GameState.IsOnAsteroid && GameState.HomeWorld.Grid[y, x] == WorldCellType.Filled)
+            if (GameState.ActiveWorld.CellIsCollideable(x, y))
                 return true;
         return false;
     }

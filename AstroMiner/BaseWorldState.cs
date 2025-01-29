@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
 
-public class BaseWorldState(GameState g)
+public abstract class BaseWorldState(GameState g)
 {
     private readonly HashSet<MiningControls> _emptyMiningControls = [];
     public List<Entity> ActiveEntitiesSortedByDistance = [];
@@ -44,4 +44,6 @@ public class BaseWorldState(GameState g)
         // Do last to reflect changes
         SortActiveEntities(); // TODO only call when needed? Seems error prone
     }
+
+    public abstract bool CellIsCollideable(int x, int y);
 }
