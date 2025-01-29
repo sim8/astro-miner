@@ -121,11 +121,7 @@ public class ControllableEntity : Entity
 
         var newRectangle = new RectangleF(newVector.X, newVector.Y, GridBoxSize, GridBoxSize);
 
-        var activeEntities = GameState.IsOnAsteroid
-            ? GameState.AsteroidWorld.ActiveEntitiesSortedByDistance
-            : GameState.HomeWorld.ActiveEntitiesSortedByDistance;
-
-        foreach (var entity in activeEntities)
+        foreach (var entity in GameState.ActiveWorld.ActiveEntitiesSortedByDistance)
             if (entity != this && entity.CanCollide && newRectangle.IntersectsWith(entity.Rectangle) &&
                 !Rectangle.IntersectsWith(entity.Rectangle)) // Allow movement if currently clipping
                 return false;
