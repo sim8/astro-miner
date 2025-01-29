@@ -3,7 +3,7 @@ using AstroMiner.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace AstroMiner.Renderers;
+namespace AstroMiner.Renderers.AsteroidWorld;
 
 public class DynamiteRenderer(
     RendererShared shared)

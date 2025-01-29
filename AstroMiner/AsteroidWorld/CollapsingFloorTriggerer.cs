@@ -1,8 +1,9 @@
 using System;
 using AstroMiner.Definitions;
 using AstroMiner.Utilities;
+using Microsoft.Xna.Framework;
 
-namespace AstroMiner;
+namespace AstroMiner.AsteroidWorld;
 
 public class CollapsingFloorTriggerer(GameState gameState)
 {
@@ -20,18 +21,19 @@ public class CollapsingFloorTriggerer(GameState gameState)
         // Iterate through cells within 10 rows/columns of player
         for (var y = Math.Max(0, playerY - Distance); y <= playerY + Distance; y++)
         for (var x = Math.Max(0, playerX - Distance); x <= playerX + Distance; x++)
-            if (gameState.Grid.GetFloorType(x, y) == FloorType.LavaCracks && _random.Next(150) == 0)
+            if (gameState.AsteroidWorld.Grid.GetFloorType(x, y) == FloorType.LavaCracks && _random.Next(150) == 0)
             {
                 // Only collapse if there's a lava neighbor
-                var hasLavaNeighbor = gameState.Grid.CheckNeighbors(x, y, cell => cell.FloorType == FloorType.Lava);
+                var hasLavaNeighbor =
+                    gameState.AsteroidWorld.Grid.CheckNeighbors(x, y, cell => cell.FloorType == FloorType.Lava);
                 if (hasLavaNeighbor)
-                    gameState.Grid.ActivateCollapsingFloorCell(x, y);
+                    gameState.AsteroidWorld.Grid.ActivateCollapsingFloorCell(x, y);
             }
     }
 
-    public void Update(int elapsedMs)
+    public void Update(GameTime gameTime)
     {
-        _elapsedTimeAccumulator += elapsedMs;
+        _elapsedTimeAccumulator += gameTime.ElapsedGameTime.Milliseconds;
 
         // Check if the interval has been reached or exceeded
         if (_elapsedTimeAccumulator >= TriggerIntervalMs)

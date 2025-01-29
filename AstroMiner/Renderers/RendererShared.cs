@@ -12,6 +12,7 @@ public class RendererShared(
     Dictionary<string, Texture2D> textures)
 {
     public readonly GameState GameState = gameState;
+    public readonly GraphicsDeviceManager Graphics = graphics;
     public readonly Dictionary<string, Texture2D> Textures = textures;
     public readonly ViewHelpers ViewHelpers = new(gameState, graphics);
 

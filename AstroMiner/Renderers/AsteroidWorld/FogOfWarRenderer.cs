@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace AstroMiner.Renderers;
+namespace AstroMiner.Renderers.AsteroidWorld;
 
 public class FogOfWarRenderer(RendererShared shared)
 {
@@ -10,7 +10,7 @@ public class FogOfWarRenderer(RendererShared shared)
 
     public void RenderFogOfWar(SpriteBatch spriteBatch, int col, int row)
     {
-        var cellState = shared.GameState.Grid.GetCellState(col, row);
+        var cellState = shared.GameState.AsteroidWorld.Grid.GetCellState(col, row);
 
         if (!cellState.isEmpty && cellState.FogOpacity > 0f)
             RenderGradientOverlay(spriteBatch, col, row, 160, cellState.FogOpacity);

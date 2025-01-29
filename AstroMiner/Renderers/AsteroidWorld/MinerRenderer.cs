@@ -4,7 +4,7 @@ using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace AstroMiner.Renderers;
+namespace AstroMiner.Renderers.AsteroidWorld;
 
 public class MinerRenderer(
     RendererShared shared)
@@ -12,7 +12,7 @@ public class MinerRenderer(
     private const int MinerBoxOffsetX = -13;
     private const int MinerBoxOffsetY = -20;
     private const int MinerTextureSize = 64;
-    private MinerEntity Miner => shared.GameState.Miner;
+    private MinerEntity Miner => shared.GameState.AsteroidWorld.Miner;
 
     public void RenderMiner(SpriteBatch spriteBatch)
     {
@@ -72,7 +72,8 @@ public class MinerRenderer(
             var leftDestRect = Miner.Direction switch
             {
                 Direction.Top => shared.ViewHelpers.GetVisibleRectForObject(
-                    Miner.FrontPosition + leftGrappleOffset + new Vector2(-(grappleVisibleGridWidth / 2), -grappleVisibleGridLength),
+                    Miner.FrontPosition + leftGrappleOffset +
+                    new Vector2(-(grappleVisibleGridWidth / 2), -grappleVisibleGridLength),
                     grappleVisibleGridWidth,
                     grappleVisibleGridLength),
                 Direction.Right => shared.ViewHelpers.GetVisibleRectForObject(
@@ -84,7 +85,8 @@ public class MinerRenderer(
                     grappleVisibleGridWidth,
                     grappleVisibleGridLength),
                 Direction.Left => shared.ViewHelpers.GetVisibleRectForObject(
-                    Miner.FrontPosition + leftGrappleOffset + new Vector2(-grappleVisibleGridLength, -(grappleVisibleGridWidth / 2)),
+                    Miner.FrontPosition + leftGrappleOffset +
+                    new Vector2(-grappleVisibleGridLength, -(grappleVisibleGridWidth / 2)),
                     grappleVisibleGridLength,
                     grappleVisibleGridWidth),
                 _ => throw new ArgumentOutOfRangeException()
@@ -95,7 +97,8 @@ public class MinerRenderer(
             var rightDestRect = Miner.Direction switch
             {
                 Direction.Top => shared.ViewHelpers.GetVisibleRectForObject(
-                    Miner.FrontPosition + rightGrappleOffset + new Vector2(-(grappleVisibleGridWidth / 2), -grappleVisibleGridLength),
+                    Miner.FrontPosition + rightGrappleOffset +
+                    new Vector2(-(grappleVisibleGridWidth / 2), -grappleVisibleGridLength),
                     grappleVisibleGridWidth,
                     grappleVisibleGridLength),
                 Direction.Right => shared.ViewHelpers.GetVisibleRectForObject(
@@ -107,7 +110,8 @@ public class MinerRenderer(
                     grappleVisibleGridWidth,
                     grappleVisibleGridLength),
                 Direction.Left => shared.ViewHelpers.GetVisibleRectForObject(
-                    Miner.FrontPosition + rightGrappleOffset + new Vector2(-grappleVisibleGridLength, -(grappleVisibleGridWidth / 2)),
+                    Miner.FrontPosition + rightGrappleOffset +
+                    new Vector2(-grappleVisibleGridLength, -(grappleVisibleGridWidth / 2)),
                     grappleVisibleGridLength,
                     grappleVisibleGridWidth),
                 _ => throw new ArgumentOutOfRangeException()

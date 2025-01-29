@@ -35,7 +35,7 @@ public class AstroMinerGame : Game
     {
         _gameState = new GameState(_graphics);
         _renderer = new Renderer(_graphics, _textures, _gameState, _frameCounter);
-        Window.ClientSizeChanged += _renderer.HandleWindowResize;
+        Window.ClientSizeChanged += _renderer.AsteroidRenderer.HandleWindowResize;
         InitializeMiningControls();
         base.Initialize();
     }
@@ -50,7 +50,7 @@ public class AstroMinerGame : Game
         _miningControlMapper.AddMapping(MiningControls.EnterOrExit, Keys.E, Buttons.Y, false);
         _miningControlMapper.AddMapping(MiningControls.PlaceDynamite, Keys.R, Buttons.RightShoulder, false);
         _miningControlMapper.AddMapping(MiningControls.UseGrapple, Keys.G, Buttons.LeftTrigger, true);
-        _miningControlMapper.AddMapping(MiningControls.NewGame, Keys.N, Buttons.Start, false);
+        _miningControlMapper.AddMapping(MiningControls.NewGameOrReturnToBase, Keys.N, Buttons.Start, false);
         _miningControlMapper.AddMapping(MiningControls.CycleZoom, Keys.Z, Buttons.Back, false);
     }
 
@@ -88,7 +88,7 @@ public class AstroMinerGame : Game
 
         var activeMiningControls = _miningControlMapper.GetActiveControls(keyboardState, gamePadState);
 
-        _gameState.Update(activeMiningControls, gameTime.ElapsedGameTime.Milliseconds);
+        _gameState.Update(activeMiningControls, gameTime);
 
         base.Update(gameTime);
     }

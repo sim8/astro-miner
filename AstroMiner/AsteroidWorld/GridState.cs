@@ -5,7 +5,7 @@ using AstroMiner.Definitions;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 
-namespace AstroMiner;
+namespace AstroMiner.AsteroidWorld;
 
 public class CellState(WallType wallType, FloorType floorType, AsteroidLayer layer)
 {
@@ -180,7 +180,7 @@ public class GridState(GameState gameState, CellState[,] grid)
         {
             if (isInitializing)
                 cellState.FogOpacity = 0f;
-            else if (cellState.FogOpacity > 0f) gameState.FogAnimationManager.AddFadingCell(x, y);
+            else if (cellState.FogOpacity > 0f) gameState.AsteroidWorld.FogAnimationManager.AddFadingCell(x, y);
         }
 
 

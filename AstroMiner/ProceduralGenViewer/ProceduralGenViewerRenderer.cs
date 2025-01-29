@@ -56,7 +56,7 @@ public class ProceduralGenViewerRenderer
     {
         spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
         RenderScene(spriteBatch);
-        RenderString(spriteBatch, 30, 30, "SEED " + _gameState.Seed);
+        RenderString(spriteBatch, 30, 30, "SEED " + _gameState.AsteroidWorld.Seed);
         spriteBatch.End();
     }
 
@@ -71,7 +71,7 @@ public class ProceduralGenViewerRenderer
         for (var row = 0; row < GameConfig.GridSize; row++)
         for (var col = 0; col < GameConfig.GridSize; col++)
         {
-            var cellState = _gameState.Grid.GetCellState(col, row);
+            var cellState = _gameState.AsteroidWorld.Grid.GetCellState(col, row);
 
             if (cellState.FloorType != FloorType.Empty)
                 spriteBatch.Draw(_textures["white"], GetGridCellRect(col, row),

@@ -13,6 +13,8 @@ public class ControllableEntity : Entity
     private const float ExcessSpeedLossPerSecond = 3f;
     private const int LavaDamageDelayMs = 1000; // 1 second delay before taking damage
 
+    private readonly List<MiningControls> _activeControlsOrder = new();
+
     private readonly Dictionary<MiningControls, Direction> _directionsControlsMapping = new()
     {
         { MiningControls.MoveUp, Direction.Top },
@@ -20,8 +22,6 @@ public class ControllableEntity : Entity
         { MiningControls.MoveDown, Direction.Bottom },
         { MiningControls.MoveLeft, Direction.Left }
     };
-
-    private readonly List<MiningControls> _activeControlsOrder = new();
 
     protected readonly GameState GameState;
 
@@ -86,24 +86,16 @@ public class ControllableEntity : Entity
     {
         // Remove any controls that are no longer active
         _activeControlsOrder.RemoveAll(control => !activeMiningControls.Contains(control));
-        
+
         // Add any new controls to the end of the list
         foreach (var control in activeMiningControls)
-        {
             if (!_activeControlsOrder.Contains(control))
-            {
                 _activeControlsOrder.Add(control);
-            }
-        }
 
         // Return the direction of the most recently pressed control
-        for (int i = _activeControlsOrder.Count - 1; i >= 0; i--)
-        {
+        for (var i = _activeControlsOrder.Count - 1; i >= 0; i--)
             if (_directionsControlsMapping.TryGetValue(_activeControlsOrder[i], out var direction))
-            {
                 return direction;
-            }
-        }
 
         return null;
     }
@@ -115,9 +107,8 @@ public class ControllableEntity : Entity
 
         for (var x = topLeftCell.x; x <= bottomRightCell.x; x++)
         for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
-            if (GameState.Grid.GetWallType(x, y) != WallType.Empty)
+            if (GameState.ActiveWorld.CellIsCollideable(x, y))
                 return true;
-
         return false;
     }
 
@@ -130,7 +121,7 @@ public class ControllableEntity : Entity
 
         var newRectangle = new RectangleF(newVector.X, newVector.Y, GridBoxSize, GridBoxSize);
 
-        foreach (var entity in GameState.ActiveEntitiesSortedByDistance)
+        foreach (var entity in GameState.ActiveWorld.ActiveEntitiesSortedByDistance)
             if (entity != this && entity.CanCollide && newRectangle.IntersectsWith(entity.Rectangle) &&
                 !Rectangle.IntersectsWith(entity.Rectangle)) // Allow movement if currently clipping
                 return false;
@@ -139,15 +130,15 @@ public class ControllableEntity : Entity
         return true;
     }
 
-    public override void Update(int elapsedMs, HashSet<MiningControls> activeMiningControls)
+    public override void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
     {
-        CheckIfShouldFallOrTakeDamage(elapsedMs);
+        CheckIfShouldFallOrTakeDamage(gameTime);
 
         if (IsAnimatingDamage)
         {
             // We need total for smooth animation, and timeSinceLastDamage to know when to stop showing
-            TotalDamageAnimationTimeMs += elapsedMs;
-            TimeSinceLastDamage += elapsedMs;
+            TotalDamageAnimationTimeMs += gameTime.ElapsedGameTime.Milliseconds;
+            TimeSinceLastDamage += gameTime.ElapsedGameTime.Milliseconds;
             if (TimeSinceLastDamage >= GameConfig.DamageAnimationTimeMs)
             {
                 TotalDamageAnimationTimeMs = 0;
@@ -162,12 +153,15 @@ public class ControllableEntity : Entity
         if (selectedDirection.HasValue && selectedDirection.Value == DirectionHelpers.GetOppositeDirection(Direction))
             CurrentSpeed = 0f;
         Direction = selectedDirection ?? Direction;
-        UpdateSpeed(selectedDirection, elapsedMs);
-        UpdatePos(elapsedMs);
+        UpdateSpeed(selectedDirection, gameTime);
+        UpdatePos(gameTime);
     }
 
-    private void CheckIfShouldFallOrTakeDamage(int elapsedMs)
+    private void CheckIfShouldFallOrTakeDamage(GameTime gameTime)
     {
+        // TODO remove
+        if (!GameState.IsOnAsteroid) return;
+
         var (topLeftX, topLeftY) = ViewHelpers.ToGridPosition(Position);
         var (bottomRightX, bottomRightY) = ViewHelpers.ToGridPosition(Position + new Vector2(GridBoxSize, GridBoxSize));
 
@@ -177,49 +171,49 @@ public class ControllableEntity : Entity
         for (var x = topLeftX; x <= bottomRightX; x++)
         for (var y = topLeftY; y <= bottomRightY; y++)
         {
-            var floorType = GameState.Grid.GetFloorType(x, y);
+            var floorType = GameState.AsteroidWorld.Grid.GetFloorType(x, y);
             if (floorType != FloorType.Empty) allCellsAreEmpty = false;
             if (floorType == FloorType.Lava) someCellsAreLava = true;
         }
 
         if (someCellsAreLava)
         {
-            _timeOnLavaMs += elapsedMs;
+            _timeOnLavaMs += gameTime.ElapsedGameTime.Milliseconds;
             if (_timeOnLavaMs >= LavaDamageDelayMs)
-                TakeDamage((float)GameConfig.LavaDamagePerSecond / 1000 * elapsedMs);
+                TakeDamage((float)GameConfig.LavaDamagePerSecond / 1000 * gameTime.ElapsedGameTime.Milliseconds);
         }
         else if (_timeOnLavaMs > 0)
         {
-            _timeOnLavaMs = Math.Max(0, _timeOnLavaMs - elapsedMs);
+            _timeOnLavaMs = Math.Max(0, _timeOnLavaMs - gameTime.ElapsedGameTime.Milliseconds);
         }
 
         if (allCellsAreEmpty) IsOffAsteroid = true;
     }
 
-    protected virtual void UpdateSpeed(Direction? selectedDirection, int elapsedGameTimeMs)
+    protected virtual void UpdateSpeed(Direction? selectedDirection, GameTime gameTime)
     {
         if (CurrentSpeed > MaxSpeed)
         {
             CurrentSpeed = Math.Max(MaxSpeed,
-                CurrentSpeed - ExcessSpeedLossPerSecond * (elapsedGameTimeMs / 1000f));
+                CurrentSpeed - ExcessSpeedLossPerSecond * (gameTime.ElapsedGameTime.Milliseconds / 1000f));
             return;
         }
 
         // Existing speed update logic
         if (!selectedDirection.HasValue && CurrentSpeed > 0)
             CurrentSpeed = Math.Max(0,
-                CurrentSpeed - MaxSpeed * (elapsedGameTimeMs / (float)TimeToStopMs));
+                CurrentSpeed - MaxSpeed * (gameTime.ElapsedGameTime.Milliseconds / (float)TimeToStopMs));
 
         if ((CurrentSpeed > 0 || selectedDirection.HasValue) && selectedDirection.HasValue)
             CurrentSpeed = Math.Min(MaxSpeed,
-                CurrentSpeed + MaxSpeed * (elapsedGameTimeMs / (float)TimeToReachMaxSpeedMs));
+                CurrentSpeed + MaxSpeed * (gameTime.ElapsedGameTime.Milliseconds / (float)TimeToReachMaxSpeedMs));
     }
 
-    private void UpdatePos(int elapsedGameTimeMs)
+    private void UpdatePos(GameTime gameTime)
     {
         if (CurrentSpeed > 0)
         {
-            var distance = CurrentSpeed * (elapsedGameTimeMs / 1000f);
+            var distance = CurrentSpeed * (gameTime.ElapsedGameTime.Milliseconds / 1000f);
             var movement = DirectionHelpers.GetDirectionalVector(distance, Direction);
 
             var hasCollisions = !ApplyVectorToPosIfNoCollisions(movement);

@@ -80,16 +80,16 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
 
             var leftTargetToCheck = leftGrappleStart + DirectionHelpers.GetDirectionalVector(distance, Direction);
             var rightTargetToCheck = rightGrappleStart + DirectionHelpers.GetDirectionalVector(distance, Direction);
-            
-            var leftCellState = gameState.Grid.GetCellState(leftTargetToCheck);
-            var rightCellState = gameState.Grid.GetCellState(rightTargetToCheck);
+
+            var leftCellState = gameState.AsteroidWorld.Grid.GetCellState(leftTargetToCheck);
+            var rightCellState = gameState.AsteroidWorld.Grid.GetCellState(rightTargetToCheck);
 
             // If either grapple hits a wall, break
             if (leftCellState.WallType != WallType.Empty || rightCellState.WallType != WallType.Empty) break;
 
             // Only valid if both grapples hit valid floor
-            var bothHitValidFloor = FloorTypes.IsFloorLikeTileset(leftCellState.FloorType) && 
-                                  FloorTypes.IsFloorLikeTileset(rightCellState.FloorType);
+            var bothHitValidFloor = FloorTypes.IsFloorLikeTileset(leftCellState.FloorType) &&
+                                    FloorTypes.IsFloorLikeTileset(rightCellState.FloorType);
 
             if (bothHitValidFloor)
             {
@@ -100,16 +100,13 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
 
             // If no valid grapple targets, still use GrappleTarget for animation
             // to show checked cells
-            if (!_grappleTargetIsValid) 
-            {
-                GrappleTarget = (leftTargetToCheck + rightTargetToCheck) / 2;
-            }
+            if (!_grappleTargetIsValid) GrappleTarget = (leftTargetToCheck + rightTargetToCheck) / 2;
         }
 
         if (_grappleTargetIsValid) _grappleCooldownRemaining = GameConfig.GrappleCooldownMs;
     }
 
-    private void UseGrapple(int elapsedMs)
+    private void UseGrapple(GameTime gameTime)
     {
         if (!_prevPressedUsedGrapple && GrappleAvailable) SetGrappleTarget();
 
@@ -128,7 +125,7 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
         }
         else // Firing grapple
         {
-            var grappleTravelDistance = elapsedMs / 20f;
+            var grappleTravelDistance = gameTime.ElapsedGameTime.Milliseconds / 20f;
             GrapplePercentToTarget =
                 Math.Min(1f, GrapplePercentToTarget + grappleTravelDistance / DistanceToTarget);
 
@@ -136,31 +133,31 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
         }
     }
 
-    protected override void UpdateSpeed(Direction? selectedDirection, int elapsedGameTimeMs)
+    protected override void UpdateSpeed(Direction? selectedDirection, GameTime gameTime)
     {
         if (IsReelingIn)
         {
             CurrentSpeed = Math.Max(ReelingBaseSpeed, CurrentSpeed);
             // Gradually ramp up to max reeling speed
-            var speedIncrease = (ReelingMaxSpeed - ReelingBaseSpeed) * (elapsedGameTimeMs / 5000f);
+            var speedIncrease = (ReelingMaxSpeed - ReelingBaseSpeed) * (gameTime.ElapsedGameTime.Milliseconds / 5000f);
             CurrentSpeed = Math.Min(ReelingMaxSpeed, CurrentSpeed + speedIncrease);
         }
         else
         {
-            base.UpdateSpeed(selectedDirection, elapsedGameTimeMs);
+            base.UpdateSpeed(selectedDirection, gameTime);
         }
     }
 
-    public override void Update(int elapsedMs, HashSet<MiningControls> activeMiningControls)
+    public override void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
     {
-        base.Update(elapsedMs, activeMiningControls);
+        base.Update(gameTime, activeMiningControls);
 
         // Update cooldown
-        _grappleCooldownRemaining = Math.Max(0, _grappleCooldownRemaining - elapsedMs);
+        _grappleCooldownRemaining = Math.Max(0, _grappleCooldownRemaining - gameTime.ElapsedGameTime.Milliseconds);
 
         if (activeMiningControls.Contains(MiningControls.UseGrapple))
         {
-            UseGrapple(elapsedMs);
+            UseGrapple(gameTime);
             _prevPressedUsedGrapple = true;
         }
         else
@@ -185,6 +182,6 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
     protected override void OnDead()
     {
         var explosionEntity = new ExplosionEntity(gameState, CenterPosition);
-        gameState.ActivateEntity(explosionEntity);
+        gameState.AsteroidWorld.ActivateEntity(explosionEntity);
     }
 }

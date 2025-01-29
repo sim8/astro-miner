@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
 
@@ -39,13 +40,13 @@ public class CloudManager
         _nextFgSpawnTime = GetRandomInterval(MinFgSpawnInterval, MaxFgSpawnInterval);
     }
 
-    public void Update(int elapsedMs)
+    public void Update(GameTime gameTime)
     {
-        var elapsedSec = elapsedMs / 1000f;
+        var elapsedSec = gameTime.ElapsedGameTime.Milliseconds / 1000f;
 
         // Generate new
 
-        _timeSinceLastCloudBg += elapsedMs;
+        _timeSinceLastCloudBg += gameTime.ElapsedGameTime.Milliseconds;
         if (_timeSinceLastCloudBg >= _nextBgSpawnTime)
         {
             SpawnCloud(false);
@@ -53,7 +54,7 @@ public class CloudManager
             _nextBgSpawnTime = GetRandomInterval(MinBgSpawnInterval, MaxBgSpawnInterval);
         }
 
-        _timeSinceLastCloudFg += elapsedMs;
+        _timeSinceLastCloudFg += gameTime.ElapsedGameTime.Milliseconds;
         if (_timeSinceLastCloudFg >= _nextFgSpawnTime)
         {
             SpawnCloud(true);

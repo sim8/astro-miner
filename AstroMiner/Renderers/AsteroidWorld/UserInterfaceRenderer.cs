@@ -6,14 +6,14 @@ using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace AstroMiner.Renderers;
+namespace AstroMiner.Renderers.AsteroidWorld;
 
 public class UserInterfaceRenderer(
     RendererShared shared)
 {
     private readonly Color _gridColor = new(70, 125, 149);
 
-    public void RenderUserInterface(SpriteBatch spriteBatch, FrameCounter frameCounter)
+    public void RenderUserInterface(SpriteBatch spriteBatch)
     {
         var timeLeft = Math.Max(GameConfig.AsteroidExplodeTimeMs - shared.GameState.MsSinceStart, 0);
         var minutes = timeLeft / 60000;
@@ -27,16 +27,11 @@ public class UserInterfaceRenderer(
 
         RenderGrappleIcon(spriteBatch);
 
-        RenderHealthBar(spriteBatch, shared.GameState.Miner, 50, 192);
-        RenderHealthBar(spriteBatch, shared.GameState.Player, 50, 207);
+        RenderHealthBar(spriteBatch, shared.GameState.AsteroidWorld.Miner, 50, 192);
+        RenderHealthBar(spriteBatch, shared.GameState.AsteroidWorld.Player, 50, 207);
 
-
-        shared.RenderString(spriteBatch, 1000, 0, "FPS " + frameCounter.AverageFramesPerSecond.ToString("F0"));
-
-
-        shared.RenderString(spriteBatch, 1000, 40, "SEED " + shared.GameState.Seed);
-
-        if (shared.GameState.ActiveControllableEntity.IsDead || shared.GameState.ActiveControllableEntity.IsOffAsteroid)
+        if (shared.GameState.ActiveControllableEntity.IsDead ||
+            shared.GameState.ActiveControllableEntity.IsOffAsteroid)
             RenderNewGameScreen(spriteBatch, shared.GameState.ActiveControllableEntity.IsDead);
     }
 
@@ -65,7 +60,7 @@ public class UserInterfaceRenderer(
 
     private void RenderGrappleIcon(SpriteBatch spriteBatch)
     {
-        var color = shared.GameState.Miner.GrappleAvailable
+        var color = shared.GameState.AsteroidWorld.Miner.GrappleAvailable
             ? Color.LimeGreen
             : _gridColor;
         spriteBatch.Draw(shared.Textures["grapple-icon"],
@@ -128,7 +123,7 @@ public class UserInterfaceRenderer(
                 _gridColor);
         }
 
-        foreach (var gameStateEdgeCell in shared.GameState.EdgeCells)
+        foreach (var gameStateEdgeCell in shared.GameState.AsteroidWorld.EdgeCells)
         {
             var x = xOffset + gameStateEdgeCell.x * scale;
             var y = yOffset + gameStateEdgeCell.y * scale;
@@ -137,7 +132,8 @@ public class UserInterfaceRenderer(
             spriteBatch.Draw(shared.Textures["white"], edgeCellDestRect, Color.White);
         }
 
-        var playerGridPos = ViewHelpers.ToGridPosition(shared.GameState.ActiveControllableEntity.CenterPosition);
+        var playerGridPos =
+            ViewHelpers.ToGridPosition(shared.GameState.ActiveControllableEntity.CenterPosition);
         var playerX = xOffset + playerGridPos.x * scale - playerSize / 2;
         var playerY = yOffset + playerGridPos.y * scale - playerSize / 2;
         var playerDestRect = new Rectangle((int)playerX, (int)playerY, playerSize, playerSize);
@@ -153,12 +149,12 @@ public class UserInterfaceRenderer(
         if (isDead)
         {
             shared.RenderString(spriteBatch, 300, 400, "YOU WERE INJURED", 5);
-            shared.RenderString(spriteBatch, 300, 500, "PRESS N TO RESTART");
+            shared.RenderString(spriteBatch, 300, 500, "PRESS N TO RETURN TO BASE");
         }
         else
         {
             shared.RenderString(spriteBatch, 300, 400, "OFF THE ASTEROID", 5);
-            shared.RenderString(spriteBatch, 300, 500, "PRESS N TO RESTART");
+            shared.RenderString(spriteBatch, 300, 500, "PRESS N TO RETURN TO BASE");
 
 
             RenderInventory(spriteBatch, 300, 600);
