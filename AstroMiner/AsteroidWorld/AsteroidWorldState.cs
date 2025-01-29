@@ -16,7 +16,6 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
     public FogAnimationManager FogAnimationManager;
     public GridState Grid;
     public MinerEntity Miner;
-    public PlayerEntity Player;
 
     public int Seed { get; private set; }
 

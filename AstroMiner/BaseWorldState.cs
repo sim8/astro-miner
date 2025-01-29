@@ -13,7 +13,6 @@ public class BaseWorldState(GameState g)
 
     public virtual void Initialize()
     {
-        Player = new PlayerEntity(g);
     }
 
     private void SortActiveEntities()
