@@ -9,9 +9,11 @@ public class BaseWorldState(GameState g)
 {
     private readonly HashSet<MiningControls> _emptyMiningControls = [];
     public List<Entity> ActiveEntitiesSortedByDistance = [];
+    public PlayerEntity Player;
 
     public virtual void Initialize()
     {
+        Player = new PlayerEntity(g);
     }
 
     private void SortActiveEntities()

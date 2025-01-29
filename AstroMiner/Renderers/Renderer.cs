@@ -45,7 +45,7 @@ public class Renderer
 
         _shared.RenderString(spriteBatch, 1000, 0, "FPS " + _frameCounter.AverageFramesPerSecond.ToString("F0"));
 
-        _shared.RenderString(spriteBatch, 1000, 40, "SEED " + _shared.GameState.Asteroid.Seed);
+        _shared.RenderString(spriteBatch, 1000, 40, "SEED " + _shared.GameState.AsteroidWorld.Seed);
 
         spriteBatch.End();
     }

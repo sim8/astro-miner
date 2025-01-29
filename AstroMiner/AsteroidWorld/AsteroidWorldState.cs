@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner.AsteroidWorld;
 
-public class AsteroidState(GameState gameState) : BaseWorldState(gameState)
+public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
 {
     public CollapsingFloorTriggerer CollapsingFloorTriggerer;
     public List<(int x, int y)> EdgeCells;

@@ -15,8 +15,8 @@ public class ActiveExplosiveRockCell(GameState gameState, (int x, int y) gridPos
         {
             var explosionPos = new Vector2(Position.X + 0.5f, Position.Y + 0.5f);
             var explosionEntity = new ExplosionEntity(gameState, explosionPos);
-            gameState.Asteroid.ActivateEntity(explosionEntity);
-            gameState.Asteroid.Grid.DeactivateExplosiveRockCell(Position.X, Position.Y);
+            gameState.AsteroidWorld.ActivateEntity(explosionEntity);
+            gameState.AsteroidWorld.Grid.DeactivateExplosiveRockCell(Position.X, Position.Y);
         }
     }
 }

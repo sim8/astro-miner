@@ -27,8 +27,8 @@ public class UserInterfaceRenderer(
 
         RenderGrappleIcon(spriteBatch);
 
-        RenderHealthBar(spriteBatch, shared.GameState.Asteroid.Miner, 50, 192);
-        RenderHealthBar(spriteBatch, shared.GameState.Asteroid.Player, 50, 207);
+        RenderHealthBar(spriteBatch, shared.GameState.AsteroidWorld.Miner, 50, 192);
+        RenderHealthBar(spriteBatch, shared.GameState.AsteroidWorld.Player, 50, 207);
 
         if (shared.GameState.ActiveControllableEntity.IsDead ||
             shared.GameState.ActiveControllableEntity.IsOffAsteroid)
@@ -60,7 +60,7 @@ public class UserInterfaceRenderer(
 
     private void RenderGrappleIcon(SpriteBatch spriteBatch)
     {
-        var color = shared.GameState.Asteroid.Miner.GrappleAvailable
+        var color = shared.GameState.AsteroidWorld.Miner.GrappleAvailable
             ? Color.LimeGreen
             : _gridColor;
         spriteBatch.Draw(shared.Textures["grapple-icon"],
@@ -123,7 +123,7 @@ public class UserInterfaceRenderer(
                 _gridColor);
         }
 
-        foreach (var gameStateEdgeCell in shared.GameState.Asteroid.EdgeCells)
+        foreach (var gameStateEdgeCell in shared.GameState.AsteroidWorld.EdgeCells)
         {
             var x = xOffset + gameStateEdgeCell.x * scale;
             var y = yOffset + gameStateEdgeCell.y * scale;

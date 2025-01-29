@@ -180,7 +180,7 @@ public class GridState(GameState gameState, CellState[,] grid)
         {
             if (isInitializing)
                 cellState.FogOpacity = 0f;
-            else if (cellState.FogOpacity > 0f) gameState.Asteroid.FogAnimationManager.AddFadingCell(x, y);
+            else if (cellState.FogOpacity > 0f) gameState.AsteroidWorld.FogAnimationManager.AddFadingCell(x, y);
         }
 
 

@@ -21,13 +21,13 @@ public class CollapsingFloorTriggerer(GameState gameState)
         // Iterate through cells within 10 rows/columns of player
         for (var y = Math.Max(0, playerY - Distance); y <= playerY + Distance; y++)
         for (var x = Math.Max(0, playerX - Distance); x <= playerX + Distance; x++)
-            if (gameState.Asteroid.Grid.GetFloorType(x, y) == FloorType.LavaCracks && _random.Next(150) == 0)
+            if (gameState.AsteroidWorld.Grid.GetFloorType(x, y) == FloorType.LavaCracks && _random.Next(150) == 0)
             {
                 // Only collapse if there's a lava neighbor
                 var hasLavaNeighbor =
-                    gameState.Asteroid.Grid.CheckNeighbors(x, y, cell => cell.FloorType == FloorType.Lava);
+                    gameState.AsteroidWorld.Grid.CheckNeighbors(x, y, cell => cell.FloorType == FloorType.Lava);
                 if (hasLavaNeighbor)
-                    gameState.Asteroid.Grid.ActivateCollapsingFloorCell(x, y);
+                    gameState.AsteroidWorld.Grid.ActivateCollapsingFloorCell(x, y);
             }
     }
 

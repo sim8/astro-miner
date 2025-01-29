@@ -14,7 +14,7 @@ public class PlayerRenderer(
     public void RenderPlayer(SpriteBatch spriteBatch)
     {
         var player = shared.GameState.IsOnAsteroid
-            ? shared.GameState.Asteroid.Player
+            ? shared.GameState.AsteroidWorld.Player
             : shared.GameState.HomeWorld.Player;
 
         var textureFrameOffsetX = player.Direction switch

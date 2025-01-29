@@ -38,7 +38,7 @@ public enum Direction
 public class GameState
 {
     public readonly GraphicsDeviceManager Graphics;
-    public AsteroidState Asteroid;
+    public AsteroidWorldState AsteroidWorld;
     public CameraState Camera;
     public CloudManager CloudManager;
     public HomeWorldState HomeWorld;
@@ -58,12 +58,12 @@ public class GameState
 
     // TODO improve this
     public MiningControllableEntity ActiveControllableEntity =>
-        !IsOnAsteroid ? HomeWorld.Player : Asteroid.IsInMiner ? Asteroid.Miner : Asteroid.Player;
+        !IsOnAsteroid ? HomeWorld.Player : AsteroidWorld.IsInMiner ? AsteroidWorld.Miner : AsteroidWorld.Player;
 
     public void InitializeAsteroid()
     {
         IsOnAsteroid = true;
-        Asteroid.Initialize();
+        AsteroidWorld.Initialize();
     }
 
     public void InitializeHome()
@@ -76,7 +76,7 @@ public class GameState
         Inventory = new Inventory();
         Camera = new CameraState(this);
         MsSinceStart = 0;
-        Asteroid = new AsteroidState(this);
+        AsteroidWorld = new AsteroidWorldState(this);
         HomeWorld = new HomeWorldState(this);
         CloudManager = new CloudManager(this);
         IsOnAsteroid = false;
@@ -85,7 +85,7 @@ public class GameState
     public void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
     {
         if (IsOnAsteroid)
-            Asteroid.Update(activeMiningControls, gameTime);
+            AsteroidWorld.Update(activeMiningControls, gameTime);
         else
             HomeWorld.Update(activeMiningControls, gameTime);
 

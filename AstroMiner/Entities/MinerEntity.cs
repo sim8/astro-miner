@@ -81,8 +81,8 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
             var leftTargetToCheck = leftGrappleStart + DirectionHelpers.GetDirectionalVector(distance, Direction);
             var rightTargetToCheck = rightGrappleStart + DirectionHelpers.GetDirectionalVector(distance, Direction);
 
-            var leftCellState = gameState.Asteroid.Grid.GetCellState(leftTargetToCheck);
-            var rightCellState = gameState.Asteroid.Grid.GetCellState(rightTargetToCheck);
+            var leftCellState = gameState.AsteroidWorld.Grid.GetCellState(leftTargetToCheck);
+            var rightCellState = gameState.AsteroidWorld.Grid.GetCellState(rightTargetToCheck);
 
             // If either grapple hits a wall, break
             if (leftCellState.WallType != WallType.Empty || rightCellState.WallType != WallType.Empty) break;
@@ -182,6 +182,6 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
     protected override void OnDead()
     {
         var explosionEntity = new ExplosionEntity(gameState, CenterPosition);
-        gameState.Asteroid.ActivateEntity(explosionEntity);
+        gameState.AsteroidWorld.ActivateEntity(explosionEntity);
     }
 }

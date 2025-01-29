@@ -28,8 +28,8 @@ public class DynamiteEntity : Entity
         if (TimeToExplodeMs <= 0)
         {
             var explosionEntity = new ExplosionEntity(_gameState, CenterPosition);
-            _gameState.Asteroid.ActivateEntity(explosionEntity);
-            _gameState.Asteroid.DeactivateEntity(this);
+            _gameState.AsteroidWorld.ActivateEntity(explosionEntity);
+            _gameState.AsteroidWorld.DeactivateEntity(this);
         }
     }
 }

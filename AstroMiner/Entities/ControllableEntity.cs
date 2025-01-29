@@ -107,7 +107,7 @@ public class ControllableEntity : Entity
 
         for (var x = topLeftCell.x; x <= bottomRightCell.x; x++)
         for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
-            if (GameState.IsOnAsteroid && GameState.Asteroid.Grid.GetWallType(x, y) != WallType.Empty)
+            if (GameState.IsOnAsteroid && GameState.AsteroidWorld.Grid.GetWallType(x, y) != WallType.Empty)
                 return true;
             else if (!GameState.IsOnAsteroid && GameState.HomeWorld.Grid[y, x] == WorldCellType.Filled)
                 return true;
@@ -124,7 +124,7 @@ public class ControllableEntity : Entity
         var newRectangle = new RectangleF(newVector.X, newVector.Y, GridBoxSize, GridBoxSize);
 
         var activeEntities = GameState.IsOnAsteroid
-            ? GameState.Asteroid.ActiveEntitiesSortedByDistance
+            ? GameState.AsteroidWorld.ActiveEntitiesSortedByDistance
             : GameState.HomeWorld.ActiveEntitiesSortedByDistance;
 
         foreach (var entity in activeEntities)
@@ -177,7 +177,7 @@ public class ControllableEntity : Entity
         for (var x = topLeftX; x <= bottomRightX; x++)
         for (var y = topLeftY; y <= bottomRightY; y++)
         {
-            var floorType = GameState.Asteroid.Grid.GetFloorType(x, y);
+            var floorType = GameState.AsteroidWorld.Grid.GetFloorType(x, y);
             if (floorType != FloorType.Empty) allCellsAreEmpty = false;
             if (floorType == FloorType.Lava) someCellsAreLava = true;
         }

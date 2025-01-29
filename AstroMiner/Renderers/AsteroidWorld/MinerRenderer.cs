@@ -12,7 +12,7 @@ public class MinerRenderer(
     private const int MinerBoxOffsetX = -13;
     private const int MinerBoxOffsetY = -20;
     private const int MinerTextureSize = 64;
-    private MinerEntity Miner => shared.GameState.Asteroid.Miner;
+    private MinerEntity Miner => shared.GameState.AsteroidWorld.Miner;
 
     public void RenderMiner(SpriteBatch spriteBatch)
     {

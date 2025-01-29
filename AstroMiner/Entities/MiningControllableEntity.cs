@@ -41,15 +41,15 @@ public class MiningControllableEntity(GameState gameState) : ControllableEntity(
         if (!ViewHelpers.IsValidGridPosition(x, y))
             return;
 
-        var wallType = GameState.Asteroid.Grid.GetWallType(x, y);
+        var wallType = GameState.AsteroidWorld.Grid.GetWallType(x, y);
 
         if (wallType == WallType.ExplosiveRock)
         {
-            GameState.Asteroid.Grid.ActivateExplosiveRockCell(x, y, 100);
+            GameState.AsteroidWorld.Grid.ActivateExplosiveRockCell(x, y, 100);
             return; // No point adding to drilling time
         }
 
-        var wallTypeConfig = GameState.Asteroid.Grid.GetWallTypeConfig(x, y);
+        var wallTypeConfig = GameState.AsteroidWorld.Grid.GetWallTypeConfig(x, y);
         if (wallTypeConfig is { IsMineable: true })
             _drillingTotalTimeRequired += wallTypeConfig.DrillTimeMs;
         _drillingCells.Add((x, y));
@@ -98,9 +98,9 @@ public class MiningControllableEntity(GameState gameState) : ControllableEntity(
         {
             foreach (var (x, y) in _drillingCells)
             {
-                var wallTypeConfig = GameState.Asteroid.Grid.GetWallTypeConfig(x, y);
+                var wallTypeConfig = GameState.AsteroidWorld.Grid.GetWallTypeConfig(x, y);
                 if (wallTypeConfig is { IsMineable: true })
-                    GameState.Asteroid.Grid.MineWall(x, y, CanAddToInventory);
+                    GameState.AsteroidWorld.Grid.MineWall(x, y, CanAddToInventory);
             }
 
             _drillingCellsMined = true;

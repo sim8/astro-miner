@@ -18,7 +18,7 @@ public class PlayerEntity(GameState gameState) : MiningControllableEntity(gameSt
             gameState.Inventory.numDynamite--;
             var dynamiteEntity = new DynamiteEntity(gameState, CenterPosition);
             dynamiteEntity.SetPositionRelativeToDirectionalEntity(this, Direction.Top);
-            gameState.Asteroid.ActiveEntitiesSortedByDistance.Add(dynamiteEntity);
+            gameState.AsteroidWorld.ActiveEntitiesSortedByDistance.Add(dynamiteEntity);
         }
     }
 
