@@ -56,10 +56,8 @@ public class AsteroidState(GameState gameState) : BaseWorldState(gameState)
     public override void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
     {
         if (ActiveControllableEntity.IsDead || ActiveControllableEntity.IsOffAsteroid)
-        {
-            if (activeMiningControls.Contains(MiningControls.NewGame)) Initialize();
-            return;
-        }
+            if (activeMiningControls.Contains(MiningControls.NewGameOrReturnToBase))
+                gameState.InitializeHome();
 
         MsSinceStart += gameTime.ElapsedGameTime.Milliseconds;
 

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using AstroMiner.Definitions;
 using AstroMiner.Entities;
 using Microsoft.Xna.Framework;
@@ -16,5 +17,12 @@ public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
         Player = new PlayerEntity(gameState);
         Player.Position = new Vector2(1.5f, 1.5f);
         ActiveEntitiesSortedByDistance = [Player];
+    }
+
+    public override void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
+    {
+        if (activeMiningControls.Contains(MiningControls.NewGameOrReturnToBase)) gameState.InitializeAsteroid();
+
+        base.Update(activeMiningControls, gameTime);
     }
 }

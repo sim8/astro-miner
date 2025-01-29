@@ -149,12 +149,12 @@ public class UserInterfaceRenderer(
         if (isDead)
         {
             shared.RenderString(spriteBatch, 300, 400, "YOU WERE INJURED", 5);
-            shared.RenderString(spriteBatch, 300, 500, "PRESS N TO RESTART");
+            shared.RenderString(spriteBatch, 300, 500, "PRESS N TO RETURN TO BASE");
         }
         else
         {
             shared.RenderString(spriteBatch, 300, 400, "OFF THE ASTEROID", 5);
-            shared.RenderString(spriteBatch, 300, 500, "PRESS N TO RESTART");
+            shared.RenderString(spriteBatch, 300, 500, "PRESS N TO RETURN TO BASE");
 
 
             RenderInventory(spriteBatch, 300, 600);

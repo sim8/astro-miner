@@ -24,7 +24,7 @@ public enum MiningControls
     UseGrapple,
 
     CycleZoom,
-    NewGame // TODO factor out
+    NewGameOrReturnToBase // TODO factor out
 }
 
 public enum Direction
@@ -64,6 +64,11 @@ public class GameState
     {
         IsOnAsteroid = true;
         Asteroid.Initialize();
+    }
+
+    public void InitializeHome()
+    {
+        IsOnAsteroid = false;
     }
 
     public void Initialize()
