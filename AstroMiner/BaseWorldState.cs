@@ -11,6 +11,8 @@ public class BaseWorldState(GameState g)
     public List<Entity> ActiveEntitiesSortedByDistance = [];
     public PlayerEntity Player;
 
+    public virtual MiningControllableEntity ActiveControllableEntity => Player;
+
     public virtual void Initialize()
     {
     }

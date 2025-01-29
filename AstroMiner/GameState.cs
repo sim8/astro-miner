@@ -56,9 +56,10 @@ public class GameState
 
     public long MsSinceStart { get; private set; }
 
-    // TODO improve this
     public MiningControllableEntity ActiveControllableEntity =>
-        !IsOnAsteroid ? HomeWorld.Player : AsteroidWorld.IsInMiner ? AsteroidWorld.Miner : AsteroidWorld.Player;
+        ActiveWorld.ActiveControllableEntity;
+
+    public BaseWorldState ActiveWorld => IsOnAsteroid ? AsteroidWorld : HomeWorld;
 
     public void InitializeAsteroid()
     {

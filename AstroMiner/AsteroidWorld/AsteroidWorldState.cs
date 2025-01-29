@@ -24,7 +24,7 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
     public bool IsInMiner => !ActiveEntitiesSortedByDistance.Contains(Player);
 
 
-    public MiningControllableEntity ActiveControllableEntity => IsInMiner ? Miner : Player;
+    public override MiningControllableEntity ActiveControllableEntity => IsInMiner ? Miner : Player;
 
     private void InitSeed()
     {
