@@ -81,7 +81,7 @@ public class GameState
         AsteroidWorld = new AsteroidWorldState(this);
         HomeWorld = new HomeWorldState(this);
         CloudManager = new CloudManager(this);
-        Ecs = new EntityComponentSystem.EntityComponentSystem();
+        Ecs = new EntityComponentSystem.EntityComponentSystem(this);
         IsOnAsteroid = false;
     }
 

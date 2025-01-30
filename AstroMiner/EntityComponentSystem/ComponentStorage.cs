@@ -2,7 +2,12 @@ using System.Collections.Generic;
 
 namespace AstroMiner.EntityComponentSystem;
 
-public class ComponentStorage<T> where T : struct
+public interface IComponentStorage
+{
+    void Remove(int entityId);
+}
+
+public class ComponentStorage<T> : IComponentStorage where T : struct
 {
     private readonly Dictionary<int, T> _components = new();
 

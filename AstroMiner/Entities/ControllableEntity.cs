@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner.Entities;
 
-public class ControllableEntity : Entity
+public class ControllableEntity(GameState gameState) : Entity
 {
     // If speed exceeds max, gradually ramp back down
     private const float ExcessSpeedLossPerSecond = 3f;
@@ -23,15 +23,10 @@ public class ControllableEntity : Entity
         { MiningControls.MoveLeft, Direction.Left }
     };
 
-    protected readonly GameState GameState;
+    protected readonly GameState GameState = gameState;
 
     private int _timeOnLavaMs;
     protected float CurrentSpeed;
-
-    public ControllableEntity(GameState gameState)
-    {
-        GameState = gameState;
-    }
 
     public float LavaTimePercentToTakingDamage => _timeOnLavaMs / (float)LavaDamageDelayMs;
 
