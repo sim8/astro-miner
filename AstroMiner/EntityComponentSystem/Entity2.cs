@@ -1,4 +1,4 @@
-namespace AstroMiner.Entities;
+namespace AstroMiner.EntityComponentSystem;
 
 public class Entity2(int id)
 {

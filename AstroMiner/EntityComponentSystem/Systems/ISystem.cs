@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
 
-namespace AstroMiner.Systems;
+namespace AstroMiner.EntityComponentSystem.Systems;
 
 public interface ISystem
 {

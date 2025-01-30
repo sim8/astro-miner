@@ -41,6 +41,7 @@ public class GameState
     public AsteroidWorldState AsteroidWorld;
     public CameraState Camera;
     public CloudManager CloudManager;
+    public EntityComponentSystem.EntityComponentSystem Ecs;
     public HomeWorldState HomeWorld;
     public Inventory Inventory;
     public bool IsOnAsteroid;
@@ -80,6 +81,7 @@ public class GameState
         AsteroidWorld = new AsteroidWorldState(this);
         HomeWorld = new HomeWorldState(this);
         CloudManager = new CloudManager(this);
+        Ecs = new EntityComponentSystem.EntityComponentSystem();
         IsOnAsteroid = false;
     }
 

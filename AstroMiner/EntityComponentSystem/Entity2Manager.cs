@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace AstroMiner.Entities;
+namespace AstroMiner.EntityComponentSystem;
 
 public class Entity2Manager
 {
