@@ -41,9 +41,7 @@ public class DynamiteSystem : System
             if (fuseComponent.TimeToExplodeMs <= 0)
             {
                 var positionComponent = World.GetComponent<PositionComponent>(fuseComponent.EntityId);
-                var explosionEntity = new ExplosionEntity(GameState, positionComponent.CenterPosition);
-                GameState.AsteroidWorld.ActivateEntity(explosionEntity);
-                
+                GameState.ExplosionSystem.CreateExplosion(positionComponent.CenterPosition);
                 World.DestroyEntity(fuseComponent.EntityId);
             }
         }

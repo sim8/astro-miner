@@ -148,8 +148,6 @@ public class AsteroidRenderer
                 _minerRenderer.RenderMiner(spriteBatch);
             else if (entity is PlayerEntity)
                 _playerRenderer.RenderPlayer(spriteBatch);
-            else if (entity is ExplosionEntity explosionEntity)
-                _explosionRenderer.RenderExplosion(spriteBatch, explosionEntity);
 
         // Render ECS entities
         foreach (var dynamiteTag in _gameState.EcsWorld.GetAllComponents<DynamiteTag>())
@@ -159,14 +157,25 @@ public class AsteroidRenderer
             var fuseComponent = _gameState.EcsWorld.GetComponent<FuseComponent>(entityId);
             _dynamiteRenderer.RenderDynamite(spriteBatch, entityId, positionComponent, fuseComponent);
         }
+
+        foreach (var explosionTag in _gameState.EcsWorld.GetAllComponents<ExplosionTag>())
+        {
+            var entityId = explosionTag.EntityId;
+            var positionComponent = _gameState.EcsWorld.GetComponent<PositionComponent>(entityId);
+            var explosionComponent = _gameState.EcsWorld.GetComponent<ExplosionComponent>(entityId);
+            _explosionRenderer.RenderExplosion(spriteBatch, positionComponent.Position, explosionComponent);
+        }
     }
 
     private void RenderAdditiveLighting(SpriteBatch spriteBatch)
     {
-        foreach (var entity in _gameState.AsteroidWorld.ActiveEntitiesSortedByDistance)
-            if (entity is ExplosionEntity explosionEntity)
-                _explosionRenderer.RenderAdditiveLightSource(spriteBatch, explosionEntity);
-
+        foreach (var explosionTag in _gameState.EcsWorld.GetAllComponents<ExplosionTag>())
+        {
+            var entityId = explosionTag.EntityId;
+            var positionComponent = _gameState.EcsWorld.GetComponent<PositionComponent>(entityId);
+            var explosionComponent = _gameState.EcsWorld.GetComponent<ExplosionComponent>(entityId);
+            _explosionRenderer.RenderAdditiveLightSource(spriteBatch, positionComponent.Position, explosionComponent);
+        }
         _shared.RenderDirectionalLightSource(spriteBatch, _gameState.AsteroidWorld.Miner.GetDirectionalLightSource(),
             _gameState.AsteroidWorld.Miner.Direction, 192, 0.4f);
 
@@ -198,10 +207,6 @@ public class AsteroidRenderer
                 ? _gameState.AsteroidWorld.Miner.CenterPosition
                 : _gameState.AsteroidWorld.Player.CenterPosition, 512, 0.4f);
 
-        foreach (var entity in _gameState.AsteroidWorld.ActiveEntitiesSortedByDistance)
-            if (entity is ExplosionEntity explosionEntity)
-                _explosionRenderer.RenderLightSource(spriteBatch, explosionEntity);
-
         // Render ECS entity lighting
         foreach (var dynamiteTag in _gameState.EcsWorld.GetAllComponents<DynamiteTag>())
         {
@@ -209,6 +214,14 @@ public class AsteroidRenderer
             var positionComponent = _gameState.EcsWorld.GetComponent<PositionComponent>(entityId);
             var fuseComponent = _gameState.EcsWorld.GetComponent<FuseComponent>(entityId);
             _dynamiteRenderer.RenderLightSource(spriteBatch, positionComponent, fuseComponent);
+        }
+
+        foreach (var explosionTag in _gameState.EcsWorld.GetAllComponents<ExplosionTag>())
+        {
+            var entityId = explosionTag.EntityId;
+            var positionComponent = _gameState.EcsWorld.GetComponent<PositionComponent>(entityId);
+            var explosionComponent = _gameState.EcsWorld.GetComponent<ExplosionComponent>(entityId);
+            _explosionRenderer.RenderLightSource(spriteBatch, positionComponent.Position, explosionComponent);
         }
 
         // Render any grid-based light sources

@@ -48,6 +48,7 @@ public class GameState
     public bool IsOnAsteroid;
     public World EcsWorld { get; private set; }
     public DynamiteSystem DynamiteSystem { get; private set; }
+    public ExplosionSystem ExplosionSystem { get; private set; }
 
     public GameState(
         GraphicsDeviceManager graphics)
@@ -87,6 +88,7 @@ public class GameState
         IsOnAsteroid = false;
         EcsWorld = new World(this);
         DynamiteSystem = new DynamiteSystem(EcsWorld, this);
+        ExplosionSystem = new ExplosionSystem(EcsWorld, this);
     }
 
     public void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
@@ -102,5 +104,6 @@ public class GameState
         
         // Update ECS systems
         DynamiteSystem.Update(gameTime);
+        ExplosionSystem.Update(gameTime);
     }
 }

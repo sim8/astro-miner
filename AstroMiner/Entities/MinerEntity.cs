@@ -181,7 +181,6 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
 
     protected override void OnDead()
     {
-        var explosionEntity = new ExplosionEntity(gameState, CenterPosition);
-        gameState.AsteroidWorld.ActivateEntity(explosionEntity);
+        gameState.ExplosionSystem.CreateExplosion(CenterPosition);
     }
 }
