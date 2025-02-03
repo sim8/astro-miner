@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using AstroMiner.AsteroidWorld;
 using AstroMiner.Entities;
 using AstroMiner.HomeWorld;
+using AstroMiner.ECS;
+using AstroMiner.ECS.Systems;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
@@ -44,6 +46,8 @@ public class GameState
     public HomeWorldState HomeWorld;
     public Inventory Inventory;
     public bool IsOnAsteroid;
+    public World EcsWorld { get; private set; }
+    public DynamiteSystem DynamiteSystem { get; private set; }
 
     public GameState(
         GraphicsDeviceManager graphics)
@@ -81,6 +85,8 @@ public class GameState
         HomeWorld = new HomeWorldState(this);
         CloudManager = new CloudManager(this);
         IsOnAsteroid = false;
+        EcsWorld = new World(this);
+        DynamiteSystem = new DynamiteSystem(EcsWorld, this);
     }
 
     public void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
@@ -93,5 +99,8 @@ public class GameState
         Camera.Update(gameTime, activeMiningControls);
 
         CloudManager.Update(gameTime);
+        
+        // Update ECS systems
+        DynamiteSystem.Update(gameTime);
     }
 }

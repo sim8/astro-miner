@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using AstroMiner.Definitions;
+using AstroMiner.ECS.Components;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner.Entities;
@@ -16,9 +17,10 @@ public class PlayerEntity(GameState gameState) : MiningControllableEntity(gameSt
         if (activeMiningControls.Contains(MiningControls.PlaceDynamite) && gameState.Inventory.numDynamite > 0)
         {
             gameState.Inventory.numDynamite--;
-            var dynamiteEntity = new DynamiteEntity(gameState, CenterPosition);
-            dynamiteEntity.SetPositionRelativeToDirectionalEntity(this, Direction.Top);
-            gameState.AsteroidWorld.ActiveEntitiesSortedByDistance.Add(dynamiteEntity);
+            var entityId = gameState.DynamiteSystem.CreateDynamite(CenterPosition);
+            var positionComponent = gameState.EcsWorld.GetComponent<PositionComponent>(entityId);
+            positionComponent.Position = CenterPosition;
+            positionComponent.SetPositionRelativeToDirectionalEntity(this, Direction.Top);
         }
     }
 
