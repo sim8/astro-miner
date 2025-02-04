@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using AstroMiner.Definitions;
 using System.Drawing;
 using AstroMiner.Entities;
+using AstroMiner.Utilities;
 
 namespace AstroMiner.ECS.Components;
 
@@ -43,4 +44,21 @@ public class FuseComponent : Component
     public int MaxFuseTimeMs { get; set; }
     public int TimeToExplodeMs { get; set; }
     public float FusePercentLeft => TimeToExplodeMs / (float)MaxFuseTimeMs;
+}
+
+public class MovementComponent : Component
+{
+    // Movement constants
+    public const float ExcessSpeedLossPerSecond = 3f;
+    
+    // State
+    public Direction Direction { get; set; } = Direction.Top;
+    public float CurrentSpeed { get; set; }
+    public float MaxSpeed { get; set; }
+    public int TimeToReachMaxSpeedMs { get; set; }
+    public int TimeToStopMs { get; set; }
+    
+    // Derived properties
+    public Vector2 DirectionalVector => DirectionHelpers.GetDirectionalVector(1f, Direction);
+    public Vector2 VelocityVector => DirectionalVector * CurrentSpeed;
 } 

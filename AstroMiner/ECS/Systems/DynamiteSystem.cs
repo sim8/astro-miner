@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using AstroMiner.ECS.Components;
 using AstroMiner.Entities;
 using Microsoft.Xna.Framework;
@@ -32,7 +33,7 @@ public class DynamiteSystem : System
         return entityId;
     }
 
-    public override void Update(GameTime gameTime)
+    public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
         foreach (var fuseComponent in World.GetAllComponents<FuseComponent>())
         {

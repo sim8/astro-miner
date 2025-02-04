@@ -43,8 +43,14 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
         Grid.MarkAllDistancesFromExploredFloor(minerPosX, minerPosY, true);
         Miner = new MinerEntity(gameState);
         Miner.Initialize(minerPos);
+
+        // Create legacy player
         Player = new PlayerEntity(gameState);
         Player.Initialize(minerPos);
+        
+        // Create ECS player
+        gameState.CreatePlayerEntity(minerPos);
+        
         EdgeCells = UserInterfaceHelpers.GetAsteroidEdgeCells(Grid);
         CollapsingFloorTriggerer = new CollapsingFloorTriggerer(gameState);
         ActiveEntitiesSortedByDistance = [Miner];

@@ -94,7 +94,7 @@ public class ExplosionSystem : System
         return cells;
     }
 
-    public override void Update(GameTime gameTime)
+    public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
         foreach (var explosionComponent in World.GetAllComponents<ExplosionComponent>())
         {
