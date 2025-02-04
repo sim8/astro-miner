@@ -10,6 +10,14 @@ namespace AstroMiner.ECS.Systems;
 
 public class ExplosionSystem : System
 {
+    // Animation state
+    public const int AnimationTimeMs = 400;
+    
+    // Effect properties
+    public const float ExplodeRockRadius = 2.2f;
+    public const float ExplosionRadius = 4f;
+    public const int BoxSizePx = 1;
+
     public ExplosionSystem(World world, GameState gameState) : base(world, gameState)
     {
     }
@@ -20,7 +28,7 @@ public class ExplosionSystem : System
         
         var positionComponent = World.AddComponent<PositionComponent>(entityId);
         positionComponent.Position = position;
-        positionComponent.BoxSizePx = ExplosionComponent.BoxSizePx;
+        positionComponent.BoxSizePx = BoxSizePx;
         
         World.AddComponent<ExplosionComponent>(entityId);
         World.AddComponent<ExplosionTag>(entityId);
@@ -31,7 +39,7 @@ public class ExplosionSystem : System
     private void ExplodeGrid(Vector2 position)
     {
         var gridPos = ViewHelpers.ToGridPosition(position);
-        var explodedCells = GetCellsInRadius(position.X, position.Y, ExplosionComponent.ExplodeRockRadius);
+        var explodedCells = GetCellsInRadius(position.X, position.Y, ExplodeRockRadius);
         
         foreach (var (x, y) in explodedCells)
         {
@@ -52,9 +60,9 @@ public class ExplosionSystem : System
     {
         var distance = Vector2.Distance(explosionPosition, entity.CenterPosition);
 
-        if (distance < ExplosionComponent.ExplosionRadius)
+        if (distance < ExplosionRadius)
         {
-            var damagePercentage = 1f - distance / ExplosionComponent.ExplosionRadius;
+            var damagePercentage = 1f - distance / ExplosionRadius;
             var damage = (int)(GameConfig.ExplosionMaxDamage * damagePercentage);
             entity.TakeDamage(damage);
         }
@@ -106,7 +114,7 @@ public class ExplosionSystem : System
                 explosionComponent.TimeSinceExplosionMs += gameTime.ElapsedGameTime.Milliseconds;
             }
 
-            if (explosionComponent.TimeSinceExplosionMs >= ExplosionComponent.AnimationTimeMs)
+            if (explosionComponent.TimeSinceExplosionMs >= AnimationTimeMs)
             {
                 World.DestroyEntity(entityId);
             }
