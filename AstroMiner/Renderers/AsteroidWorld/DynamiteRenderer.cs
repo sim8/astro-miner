@@ -25,21 +25,28 @@ public class DynamiteRenderer(
         return (decimalValue > 0.5, sparksIndex);
     }
 
-    public void RenderDynamite(SpriteBatch spriteBatch, int entityId, PositionComponent position, FuseComponent fuse)
+    public void RenderDynamite(SpriteBatch spriteBatch, int entityId)
     {
-        if (fuse.FusePercentLeft < 0) return;
+        var positionComponent = shared.GameState.EcsWorld.GetComponent<PositionComponent>(entityId);
+        var fuseComponent = shared.GameState.EcsWorld.GetComponent<FuseComponent>(entityId);
+        
+        if (positionComponent == null || fuseComponent == null)
+            return;
+            
+        if (fuseComponent.FusePercentLeft < 0) return;
+        
         var sourceRectangle = new Rectangle(
             0, 0,
             6,
             11);
-        var destinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(position.Position,
+        var destinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(positionComponent.Position,
             6, 11, DynamiteBoxOffsetX, DynamiteBoxOffsetY);
 
         spriteBatch.Draw(shared.Textures["dynamite"], destinationRectangle, sourceRectangle, Color.White);
 
-        var fuseLeftPx = (int)Math.Floor(fuse.FusePercentLeft * FuseLengthPx);
+        var fuseLeftPx = (int)Math.Floor(fuseComponent.FusePercentLeft * FuseLengthPx);
 
-        var (shouldShow, sparksIndex) = GetSparksIndex(fuse.FusePercentLeft);
+        var (shouldShow, sparksIndex) = GetSparksIndex(fuseComponent.FusePercentLeft);
 
         if (shouldShow)
         {
@@ -47,7 +54,7 @@ public class DynamiteRenderer(
                 7, SparksBorderSize + (SparksBoxSize + SparksBorderSize) * sparksIndex,
                 SparksBoxSize,
                 SparksBoxSize);
-            var sparksDestinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(position.Position,
+            var sparksDestinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(positionComponent.Position,
                 SparksBoxSize, SparksBoxSize, 0, -(5 + fuseLeftPx));
 
             spriteBatch.Draw(shared.Textures["dynamite"], sparksDestinationRectangle, sparksSourceRectangle,
@@ -55,11 +62,17 @@ public class DynamiteRenderer(
         }
     }
 
-    public void RenderLightSource(SpriteBatch spriteBatch, PositionComponent position, FuseComponent fuse)
+    public void RenderLightSource(SpriteBatch spriteBatch, int entityId)
     {
-        var (shouldShow, _) = GetSparksIndex(fuse.FusePercentLeft);
+        var positionComponent = shared.GameState.EcsWorld.GetComponent<PositionComponent>(entityId);
+        var fuseComponent = shared.GameState.EcsWorld.GetComponent<FuseComponent>(entityId);
+        
+        if (positionComponent == null || fuseComponent == null)
+            return;
 
-        var lightSourcePos = position.CenterPosition;
+        var (shouldShow, _) = GetSparksIndex(fuseComponent.FusePercentLeft);
+
+        var lightSourcePos = positionComponent.CenterPosition;
         shared.RenderRadialLightSource(spriteBatch, lightSourcePos, 128, shouldShow ? 0.3f : 0.1f);
     }
 }

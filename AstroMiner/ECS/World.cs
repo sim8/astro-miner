@@ -42,6 +42,23 @@ public class World
         _gameState = gameState;
     }
 
+    public IEnumerable<int> GetAllEntityIds()
+    {
+        return _entityComponents.Keys;
+    }
+
+    public bool HasComponent<T>(int entityId) where T : Component
+    {
+        if (!_entityComponents.TryGetValue(entityId, out var components))
+            return false;
+
+        foreach (var component in components)
+            if (component is T)
+                return true;
+
+        return false;
+    }
+
     public int CreateEntity()
     {
         var entityId = _nextEntityId++;
