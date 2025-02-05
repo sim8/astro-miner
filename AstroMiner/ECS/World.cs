@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
+using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using Microsoft.Xna.Framework;
 
@@ -40,6 +41,55 @@ public class World
     public World(GameState gameState)
     {
         _gameState = gameState;
+    }
+
+    public int CreatePlayerEntity(Vector2 position)
+    {
+        var entityId = CreateEntity();
+        
+        // Add position component
+        var positionComponent = AddComponent<PositionComponent>(entityId);
+        positionComponent.Position = position;
+        positionComponent.BoxSizePx = GameConfig.PlayerBoxSizePx;
+        
+        // Add movement component
+        var movementComponent = AddComponent<MovementComponent>(entityId);
+        movementComponent.MaxSpeed = 4f;  // From PlayerEntity
+        movementComponent.TimeToReachMaxSpeedMs = 0;  // From ControllableEntity default
+        movementComponent.TimeToStopMs = 0;  // From ControllableEntity default
+        
+        // Add tag component for identification
+        AddComponent<PlayerTag>(entityId);
+        
+        // Set as active controllable entity
+        SetActiveControllableEntity(entityId);
+        
+        return entityId;
+    }
+
+    public int CreateMinerEntity(Vector2 position)
+    {
+        var entityId = CreateEntity();
+        
+        // Add position component
+        var positionComponent = AddComponent<PositionComponent>(entityId);
+        positionComponent.Position = position;
+        positionComponent.BoxSizePx = GameConfig.MinerBoxSizePx;
+        
+        // Add movement component with miner-specific values
+        var movementComponent = AddComponent<MovementComponent>(entityId);
+        movementComponent.MaxSpeed = 4f;  // From MinerEntity
+        movementComponent.TimeToReachMaxSpeedMs = 600;  // From MinerEntity
+        movementComponent.TimeToStopMs = 400;  // From MinerEntity
+        
+        // Add tag component for identification
+        AddComponent<MinerTag>(entityId);
+        
+        // Set as active controllable entity if it's the first entity
+        if (_activeControllableEntityId == null)
+            SetActiveControllableEntity(entityId);
+        
+        return entityId;
     }
 
     public IEnumerable<int> GetAllEntityIds()

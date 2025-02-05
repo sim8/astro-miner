@@ -142,14 +142,13 @@ public class AsteroidRenderer
             (col, row) => { _fogOfWarRenderer.RenderFogOfWar(spriteBatch, col, row); }
         );
 
-        // Render legacy entities
-        foreach (var entity in _gameState.AsteroidWorld.ActiveEntitiesSortedByDistance)
-            if (entity is MinerEntity)
-                _minerRenderer.RenderMiner(spriteBatch);
-
         // Render ECS entities
         foreach (var entityId in _gameState.EcsWorld.GetAllEntityIds())
         {
+            // Render miner
+            if (_gameState.EcsWorld.HasComponent<MinerTag>(entityId))
+                _minerRenderer.RenderMiner(spriteBatch, entityId);
+            
             // Render dynamite
             if (_gameState.EcsWorld.HasComponent<DynamiteTag>(entityId))
                 _dynamiteRenderer.RenderDynamite(spriteBatch, entityId);

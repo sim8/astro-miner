@@ -62,30 +62,6 @@ public class GameState
         // HomeWorld.Initialize();
     }
 
-    public int CreatePlayerEntity(Vector2 position)
-    {
-        var entityId = EcsWorld.CreateEntity();
-        
-        // Add position component
-        var positionComponent = EcsWorld.AddComponent<PositionComponent>(entityId);
-        positionComponent.Position = position;
-        positionComponent.BoxSizePx = GameConfig.PlayerBoxSizePx;
-        
-        // Add movement component
-        var movementComponent = EcsWorld.AddComponent<MovementComponent>(entityId);
-        movementComponent.MaxSpeed = 4f;  // From PlayerEntity
-        movementComponent.TimeToReachMaxSpeedMs = 0;  // From ControllableEntity default
-        movementComponent.TimeToStopMs = 0;  // From ControllableEntity default
-        
-        // Add tag component for identification
-        EcsWorld.AddComponent<PlayerTag>(entityId);
-        
-        // Set as active controllable entity
-        EcsWorld.SetActiveControllableEntity(entityId);
-        
-        return entityId;
-    }
-
     public long MsSinceStart { get; private set; }
 
     public MiningControllableEntity ActiveControllableEntity =>

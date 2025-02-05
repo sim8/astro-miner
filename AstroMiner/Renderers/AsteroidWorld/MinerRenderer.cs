@@ -1,5 +1,5 @@
 using System;
-using AstroMiner.Entities;
+using AstroMiner.ECS.Components;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,35 +12,43 @@ public class MinerRenderer(
     private const int MinerBoxOffsetX = -13;
     private const int MinerBoxOffsetY = -20;
     private const int MinerTextureSize = 64;
-    private MinerEntity Miner => shared.GameState.AsteroidWorld.Miner;
 
-    public void RenderMiner(SpriteBatch spriteBatch)
+    public void RenderMiner(SpriteBatch spriteBatch, int entityId)
     {
-        RenderGrapple(spriteBatch);
+        var positionComponent = shared.GameState.EcsWorld.GetComponent<PositionComponent>(entityId);
+        var movementComponent = shared.GameState.EcsWorld.GetComponent<MovementComponent>(entityId);
+        
+        if (positionComponent == null || movementComponent == null)
+            return;
+
+        // TODO: Implement grapple rendering when we add grapple component
+        // RenderGrapple(spriteBatch);
+        
         var sourceRectangle = new Rectangle(
-            Miner.Direction is Direction.Bottom or Direction.Left
+            movementComponent.Direction is Direction.Bottom or Direction.Left
                 ? 0
                 : MinerTextureSize,
-            Miner.Direction is Direction.Top or Direction.Left
+            movementComponent.Direction is Direction.Top or Direction.Left
                 ? 0
                 : MinerTextureSize,
             MinerTextureSize,
             MinerTextureSize);
-        var destinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(Miner.Position,
+            
+        var destinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(positionComponent.Position,
             MinerTextureSize, MinerTextureSize, MinerBoxOffsetX, MinerBoxOffsetY);
 
-        var tintColor = Miner.IsDead
-            ? Color.Gray
-            : ViewHelpers.GetEntityTintColor(Miner);
+        // TODO: Add health component for proper tint color
+        var tintColor = Color.White;
 
-        spriteBatch.Draw(GetTracksTexture(), destinationRectangle, sourceRectangle, tintColor);
+        spriteBatch.Draw(GetTracksTexture(positionComponent.Position, movementComponent.Direction), 
+            destinationRectangle, sourceRectangle, tintColor);
         spriteBatch.Draw(shared.Textures["miner-no-tracks"], destinationRectangle, sourceRectangle, tintColor);
     }
 
-    private Texture2D GetTracksTexture()
+    private Texture2D GetTracksTexture(Vector2 position, Direction direction)
     {
-        var (gridX, gridY) = ViewHelpers.GridPosToTexturePx(Miner.Position);
-        switch (Miner.Direction)
+        var (gridX, gridY) = ViewHelpers.GridPosToTexturePx(position);
+        switch (direction)
         {
             case Direction.Top: return shared.Textures["tracks-" + (2 - gridY % 3)];
             case Direction.Right: return shared.Textures["tracks-" + gridX % 3];
@@ -51,6 +59,8 @@ public class MinerRenderer(
         return shared.Textures["tracks-1"];
     }
 
+    // TODO: Re-implement when we add grapple component
+    /*
     private void RenderGrapple(SpriteBatch spriteBatch)
     {
         if (Miner.GrappleTarget.HasValue)
@@ -119,4 +129,5 @@ public class MinerRenderer(
             spriteBatch.Draw(shared.Textures["white"], rightDestRect, Color.Black);
         }
     }
+    */
 }
