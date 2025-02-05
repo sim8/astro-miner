@@ -30,7 +30,7 @@ public class FogAnimationManager
 
 
             var distanceFromPlayer = Vector2.Distance(new Vector2(x + 0.5f, y + 0.5f),
-                _gameState.ActiveControllableEntity.CenterPosition);
+                _gameState.EcsWorld.ActiveControllableEntityCenterPosition);
 
             cell.FogOpacity = Math.Max(0,
                 cell.FogOpacity - gameTime.ElapsedGameTime.Milliseconds / (BaseFadeOutDurationMs * distanceFromPlayer));

@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
+using AstroMiner.ECS.Components;
+using Microsoft.Xna.Framework;
 
 namespace AstroMiner.ECS;
 
@@ -13,6 +16,26 @@ public class World
     private int _nextEntityId = 1;
     private readonly Dictionary<int, HashSet<Component>> _entityComponents = new();
     private readonly Dictionary<Type, HashSet<Component>> _componentsByType = new();
+    
+    // Track the currently active controllable entity
+    private int? _activeControllableEntityId;
+    public int? ActiveControllableEntityId => _activeControllableEntityId;
+    
+    public void SetActiveControllableEntity(int entityId)
+    {
+        if (!_entityComponents.ContainsKey(entityId))
+            return;
+            
+        _activeControllableEntityId = entityId;
+    }
+    
+    public void DeactivateControllableEntity()
+    {
+        _activeControllableEntityId = null;
+    }
+
+    public Vector2 ActiveControllableEntityCenterPosition => _activeControllableEntityId == null?   Vector2.Zero : GetComponent<PositionComponent>(_activeControllableEntityId.Value).CenterPosition;
+
 
     public World(GameState gameState)
     {
@@ -37,6 +60,10 @@ public class World
         }
 
         _entityComponents.Remove(entityId);
+        
+        // Clear active entity if it's the one being destroyed
+        if (_activeControllableEntityId == entityId)
+            _activeControllableEntityId = null;
     }
 
     public T AddComponent<T>(int entityId) where T : Component, new()

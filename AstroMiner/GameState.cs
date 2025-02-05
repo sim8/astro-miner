@@ -80,6 +80,9 @@ public class GameState
         // Add tag component for identification
         EcsWorld.AddComponent<PlayerTag>(entityId);
         
+        // Set as active controllable entity
+        EcsWorld.SetActiveControllableEntity(entityId);
+        
         return entityId;
     }
 

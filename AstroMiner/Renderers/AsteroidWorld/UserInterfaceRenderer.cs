@@ -133,7 +133,7 @@ public class UserInterfaceRenderer(
         }
 
         var playerGridPos =
-            ViewHelpers.ToGridPosition(shared.GameState.ActiveControllableEntity.CenterPosition);
+            ViewHelpers.ToGridPosition(shared.GameState.EcsWorld.ActiveControllableEntityCenterPosition);
         var playerX = xOffset + playerGridPos.x * scale - playerSize / 2;
         var playerY = yOffset + playerGridPos.y * scale - playerSize / 2;
         var playerDestRect = new Rectangle((int)playerX, (int)playerY, playerSize, playerSize);

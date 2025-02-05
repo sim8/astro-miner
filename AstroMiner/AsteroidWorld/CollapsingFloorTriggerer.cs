@@ -16,7 +16,7 @@ public class CollapsingFloorTriggerer(GameState gameState)
 
     private void MaybeCollapseFloors()
     {
-        var (playerX, playerY) = ViewHelpers.ToGridPosition(gameState.ActiveControllableEntity.Position);
+        var (playerX, playerY) = ViewHelpers.ToGridPosition(gameState.EcsWorld.ActiveControllableEntityCenterPosition);
 
         // Iterate through cells within 10 rows/columns of player
         for (var y = Math.Max(0, playerY - Distance); y <= playerY + Distance; y++)
