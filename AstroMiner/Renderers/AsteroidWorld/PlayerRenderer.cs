@@ -1,3 +1,4 @@
+using AstroMiner.ECS.Components;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,11 +12,15 @@ public class PlayerRenderer(
     private const int PlayerBoxOffsetY = -22;
     private const int PlayerTextureSizePx = 50;
 
-    public void RenderPlayer(SpriteBatch spriteBatch)
+    public void RenderPlayer(SpriteBatch spriteBatch, int entityId)
     {
-        var player = shared.GameState.ActiveWorld.Player;
+        var positionComponent = shared.GameState.EcsWorld.GetComponent<PositionComponent>(entityId);
+        var movementComponent = shared.GameState.EcsWorld.GetComponent<MovementComponent>(entityId);
+        
+        if (positionComponent == null || movementComponent == null)
+            return;
 
-        var textureFrameOffsetX = player.Direction switch
+        var textureFrameOffsetX = movementComponent.Direction switch
         {
             Direction.Bottom => 0,
             Direction.Left => PlayerTextureSizePx * 1,
@@ -28,10 +33,11 @@ public class PlayerRenderer(
             PlayerTextureSizePx,
             PlayerTextureSizePx);
 
-        var destinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(player.Position,
+        var destinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(positionComponent.Position,
             PlayerTextureSizePx, PlayerTextureSizePx, PlayerBoxOffsetX, PlayerBoxOffsetY);
 
-        var tintColor = ViewHelpers.GetEntityTintColor(player);
+        // TODO: Add health component to handle tint color
+        var tintColor = Color.Green;
 
         spriteBatch.Draw(shared.Textures["player"], destinationRectangle, sourceRectangle, tintColor);
     }

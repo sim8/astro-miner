@@ -146,8 +146,6 @@ public class AsteroidRenderer
         foreach (var entity in _gameState.AsteroidWorld.ActiveEntitiesSortedByDistance)
             if (entity is MinerEntity)
                 _minerRenderer.RenderMiner(spriteBatch);
-            else if (entity is PlayerEntity)
-                _playerRenderer.RenderPlayer(spriteBatch);
 
         // Render ECS entities
         foreach (var dynamiteTag in _gameState.EcsWorld.GetAllComponents<DynamiteTag>())
@@ -164,6 +162,12 @@ public class AsteroidRenderer
             var positionComponent = _gameState.EcsWorld.GetComponent<PositionComponent>(entityId);
             var explosionComponent = _gameState.EcsWorld.GetComponent<ExplosionComponent>(entityId);
             _explosionRenderer.RenderExplosion(spriteBatch, positionComponent.Position, explosionComponent);
+        }
+
+        foreach (var playerTag in _gameState.EcsWorld.GetAllComponents<PlayerTag>())
+        {
+            var entityId = playerTag.EntityId;
+            _playerRenderer.RenderPlayer(spriteBatch, entityId);
         }
     }
 
