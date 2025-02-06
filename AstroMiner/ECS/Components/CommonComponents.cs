@@ -50,15 +50,29 @@ public class MovementComponent : Component
 {
     // Movement constants
     public const float ExcessSpeedLossPerSecond = 3f;
-    
+
     // State
     public Direction Direction { get; set; } = Direction.Top;
     public float CurrentSpeed { get; set; }
     public float MaxSpeed { get; set; }
     public int TimeToReachMaxSpeedMs { get; set; }
     public int TimeToStopMs { get; set; }
-    
+
     // Derived properties
     public Vector2 DirectionalVector => DirectionHelpers.GetDirectionalVector(1f, Direction);
     public Vector2 VelocityVector => DirectionalVector * CurrentSpeed;
-} 
+}
+
+public class HealthComponent : Component
+{
+    public float MaxHealth { get; set; }
+    public float CurrentHealth { get; set; }
+    public bool IsDead { get; set; }
+
+    // Animation state
+    public bool IsAnimatingDamage { get; set; }
+    public int TimeSinceLastDamageMs { get; set; }
+    public int TotalDamageAnimationTimeMs { get; set; }
+
+    public float HealthPercentage => CurrentHealth / MaxHealth;
+}

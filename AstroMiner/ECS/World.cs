@@ -79,6 +79,11 @@ public class World
         movementComponent.TimeToReachMaxSpeedMs = 0;  // From ControllableEntity default
         movementComponent.TimeToStopMs = 0;  // From ControllableEntity default
 
+        // Add health component
+        var healthComponent = AddComponent<HealthComponent>(entityId);
+        healthComponent.MaxHealth = GameConfig.PlayerMaxHealth;
+        healthComponent.CurrentHealth = GameConfig.PlayerMaxHealth;
+
         // Add tag component for identification
         AddComponent<PlayerTag>(entityId);
 
@@ -102,6 +107,11 @@ public class World
         movementComponent.MaxSpeed = 4f;  // From MinerEntity
         movementComponent.TimeToReachMaxSpeedMs = 600;  // From MinerEntity
         movementComponent.TimeToStopMs = 400;  // From MinerEntity
+
+        // Add health component
+        var healthComponent = AddComponent<HealthComponent>(entityId);
+        healthComponent.MaxHealth = GameConfig.MinerMaxHealth;
+        healthComponent.CurrentHealth = GameConfig.MinerMaxHealth;
 
         // Add tag component for identification
         AddComponent<MinerTag>(entityId);

@@ -148,17 +148,17 @@ public class AsteroidRenderer
             // Render miner
             if (_gameState.EcsWorld.HasComponent<MinerTag>(entityId))
                 _minerRenderer.RenderMiner(spriteBatch, entityId);
-            
+
             // Render dynamite
             if (_gameState.EcsWorld.HasComponent<DynamiteTag>(entityId))
                 _dynamiteRenderer.RenderDynamite(spriteBatch, entityId);
-            
+
             // Render explosions
             if (_gameState.EcsWorld.HasComponent<ExplosionTag>(entityId))
                 _explosionRenderer.RenderExplosion(spriteBatch, entityId);
-            
+
             // Render player
-            if (_gameState.EcsWorld.HasComponent<PlayerTag>(entityId))
+            if (_gameState.EcsWorld.HasComponent<PlayerTag>(entityId) && !_gameState.AsteroidWorld.IsInMiner)
                 _playerRenderer.RenderPlayer(spriteBatch, entityId);
         }
     }
@@ -212,7 +212,7 @@ public class AsteroidRenderer
             // Render dynamite lighting
             if (_gameState.EcsWorld.HasComponent<DynamiteTag>(entityId))
                 _dynamiteRenderer.RenderLightSource(spriteBatch, entityId);
-            
+
             // Render explosion lighting
             if (_gameState.EcsWorld.HasComponent<ExplosionTag>(entityId))
                 _explosionRenderer.RenderLightSource(spriteBatch, entityId);
@@ -255,7 +255,7 @@ public class AsteroidRenderer
         var (startCol, startRow, endCol, endRow) = _shared.ViewHelpers.GetVisibleGrid(padding);
 
         for (var row = startRow; row < endRow; row++)
-        for (var col = startCol; col < endCol; col++)
-            cellAction(col, row);
+            for (var col = startCol; col < endCol; col++)
+                cellAction(col, row);
     }
 }

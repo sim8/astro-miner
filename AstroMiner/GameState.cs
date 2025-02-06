@@ -52,6 +52,7 @@ public class GameState
     public DynamiteSystem DynamiteSystem { get; private set; }
     public ExplosionSystem ExplosionSystem { get; private set; }
     public MovementSystem MovementSystem { get; private set; }
+    public HealthSystem HealthSystem { get; private set; }
     public VehicleEnterExitSystem VehicleEnterExitSystem { get; private set; }
 
     public GameState(
@@ -94,6 +95,7 @@ public class GameState
         DynamiteSystem = new DynamiteSystem(EcsWorld, this);
         ExplosionSystem = new ExplosionSystem(EcsWorld, this);
         MovementSystem = new MovementSystem(EcsWorld, this);
+        HealthSystem = new HealthSystem(EcsWorld, this);
         VehicleEnterExitSystem = new VehicleEnterExitSystem(EcsWorld, this);
     }
 
@@ -112,6 +114,7 @@ public class GameState
         DynamiteSystem.Update(gameTime, activeMiningControls);
         ExplosionSystem.Update(gameTime, activeMiningControls);
         MovementSystem.Update(gameTime, activeMiningControls);
+        HealthSystem.Update(gameTime, activeMiningControls);
         VehicleEnterExitSystem.Update(gameTime, activeMiningControls);
     }
 }
