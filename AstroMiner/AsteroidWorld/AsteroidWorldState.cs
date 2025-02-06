@@ -43,12 +43,12 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
         Grid.MarkAllDistancesFromExploredFloor(minerPosX, minerPosY, true);
         
         // Create legacy miner
-        Miner = new MinerEntity(gameState);
-        Miner.Initialize(minerPos);
+        // Miner = new MinerEntity(gameState);
+        // Miner.Initialize(minerPos);
 
         // Create legacy player
-        Player = new PlayerEntity(gameState);
-        Player.Initialize(minerPos);
+        // Player = new PlayerEntity(gameState);
+        // Player.Initialize(minerPos);
         
         // Create ECS entities
         var minerEntityId = gameState.EcsWorld.CreateMinerEntity(minerPos);
@@ -64,7 +64,7 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
 
     public override void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
     {
-        if (ActiveControllableEntity.IsDead || ActiveControllableEntity.IsOffAsteroid)
+        if (gameState.EcsWorld.ActiveControllableEntityIsDead || gameState.EcsWorld.ActiveControllableEntityIsOffAsteroid)
             if (activeMiningControls.Contains(MiningControls.NewGameOrReturnToBase))
                 gameState.InitializeHome();
 
@@ -76,20 +76,21 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
             return;
         }
 
-        if (activeMiningControls.Contains(MiningControls.EnterOrExit))
-        {
-            ActiveControllableEntity.Disembark();
-            if (ActiveControllableEntity == Player && !Miner.IsDead &&
-                Player.GetDistanceTo(Miner) < GameConfig.MinEmbarkingDistance)
-            {
-                DeactivateEntity(Player);
-            }
-            else if (ActiveControllableEntity == Miner)
-            {
-                Player.Position = Miner.Position;
-                ActivateEntity(Player);
-            }
-        }
+// todo
+        // if (activeMiningControls.Contains(MiningControls.EnterOrExit))
+        // {
+        //     ActiveControllableEntity.Disembark();
+        //     if (ActiveControllableEntity == Player && !Miner.IsDead &&
+        //         Player.GetDistanceTo(Miner) < GameConfig.MinEmbarkingDistance)
+        //     {
+        //         DeactivateEntity(Player);
+        //     }
+        //     else if (ActiveControllableEntity == Miner)
+        //     {
+        //         Player.Position = Miner.Position;
+        //         ActivateEntity(Player);
+        //     }
+        // }
 
         base.Update(activeMiningControls, gameTime);
 

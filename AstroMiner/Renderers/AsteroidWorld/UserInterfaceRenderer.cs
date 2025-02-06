@@ -30,8 +30,8 @@ public class UserInterfaceRenderer(
         RenderHealthBar(spriteBatch, shared.GameState.AsteroidWorld.Miner, 50, 192);
         RenderHealthBar(spriteBatch, shared.GameState.AsteroidWorld.Player, 50, 207);
 
-        if (shared.GameState.ActiveControllableEntity.IsDead ||
-            shared.GameState.ActiveControllableEntity.IsOffAsteroid)
+        if (shared.GameState.EcsWorld.ActiveControllableEntityIsDead ||
+            shared.GameState.EcsWorld.ActiveControllableEntityIsOffAsteroid)
             RenderNewGameScreen(spriteBatch, shared.GameState.ActiveControllableEntity.IsDead);
     }
 
@@ -54,18 +54,21 @@ public class UserInterfaceRenderer(
     private void RenderHealthBar(SpriteBatch spriteBatch, MiningControllableEntity entity, int xOffset, int yOffset)
     {
         spriteBatch.Draw(shared.Textures["white"],
-            new Rectangle(xOffset, yOffset, (int)entity.Health, 3),
-            Color.LimeGreen);
+            new Rectangle(xOffset, yOffset, 200, 3),
+            // TODO
+            // new Rectangle(xOffset, yOffset, (int)entity.Health, 3),
+            Color.Red);
     }
 
     private void RenderGrappleIcon(SpriteBatch spriteBatch)
     {
-        var color = shared.GameState.AsteroidWorld.Miner.GrappleAvailable
-            ? Color.LimeGreen
-            : _gridColor;
+        // TODO
+        // var color = shared.GameState.AsteroidWorld.Miner.GrappleAvailable
+        //     ? Color.LimeGreen
+        //     : _gridColor;
         spriteBatch.Draw(shared.Textures["grapple-icon"],
             new Rectangle(10, 185, 32, 32),
-            color);
+            Color.Red);
     }
 
     private void RenderMinimap(SpriteBatch spriteBatch)

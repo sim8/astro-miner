@@ -37,6 +37,9 @@ public class World
 
     public Vector2 ActiveControllableEntityCenterPosition => _activeControllableEntityId == null?   Vector2.Zero : GetComponent<PositionComponent>(_activeControllableEntityId.Value).CenterPosition;
 
+    public bool ActiveControllableEntityIsDead => false;
+    public bool ActiveControllableEntityIsOffAsteroid => false;
+
 
     public World(GameState gameState)
     {

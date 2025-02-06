@@ -173,12 +173,13 @@ public class AsteroidRenderer
                 _explosionRenderer.RenderAdditiveLightSource(spriteBatch, entityId);
         }
 
-        _shared.RenderDirectionalLightSource(spriteBatch, _gameState.AsteroidWorld.Miner.GetDirectionalLightSource(),
-            _gameState.AsteroidWorld.Miner.Direction, 192, 0.4f);
+        // TODO
+        // _shared.RenderDirectionalLightSource(spriteBatch, _gameState.AsteroidWorld.Miner.GetDirectionalLightSource(),
+        //     _gameState.AsteroidWorld.Miner.Direction, 192, 0.4f);
 
-        if (!_gameState.AsteroidWorld.IsInMiner)
-            _shared.RenderDirectionalLightSource(spriteBatch, _gameState.AsteroidWorld.Player.GetDirectionalLightSource(),
-                _gameState.AsteroidWorld.Player.Direction, 128, 0.3f);
+        // if (!_gameState.AsteroidWorld.IsInMiner)
+        //     _shared.RenderDirectionalLightSource(spriteBatch, _gameState.AsteroidWorld.Player.GetDirectionalLightSource(),
+        //         _gameState.AsteroidWorld.Player.Direction, 128, 0.3f);
     }
 
     private void RenderLightingToRenderTarget(SpriteBatch spriteBatch)
@@ -192,17 +193,18 @@ public class AsteroidRenderer
         spriteBatch.Draw(_shared.Textures["white"], new Rectangle(0, 0, viewportWidth, viewportHeight),
             FogOfWarRenderer.FogColor * 0.8f);
 
-        _shared.RenderDirectionalLightSource(spriteBatch, _gameState.AsteroidWorld.Miner.GetDirectionalLightSource(),
-            _gameState.AsteroidWorld.Miner.Direction);
+        // TODO
+        // _shared.RenderDirectionalLightSource(spriteBatch, _gameState.AsteroidWorld.Miner.GetDirectionalLightSource(),
+        //     _gameState.AsteroidWorld.Miner.Direction);
 
-        if (!_gameState.AsteroidWorld.IsInMiner)
-            _shared.RenderDirectionalLightSource(spriteBatch, _gameState.AsteroidWorld.Player.GetDirectionalLightSource(),
-                _gameState.AsteroidWorld.Player.Direction, 256);
+        // if (!_gameState.AsteroidWorld.IsInMiner)
+        //     _shared.RenderDirectionalLightSource(spriteBatch, _gameState.AsteroidWorld.Player.GetDirectionalLightSource(),
+        //         _gameState.AsteroidWorld.Player.Direction, 256);
 
-        _shared.RenderRadialLightSource(spriteBatch,
-            _gameState.AsteroidWorld.IsInMiner
-                ? _gameState.AsteroidWorld.Miner.CenterPosition
-                : _gameState.AsteroidWorld.Player.CenterPosition, 512, 0.4f);
+        // _shared.RenderRadialLightSource(spriteBatch,
+        //     _gameState.AsteroidWorld.IsInMiner
+        //         ? _gameState.AsteroidWorld.Miner.CenterPosition
+        //         : _gameState.AsteroidWorld.Player.CenterPosition, 512, 0.4f);
 
         // Render ECS entity lighting
         foreach (var entityId in _gameState.EcsWorld.GetAllEntityIds())

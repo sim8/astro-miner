@@ -34,15 +34,15 @@ public abstract class BaseWorldState(GameState g)
 
     public virtual void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
     {
-        foreach (var entity in ActiveEntitiesSortedByDistance.ToList())
-            if (entity is MiningControllableEntity && entity == g.ActiveControllableEntity)
-                entity.Update(gameTime, activeMiningControls);
-            else
-                entity.Update(gameTime, _emptyMiningControls);
+        // foreach (var entity in ActiveEntitiesSortedByDistance.ToList())
+        //     if (entity is MiningControllableEntity && entity == g.ActiveControllableEntity)
+        //         entity.Update(gameTime, activeMiningControls);
+        //     else
+        //         entity.Update(gameTime, _emptyMiningControls);
 
 
         // Do last to reflect changes
-        SortActiveEntities(); // TODO only call when needed? Seems error prone
+        // SortActiveEntities(); // TODO only call when needed? Seems error prone
     }
 
     public abstract bool CellIsCollideable(int x, int y);
