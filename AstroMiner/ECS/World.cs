@@ -17,25 +17,31 @@ public class World
     private int _nextEntityId = 1;
     private readonly Dictionary<int, HashSet<Component>> _entityComponents = new();
     private readonly Dictionary<Type, HashSet<Component>> _componentsByType = new();
-    
+
+    // Track special entities
+    private int? _playerEntityId;
+    private int? _minerEntityId;
+    public int? PlayerEntityId => _playerEntityId;
+    public int? MinerEntityId => _minerEntityId;
+
     // Track the currently active controllable entity
     private int? _activeControllableEntityId;
     public int? ActiveControllableEntityId => _activeControllableEntityId;
-    
+
     public void SetActiveControllableEntity(int entityId)
     {
         if (!_entityComponents.ContainsKey(entityId))
             return;
-            
+
         _activeControllableEntityId = entityId;
     }
-    
+
     public void DeactivateControllableEntity()
     {
         _activeControllableEntityId = null;
     }
 
-    public Vector2 ActiveControllableEntityCenterPosition => _activeControllableEntityId == null?   Vector2.Zero : GetComponent<PositionComponent>(_activeControllableEntityId.Value).CenterPosition;
+    public Vector2 ActiveControllableEntityCenterPosition => _activeControllableEntityId == null ? Vector2.Zero : GetComponent<PositionComponent>(_activeControllableEntityId.Value).CenterPosition;
 
     public bool ActiveControllableEntityIsDead => false;
     public bool ActiveControllableEntityIsOffAsteroid => false;
@@ -51,7 +57,7 @@ public class World
         // If this is the active controllable entity, it's active
         if (entityId == _activeControllableEntityId)
             return true;
-            
+
         // If it doesn't have a MovementComponent component, it's always active
         // TODO use better thing than Movement?
         var hasControllableComponent = HasComponent<MovementComponent>(entityId);
@@ -61,42 +67,48 @@ public class World
     public int CreatePlayerEntity(Vector2 position)
     {
         var entityId = CreateEntity();
-        
+
         // Add position component
         var positionComponent = AddComponent<PositionComponent>(entityId);
         positionComponent.Position = position;
         positionComponent.BoxSizePx = GameConfig.PlayerBoxSizePx;
-        
+
         // Add movement component
         var movementComponent = AddComponent<MovementComponent>(entityId);
         movementComponent.MaxSpeed = 4f;  // From PlayerEntity
         movementComponent.TimeToReachMaxSpeedMs = 0;  // From ControllableEntity default
         movementComponent.TimeToStopMs = 0;  // From ControllableEntity default
-        
+
         // Add tag component for identification
         AddComponent<PlayerTag>(entityId);
-        
+
+        // Store the player entity ID
+        _playerEntityId = entityId;
+
         return entityId;
     }
 
     public int CreateMinerEntity(Vector2 position)
     {
         var entityId = CreateEntity();
-        
+
         // Add position component
         var positionComponent = AddComponent<PositionComponent>(entityId);
         positionComponent.Position = position;
         positionComponent.BoxSizePx = GameConfig.MinerBoxSizePx;
-        
+
         // Add movement component with miner-specific values
         var movementComponent = AddComponent<MovementComponent>(entityId);
         movementComponent.MaxSpeed = 4f;  // From MinerEntity
         movementComponent.TimeToReachMaxSpeedMs = 600;  // From MinerEntity
         movementComponent.TimeToStopMs = 400;  // From MinerEntity
-        
+
         // Add tag component for identification
         AddComponent<MinerTag>(entityId);
-        
+
+        // Store the miner entity ID
+        _minerEntityId = entityId;
+
         return entityId;
     }
 
@@ -135,25 +147,29 @@ public class World
         }
 
         _entityComponents.Remove(entityId);
-        
-        // Clear active entity if it's the one being destroyed
+
+        // Clear entity references if they're being destroyed
         if (_activeControllableEntityId == entityId)
             _activeControllableEntityId = null;
+        if (_playerEntityId == entityId)
+            _playerEntityId = null;
+        if (_minerEntityId == entityId)
+            _minerEntityId = null;
     }
 
     public T AddComponent<T>(int entityId) where T : Component, new()
     {
         var component = new T { EntityId = entityId };
-        
+
         if (!_entityComponents.ContainsKey(entityId))
             _entityComponents[entityId] = new HashSet<Component>();
-        
+
         _entityComponents[entityId].Add(component);
 
         var type = typeof(T);
         if (!_componentsByType.ContainsKey(type))
             _componentsByType[type] = new HashSet<Component>();
-        
+
         _componentsByType[type].Add(component);
 
         return component;
@@ -184,4 +200,4 @@ public class World
             yield return (T)component;
         }
     }
-} 
+}

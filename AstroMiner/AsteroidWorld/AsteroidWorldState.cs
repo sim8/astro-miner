@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AstroMiner.Definitions;
+using AstroMiner.ECS.Components;
 using AstroMiner.Entities;
 using AstroMiner.ProceduralGen;
 using AstroMiner.Utilities;
@@ -21,8 +22,9 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
 
     public long MsSinceStart { get; private set; }
 
-    public bool IsInMiner => !ActiveEntitiesSortedByDistance.Contains(Player);
-
+    public bool IsInMiner => gameState.EcsWorld.ActiveControllableEntityId != null &&
+                             gameState.EcsWorld.HasComponent<MinerTag>(gameState.EcsWorld.ActiveControllableEntityId
+                                 .Value);
 
     public override MiningControllableEntity ActiveControllableEntity => IsInMiner ? Miner : Player;
 
@@ -41,7 +43,7 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
 
         var (minerPosX, minerPosY) = ViewHelpers.ToGridPosition(minerPos);
         Grid.MarkAllDistancesFromExploredFloor(minerPosX, minerPosY, true);
-        
+
         // Create legacy miner
         // Miner = new MinerEntity(gameState);
         // Miner.Initialize(minerPos);
@@ -49,12 +51,12 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
         // Create legacy player
         // Player = new PlayerEntity(gameState);
         // Player.Initialize(minerPos);
-        
+
         // Create ECS entities
         var minerEntityId = gameState.EcsWorld.CreateMinerEntity(minerPos);
         gameState.EcsWorld.CreatePlayerEntity(minerPos);
         gameState.EcsWorld.SetActiveControllableEntity(minerEntityId);
-        
+
         EdgeCells = UserInterfaceHelpers.GetAsteroidEdgeCells(Grid);
         CollapsingFloorTriggerer = new CollapsingFloorTriggerer(gameState);
         ActiveEntitiesSortedByDistance = [Miner];
@@ -64,7 +66,8 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
 
     public override void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
     {
-        if (gameState.EcsWorld.ActiveControllableEntityIsDead || gameState.EcsWorld.ActiveControllableEntityIsOffAsteroid)
+        if (gameState.EcsWorld.ActiveControllableEntityIsDead ||
+            gameState.EcsWorld.ActiveControllableEntityIsOffAsteroid)
             if (activeMiningControls.Contains(MiningControls.NewGameOrReturnToBase))
                 gameState.InitializeHome();
 
@@ -76,7 +79,7 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
             return;
         }
 
-// todo
+        // todo
         // if (activeMiningControls.Contains(MiningControls.EnterOrExit))
         // {
         //     ActiveControllableEntity.Disembark();

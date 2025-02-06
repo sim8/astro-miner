@@ -52,6 +52,7 @@ public class GameState
     public DynamiteSystem DynamiteSystem { get; private set; }
     public ExplosionSystem ExplosionSystem { get; private set; }
     public MovementSystem MovementSystem { get; private set; }
+    public VehicleEnterExitSystem VehicleEnterExitSystem { get; private set; }
 
     public GameState(
         GraphicsDeviceManager graphics)
@@ -93,6 +94,7 @@ public class GameState
         DynamiteSystem = new DynamiteSystem(EcsWorld, this);
         ExplosionSystem = new ExplosionSystem(EcsWorld, this);
         MovementSystem = new MovementSystem(EcsWorld, this);
+        VehicleEnterExitSystem = new VehicleEnterExitSystem(EcsWorld, this);
     }
 
     public void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
@@ -105,10 +107,11 @@ public class GameState
         Camera.Update(gameTime, activeMiningControls);
 
         CloudManager.Update(gameTime);
-        
+
         // Update ECS systems
         DynamiteSystem.Update(gameTime, activeMiningControls);
         ExplosionSystem.Update(gameTime, activeMiningControls);
         MovementSystem.Update(gameTime, activeMiningControls);
+        VehicleEnterExitSystem.Update(gameTime, activeMiningControls);
     }
 }
