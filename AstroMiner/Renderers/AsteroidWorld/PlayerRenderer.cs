@@ -16,7 +16,7 @@ public class PlayerRenderer(
     {
         var positionComponent = shared.GameState.EcsWorld.GetComponent<PositionComponent>(entityId);
         var movementComponent = shared.GameState.EcsWorld.GetComponent<MovementComponent>(entityId);
-        
+
         if (positionComponent == null || movementComponent == null)
             return;
 
@@ -36,8 +36,7 @@ public class PlayerRenderer(
         var destinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(positionComponent.Position,
             PlayerTextureSizePx, PlayerTextureSizePx, PlayerBoxOffsetX, PlayerBoxOffsetY);
 
-        // TODO: Add health component to handle tint color
-        var tintColor = Color.Green;
+        var tintColor = ViewHelpers.GetEntityTintColor(shared.GameState.EcsWorld, entityId);
 
         spriteBatch.Draw(shared.Textures["player"], destinationRectangle, sourceRectangle, tintColor);
     }

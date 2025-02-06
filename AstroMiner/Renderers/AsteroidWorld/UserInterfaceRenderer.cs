@@ -5,6 +5,7 @@ using AstroMiner.Entities;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using AstroMiner.ECS.Components;
 
 namespace AstroMiner.Renderers.AsteroidWorld;
 
@@ -27,8 +28,10 @@ public class UserInterfaceRenderer(
 
         RenderGrappleIcon(spriteBatch);
 
-        RenderHealthBar(spriteBatch, shared.GameState.AsteroidWorld.Miner, 50, 192);
-        RenderHealthBar(spriteBatch, shared.GameState.AsteroidWorld.Player, 50, 207);
+        if (shared.GameState.EcsWorld.MinerEntityId.HasValue)
+            RenderHealthBar(spriteBatch, shared.GameState.EcsWorld.MinerEntityId.Value, 50, 192);
+        if (shared.GameState.EcsWorld.PlayerEntityId.HasValue)
+            RenderHealthBar(spriteBatch, shared.GameState.EcsWorld.PlayerEntityId.Value, 50, 207);
 
         if (shared.GameState.EcsWorld.ActiveControllableEntityIsDead ||
             shared.GameState.EcsWorld.ActiveControllableEntityIsOffAsteroid)
@@ -51,13 +54,16 @@ public class UserInterfaceRenderer(
         }
     }
 
-    private void RenderHealthBar(SpriteBatch spriteBatch, MiningControllableEntity entity, int xOffset, int yOffset)
+    private void RenderHealthBar(SpriteBatch spriteBatch, int entityId, int xOffset, int yOffset)
     {
+        var healthComponent = shared.GameState.EcsWorld.GetComponent<HealthComponent>(entityId);
+        if (healthComponent == null)
+            return;
+
+        var healthBarWidth = (int)(200 * healthComponent.HealthPercentage);
         spriteBatch.Draw(shared.Textures["white"],
-            new Rectangle(xOffset, yOffset, 200, 3),
-            // TODO
-            // new Rectangle(xOffset, yOffset, (int)entity.Health, 3),
-            Color.Red);
+            new Rectangle(xOffset, yOffset, healthBarWidth, 3),
+            Color.LimeGreen);
     }
 
     private void RenderGrappleIcon(SpriteBatch spriteBatch)

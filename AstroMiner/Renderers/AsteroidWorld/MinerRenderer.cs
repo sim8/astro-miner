@@ -17,13 +17,13 @@ public class MinerRenderer(
     {
         var positionComponent = shared.GameState.EcsWorld.GetComponent<PositionComponent>(entityId);
         var movementComponent = shared.GameState.EcsWorld.GetComponent<MovementComponent>(entityId);
-        
+
         if (positionComponent == null || movementComponent == null)
             return;
 
         // TODO: Implement grapple rendering when we add grapple component
         // RenderGrapple(spriteBatch);
-        
+
         var sourceRectangle = new Rectangle(
             movementComponent.Direction is Direction.Bottom or Direction.Left
                 ? 0
@@ -33,14 +33,13 @@ public class MinerRenderer(
                 : MinerTextureSize,
             MinerTextureSize,
             MinerTextureSize);
-            
+
         var destinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(positionComponent.Position,
             MinerTextureSize, MinerTextureSize, MinerBoxOffsetX, MinerBoxOffsetY);
 
-        // TODO: Add health component for proper tint color
-        var tintColor = Color.White;
+        var tintColor = ViewHelpers.GetEntityTintColor(shared.GameState.EcsWorld, entityId);
 
-        spriteBatch.Draw(GetTracksTexture(positionComponent.Position, movementComponent.Direction), 
+        spriteBatch.Draw(GetTracksTexture(positionComponent.Position, movementComponent.Direction),
             destinationRectangle, sourceRectangle, tintColor);
         spriteBatch.Draw(shared.Textures["miner-no-tracks"], destinationRectangle, sourceRectangle, tintColor);
     }

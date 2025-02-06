@@ -74,5 +74,10 @@ public class HealthComponent : Component
     public int TimeSinceLastDamageMs { get; set; }
     public int TotalDamageAnimationTimeMs { get; set; }
 
+    // Lava state
+    public int TimeOnLavaMs { get; set; }
+    public bool IsOnLava { get; set; }
+
     public float HealthPercentage => CurrentHealth / MaxHealth;
+    public float LavaTimePercentToTakingDamage => TimeOnLavaMs / (float)GameConfig.LavaDamageDelayMs;
 }

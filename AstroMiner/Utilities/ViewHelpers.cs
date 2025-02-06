@@ -1,5 +1,7 @@
 using System;
 using AstroMiner.Definitions;
+using AstroMiner.ECS;
+using AstroMiner.ECS.Components;
 using AstroMiner.Entities;
 using Microsoft.Xna.Framework;
 
@@ -117,13 +119,15 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
     }
 
     // Tint red if taking damage
-    public static Color GetEntityTintColor(MiningControllableEntity entity)
+    public static Color GetEntityTintColor(World world, int entityId)
     {
-        if (!entity.IsAnimatingDamage)
+        var healthComponent = world.GetComponent<HealthComponent>(entityId);
+
+        if (!healthComponent.IsAnimatingDamage)
         {
-            if (entity.LavaTimePercentToTakingDamage > 0f)
+            if (healthComponent.TimeOnLavaMs > 0)
             {
-                var gb = (int)(255 * (1f - entity.LavaTimePercentToTakingDamage));
+                var gb = (int)(255 * (1f - healthComponent.LavaTimePercentToTakingDamage));
                 return new Color(255, gb, gb, 255);
             }
 
@@ -131,7 +135,7 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         }
 
         var flashFrame =
-            (int)(entity.TotalDamageAnimationTimeMs / (GameConfig.DamageAnimationTimeMs / 8.0f));
+            (int)(healthComponent.TotalDamageAnimationTimeMs / (GameConfig.DamageAnimationTimeMs / 8.0f));
         return flashFrame % 2 == 0 ? Color.Red : Color.White;
     }
 
