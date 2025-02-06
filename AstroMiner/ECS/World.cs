@@ -43,6 +43,18 @@ public class World
         _gameState = gameState;
     }
 
+    public bool GetIsActive(int entityId)
+    {
+        // If this is the active controllable entity, it's active
+        if (entityId == _activeControllableEntityId)
+            return true;
+            
+        // If it doesn't have a MovementComponent component, it's always active
+        // TODO use better thing than Movement?
+        var hasControllableComponent = HasComponent<MovementComponent>(entityId);
+        return !hasControllableComponent;
+    }
+
     public int CreatePlayerEntity(Vector2 position)
     {
         var entityId = CreateEntity();
@@ -60,9 +72,6 @@ public class World
         
         // Add tag component for identification
         AddComponent<PlayerTag>(entityId);
-        
-        // Set as active controllable entity
-        SetActiveControllableEntity(entityId);
         
         return entityId;
     }
@@ -84,10 +93,6 @@ public class World
         
         // Add tag component for identification
         AddComponent<MinerTag>(entityId);
-        
-        // Set as active controllable entity if it's the first entity
-        if (_activeControllableEntityId == null)
-            SetActiveControllableEntity(entityId);
         
         return entityId;
     }

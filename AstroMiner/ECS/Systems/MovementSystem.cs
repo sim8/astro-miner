@@ -111,19 +111,20 @@ public class MovementSystem : System
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
-        var selectedDirection = GetDirectionFromActiveControls(activeControls);
+        var pressedDirection = GetDirectionFromActiveControls(activeControls);
 
         foreach (var movementComponent in World.GetAllComponents<MovementComponent>())
         {
             var entityId = movementComponent.EntityId;
+            var activeDirection = entityId == GameState.EcsWorld.ActiveControllableEntityId ? pressedDirection : null;
             var positionComponent = World.GetComponent<PositionComponent>(entityId);
             
             if (positionComponent == null)
                 continue;
 
             // Update direction and speed
-            HandleDirectionChange(movementComponent, selectedDirection);
-            UpdateSpeed(movementComponent, selectedDirection, gameTime);
+            HandleDirectionChange(movementComponent, activeDirection);
+            UpdateSpeed(movementComponent, activeDirection, gameTime);
 
             // Update position
             if (movementComponent.CurrentSpeed > 0)

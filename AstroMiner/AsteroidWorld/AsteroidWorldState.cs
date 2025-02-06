@@ -51,8 +51,9 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
         Player.Initialize(minerPos);
         
         // Create ECS entities
-        gameState.EcsWorld.CreateMinerEntity(minerPos);
+        var minerEntityId = gameState.EcsWorld.CreateMinerEntity(minerPos);
         gameState.EcsWorld.CreatePlayerEntity(minerPos);
+        gameState.EcsWorld.SetActiveControllableEntity(minerEntityId);
         
         EdgeCells = UserInterfaceHelpers.GetAsteroidEdgeCells(Grid);
         CollapsingFloorTriggerer = new CollapsingFloorTriggerer(gameState);
