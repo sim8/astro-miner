@@ -12,7 +12,7 @@ public class ExplosionSystem : System
 {
     // Animation state
     public const int AnimationTimeMs = 400;
-    
+
     // Effect properties
     public const float ExplodeRockRadius = 2.2f;
     public const float ExplosionRadius = 4f;
@@ -25,14 +25,14 @@ public class ExplosionSystem : System
     public int CreateExplosion(Vector2 position)
     {
         var entityId = World.CreateEntity();
-        
+
         var positionComponent = World.AddComponent<PositionComponent>(entityId);
         positionComponent.Position = position;
         positionComponent.BoxSizePx = BoxSizePx;
-        
+
         World.AddComponent<ExplosionComponent>(entityId);
         World.AddComponent<ExplosionTag>(entityId);
-        
+
         return entityId;
     }
 
@@ -40,7 +40,7 @@ public class ExplosionSystem : System
     {
         var gridPos = ViewHelpers.ToGridPosition(position);
         var explodedCells = GetCellsInRadius(position.X, position.Y, ExplodeRockRadius);
-        
+
         foreach (var (x, y) in explodedCells)
         {
             // If x,y = gridPos, already triggered explosion
@@ -56,15 +56,23 @@ public class ExplosionSystem : System
         }
     }
 
-    private void CalculateEntityDamage(Vector2 explosionPosition, MiningControllableEntity entity)
+    private void CalculateEntityDamage(Vector2 explosionPosition)
     {
-        var distance = Vector2.Distance(explosionPosition, entity.CenterPosition);
-
-        if (distance < ExplosionRadius)
+        foreach (var healthComponent in World.GetAllComponents<HealthComponent>())
         {
-            var damagePercentage = 1f - distance / ExplosionRadius;
-            var damage = (int)(GameConfig.ExplosionMaxDamage * damagePercentage);
-            entity.TakeDamage(damage);
+            if (healthComponent.IsDead) continue;
+
+            var positionComponent = World.GetComponent<PositionComponent>(healthComponent.EntityId);
+            if (positionComponent == null) continue;
+
+            var distance = Vector2.Distance(explosionPosition, positionComponent.CenterPosition);
+
+            if (distance < ExplosionRadius)
+            {
+                var damagePercentage = 1f - distance / ExplosionRadius;
+                var damage = (int)(GameConfig.ExplosionMaxDamage * damagePercentage);
+                GameState.HealthSystem.TakeDamage(healthComponent.EntityId, damage);
+            }
         }
     }
 
@@ -80,16 +88,16 @@ public class ExplosionSystem : System
 
         // Iterate through the grid cells within these bounds
         for (var i = startX; i <= endX; i++)
-        for (var j = startY; j <= endY; j++)
-        {
-            // Calculate the distance from the center of the cell to the point
-            var cellCenterX = i + 0.5f;
-            var cellCenterY = j + 0.5f;
-            var distance = (float)Math.Sqrt(Math.Pow(cellCenterX - centerX, 2) + Math.Pow(cellCenterY - centerY, 2));
+            for (var j = startY; j <= endY; j++)
+            {
+                // Calculate the distance from the center of the cell to the point
+                var cellCenterX = i + 0.5f;
+                var cellCenterY = j + 0.5f;
+                var distance = (float)Math.Sqrt(Math.Pow(cellCenterX - centerX, 2) + Math.Pow(cellCenterY - centerY, 2));
 
-            // If the distance is less than or equal to the radius, include the cell
-            if (distance <= radius) cells.Add((i, j));
-        }
+                // If the distance is less than or equal to the radius, include the cell
+                if (distance <= radius) cells.Add((i, j));
+            }
 
         return cells;
     }
@@ -104,9 +112,7 @@ public class ExplosionSystem : System
             if (!explosionComponent.HasExploded)
             {
                 ExplodeGrid(positionComponent.Position);
-                CalculateEntityDamage(positionComponent.Position, GameState.AsteroidWorld.Miner);
-                if (!GameState.AsteroidWorld.IsInMiner)
-                    CalculateEntityDamage(positionComponent.Position, GameState.AsteroidWorld.Player);
+                CalculateEntityDamage(positionComponent.Position);
                 explosionComponent.HasExploded = true;
             }
             else
@@ -120,4 +126,4 @@ public class ExplosionSystem : System
             }
         }
     }
-} 
+}

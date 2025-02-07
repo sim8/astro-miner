@@ -54,6 +54,7 @@ public class GameState
     public MovementSystem MovementSystem { get; private set; }
     public HealthSystem HealthSystem { get; private set; }
     public VehicleEnterExitSystem VehicleEnterExitSystem { get; private set; }
+    public FallOrLavaDamageSystem FallOrLavaDamageSystem { get; private set; }
 
     public GameState(
         GraphicsDeviceManager graphics)
@@ -97,6 +98,7 @@ public class GameState
         MovementSystem = new MovementSystem(EcsWorld, this);
         HealthSystem = new HealthSystem(EcsWorld, this);
         VehicleEnterExitSystem = new VehicleEnterExitSystem(EcsWorld, this);
+        FallOrLavaDamageSystem = new FallOrLavaDamageSystem(EcsWorld, this);
     }
 
     public void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
@@ -116,5 +118,6 @@ public class GameState
         MovementSystem.Update(gameTime, activeMiningControls);
         HealthSystem.Update(gameTime, activeMiningControls);
         VehicleEnterExitSystem.Update(gameTime, activeMiningControls);
+        FallOrLavaDamageSystem.Update(gameTime, activeMiningControls);
     }
 }
