@@ -13,6 +13,19 @@ public class HealthSystem : System
     {
     }
 
+    public void KillAllEntities()
+    {
+        foreach (var healthComponent in World.GetAllComponents<HealthComponent>())
+        {
+            if (!healthComponent.IsDead)
+            {
+                healthComponent.CurrentHealth = 0;
+                healthComponent.IsDead = true;
+                OnEntityDeath(healthComponent.EntityId);
+            }
+        }
+    }
+
     public void TakeDamage(int entityId, float damage)
     {
         var healthComponent = World.GetComponent<HealthComponent>(entityId);

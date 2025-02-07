@@ -35,7 +35,7 @@ public class UserInterfaceRenderer(
 
         if (shared.GameState.EcsWorld.ActiveControllableEntityIsDead ||
             shared.GameState.EcsWorld.ActiveControllableEntityIsOffAsteroid)
-            RenderNewGameScreen(spriteBatch, shared.GameState.ActiveControllableEntity.IsDead);
+            RenderNewGameScreen(spriteBatch, shared.GameState.EcsWorld.ActiveControllableEntityIsDead);
     }
 
     private void RenderInventory(SpriteBatch spriteBatch, int xOffset, int yoffset)

@@ -43,9 +43,25 @@ public class World
 
     public Vector2 ActiveControllableEntityCenterPosition => _activeControllableEntityId == null ? Vector2.Zero : GetComponent<PositionComponent>(_activeControllableEntityId.Value).CenterPosition;
 
-    public bool ActiveControllableEntityIsDead => false;
-    public bool ActiveControllableEntityIsOffAsteroid => false;
+    public bool ActiveControllableEntityIsDead
+    {
+        get
+        {
+            if (_activeControllableEntityId == null) return false;
+            var healthComponent = GetComponent<HealthComponent>(_activeControllableEntityId.Value);
+            return healthComponent?.IsDead ?? false;
+        }
+    }
 
+    public bool ActiveControllableEntityIsOffAsteroid
+    {
+        get
+        {
+            if (_activeControllableEntityId == null) return false;
+            var positionComponent = GetComponent<PositionComponent>(_activeControllableEntityId.Value);
+            return positionComponent?.IsOffAsteroid ?? false;
+        }
+    }
 
     public World(GameState gameState)
     {
