@@ -10,6 +10,7 @@ public class PositionComponent : Component
 {
     public int BoxSizePx;
     public Vector2 Position;
+    public bool IsOffAsteroid { get; set; }
 
     public float GridBoxSize => (float)BoxSizePx / GameConfig.CellTextureSizePx;
 

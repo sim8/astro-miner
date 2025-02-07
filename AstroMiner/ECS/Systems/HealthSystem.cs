@@ -13,44 +13,6 @@ public class HealthSystem : System
     {
     }
 
-    // TODO move to a LavaOrFall system?
-    private void CheckLavaDamage(GameTime gameTime, HealthComponent healthComponent)
-    {
-        if (!GameState.IsOnAsteroid) return;
-
-        var positionComponent = World.GetComponent<PositionComponent>(healthComponent.EntityId);
-        if (positionComponent == null) return;
-
-        var (topLeftX, topLeftY) = ViewHelpers.ToGridPosition(positionComponent.Position);
-        var (bottomRightX, bottomRightY) = ViewHelpers.ToGridPosition(positionComponent.Position + new Vector2(positionComponent.GridBoxSize, positionComponent.GridBoxSize));
-
-        var someCellsAreLava = false;
-
-        for (var x = topLeftX; x <= bottomRightX; x++)
-            for (var y = topLeftY; y <= bottomRightY; y++)
-            {
-                var floorType = GameState.AsteroidWorld.Grid.GetFloorType(x, y);
-                if (floorType == FloorType.Lava)
-                {
-                    someCellsAreLava = true;
-                    break;
-                }
-            }
-
-        healthComponent.IsOnLava = someCellsAreLava;
-
-        if (someCellsAreLava)
-        {
-            healthComponent.TimeOnLavaMs += gameTime.ElapsedGameTime.Milliseconds;
-            if (healthComponent.TimeOnLavaMs >= GameConfig.LavaDamageDelayMs)
-                TakeDamage(healthComponent.EntityId, (float)GameConfig.LavaDamagePerSecond / 1000 * gameTime.ElapsedGameTime.Milliseconds);
-        }
-        else if (healthComponent.TimeOnLavaMs > 0)
-        {
-            healthComponent.TimeOnLavaMs = Math.Max(0, healthComponent.TimeOnLavaMs - gameTime.ElapsedGameTime.Milliseconds);
-        }
-    }
-
     public void TakeDamage(int entityId, float damage)
     {
         var healthComponent = World.GetComponent<HealthComponent>(entityId);
@@ -82,13 +44,6 @@ public class HealthSystem : System
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
-        // Check for lava damage on all entities with health components
-        foreach (var healthComponent in World.GetAllComponents<HealthComponent>())
-        {
-            if (!healthComponent.IsDead)
-                CheckLavaDamage(gameTime, healthComponent);
-        }
-
         // Update damage animation state
         foreach (var healthComponent in World.GetAllComponents<HealthComponent>())
         {
