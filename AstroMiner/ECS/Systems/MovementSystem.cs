@@ -17,9 +17,9 @@ public class MovementSystem : System
         { MiningControls.MoveDown, Direction.Bottom },
         { MiningControls.MoveLeft, Direction.Left }
     };
-    
+
     private readonly List<MiningControls> _activeControlsOrder = new();
-    
+
     public MovementSystem(World world, GameState gameState) : base(world, gameState)
     {
     }
@@ -60,16 +60,16 @@ public class MovementSystem : System
             movement.CurrentSpeed = Math.Min(movement.MaxSpeed,
                 movement.CurrentSpeed + movement.MaxSpeed * (gameTime.ElapsedGameTime.Milliseconds / (float)movement.TimeToReachMaxSpeedMs));
     }
-    
+
     private void HandleDirectionChange(MovementComponent movement, Direction? selectedDirection)
     {
         // Zero speed if turn 180
         if (selectedDirection.HasValue && selectedDirection.Value == DirectionHelpers.GetOppositeDirection(movement.Direction))
             movement.CurrentSpeed = 0f;
-            
+
         movement.Direction = selectedDirection ?? movement.Direction;
     }
-    
+
     public Direction GetRotatedDirection(Direction baseDirection, Direction rotation)
     {
         var directionInt = (int)baseDirection;
@@ -84,26 +84,35 @@ public class MovementSystem : System
         var bottomRightCell = ViewHelpers.ToGridPosition(position + new Vector2(gridBoxSize, gridBoxSize));
 
         for (var x = topLeftCell.x; x <= bottomRightCell.x; x++)
-        for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
-            if (GameState.ActiveWorld.CellIsCollideable(x, y))
-                return true;
+            for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
+                if (GameState.ActiveWorld.CellIsCollideable(x, y))
+                    return true;
         return false;
     }
 
-    private bool ApplyVectorToPosIfNoCollisions(PositionComponent positionComponent, Vector2 vector)
+    private bool ApplyVectorToPosIfNoCollisions(int entityId, Vector2 vector, PositionComponent positionComponent)
     {
-        var newVector = positionComponent.Position + vector;
-        var newPositionHasCollisions = IsNewPositionIntersectingWithFilledCells(newVector, positionComponent.GridBoxSize);
+        var newPosition = positionComponent.Position + vector;
+        var newPositionHasCollisions = IsNewPositionIntersectingWithFilledCells(newPosition, positionComponent.GridBoxSize);
 
         if (newPositionHasCollisions) return false;
 
-        var newRectangle = new RectangleF(newVector.X, newVector.Y, positionComponent.GridBoxSize, positionComponent.GridBoxSize);
+        // Check collisions with other entities
+        var newRectangle = new RectangleF(newPosition.X, newPosition.Y, positionComponent.GridBoxSize, positionComponent.GridBoxSize);
+        var currentRectangle = positionComponent.Rectangle;
 
-        // TODO: Handle entity collisions when we migrate entities to ECS
-        // foreach (var entity in GameState.ActiveWorld.ActiveEntitiesSortedByDistance)
-        //     if (entity != this && entity.CanCollide && newRectangle.IntersectsWith(entity.Rectangle) &&
-        //         !Rectangle.IntersectsWith(entity.Rectangle)) // Allow movement if currently clipping
-        //         return false;
+        foreach (var otherPositionComponent in World.GetAllComponents<PositionComponent>())
+        {
+            // Skip self and non-collideable entities
+            if (otherPositionComponent.EntityId == entityId || !otherPositionComponent.IsCollideable)
+                continue;
+
+            if (newRectangle.IntersectsWith(otherPositionComponent.Rectangle) &&
+                !currentRectangle.IntersectsWith(otherPositionComponent.Rectangle)) // Allow movement if currently clipping
+            {
+                return false;
+            }
+        }
 
         positionComponent.Position += vector;
         return true;
@@ -118,7 +127,7 @@ public class MovementSystem : System
             var entityId = movementComponent.EntityId;
             var activeDirection = entityId == GameState.EcsWorld.ActiveControllableEntityId ? pressedDirection : null;
             var positionComponent = World.GetComponent<PositionComponent>(entityId);
-            
+
             if (positionComponent == null)
                 continue;
 
@@ -132,10 +141,10 @@ public class MovementSystem : System
                 var distance = movementComponent.CurrentSpeed * (gameTime.ElapsedGameTime.Milliseconds / 1000f);
                 var movement = DirectionHelpers.GetDirectionalVector(distance, movementComponent.Direction);
 
-                var hasCollisions = !ApplyVectorToPosIfNoCollisions(positionComponent, movement);
+                var hasCollisions = !ApplyVectorToPosIfNoCollisions(entityId, movement, positionComponent);
                 if (hasCollisions)
                     movementComponent.CurrentSpeed = 0;
             }
         }
     }
-} 
+}

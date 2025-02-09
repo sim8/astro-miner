@@ -18,18 +18,19 @@ public class DynamiteSystem : System
     public int CreateDynamite(Vector2 position)
     {
         var entityId = World.CreateEntity();
-        
+
         var positionComponent = World.AddComponent<PositionComponent>(entityId);
         positionComponent.Position = position;
         positionComponent.BoxSizePx = BoxSizePx;
-        
+        positionComponent.IsCollideable = false;
+
         var fuseComponent = World.AddComponent<FuseComponent>(entityId);
         fuseComponent.MaxFuseTimeMs = FuseTimeMs;
         fuseComponent.TimeToExplodeMs = FuseTimeMs;
-        
+
         // Add tag component for identification
         World.AddComponent<DynamiteTag>(entityId);
-        
+
         return entityId;
     }
 
@@ -38,7 +39,7 @@ public class DynamiteSystem : System
         foreach (var fuseComponent in World.GetAllComponents<FuseComponent>())
         {
             fuseComponent.TimeToExplodeMs -= gameTime.ElapsedGameTime.Milliseconds;
-            
+
             if (fuseComponent.TimeToExplodeMs <= 0)
             {
                 var positionComponent = World.GetComponent<PositionComponent>(fuseComponent.EntityId);
@@ -47,4 +48,4 @@ public class DynamiteSystem : System
             }
         }
     }
-} 
+}

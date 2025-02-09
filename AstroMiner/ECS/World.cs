@@ -88,7 +88,7 @@ public class World
         var positionComponent = AddComponent<PositionComponent>(entityId);
         positionComponent.Position = position;
         positionComponent.BoxSizePx = GameConfig.PlayerBoxSizePx;
-
+        positionComponent.IsCollideable = true;
         // Add movement component
         var movementComponent = AddComponent<MovementComponent>(entityId);
         movementComponent.MaxSpeed = 4f;  // From PlayerEntity
@@ -117,7 +117,7 @@ public class World
         var positionComponent = AddComponent<PositionComponent>(entityId);
         positionComponent.Position = position;
         positionComponent.BoxSizePx = GameConfig.MinerBoxSizePx;
-
+        positionComponent.IsCollideable = true;
         // Add movement component with miner-specific values
         var movementComponent = AddComponent<MovementComponent>(entityId);
         movementComponent.MaxSpeed = 4f;  // From MinerEntity
