@@ -181,6 +181,6 @@ public class MinerEntity(GameState gameState) : MiningControllableEntity(gameSta
 
     protected override void OnDead()
     {
-        gameState.Ecs.ExplosionSystem.CreateExplosion(CenterPosition);
+        gameState.Ecs.Factories.CreateExplosionEntity(CenterPosition);
     }
 }

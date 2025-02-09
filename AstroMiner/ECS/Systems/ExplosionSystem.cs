@@ -22,11 +22,6 @@ public class ExplosionSystem : System
     {
     }
 
-    public int CreateExplosion(Vector2 position)
-    {
-        return Ecs.Factories.CreateExplosionEntity(position);
-    }
-
     private void ExplodeGrid(Vector2 position)
     {
         var gridPos = ViewHelpers.ToGridPosition(position);

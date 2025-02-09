@@ -52,7 +52,7 @@ public class HealthSystem : System
         // Create explosion at entity position
         var positionComponent = Ecs.GetComponent<PositionComponent>(entityId);
         if (positionComponent != null)
-            GameState.Ecs.ExplosionSystem.CreateExplosion(positionComponent.CenterPosition);
+            GameState.Ecs.Factories.CreateExplosionEntity(positionComponent.CenterPosition);
     }
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
