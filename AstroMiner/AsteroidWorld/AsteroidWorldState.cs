@@ -20,8 +20,8 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
 
     public long MsSinceStart { get; private set; }
 
-    public bool IsInMiner => gameState.EcsWorld.ActiveControllableEntityId != null &&
-                             gameState.EcsWorld.HasComponent<MinerTag>(gameState.EcsWorld.ActiveControllableEntityId
+    public bool IsInMiner => gameState.Ecs.ActiveControllableEntityId != null &&
+                             gameState.Ecs.HasComponent<MinerTag>(gameState.Ecs.ActiveControllableEntityId
                                  .Value);
 
     private void InitSeed()
@@ -41,9 +41,9 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
         Grid.MarkAllDistancesFromExploredFloor(minerPosX, minerPosY, true);
 
         // Create ECS entities
-        var minerEntityId = gameState.EcsWorld.Factories.CreateMinerEntity(minerPos);
-        gameState.EcsWorld.Factories.CreatePlayerEntity(minerPos);
-        gameState.EcsWorld.SetActiveControllableEntity(minerEntityId);
+        var minerEntityId = gameState.Ecs.Factories.CreateMinerEntity(minerPos);
+        gameState.Ecs.Factories.CreatePlayerEntity(minerPos);
+        gameState.Ecs.SetActiveControllableEntity(minerEntityId);
 
         EdgeCells = UserInterfaceHelpers.GetAsteroidEdgeCells(Grid);
         CollapsingFloorTriggerer = new CollapsingFloorTriggerer(gameState);
@@ -53,8 +53,8 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
 
     public override void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
     {
-        if (gameState.EcsWorld.ActiveControllableEntityIsDead ||
-            gameState.EcsWorld.ActiveControllableEntityIsOffAsteroid)
+        if (gameState.Ecs.ActiveControllableEntityIsDead ||
+            gameState.Ecs.ActiveControllableEntityIsOffAsteroid)
             if (activeMiningControls.Contains(MiningControls.NewGameOrReturnToBase))
                 gameState.InitializeHome();
 

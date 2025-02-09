@@ -18,7 +18,7 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
 
     private Rectangle AdjustRectForCamera(float x, float y, float width, float height)
     {
-        var (xPx, yPx) = GridPosToDisplayedPx(gameState.EcsWorld.ActiveControllableEntityCenterPosition);
+        var (xPx, yPx) = GridPosToDisplayedPx(gameState.Ecs.ActiveControllableEntityCenterPosition);
         var adjustedX = x - xPx + graphics.GraphicsDevice.Viewport.Width / 2f;
         var adjustedY = y - yPx + graphics.GraphicsDevice.Viewport.Height / 2f;
         return new Rectangle(
@@ -119,9 +119,9 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
     }
 
     // Tint red if taking damage
-    public static Color GetEntityTintColor(World world, int entityId)
+    public static Color GetEntityTintColor(Ecs ecs, int entityId)
     {
-        var healthComponent = world.GetComponent<HealthComponent>(entityId);
+        var healthComponent = ecs.GetComponent<HealthComponent>(entityId);
 
         if (!healthComponent.IsAnimatingDamage)
         {
@@ -141,7 +141,7 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
 
     public (int startCol, int startRow, int endCol, int endRow) GetVisibleGrid(int padding = 0)
     {
-        var cameraPos = gameState.EcsWorld.ActiveControllableEntityCenterPosition;
+        var cameraPos = gameState.Ecs.ActiveControllableEntityCenterPosition;
         var (viewportWidthPx, viewportHeightPx) = GetViewportSize();
 
         var viewportGridWidth = ConvertVisiblePxToGridUnits(viewportWidthPx);

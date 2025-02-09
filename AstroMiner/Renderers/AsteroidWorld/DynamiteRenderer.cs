@@ -27,14 +27,14 @@ public class DynamiteRenderer(
 
     public void RenderDynamite(SpriteBatch spriteBatch, int entityId)
     {
-        var positionComponent = shared.GameState.EcsWorld.GetComponent<PositionComponent>(entityId);
-        var fuseComponent = shared.GameState.EcsWorld.GetComponent<FuseComponent>(entityId);
-        
+        var positionComponent = shared.GameState.Ecs.GetComponent<PositionComponent>(entityId);
+        var fuseComponent = shared.GameState.Ecs.GetComponent<FuseComponent>(entityId);
+
         if (positionComponent == null || fuseComponent == null)
             return;
-            
+
         if (fuseComponent.FusePercentLeft < 0) return;
-        
+
         var sourceRectangle = new Rectangle(
             0, 0,
             6,
@@ -64,9 +64,9 @@ public class DynamiteRenderer(
 
     public void RenderLightSource(SpriteBatch spriteBatch, int entityId)
     {
-        var positionComponent = shared.GameState.EcsWorld.GetComponent<PositionComponent>(entityId);
-        var fuseComponent = shared.GameState.EcsWorld.GetComponent<FuseComponent>(entityId);
-        
+        var positionComponent = shared.GameState.Ecs.GetComponent<PositionComponent>(entityId);
+        var fuseComponent = shared.GameState.Ecs.GetComponent<FuseComponent>(entityId);
+
         if (positionComponent == null || fuseComponent == null)
             return;
 

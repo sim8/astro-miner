@@ -8,14 +8,14 @@ namespace AstroMiner.ECS;
 /// </summary>
 public abstract class System
 {
-    protected readonly World World;
+    protected readonly Ecs Ecs;
     protected readonly GameState GameState;
 
-    protected System(World world, GameState gameState)
+    protected System(Ecs ecs, GameState gameState)
     {
-        World = world;
+        Ecs = ecs;
         GameState = gameState;
     }
 
     public abstract void Update(GameTime gameTime, HashSet<MiningControls> activeControls);
-} 
+}

@@ -143,22 +143,22 @@ public class AsteroidRenderer
         );
 
         // Render ECS entities
-        foreach (var entityId in _gameState.EcsWorld.GetAllEntityIds())
+        foreach (var entityId in _gameState.Ecs.GetAllEntityIds())
         {
             // Render miner
-            if (_gameState.EcsWorld.HasComponent<MinerTag>(entityId))
+            if (_gameState.Ecs.HasComponent<MinerTag>(entityId))
                 _minerRenderer.RenderMiner(spriteBatch, entityId);
 
             // Render dynamite
-            if (_gameState.EcsWorld.HasComponent<DynamiteTag>(entityId))
+            if (_gameState.Ecs.HasComponent<DynamiteTag>(entityId))
                 _dynamiteRenderer.RenderDynamite(spriteBatch, entityId);
 
             // Render explosions
-            if (_gameState.EcsWorld.HasComponent<ExplosionTag>(entityId))
+            if (_gameState.Ecs.HasComponent<ExplosionTag>(entityId))
                 _explosionRenderer.RenderExplosion(spriteBatch, entityId);
 
             // Render player
-            if (_gameState.EcsWorld.HasComponent<PlayerTag>(entityId) && !_gameState.AsteroidWorld.IsInMiner)
+            if (_gameState.Ecs.HasComponent<PlayerTag>(entityId) && !_gameState.AsteroidWorld.IsInMiner)
                 _playerRenderer.RenderPlayer(spriteBatch, entityId);
         }
     }
@@ -166,10 +166,10 @@ public class AsteroidRenderer
     private void RenderAdditiveLighting(SpriteBatch spriteBatch)
     {
         // Render ECS entity lighting
-        foreach (var entityId in _gameState.EcsWorld.GetAllEntityIds())
+        foreach (var entityId in _gameState.Ecs.GetAllEntityIds())
         {
             // Render explosion lighting
-            if (_gameState.EcsWorld.HasComponent<ExplosionTag>(entityId))
+            if (_gameState.Ecs.HasComponent<ExplosionTag>(entityId))
                 _explosionRenderer.RenderAdditiveLightSource(spriteBatch, entityId);
         }
 
@@ -207,14 +207,14 @@ public class AsteroidRenderer
         //         : _gameState.AsteroidWorld.Player.CenterPosition, 512, 0.4f);
 
         // Render ECS entity lighting
-        foreach (var entityId in _gameState.EcsWorld.GetAllEntityIds())
+        foreach (var entityId in _gameState.Ecs.GetAllEntityIds())
         {
             // Render dynamite lighting
-            if (_gameState.EcsWorld.HasComponent<DynamiteTag>(entityId))
+            if (_gameState.Ecs.HasComponent<DynamiteTag>(entityId))
                 _dynamiteRenderer.RenderLightSource(spriteBatch, entityId);
 
             // Render explosion lighting
-            if (_gameState.EcsWorld.HasComponent<ExplosionTag>(entityId))
+            if (_gameState.Ecs.HasComponent<ExplosionTag>(entityId))
                 _explosionRenderer.RenderLightSource(spriteBatch, entityId);
         }
 

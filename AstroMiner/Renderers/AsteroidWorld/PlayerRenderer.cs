@@ -14,8 +14,8 @@ public class PlayerRenderer(
 
     public void RenderPlayer(SpriteBatch spriteBatch, int entityId)
     {
-        var positionComponent = shared.GameState.EcsWorld.GetComponent<PositionComponent>(entityId);
-        var movementComponent = shared.GameState.EcsWorld.GetComponent<MovementComponent>(entityId);
+        var positionComponent = shared.GameState.Ecs.GetComponent<PositionComponent>(entityId);
+        var movementComponent = shared.GameState.Ecs.GetComponent<MovementComponent>(entityId);
 
         if (positionComponent == null || movementComponent == null)
             return;
@@ -36,7 +36,7 @@ public class PlayerRenderer(
         var destinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(positionComponent.Position,
             PlayerTextureSizePx, PlayerTextureSizePx, PlayerBoxOffsetX, PlayerBoxOffsetY);
 
-        var tintColor = ViewHelpers.GetEntityTintColor(shared.GameState.EcsWorld, entityId);
+        var tintColor = ViewHelpers.GetEntityTintColor(shared.GameState.Ecs, entityId);
 
         spriteBatch.Draw(shared.Textures["player"], destinationRectangle, sourceRectangle, tintColor);
     }

@@ -6,10 +6,10 @@ namespace AstroMiner.Utilities;
 
 public static class EntityHelpers
 {
-    public static float GetDistanceBetween(World world, int entityId1, int entityId2)
+    public static float GetDistanceBetween(Ecs ecs, int entityId1, int entityId2)
     {
-        var pos1 = world.GetComponent<PositionComponent>(entityId1);
-        var pos2 = world.GetComponent<PositionComponent>(entityId2);
+        var pos1 = ecs.GetComponent<PositionComponent>(entityId1);
+        var pos2 = ecs.GetComponent<PositionComponent>(entityId2);
 
         if (pos1 == null || pos2 == null)
             return float.MaxValue;

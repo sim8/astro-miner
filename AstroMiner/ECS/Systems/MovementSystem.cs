@@ -20,7 +20,7 @@ public class MovementSystem : System
 
     private readonly List<MiningControls> _activeControlsOrder = new();
 
-    public MovementSystem(World world, GameState gameState) : base(world, gameState)
+    public MovementSystem(Ecs ecs, GameState gameState) : base(ecs, gameState)
     {
     }
 
@@ -101,7 +101,7 @@ public class MovementSystem : System
         var newRectangle = new RectangleF(newPosition.X, newPosition.Y, positionComponent.GridBoxSize, positionComponent.GridBoxSize);
         var currentRectangle = positionComponent.Rectangle;
 
-        foreach (var otherPositionComponent in World.GetAllComponents<PositionComponent>())
+        foreach (var otherPositionComponent in Ecs.GetAllComponents<PositionComponent>())
         {
             // Skip self and non-collideable entities
             if (otherPositionComponent.EntityId == entityId || !otherPositionComponent.IsCollideable)
@@ -122,11 +122,11 @@ public class MovementSystem : System
     {
         var pressedDirection = GetDirectionFromActiveControls(activeControls);
 
-        foreach (var movementComponent in World.GetAllComponents<MovementComponent>())
+        foreach (var movementComponent in Ecs.GetAllComponents<MovementComponent>())
         {
             var entityId = movementComponent.EntityId;
-            var activeDirection = entityId == GameState.EcsWorld.ActiveControllableEntityId ? pressedDirection : null;
-            var positionComponent = World.GetComponent<PositionComponent>(entityId);
+            var activeDirection = entityId == GameState.Ecs.ActiveControllableEntityId ? pressedDirection : null;
+            var positionComponent = Ecs.GetComponent<PositionComponent>(entityId);
 
             if (positionComponent == null)
                 continue;

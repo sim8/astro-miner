@@ -15,9 +15,9 @@ public class ExplosionRenderer(
 
     public void RenderExplosion(SpriteBatch spriteBatch, int entityId)
     {
-        var positionComponent = shared.GameState.EcsWorld.GetComponent<PositionComponent>(entityId);
-        var explosionComponent = shared.GameState.EcsWorld.GetComponent<ExplosionComponent>(entityId);
-        
+        var positionComponent = shared.GameState.Ecs.GetComponent<PositionComponent>(entityId);
+        var explosionComponent = shared.GameState.Ecs.GetComponent<ExplosionComponent>(entityId);
+
         if (positionComponent == null || explosionComponent == null)
             return;
 
@@ -31,9 +31,9 @@ public class ExplosionRenderer(
 
     public void RenderLightSource(SpriteBatch spriteBatch, int entityId)
     {
-        var positionComponent = shared.GameState.EcsWorld.GetComponent<PositionComponent>(entityId);
-        var explosionComponent = shared.GameState.EcsWorld.GetComponent<ExplosionComponent>(entityId);
-        
+        var positionComponent = shared.GameState.Ecs.GetComponent<PositionComponent>(entityId);
+        var explosionComponent = shared.GameState.Ecs.GetComponent<ExplosionComponent>(entityId);
+
         if (positionComponent == null || explosionComponent == null)
             return;
 

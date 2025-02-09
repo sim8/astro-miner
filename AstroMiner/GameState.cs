@@ -48,7 +48,7 @@ public class GameState
     public HomeWorldState HomeWorld;
     public Inventory Inventory;
     public bool IsOnAsteroid;
-    public World EcsWorld { get; private set; }
+    public Ecs Ecs { get; private set; }
     public DynamiteSystem DynamiteSystem { get; private set; }
     public ExplosionSystem ExplosionSystem { get; private set; }
     public MovementSystem MovementSystem { get; private set; }
@@ -89,13 +89,13 @@ public class GameState
         HomeWorld = new HomeWorldState(this);
         CloudManager = new CloudManager(this);
         IsOnAsteroid = false;
-        EcsWorld = new World(this);
-        DynamiteSystem = new DynamiteSystem(EcsWorld, this);
-        ExplosionSystem = new ExplosionSystem(EcsWorld, this);
-        MovementSystem = new MovementSystem(EcsWorld, this);
-        HealthSystem = new HealthSystem(EcsWorld, this);
-        VehicleEnterExitSystem = new VehicleEnterExitSystem(EcsWorld, this);
-        FallOrLavaDamageSystem = new FallOrLavaDamageSystem(EcsWorld, this);
+        Ecs = new Ecs(this);
+        DynamiteSystem = new DynamiteSystem(Ecs, this);
+        ExplosionSystem = new ExplosionSystem(Ecs, this);
+        MovementSystem = new MovementSystem(Ecs, this);
+        HealthSystem = new HealthSystem(Ecs, this);
+        VehicleEnterExitSystem = new VehicleEnterExitSystem(Ecs, this);
+        FallOrLavaDamageSystem = new FallOrLavaDamageSystem(Ecs, this);
     }
 
     public void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)

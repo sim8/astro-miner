@@ -11,26 +11,26 @@ public class DynamiteSystem : System
     private const int FuseTimeMs = 4000;
     private const int BoxSizePx = 4;
 
-    public DynamiteSystem(World world, GameState gameState) : base(world, gameState)
+    public DynamiteSystem(Ecs ecs, GameState gameState) : base(ecs, gameState)
     {
     }
 
     public int CreateDynamite(Vector2 position)
     {
-        return World.Factories.CreateDynamiteEntity(position);
+        return Ecs.Factories.CreateDynamiteEntity(position);
     }
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
-        foreach (var fuseComponent in World.GetAllComponents<FuseComponent>())
+        foreach (var fuseComponent in Ecs.GetAllComponents<FuseComponent>())
         {
             fuseComponent.TimeToExplodeMs -= gameTime.ElapsedGameTime.Milliseconds;
 
             if (fuseComponent.TimeToExplodeMs <= 0)
             {
-                var positionComponent = World.GetComponent<PositionComponent>(fuseComponent.EntityId);
+                var positionComponent = Ecs.GetComponent<PositionComponent>(fuseComponent.EntityId);
                 GameState.ExplosionSystem.CreateExplosion(positionComponent.CenterPosition);
-                World.DestroyEntity(fuseComponent.EntityId);
+                Ecs.DestroyEntity(fuseComponent.EntityId);
             }
         }
     }

@@ -9,7 +9,7 @@ namespace AstroMiner.ECS.Systems;
 
 public class FallOrLavaDamageSystem : System
 {
-    public FallOrLavaDamageSystem(World world, GameState gameState) : base(world, gameState)
+    public FallOrLavaDamageSystem(Ecs ecs, GameState gameState) : base(ecs, gameState)
     {
     }
 
@@ -17,11 +17,11 @@ public class FallOrLavaDamageSystem : System
     {
         if (!GameState.IsOnAsteroid) return;
 
-        foreach (var healthComponent in World.GetAllComponents<HealthComponent>())
+        foreach (var healthComponent in Ecs.GetAllComponents<HealthComponent>())
         {
             if (healthComponent.IsDead) continue;
 
-            var positionComponent = World.GetComponent<PositionComponent>(healthComponent.EntityId);
+            var positionComponent = Ecs.GetComponent<PositionComponent>(healthComponent.EntityId);
             if (positionComponent == null) continue;
 
             var (topLeftX, topLeftY) = ViewHelpers.ToGridPosition(positionComponent.Position);

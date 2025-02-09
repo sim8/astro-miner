@@ -9,13 +9,13 @@ namespace AstroMiner.ECS.Systems;
 
 public class HealthSystem : System
 {
-    public HealthSystem(World world, GameState gameState) : base(world, gameState)
+    public HealthSystem(Ecs ecs, GameState gameState) : base(ecs, gameState)
     {
     }
 
     public void KillAllEntities()
     {
-        foreach (var healthComponent in World.GetAllComponents<HealthComponent>())
+        foreach (var healthComponent in Ecs.GetAllComponents<HealthComponent>())
         {
             if (!healthComponent.IsDead)
             {
@@ -28,7 +28,7 @@ public class HealthSystem : System
 
     public void TakeDamage(int entityId, float damage)
     {
-        var healthComponent = World.GetComponent<HealthComponent>(entityId);
+        var healthComponent = Ecs.GetComponent<HealthComponent>(entityId);
         if (healthComponent == null || healthComponent.IsDead)
             return;
 
@@ -46,11 +46,11 @@ public class HealthSystem : System
     private void OnEntityDeath(int entityId)
     {
         // Only create explosion if it's the miner dying
-        if (entityId != World.MinerEntityId)
+        if (entityId != Ecs.MinerEntityId)
             return;
 
         // Create explosion at entity position
-        var positionComponent = World.GetComponent<PositionComponent>(entityId);
+        var positionComponent = Ecs.GetComponent<PositionComponent>(entityId);
         if (positionComponent != null)
             GameState.ExplosionSystem.CreateExplosion(positionComponent.CenterPosition);
     }
@@ -58,7 +58,7 @@ public class HealthSystem : System
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
         // Update damage animation state
-        foreach (var healthComponent in World.GetAllComponents<HealthComponent>())
+        foreach (var healthComponent in Ecs.GetAllComponents<HealthComponent>())
         {
             if (healthComponent.IsAnimatingDamage)
             {

@@ -12,7 +12,7 @@ namespace AstroMiner.ECS.Systems;
 public class VehicleEnterExitSystem : System
 {
 
-    public VehicleEnterExitSystem(World world, GameState gameState) : base(world, gameState)
+    public VehicleEnterExitSystem(Ecs ecs, GameState gameState) : base(ecs, gameState)
     {
     }
 
@@ -25,20 +25,20 @@ public class VehicleEnterExitSystem : System
             {
 
                 // Set player as active controllable entity
-                World.SetActiveControllableEntity(World.PlayerEntityId.Value);
+                Ecs.SetActiveControllableEntity(Ecs.PlayerEntityId.Value);
 
-                var minerPosition = World.GetComponent<PositionComponent>(World.MinerEntityId.Value).Position;
+                var minerPosition = Ecs.GetComponent<PositionComponent>(Ecs.MinerEntityId.Value).Position;
 
                 // Set player position to miner position
-                var playerPosition = World.GetComponent<PositionComponent>(World.PlayerEntityId.Value);
+                var playerPosition = Ecs.GetComponent<PositionComponent>(Ecs.PlayerEntityId.Value);
                 playerPosition.Position = minerPosition;
             }
             else
             {
-                if (EntityHelpers.GetDistanceBetween(World, World.PlayerEntityId.Value, World.MinerEntityId.Value) < GameConfig.MinEmbarkingDistance)
+                if (EntityHelpers.GetDistanceBetween(Ecs, Ecs.PlayerEntityId.Value, Ecs.MinerEntityId.Value) < GameConfig.MinEmbarkingDistance)
                 {
                     // Set miner as active controllable entity
-                    World.SetActiveControllableEntity(World.MinerEntityId.Value);
+                    Ecs.SetActiveControllableEntity(Ecs.MinerEntityId.Value);
                 }
             }
             // TODO: Disembark?

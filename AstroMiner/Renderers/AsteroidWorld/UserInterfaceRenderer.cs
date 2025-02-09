@@ -28,14 +28,14 @@ public class UserInterfaceRenderer(
 
         RenderGrappleIcon(spriteBatch);
 
-        if (shared.GameState.EcsWorld.MinerEntityId.HasValue)
-            RenderHealthBar(spriteBatch, shared.GameState.EcsWorld.MinerEntityId.Value, 50, 192);
-        if (shared.GameState.EcsWorld.PlayerEntityId.HasValue)
-            RenderHealthBar(spriteBatch, shared.GameState.EcsWorld.PlayerEntityId.Value, 50, 207);
+        if (shared.GameState.Ecs.MinerEntityId.HasValue)
+            RenderHealthBar(spriteBatch, shared.GameState.Ecs.MinerEntityId.Value, 50, 192);
+        if (shared.GameState.Ecs.PlayerEntityId.HasValue)
+            RenderHealthBar(spriteBatch, shared.GameState.Ecs.PlayerEntityId.Value, 50, 207);
 
-        if (shared.GameState.EcsWorld.ActiveControllableEntityIsDead ||
-            shared.GameState.EcsWorld.ActiveControllableEntityIsOffAsteroid)
-            RenderNewGameScreen(spriteBatch, shared.GameState.EcsWorld.ActiveControllableEntityIsDead);
+        if (shared.GameState.Ecs.ActiveControllableEntityIsDead ||
+            shared.GameState.Ecs.ActiveControllableEntityIsOffAsteroid)
+            RenderNewGameScreen(spriteBatch, shared.GameState.Ecs.ActiveControllableEntityIsDead);
     }
 
     private void RenderInventory(SpriteBatch spriteBatch, int xOffset, int yoffset)
@@ -56,7 +56,7 @@ public class UserInterfaceRenderer(
 
     private void RenderHealthBar(SpriteBatch spriteBatch, int entityId, int xOffset, int yOffset)
     {
-        var healthComponent = shared.GameState.EcsWorld.GetComponent<HealthComponent>(entityId);
+        var healthComponent = shared.GameState.Ecs.GetComponent<HealthComponent>(entityId);
         if (healthComponent == null)
             return;
 
@@ -142,7 +142,7 @@ public class UserInterfaceRenderer(
         }
 
         var playerGridPos =
-            ViewHelpers.ToGridPosition(shared.GameState.EcsWorld.ActiveControllableEntityCenterPosition);
+            ViewHelpers.ToGridPosition(shared.GameState.Ecs.ActiveControllableEntityCenterPosition);
         var playerX = xOffset + playerGridPos.x * scale - playerSize / 2;
         var playerY = yOffset + playerGridPos.y * scale - playerSize / 2;
         var playerDestRect = new Rectangle((int)playerX, (int)playerY, playerSize, playerSize);

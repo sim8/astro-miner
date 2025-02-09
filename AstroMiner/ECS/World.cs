@@ -11,7 +11,7 @@ namespace AstroMiner.ECS;
 /// The World class manages all entities and their components.
 /// It provides methods for creating/destroying entities and adding/removing components.
 /// </summary>
-public class World
+public class Ecs
 {
     private readonly GameState _gameState;
     private int _nextEntityId = 1;
@@ -30,10 +30,10 @@ public class World
 
     public EntityFactories Factories { get; }
 
-    public World(GameState gameState)
+    public Ecs(GameState gameState)
     {
         _gameState = gameState;
-        Factories = new EntityFactories(gameState);
+        Factories = new EntityFactories(this);
     }
 
     public void SetActiveControllableEntity(int entityId)

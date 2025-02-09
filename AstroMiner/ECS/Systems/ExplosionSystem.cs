@@ -18,13 +18,13 @@ public class ExplosionSystem : System
     public const float ExplosionRadius = 4f;
     public const int BoxSizePx = 1;
 
-    public ExplosionSystem(World world, GameState gameState) : base(world, gameState)
+    public ExplosionSystem(Ecs ecs, GameState gameState) : base(ecs, gameState)
     {
     }
 
     public int CreateExplosion(Vector2 position)
     {
-        return World.Factories.CreateExplosionEntity(position);
+        return Ecs.Factories.CreateExplosionEntity(position);
     }
 
     private void ExplodeGrid(Vector2 position)
@@ -49,11 +49,11 @@ public class ExplosionSystem : System
 
     private void CalculateEntityDamage(Vector2 explosionPosition)
     {
-        foreach (var healthComponent in World.GetAllComponents<HealthComponent>())
+        foreach (var healthComponent in Ecs.GetAllComponents<HealthComponent>())
         {
             if (healthComponent.IsDead) continue;
 
-            var positionComponent = World.GetComponent<PositionComponent>(healthComponent.EntityId);
+            var positionComponent = Ecs.GetComponent<PositionComponent>(healthComponent.EntityId);
             if (positionComponent == null) continue;
 
             var distance = Vector2.Distance(explosionPosition, positionComponent.CenterPosition);
@@ -95,10 +95,10 @@ public class ExplosionSystem : System
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
-        foreach (var explosionComponent in World.GetAllComponents<ExplosionComponent>())
+        foreach (var explosionComponent in Ecs.GetAllComponents<ExplosionComponent>())
         {
             var entityId = explosionComponent.EntityId;
-            var positionComponent = World.GetComponent<PositionComponent>(entityId);
+            var positionComponent = Ecs.GetComponent<PositionComponent>(entityId);
 
             if (!explosionComponent.HasExploded)
             {
@@ -113,7 +113,7 @@ public class ExplosionSystem : System
 
             if (explosionComponent.TimeSinceExplosionMs >= AnimationTimeMs)
             {
-                World.DestroyEntity(entityId);
+                Ecs.DestroyEntity(entityId);
             }
         }
     }
