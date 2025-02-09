@@ -5,6 +5,7 @@ using AstroMiner.Entities;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using AstroMiner.ECS.Components;
 
 namespace AstroMiner.Renderers.AsteroidWorld;
 
@@ -27,12 +28,14 @@ public class UserInterfaceRenderer(
 
         RenderGrappleIcon(spriteBatch);
 
-        RenderHealthBar(spriteBatch, shared.GameState.AsteroidWorld.Miner, 50, 192);
-        RenderHealthBar(spriteBatch, shared.GameState.AsteroidWorld.Player, 50, 207);
+        if (shared.GameState.Ecs.MinerEntityId.HasValue)
+            RenderHealthBar(spriteBatch, shared.GameState.Ecs.MinerEntityId.Value, 50, 192);
+        if (shared.GameState.Ecs.PlayerEntityId.HasValue)
+            RenderHealthBar(spriteBatch, shared.GameState.Ecs.PlayerEntityId.Value, 50, 207);
 
-        if (shared.GameState.ActiveControllableEntity.IsDead ||
-            shared.GameState.ActiveControllableEntity.IsOffAsteroid)
-            RenderNewGameScreen(spriteBatch, shared.GameState.ActiveControllableEntity.IsDead);
+        if (shared.GameState.Ecs.ActiveControllableEntityIsDead ||
+            shared.GameState.Ecs.ActiveControllableEntityIsOffAsteroid)
+            RenderNewGameScreen(spriteBatch, shared.GameState.Ecs.ActiveControllableEntityIsDead);
     }
 
     private void RenderInventory(SpriteBatch spriteBatch, int xOffset, int yoffset)
@@ -51,21 +54,27 @@ public class UserInterfaceRenderer(
         }
     }
 
-    private void RenderHealthBar(SpriteBatch spriteBatch, MiningControllableEntity entity, int xOffset, int yOffset)
+    private void RenderHealthBar(SpriteBatch spriteBatch, int entityId, int xOffset, int yOffset)
     {
+        var healthComponent = shared.GameState.Ecs.GetComponent<HealthComponent>(entityId);
+        if (healthComponent == null)
+            return;
+
+        var healthBarWidth = (int)(200 * healthComponent.HealthPercentage);
         spriteBatch.Draw(shared.Textures["white"],
-            new Rectangle(xOffset, yOffset, (int)entity.Health, 3),
+            new Rectangle(xOffset, yOffset, healthBarWidth, 3),
             Color.LimeGreen);
     }
 
     private void RenderGrappleIcon(SpriteBatch spriteBatch)
     {
-        var color = shared.GameState.AsteroidWorld.Miner.GrappleAvailable
-            ? Color.LimeGreen
-            : _gridColor;
+        // TODO
+        // var color = shared.GameState.AsteroidWorld.Miner.GrappleAvailable
+        //     ? Color.LimeGreen
+        //     : _gridColor;
         spriteBatch.Draw(shared.Textures["grapple-icon"],
             new Rectangle(10, 185, 32, 32),
-            color);
+            Color.Red);
     }
 
     private void RenderMinimap(SpriteBatch spriteBatch)
@@ -133,7 +142,7 @@ public class UserInterfaceRenderer(
         }
 
         var playerGridPos =
-            ViewHelpers.ToGridPosition(shared.GameState.ActiveControllableEntity.CenterPosition);
+            ViewHelpers.ToGridPosition(shared.GameState.Ecs.ActiveControllableEntityCenterPosition);
         var playerX = xOffset + playerGridPos.x * scale - playerSize / 2;
         var playerY = yOffset + playerGridPos.y * scale - playerSize / 2;
         var playerDestRect = new Rectangle((int)playerX, (int)playerY, playerSize, playerSize);

@@ -29,6 +29,8 @@ public static class GameConfig
 
     public const int LavaDamagePerSecond = 50;
 
+    public const int LavaDamageDelayMs = 1000;
+
     public const int DamageAnimationTimeMs = 1000;
 
     public const int CollapsingFloorSpreadTime = 700;

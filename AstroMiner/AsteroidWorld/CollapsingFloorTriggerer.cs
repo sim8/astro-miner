@@ -16,19 +16,19 @@ public class CollapsingFloorTriggerer(GameState gameState)
 
     private void MaybeCollapseFloors()
     {
-        var (playerX, playerY) = ViewHelpers.ToGridPosition(gameState.ActiveControllableEntity.Position);
+        var (playerX, playerY) = ViewHelpers.ToGridPosition(gameState.Ecs.ActiveControllableEntityCenterPosition);
 
         // Iterate through cells within 10 rows/columns of player
         for (var y = Math.Max(0, playerY - Distance); y <= playerY + Distance; y++)
-        for (var x = Math.Max(0, playerX - Distance); x <= playerX + Distance; x++)
-            if (gameState.AsteroidWorld.Grid.GetFloorType(x, y) == FloorType.LavaCracks && _random.Next(150) == 0)
-            {
-                // Only collapse if there's a lava neighbor
-                var hasLavaNeighbor =
-                    gameState.AsteroidWorld.Grid.CheckNeighbors(x, y, cell => cell.FloorType == FloorType.Lava);
-                if (hasLavaNeighbor)
-                    gameState.AsteroidWorld.Grid.ActivateCollapsingFloorCell(x, y);
-            }
+            for (var x = Math.Max(0, playerX - Distance); x <= playerX + Distance; x++)
+                if (gameState.AsteroidWorld.Grid.GetFloorType(x, y) == FloorType.LavaCracks && _random.Next(150) == 0)
+                {
+                    // Only collapse if there's a lava neighbor
+                    var hasLavaNeighbor =
+                        gameState.AsteroidWorld.Grid.CheckNeighbors(x, y, cell => cell.FloorType == FloorType.Lava);
+                    if (hasLavaNeighbor)
+                        gameState.AsteroidWorld.Grid.ActivateCollapsingFloorCell(x, y);
+                }
     }
 
     public void Update(GameTime gameTime)

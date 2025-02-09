@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using AstroMiner.AsteroidWorld;
+using AstroMiner.Definitions;
 using AstroMiner.Entities;
 using AstroMiner.HomeWorld;
+using AstroMiner.ECS;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
@@ -44,20 +46,18 @@ public class GameState
     public HomeWorldState HomeWorld;
     public Inventory Inventory;
     public bool IsOnAsteroid;
+    public Ecs Ecs { get; private set; }
 
     public GameState(
         GraphicsDeviceManager graphics)
     {
         Graphics = graphics;
         Initialize();
-        // InitializeAsteroid();
-        HomeWorld.Initialize();
+        InitializeAsteroid();
+        // HomeWorld.Initialize();
     }
 
     public long MsSinceStart { get; private set; }
-
-    public MiningControllableEntity ActiveControllableEntity =>
-        ActiveWorld.ActiveControllableEntity;
 
     public BaseWorldState ActiveWorld => IsOnAsteroid ? AsteroidWorld : HomeWorld;
 
@@ -81,6 +81,7 @@ public class GameState
         HomeWorld = new HomeWorldState(this);
         CloudManager = new CloudManager(this);
         IsOnAsteroid = false;
+        Ecs = new Ecs(this);
     }
 
     public void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
@@ -91,7 +92,7 @@ public class GameState
             HomeWorld.Update(activeMiningControls, gameTime);
 
         Camera.Update(gameTime, activeMiningControls);
-
         CloudManager.Update(gameTime);
+        Ecs.Update(gameTime, activeMiningControls);
     }
 }

@@ -2,6 +2,7 @@ using System;
 using AstroMiner.AsteroidWorld;
 using AstroMiner.Definitions;
 using AstroMiner.Entities;
+using AstroMiner.ECS.Components;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -141,29 +142,44 @@ public class AsteroidRenderer
             (col, row) => { _fogOfWarRenderer.RenderFogOfWar(spriteBatch, col, row); }
         );
 
-        foreach (var entity in _gameState.AsteroidWorld.ActiveEntitiesSortedByDistance)
-            if (entity is MinerEntity)
-                _minerRenderer.RenderMiner(spriteBatch);
-            else if (entity is PlayerEntity)
-                _playerRenderer.RenderPlayer(spriteBatch);
-            else if (entity is DynamiteEntity dynamiteEntity)
-                _dynamiteRenderer.RenderDynamite(spriteBatch, dynamiteEntity);
-            else if (entity is ExplosionEntity explosionEntity)
-                _explosionRenderer.RenderExplosion(spriteBatch, explosionEntity);
+        // Render ECS entities
+        foreach (var entityId in _gameState.Ecs.GetAllEntityIds())
+        {
+            // Render miner
+            if (_gameState.Ecs.HasComponent<MinerTag>(entityId))
+                _minerRenderer.RenderMiner(spriteBatch, entityId);
+
+            // Render dynamite
+            if (_gameState.Ecs.HasComponent<DynamiteTag>(entityId))
+                _dynamiteRenderer.RenderDynamite(spriteBatch, entityId);
+
+            // Render explosions
+            if (_gameState.Ecs.HasComponent<ExplosionTag>(entityId))
+                _explosionRenderer.RenderExplosion(spriteBatch, entityId);
+
+            // Render player
+            if (_gameState.Ecs.HasComponent<PlayerTag>(entityId) && !_gameState.AsteroidWorld.IsInMiner)
+                _playerRenderer.RenderPlayer(spriteBatch, entityId);
+        }
     }
 
     private void RenderAdditiveLighting(SpriteBatch spriteBatch)
     {
-        foreach (var entity in _gameState.AsteroidWorld.ActiveEntitiesSortedByDistance)
-            if (entity is ExplosionEntity explosionEntity)
-                _explosionRenderer.RenderAdditiveLightSource(spriteBatch, explosionEntity);
+        // Render ECS entity lighting
+        foreach (var entityId in _gameState.Ecs.GetAllEntityIds())
+        {
+            // Render explosion lighting
+            if (_gameState.Ecs.HasComponent<ExplosionTag>(entityId))
+                _explosionRenderer.RenderAdditiveLightSource(spriteBatch, entityId);
+        }
 
-        _shared.RenderDirectionalLightSource(spriteBatch, _gameState.AsteroidWorld.Miner.GetDirectionalLightSource(),
-            _gameState.AsteroidWorld.Miner.Direction, 192, 0.4f);
+        // TODO
+        // _shared.RenderDirectionalLightSource(spriteBatch, _gameState.AsteroidWorld.Miner.GetDirectionalLightSource(),
+        //     _gameState.AsteroidWorld.Miner.Direction, 192, 0.4f);
 
-        if (!_gameState.AsteroidWorld.IsInMiner)
-            _shared.RenderDirectionalLightSource(spriteBatch, _gameState.AsteroidWorld.Player.GetDirectionalLightSource(),
-                _gameState.AsteroidWorld.Player.Direction, 128, 0.3f);
+        // if (!_gameState.AsteroidWorld.IsInMiner)
+        //     _shared.RenderDirectionalLightSource(spriteBatch, _gameState.AsteroidWorld.Player.GetDirectionalLightSource(),
+        //         _gameState.AsteroidWorld.Player.Direction, 128, 0.3f);
     }
 
     private void RenderLightingToRenderTarget(SpriteBatch spriteBatch)
@@ -177,24 +193,30 @@ public class AsteroidRenderer
         spriteBatch.Draw(_shared.Textures["white"], new Rectangle(0, 0, viewportWidth, viewportHeight),
             FogOfWarRenderer.FogColor * 0.8f);
 
+        // TODO
+        // _shared.RenderDirectionalLightSource(spriteBatch, _gameState.AsteroidWorld.Miner.GetDirectionalLightSource(),
+        //     _gameState.AsteroidWorld.Miner.Direction);
 
-        _shared.RenderDirectionalLightSource(spriteBatch, _gameState.AsteroidWorld.Miner.GetDirectionalLightSource(),
-            _gameState.AsteroidWorld.Miner.Direction);
+        // if (!_gameState.AsteroidWorld.IsInMiner)
+        //     _shared.RenderDirectionalLightSource(spriteBatch, _gameState.AsteroidWorld.Player.GetDirectionalLightSource(),
+        //         _gameState.AsteroidWorld.Player.Direction, 256);
 
-        if (!_gameState.AsteroidWorld.IsInMiner)
-            _shared.RenderDirectionalLightSource(spriteBatch, _gameState.AsteroidWorld.Player.GetDirectionalLightSource(),
-                _gameState.AsteroidWorld.Player.Direction, 256);
+        // _shared.RenderRadialLightSource(spriteBatch,
+        //     _gameState.AsteroidWorld.IsInMiner
+        //         ? _gameState.AsteroidWorld.Miner.CenterPosition
+        //         : _gameState.AsteroidWorld.Player.CenterPosition, 512, 0.4f);
 
-        _shared.RenderRadialLightSource(spriteBatch,
-            _gameState.AsteroidWorld.IsInMiner
-                ? _gameState.AsteroidWorld.Miner.CenterPosition
-                : _gameState.AsteroidWorld.Player.CenterPosition, 512, 0.4f);
+        // Render ECS entity lighting
+        foreach (var entityId in _gameState.Ecs.GetAllEntityIds())
+        {
+            // Render dynamite lighting
+            if (_gameState.Ecs.HasComponent<DynamiteTag>(entityId))
+                _dynamiteRenderer.RenderLightSource(spriteBatch, entityId);
 
-        foreach (var entity in _gameState.AsteroidWorld.ActiveEntitiesSortedByDistance)
-            if (entity is DynamiteEntity dynamiteEntity)
-                _dynamiteRenderer.RenderLightSource(spriteBatch, dynamiteEntity);
-            else if (entity is ExplosionEntity explosionEntity)
-                _explosionRenderer.RenderLightSource(spriteBatch, explosionEntity);
+            // Render explosion lighting
+            if (_gameState.Ecs.HasComponent<ExplosionTag>(entityId))
+                _explosionRenderer.RenderLightSource(spriteBatch, entityId);
+        }
 
         // Render any grid-based light sources
         LoopVisibleCells(
@@ -233,7 +255,7 @@ public class AsteroidRenderer
         var (startCol, startRow, endCol, endRow) = _shared.ViewHelpers.GetVisibleGrid(padding);
 
         for (var row = startRow; row < endRow; row++)
-        for (var col = startCol; col < endCol; col++)
-            cellAction(col, row);
+            for (var col = startCol; col < endCol; col++)
+                cellAction(col, row);
     }
 }

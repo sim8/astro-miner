@@ -1,5 +1,4 @@
 using AstroMiner.Definitions;
-using AstroMiner.Entities;
 using AstroMiner.Renderers.AsteroidWorld;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -32,9 +31,5 @@ public class HomeWorldRenderer
                 spriteBatch.Draw(_shared.Textures["white"],
                     _shared.ViewHelpers.GetVisibleRectForGridCell(col, row),
                     Color.White);
-
-        foreach (var entity in _shared.GameState.HomeWorld.ActiveEntitiesSortedByDistance)
-            if (entity is PlayerEntity)
-                _playerRenderer.RenderPlayer(spriteBatch);
     }
 }
