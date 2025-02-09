@@ -17,21 +17,7 @@ public class DynamiteSystem : System
 
     public int CreateDynamite(Vector2 position)
     {
-        var entityId = World.CreateEntity();
-
-        var positionComponent = World.AddComponent<PositionComponent>(entityId);
-        positionComponent.Position = position;
-        positionComponent.BoxSizePx = BoxSizePx;
-        positionComponent.IsCollideable = false;
-
-        var fuseComponent = World.AddComponent<FuseComponent>(entityId);
-        fuseComponent.MaxFuseTimeMs = FuseTimeMs;
-        fuseComponent.TimeToExplodeMs = FuseTimeMs;
-
-        // Add tag component for identification
-        World.AddComponent<DynamiteTag>(entityId);
-
-        return entityId;
+        return World.Factories.CreateDynamiteEntity(position);
     }
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)

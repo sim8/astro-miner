@@ -39,9 +39,10 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
 
         var (minerPosX, minerPosY) = ViewHelpers.ToGridPosition(minerPos);
         Grid.MarkAllDistancesFromExploredFloor(minerPosX, minerPosY, true);
+
         // Create ECS entities
-        var minerEntityId = gameState.EcsWorld.CreateMinerEntity(minerPos);
-        gameState.EcsWorld.CreatePlayerEntity(minerPos);
+        var minerEntityId = gameState.EcsWorld.Factories.CreateMinerEntity(minerPos);
+        gameState.EcsWorld.Factories.CreatePlayerEntity(minerPos);
         gameState.EcsWorld.SetActiveControllableEntity(minerEntityId);
 
         EdgeCells = UserInterfaceHelpers.GetAsteroidEdgeCells(Grid);

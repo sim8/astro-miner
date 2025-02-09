@@ -24,16 +24,7 @@ public class ExplosionSystem : System
 
     public int CreateExplosion(Vector2 position)
     {
-        var entityId = World.CreateEntity();
-
-        var positionComponent = World.AddComponent<PositionComponent>(entityId);
-        positionComponent.Position = position;
-        positionComponent.BoxSizePx = BoxSizePx;
-        positionComponent.IsCollideable = false;
-        World.AddComponent<ExplosionComponent>(entityId);
-        World.AddComponent<ExplosionTag>(entityId);
-
-        return entityId;
+        return World.Factories.CreateExplosionEntity(position);
     }
 
     private void ExplodeGrid(Vector2 position)

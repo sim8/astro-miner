@@ -28,6 +28,14 @@ public class World
     private int? _activeControllableEntityId;
     public int? ActiveControllableEntityId => _activeControllableEntityId;
 
+    public EntityFactories Factories { get; }
+
+    public World(GameState gameState)
+    {
+        _gameState = gameState;
+        Factories = new EntityFactories(this);
+    }
+
     public void SetActiveControllableEntity(int entityId)
     {
         if (!_entityComponents.ContainsKey(entityId))
@@ -63,11 +71,6 @@ public class World
         }
     }
 
-    public World(GameState gameState)
-    {
-        _gameState = gameState;
-    }
-
     public bool GetIsActive(int entityId)
     {
         // If this is the active controllable entity, it's active
@@ -80,62 +83,14 @@ public class World
         return !hasControllableComponent;
     }
 
-    public int CreatePlayerEntity(Vector2 position)
+    public void SetPlayerEntityId(int entityId)
     {
-        var entityId = CreateEntity();
-
-        // Add position component
-        var positionComponent = AddComponent<PositionComponent>(entityId);
-        positionComponent.Position = position;
-        positionComponent.BoxSizePx = GameConfig.PlayerBoxSizePx;
-        positionComponent.IsCollideable = true;
-        // Add movement component
-        var movementComponent = AddComponent<MovementComponent>(entityId);
-        movementComponent.MaxSpeed = 4f;  // From PlayerEntity
-        movementComponent.TimeToReachMaxSpeedMs = 0;  // From ControllableEntity default
-        movementComponent.TimeToStopMs = 0;  // From ControllableEntity default
-
-        // Add health component
-        var healthComponent = AddComponent<HealthComponent>(entityId);
-        healthComponent.MaxHealth = GameConfig.PlayerMaxHealth;
-        healthComponent.CurrentHealth = GameConfig.PlayerMaxHealth;
-
-        // Add tag component for identification
-        AddComponent<PlayerTag>(entityId);
-
-        // Store the player entity ID
         _playerEntityId = entityId;
-
-        return entityId;
     }
 
-    public int CreateMinerEntity(Vector2 position)
+    public void SetMinerEntityId(int entityId)
     {
-        var entityId = CreateEntity();
-
-        // Add position component
-        var positionComponent = AddComponent<PositionComponent>(entityId);
-        positionComponent.Position = position;
-        positionComponent.BoxSizePx = GameConfig.MinerBoxSizePx;
-        positionComponent.IsCollideable = true;
-        // Add movement component with miner-specific values
-        var movementComponent = AddComponent<MovementComponent>(entityId);
-        movementComponent.MaxSpeed = 4f;  // From MinerEntity
-        movementComponent.TimeToReachMaxSpeedMs = 600;  // From MinerEntity
-        movementComponent.TimeToStopMs = 400;  // From MinerEntity
-
-        // Add health component
-        var healthComponent = AddComponent<HealthComponent>(entityId);
-        healthComponent.MaxHealth = GameConfig.MinerMaxHealth;
-        healthComponent.CurrentHealth = GameConfig.MinerMaxHealth;
-
-        // Add tag component for identification
-        AddComponent<MinerTag>(entityId);
-
-        // Store the miner entity ID
         _minerEntityId = entityId;
-
-        return entityId;
     }
 
     public IEnumerable<int> GetAllEntityIds()
