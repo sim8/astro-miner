@@ -33,7 +33,7 @@ public class World
     public World(GameState gameState)
     {
         _gameState = gameState;
-        Factories = new EntityFactories(this);
+        Factories = new EntityFactories(gameState);
     }
 
     public void SetActiveControllableEntity(int entityId)

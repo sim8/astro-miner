@@ -7,11 +7,13 @@ namespace AstroMiner.ECS;
 
 public class EntityFactories
 {
+    private readonly GameState _gameState;
     private readonly World _world;
 
-    public EntityFactories(World world)
+    public EntityFactories(GameState gameState)
     {
-        _world = world;
+        _gameState = gameState;
+        _world = gameState.EcsWorld;
     }
 
     public int CreatePlayerEntity(Vector2 position)
