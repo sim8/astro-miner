@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
+using AstroMiner.ECS.Systems;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner.ECS;
@@ -30,10 +31,36 @@ public class Ecs
 
     public EntityFactories Factories { get; }
 
+    // Systems
+    public DynamiteSystem DynamiteSystem { get; }
+    public ExplosionSystem ExplosionSystem { get; }
+    public MovementSystem MovementSystem { get; }
+    public HealthSystem HealthSystem { get; }
+    public VehicleEnterExitSystem VehicleEnterExitSystem { get; }
+    public FallOrLavaDamageSystem FallOrLavaDamageSystem { get; }
+
     public Ecs(GameState gameState)
     {
         _gameState = gameState;
         Factories = new EntityFactories(this);
+
+        // Initialize systems
+        DynamiteSystem = new DynamiteSystem(this, gameState);
+        ExplosionSystem = new ExplosionSystem(this, gameState);
+        MovementSystem = new MovementSystem(this, gameState);
+        HealthSystem = new HealthSystem(this, gameState);
+        VehicleEnterExitSystem = new VehicleEnterExitSystem(this, gameState);
+        FallOrLavaDamageSystem = new FallOrLavaDamageSystem(this, gameState);
+    }
+
+    public void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
+    {
+        DynamiteSystem.Update(gameTime, activeMiningControls);
+        ExplosionSystem.Update(gameTime, activeMiningControls);
+        MovementSystem.Update(gameTime, activeMiningControls);
+        HealthSystem.Update(gameTime, activeMiningControls);
+        VehicleEnterExitSystem.Update(gameTime, activeMiningControls);
+        FallOrLavaDamageSystem.Update(gameTime, activeMiningControls);
     }
 
     public void SetActiveControllableEntity(int entityId)

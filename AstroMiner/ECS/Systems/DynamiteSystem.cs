@@ -29,7 +29,7 @@ public class DynamiteSystem : System
             if (fuseComponent.TimeToExplodeMs <= 0)
             {
                 var positionComponent = Ecs.GetComponent<PositionComponent>(fuseComponent.EntityId);
-                GameState.ExplosionSystem.CreateExplosion(positionComponent.CenterPosition);
+                GameState.Ecs.ExplosionSystem.CreateExplosion(positionComponent.CenterPosition);
                 Ecs.DestroyEntity(fuseComponent.EntityId);
             }
         }

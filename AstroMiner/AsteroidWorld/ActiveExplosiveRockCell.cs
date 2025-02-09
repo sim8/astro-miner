@@ -13,7 +13,7 @@ public class ActiveExplosiveRockCell(GameState gameState, (int x, int y) gridPos
         if (TimeToExplodeMs <= 0)
         {
             var explosionPos = new Vector2(Position.X + 0.5f, Position.Y + 0.5f);
-            gameState.ExplosionSystem.CreateExplosion(explosionPos);
+            gameState.Ecs.ExplosionSystem.CreateExplosion(explosionPos);
             gameState.AsteroidWorld.Grid.DeactivateExplosiveRockCell(Position.X, Position.Y);
         }
     }

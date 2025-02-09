@@ -17,7 +17,7 @@ public class PlayerEntity(GameState gameState) : MiningControllableEntity(gameSt
         if (activeMiningControls.Contains(MiningControls.PlaceDynamite) && gameState.Inventory.numDynamite > 0)
         {
             gameState.Inventory.numDynamite--;
-            var entityId = gameState.DynamiteSystem.CreateDynamite(CenterPosition);
+            var entityId = gameState.Ecs.DynamiteSystem.CreateDynamite(CenterPosition);
             var positionComponent = gameState.Ecs.GetComponent<PositionComponent>(entityId);
             positionComponent.Position = CenterPosition;
             positionComponent.SetPositionRelativeToDirectionalEntity(this, Direction.Top);

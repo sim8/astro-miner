@@ -47,7 +47,7 @@ public class FallOrLavaDamageSystem : System
                 healthComponent.TimeOnLavaMs += gameTime.ElapsedGameTime.Milliseconds;
                 if (healthComponent.TimeOnLavaMs >= GameConfig.LavaDamageDelayMs)
                 {
-                    GameState.HealthSystem.TakeDamage(healthComponent.EntityId, (float)GameConfig.LavaDamagePerSecond / 1000 * gameTime.ElapsedGameTime.Milliseconds);
+                    GameState.Ecs.HealthSystem.TakeDamage(healthComponent.EntityId, (float)GameConfig.LavaDamagePerSecond / 1000 * gameTime.ElapsedGameTime.Milliseconds);
                 }
             }
             else if (healthComponent.TimeOnLavaMs > 0)

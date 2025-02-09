@@ -62,7 +62,7 @@ public class ExplosionSystem : System
             {
                 var damagePercentage = 1f - distance / ExplosionRadius;
                 var damage = (int)(GameConfig.ExplosionMaxDamage * damagePercentage);
-                GameState.HealthSystem.TakeDamage(healthComponent.EntityId, damage);
+                GameState.Ecs.HealthSystem.TakeDamage(healthComponent.EntityId, damage);
             }
         }
     }

@@ -4,8 +4,6 @@ using AstroMiner.Definitions;
 using AstroMiner.Entities;
 using AstroMiner.HomeWorld;
 using AstroMiner.ECS;
-using AstroMiner.ECS.Systems;
-using AstroMiner.ECS.Components;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
@@ -49,12 +47,6 @@ public class GameState
     public Inventory Inventory;
     public bool IsOnAsteroid;
     public Ecs Ecs { get; private set; }
-    public DynamiteSystem DynamiteSystem { get; private set; }
-    public ExplosionSystem ExplosionSystem { get; private set; }
-    public MovementSystem MovementSystem { get; private set; }
-    public HealthSystem HealthSystem { get; private set; }
-    public VehicleEnterExitSystem VehicleEnterExitSystem { get; private set; }
-    public FallOrLavaDamageSystem FallOrLavaDamageSystem { get; private set; }
 
     public GameState(
         GraphicsDeviceManager graphics)
@@ -90,12 +82,6 @@ public class GameState
         CloudManager = new CloudManager(this);
         IsOnAsteroid = false;
         Ecs = new Ecs(this);
-        DynamiteSystem = new DynamiteSystem(Ecs, this);
-        ExplosionSystem = new ExplosionSystem(Ecs, this);
-        MovementSystem = new MovementSystem(Ecs, this);
-        HealthSystem = new HealthSystem(Ecs, this);
-        VehicleEnterExitSystem = new VehicleEnterExitSystem(Ecs, this);
-        FallOrLavaDamageSystem = new FallOrLavaDamageSystem(Ecs, this);
     }
 
     public void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
@@ -106,15 +92,7 @@ public class GameState
             HomeWorld.Update(activeMiningControls, gameTime);
 
         Camera.Update(gameTime, activeMiningControls);
-
         CloudManager.Update(gameTime);
-
-        // Update ECS systems
-        DynamiteSystem.Update(gameTime, activeMiningControls);
-        ExplosionSystem.Update(gameTime, activeMiningControls);
-        MovementSystem.Update(gameTime, activeMiningControls);
-        HealthSystem.Update(gameTime, activeMiningControls);
-        VehicleEnterExitSystem.Update(gameTime, activeMiningControls);
-        FallOrLavaDamageSystem.Update(gameTime, activeMiningControls);
+        Ecs.Update(gameTime, activeMiningControls);
     }
 }
