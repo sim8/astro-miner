@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
-using AstroMiner.Entities;
 using AstroMiner.ProceduralGen;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
@@ -16,7 +15,6 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
     public List<(int x, int y)> EdgeCells;
     public FogAnimationManager FogAnimationManager;
     public GridState Grid;
-    public MinerEntity Miner;
 
     public int Seed { get; private set; }
 
@@ -25,8 +23,6 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
     public bool IsInMiner => gameState.EcsWorld.ActiveControllableEntityId != null &&
                              gameState.EcsWorld.HasComponent<MinerTag>(gameState.EcsWorld.ActiveControllableEntityId
                                  .Value);
-
-    public override MiningControllableEntity ActiveControllableEntity => IsInMiner ? Miner : Player;
 
     private void InitSeed()
     {
@@ -43,15 +39,6 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
 
         var (minerPosX, minerPosY) = ViewHelpers.ToGridPosition(minerPos);
         Grid.MarkAllDistancesFromExploredFloor(minerPosX, minerPosY, true);
-
-        // Create legacy miner
-        // Miner = new MinerEntity(gameState);
-        // Miner.Initialize(minerPos);
-
-        // Create legacy player
-        // Player = new PlayerEntity(gameState);
-        // Player.Initialize(minerPos);
-
         // Create ECS entities
         var minerEntityId = gameState.EcsWorld.CreateMinerEntity(minerPos);
         gameState.EcsWorld.CreatePlayerEntity(minerPos);
@@ -59,7 +46,6 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
 
         EdgeCells = UserInterfaceHelpers.GetAsteroidEdgeCells(Grid);
         CollapsingFloorTriggerer = new CollapsingFloorTriggerer(gameState);
-        ActiveEntitiesSortedByDistance = [Miner];
         MsSinceStart = 0;
         FogAnimationManager = new FogAnimationManager(gameState);
     }
@@ -78,22 +64,6 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
             gameState.HealthSystem.KillAllEntities();
             return;
         }
-
-        // todo
-        // if (activeMiningControls.Contains(MiningControls.EnterOrExit))
-        // {
-        //     ActiveControllableEntity.Disembark();
-        //     if (ActiveControllableEntity == Player && !Miner.IsDead &&
-        //         Player.GetDistanceTo(Miner) < GameConfig.MinEmbarkingDistance)
-        //     {
-        //         DeactivateEntity(Player);
-        //     }
-        //     else if (ActiveControllableEntity == Miner)
-        //     {
-        //         Player.Position = Miner.Position;
-        //         ActivateEntity(Player);
-        //     }
-        // }
 
         base.Update(activeMiningControls, gameTime);
 

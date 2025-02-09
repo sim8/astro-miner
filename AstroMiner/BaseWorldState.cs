@@ -11,15 +11,8 @@ public abstract class BaseWorldState(GameState g)
     public List<Entity> ActiveEntitiesSortedByDistance = [];
     public PlayerEntity Player;
 
-    public virtual MiningControllableEntity ActiveControllableEntity => Player;
-
     public virtual void Initialize()
     {
-    }
-
-    private void SortActiveEntities()
-    {
-        ActiveEntitiesSortedByDistance.Sort((a, b) => a.FrontY.CompareTo(b.FrontY));
     }
 
     public void ActivateEntity(Entity entity)
