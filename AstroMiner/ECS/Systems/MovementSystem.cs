@@ -70,7 +70,7 @@ public class MovementSystem : System
         movement.Direction = selectedDirection ?? movement.Direction;
     }
 
-    public Direction GetRotatedDirection(Direction baseDirection, Direction rotation)
+    public static Direction GetRotatedDirection(Direction baseDirection, Direction rotation)
     {
         var directionInt = (int)baseDirection;
         var rotationInt = (int)rotation;
@@ -146,5 +146,30 @@ public class MovementSystem : System
                     movementComponent.CurrentSpeed = 0;
             }
         }
+    }
+
+    public void SetPositionRelativeToDirectionalEntity(PositionComponent positionComponent, int directionalEntityId, Direction rotation,
+    bool insideEdge = false)
+    {
+
+        var directionalEntityMovementComponent = Ecs.GetComponent<MovementComponent>(directionalEntityId);
+        var directionalEntityPositionComponent = Ecs.GetComponent<PositionComponent>(directionalEntityId);
+        if (directionalEntityMovementComponent == null || directionalEntityPositionComponent == null) return;
+
+
+
+        var centerToCenterDistance =
+            directionalEntityPositionComponent.GridBoxSize / 2 + (insideEdge ? -(positionComponent.GridBoxSize / 2) : positionComponent.GridBoxSize / 2);
+        var actualDirection = GetRotatedDirection(directionalEntityMovementComponent.Direction, rotation);
+        var newCenterPos = actualDirection switch
+        {
+            Direction.Top => directionalEntityPositionComponent.CenterPosition + new Vector2(0, -centerToCenterDistance),
+            Direction.Right => directionalEntityPositionComponent.CenterPosition + new Vector2(centerToCenterDistance, 0),
+            Direction.Bottom => directionalEntityPositionComponent.CenterPosition + new Vector2(0, centerToCenterDistance),
+            Direction.Left => directionalEntityPositionComponent.CenterPosition + new Vector2(-centerToCenterDistance, 0),
+            _ => directionalEntityPositionComponent.CenterPosition
+        };
+
+        positionComponent.Position = newCenterPos - new Vector2(positionComponent.GridBoxSize / 2, positionComponent.GridBoxSize / 2);
     }
 }
