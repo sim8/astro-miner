@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework;
 using AstroMiner.Definitions;
 using System.Drawing;
-using AstroMiner.Entities;
 using AstroMiner.Utilities;
 
 namespace AstroMiner.ECS.Components;
@@ -20,25 +19,6 @@ public class PositionComponent : Component
     public float FrontY => Position.Y + GridBoxSize;
 
     public RectangleF Rectangle => new(Position.X, Position.Y, GridBoxSize, GridBoxSize);
-
-    public bool SetPositionRelativeToDirectionalEntity(ControllableEntity directionalEntity, Direction rotation,
-        bool insideEdge = false)
-    {
-        var centerToCenterDistance =
-            directionalEntity.GridBoxSize / 2 + (insideEdge ? -(GridBoxSize / 2) : GridBoxSize / 2);
-        var actualDirection = directionalEntity.GetRotatedDirection(rotation);
-        var newCenterPos = actualDirection switch
-        {
-            Direction.Top => directionalEntity.CenterPosition + new Vector2(0, -centerToCenterDistance),
-            Direction.Right => directionalEntity.CenterPosition + new Vector2(centerToCenterDistance, 0),
-            Direction.Bottom => directionalEntity.CenterPosition + new Vector2(0, centerToCenterDistance),
-            Direction.Left => directionalEntity.CenterPosition + new Vector2(-centerToCenterDistance, 0),
-            _ => directionalEntity.CenterPosition
-        };
-
-        Position = newCenterPos - new Vector2(GridBoxSize / 2, GridBoxSize / 2);
-        return true; // TODO: Check collisions
-    }
 }
 
 public class FuseComponent : Component
