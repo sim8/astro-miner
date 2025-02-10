@@ -35,6 +35,9 @@ public class EntityFactories
         healthComponent.MaxHealth = GameConfig.PlayerMaxHealth;
         healthComponent.CurrentHealth = GameConfig.PlayerMaxHealth;
 
+        // Add mining component
+        _ecs.AddComponent<MiningComponent>(entityId);
+
         // Add tag component for identification
         _ecs.AddComponent<PlayerTag>(entityId);
 
@@ -64,6 +67,10 @@ public class EntityFactories
         var healthComponent = _ecs.AddComponent<HealthComponent>(entityId);
         healthComponent.MaxHealth = GameConfig.MinerMaxHealth;
         healthComponent.CurrentHealth = GameConfig.MinerMaxHealth;
+
+        // Add mining component
+        var miningComponent = _ecs.AddComponent<MiningComponent>(entityId);
+        miningComponent.DrillingWidth = 0.9f;
 
         // Add tag component for identification
         _ecs.AddComponent<MinerTag>(entityId);

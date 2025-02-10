@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using AstroMiner.Definitions;
 using System.Drawing;
 using AstroMiner.Utilities;
+using System.Collections.Generic;
 
 namespace AstroMiner.ECS.Components;
 
@@ -62,4 +63,18 @@ public class HealthComponent : Component
 
     public float HealthPercentage => CurrentHealth / MaxHealth;
     public float LavaTimePercentToTakingDamage => TimeOnLavaMs / (float)GameConfig.LavaDamageDelayMs;
+}
+
+// TODO rename Drill
+public class MiningComponent : Component
+{
+    public readonly List<(int x, int y)> DrillingCells = new();
+    public bool DrillingCellsMined { get; set; } = false;
+    public int DrillingMs { get; set; } = 0;
+
+    public (int x, int y)? DrillingPos { get; set; } = null;
+    public int DrillingTotalTimeRequired { get; set; } = 0;
+
+    public float DrillingWidth { get; set; } = 0f;
+    public bool CanAddToInventory { get; set; } = true;
 }

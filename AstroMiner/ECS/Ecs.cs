@@ -38,7 +38,7 @@ public class Ecs
     public HealthSystem HealthSystem { get; }
     public VehicleEnterExitSystem VehicleEnterExitSystem { get; }
     public FallOrLavaDamageSystem FallOrLavaDamageSystem { get; }
-
+    public MiningSystem MiningSystem { get; }
     public Ecs(GameState gameState)
     {
         _gameState = gameState;
@@ -51,6 +51,7 @@ public class Ecs
         HealthSystem = new HealthSystem(this, gameState);
         VehicleEnterExitSystem = new VehicleEnterExitSystem(this, gameState);
         FallOrLavaDamageSystem = new FallOrLavaDamageSystem(this, gameState);
+        MiningSystem = new MiningSystem(this, gameState);
     }
 
     public void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
@@ -61,6 +62,7 @@ public class Ecs
         HealthSystem.Update(gameTime, activeMiningControls);
         VehicleEnterExitSystem.Update(gameTime, activeMiningControls);
         FallOrLavaDamageSystem.Update(gameTime, activeMiningControls);
+        MiningSystem.Update(gameTime, activeMiningControls);
     }
 
     public void SetActiveControllableEntity(int entityId)
