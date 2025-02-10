@@ -78,3 +78,23 @@ public class MiningComponent : Component
     public float DrillingWidth { get; set; } = 0f;
     public bool CanAddToInventory { get; set; } = true;
 }
+
+public class GrappleComponent : Component
+{
+    // Constants
+    private const float ReelingBaseSpeed = 7f;
+    private const float ReelingMaxSpeed = 11f;
+    public const float GrapplesWidth = 0.4f;
+
+    public int GrappleCooldownRemaining { get; set; } = 0;
+
+    public Direction? GrappleDirection { get; set; } = null;
+    public bool GrappleTargetIsValid { get; set; } = false;
+    public bool PrevPressedUsedGrapple { get; set; } = false;
+    public float GrapplePercentToTarget { get; set; } = 0f;
+    public Vector2? GrappleTarget { get; set; } = null;
+
+    // Derived
+    public bool GrappleAvailable => GrappleCooldownRemaining == 0;
+    public bool IsReelingIn => GrapplePercentToTarget == 1f && GrappleTargetIsValid;
+}

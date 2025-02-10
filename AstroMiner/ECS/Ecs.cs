@@ -39,6 +39,7 @@ public class Ecs
     public VehicleEnterExitSystem VehicleEnterExitSystem { get; }
     public FallOrLavaDamageSystem FallOrLavaDamageSystem { get; }
     public MiningSystem MiningSystem { get; }
+    public GrappleSystem GrappleSystem { get; }
     public Ecs(GameState gameState)
     {
         _gameState = gameState;
@@ -52,6 +53,7 @@ public class Ecs
         VehicleEnterExitSystem = new VehicleEnterExitSystem(this, gameState);
         FallOrLavaDamageSystem = new FallOrLavaDamageSystem(this, gameState);
         MiningSystem = new MiningSystem(this, gameState);
+        GrappleSystem = new GrappleSystem(this, gameState);
     }
 
     public void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
@@ -63,6 +65,7 @@ public class Ecs
         VehicleEnterExitSystem.Update(gameTime, activeMiningControls);
         FallOrLavaDamageSystem.Update(gameTime, activeMiningControls);
         MiningSystem.Update(gameTime, activeMiningControls);
+        GrappleSystem.Update(gameTime, activeMiningControls);
     }
 
     public void SetActiveControllableEntity(int entityId)

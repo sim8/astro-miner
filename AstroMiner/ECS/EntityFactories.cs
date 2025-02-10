@@ -72,6 +72,9 @@ public class EntityFactories
         var miningComponent = _ecs.AddComponent<MiningComponent>(entityId);
         miningComponent.DrillingWidth = 0.9f;
 
+        // Add grapple component
+        _ecs.AddComponent<GrappleComponent>(entityId);
+
         // Add tag component for identification
         _ecs.AddComponent<MinerTag>(entityId);
 

@@ -172,4 +172,11 @@ public class MovementSystem : System
 
         positionComponent.Position = newCenterPos - new Vector2(positionComponent.GridBoxSize / 2, positionComponent.GridBoxSize / 2);
     }
+
+    public Vector2 GetFrontPosition(int directionalEntityId)
+    {
+        var positionComponent = Ecs.GetComponent<PositionComponent>(directionalEntityId);
+        var movementComponent = Ecs.GetComponent<MovementComponent>(directionalEntityId);
+        return positionComponent.CenterPosition + DirectionHelpers.GetDirectionalVector(positionComponent.GridBoxSize / 2f, movementComponent.Direction);
+    }
 }
