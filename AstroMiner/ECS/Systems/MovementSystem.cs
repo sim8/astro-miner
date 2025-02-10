@@ -44,6 +44,10 @@ public class MovementSystem : System
 
     private void UpdateSpeed(MovementComponent movement, Direction? selectedDirection, GameTime gameTime)
     {
+        // Skip speed update if entity is reeling in (handled by GrappleSystem)
+        var grappleComponent = Ecs.GetComponent<GrappleComponent>(movement.EntityId);
+        if (grappleComponent?.IsReelingIn == true) return;
+
         if (movement.CurrentSpeed > movement.MaxSpeed)
         {
             movement.CurrentSpeed = Math.Max(movement.MaxSpeed,

@@ -136,20 +136,22 @@ public class GrappleSystem : System
         }
     }
 
-    // protected override void UpdateSpeed(Direction? selectedDirection, GameTime gameTime)
-    // {
-    //     if (IsReelingIn)
-    //     {
-    //         CurrentSpeed = Math.Max(ReelingBaseSpeed, CurrentSpeed);
-    //         // Gradually ramp up to max reeling speed
-    //         var speedIncrease = (ReelingMaxSpeed - ReelingBaseSpeed) * (gameTime.ElapsedGameTime.Milliseconds / 5000f);
-    //         CurrentSpeed = Math.Min(ReelingMaxSpeed, CurrentSpeed + speedIncrease);
-    //     }
-    //     else
-    //     {
-    //         base.UpdateSpeed(selectedDirection, gameTime);
-    //     }
-    // }
+    private void UpdateReelingSpeed(GrappleComponent grappleComponent, GameTime gameTime)
+    {
+        if (!grappleComponent.IsReelingIn) return;
+
+        var movementComponent = Ecs.GetComponent<MovementComponent>(grappleComponent.EntityId);
+        if (movementComponent == null) return;
+
+        // Set minimum speed
+        movementComponent.CurrentSpeed = Math.Max(GrappleComponent.ReelingBaseSpeed, movementComponent.CurrentSpeed);
+
+        // Gradually ramp up to max reeling speed
+        var speedIncrease = (GrappleComponent.ReelingMaxSpeed - GrappleComponent.ReelingBaseSpeed) *
+            (gameTime.ElapsedGameTime.Milliseconds / 5000f);
+        movementComponent.CurrentSpeed = Math.Min(GrappleComponent.ReelingMaxSpeed,
+            movementComponent.CurrentSpeed + speedIncrease);
+    }
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
     {
@@ -171,6 +173,9 @@ public class GrappleSystem : System
             ResetGrapple(grappleComponent);
             grappleComponent.PrevPressedUsedGrapple = false;
         }
+
+        // Update reeling speed if needed
+        UpdateReelingSpeed(grappleComponent, gameTime);
     }
 
     // public override Vector2 GetDirectionalLightSource()

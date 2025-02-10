@@ -82,8 +82,8 @@ public class MiningComponent : Component
 public class GrappleComponent : Component
 {
     // Constants
-    private const float ReelingBaseSpeed = 7f;
-    private const float ReelingMaxSpeed = 11f;
+    public const float ReelingBaseSpeed = 7f;
+    public const float ReelingMaxSpeed = 11f;
     public const float GrapplesWidth = 0.4f;
 
     public int GrappleCooldownRemaining { get; set; } = 0;
