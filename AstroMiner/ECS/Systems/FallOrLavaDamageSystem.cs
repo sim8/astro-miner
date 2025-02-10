@@ -24,6 +24,8 @@ public class FallOrLavaDamageSystem : System
             var positionComponent = Ecs.GetComponent<PositionComponent>(healthComponent.EntityId);
             if (positionComponent == null) continue;
 
+            if (healthComponent.EntityId == Ecs.PlayerEntityId && GameState.AsteroidWorld.IsInMiner) continue;
+
             var (topLeftX, topLeftY) = ViewHelpers.ToGridPosition(positionComponent.Position);
             var (bottomRightX, bottomRightY) = ViewHelpers.ToGridPosition(positionComponent.Position + new Vector2(positionComponent.GridBoxSize, positionComponent.GridBoxSize));
 

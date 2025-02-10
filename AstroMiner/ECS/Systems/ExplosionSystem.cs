@@ -46,6 +46,8 @@ public class ExplosionSystem : System
     {
         foreach (var healthComponent in Ecs.GetAllComponents<HealthComponent>())
         {
+            if (healthComponent.EntityId == Ecs.PlayerEntityId && GameState.AsteroidWorld.IsInMiner) continue;
+
             if (healthComponent.IsDead) continue;
 
             var positionComponent = Ecs.GetComponent<PositionComponent>(healthComponent.EntityId);

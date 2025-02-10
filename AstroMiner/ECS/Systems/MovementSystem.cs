@@ -111,6 +111,8 @@ public class MovementSystem : System
             if (otherPositionComponent.EntityId == entityId || !otherPositionComponent.IsCollideable)
                 continue;
 
+            if (otherPositionComponent.EntityId == Ecs.PlayerEntityId && GameState.AsteroidWorld.IsInMiner) continue;
+
             if (newRectangle.IntersectsWith(otherPositionComponent.Rectangle) &&
                 !currentRectangle.IntersectsWith(otherPositionComponent.Rectangle)) // Allow movement if currently clipping
             {
