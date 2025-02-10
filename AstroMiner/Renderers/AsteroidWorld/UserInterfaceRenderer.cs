@@ -1,11 +1,10 @@
 using System;
 using System.Linq;
 using AstroMiner.Definitions;
-using AstroMiner.Entities;
+using AstroMiner.ECS.Components;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using AstroMiner.ECS.Components;
 
 namespace AstroMiner.Renderers.AsteroidWorld;
 
@@ -68,13 +67,16 @@ public class UserInterfaceRenderer(
 
     private void RenderGrappleIcon(SpriteBatch spriteBatch)
     {
-        // TODO
-        // var color = shared.GameState.AsteroidWorld.Miner.GrappleAvailable
-        //     ? Color.LimeGreen
-        //     : _gridColor;
+        if (!shared.GameState.Ecs.MinerEntityId.HasValue) return;
+        var grappleComponent =
+            shared.GameState.Ecs.GetComponent<GrappleComponent>(shared.GameState.Ecs.MinerEntityId.Value);
+
+        var color = grappleComponent.GrappleAvailable
+            ? Color.LimeGreen
+            : _gridColor;
         spriteBatch.Draw(shared.Textures["grapple-icon"],
             new Rectangle(10, 185, 32, 32),
-            Color.Red);
+            color);
     }
 
     private void RenderMinimap(SpriteBatch spriteBatch)

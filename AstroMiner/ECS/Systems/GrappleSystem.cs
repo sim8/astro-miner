@@ -25,7 +25,9 @@ public class GrappleSystem : System
     public float GetDistanceToTarget(GrappleComponent grappleComponent)
     {
         var frontPosition = Ecs.MovementSystem.GetFrontPosition(grappleComponent.EntityId);
-        return grappleComponent.GrappleTarget.HasValue ? Vector2.Distance(frontPosition, grappleComponent.GrappleTarget.Value) : 0f;
+        return grappleComponent.GrappleTarget.HasValue
+            ? Vector2.Distance(frontPosition, grappleComponent.GrappleTarget.Value)
+            : 0f;
     }
 
     private void ResetGrapple(GrappleComponent grappleComponent)
@@ -41,6 +43,7 @@ public class GrappleSystem : System
         var minGrappleLength = 1;
         var movementComponent = Ecs.GetComponent<MovementComponent>(Ecs.ActiveControllableEntityId.Value);
         var frontPosition = Ecs.MovementSystem.GetFrontPosition(grappleComponent.EntityId);
+        grappleComponent.GrappleDirection = movementComponent.Direction;
 
         var distanceToEdgeOfCell = movementComponent.Direction switch
         {
@@ -68,8 +71,10 @@ public class GrappleSystem : System
             var distanceToNearEdgeOfCell = Math.Max(0, distanceToEdgeOfCell - 0.1f);
             var distance = Math.Min(GameConfig.MaxGrappleLength, i + distanceToNearEdgeOfCell);
 
-            var leftTargetToCheck = leftGrappleStart + DirectionHelpers.GetDirectionalVector(distance, movementComponent.Direction);
-            var rightTargetToCheck = rightGrappleStart + DirectionHelpers.GetDirectionalVector(distance, movementComponent.Direction);
+            var leftTargetToCheck = leftGrappleStart +
+                                    DirectionHelpers.GetDirectionalVector(distance, movementComponent.Direction);
+            var rightTargetToCheck = rightGrappleStart +
+                                     DirectionHelpers.GetDirectionalVector(distance, movementComponent.Direction);
 
             var leftCellState = GameState.AsteroidWorld.Grid.GetCellState(leftTargetToCheck);
             var rightCellState = GameState.AsteroidWorld.Grid.GetCellState(rightTargetToCheck);
@@ -90,15 +95,18 @@ public class GrappleSystem : System
 
             // If no valid grapple targets, still use GrappleTarget for animation
             // to show checked cells
-            if (!grappleComponent.GrappleTargetIsValid) grappleComponent.GrappleTarget = (leftTargetToCheck + rightTargetToCheck) / 2;
+            if (!grappleComponent.GrappleTargetIsValid)
+                grappleComponent.GrappleTarget = (leftTargetToCheck + rightTargetToCheck) / 2;
         }
 
-        if (grappleComponent.GrappleTargetIsValid) grappleComponent.GrappleCooldownRemaining = GameConfig.GrappleCooldownMs;
+        if (grappleComponent.GrappleTargetIsValid)
+            grappleComponent.GrappleCooldownRemaining = GameConfig.GrappleCooldownMs;
     }
 
     private void UseGrapple(GameTime gameTime, GrappleComponent grappleComponent)
     {
-        if (!grappleComponent.PrevPressedUsedGrapple && grappleComponent.GrappleAvailable) SetGrappleTarget(grappleComponent);
+        if (!grappleComponent.PrevPressedUsedGrapple && grappleComponent.GrappleAvailable)
+            SetGrappleTarget(grappleComponent);
 
         if (!grappleComponent.GrappleTarget.HasValue) return;
 
@@ -119,9 +127,12 @@ public class GrappleSystem : System
         {
             var grappleTravelDistance = gameTime.ElapsedGameTime.Milliseconds / 20f;
             grappleComponent.GrapplePercentToTarget =
-                Math.Min(1f, grappleComponent.GrapplePercentToTarget + grappleTravelDistance / GetDistanceToTarget(grappleComponent));
+                Math.Min(1f,
+                    grappleComponent.GrapplePercentToTarget +
+                    grappleTravelDistance / GetDistanceToTarget(grappleComponent));
 
-            if (grappleComponent.GrapplePercentToTarget == 1f && !grappleComponent.GrappleTargetIsValid) ResetGrapple(grappleComponent);
+            if (grappleComponent.GrapplePercentToTarget == 1f && !grappleComponent.GrappleTargetIsValid)
+                ResetGrapple(grappleComponent);
         }
     }
 
@@ -144,13 +155,11 @@ public class GrappleSystem : System
     {
         var grappleComponent = Ecs.GetComponent<GrappleComponent>(Ecs.ActiveControllableEntityId.Value);
 
-        if (grappleComponent is null)
-        {
-            return;
-        }
+        if (grappleComponent is null) return;
 
         // Update cooldown
-        grappleComponent.GrappleCooldownRemaining = Math.Max(0, grappleComponent.GrappleCooldownRemaining - gameTime.ElapsedGameTime.Milliseconds);
+        grappleComponent.GrappleCooldownRemaining = Math.Max(0,
+            grappleComponent.GrappleCooldownRemaining - gameTime.ElapsedGameTime.Milliseconds);
 
         if (activeMiningControls.Contains(MiningControls.UseGrapple))
         {
