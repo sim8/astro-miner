@@ -110,12 +110,6 @@ public class MiningSystem : System
         return positionComponent.CenterPosition + DirectionHelpers.GetDirectionalVector(drillDistanceFromCenter, movementComponent.Direction);
     }
 
-    // public virtual Vector2 GetDirectionalLightSource()
-    // {
-    //     // Can be adjusted if lightsource has different placements per rotation
-    //     return Position;
-    // }
-
     private void ResetDrill(MiningComponent miningComponent)
     {
         miningComponent.DrillingPos = null;

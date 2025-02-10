@@ -65,6 +65,7 @@
 
 ## Quality
 
+- Better handling of in/out of miner + positioning
 - Player placement when exiting
 - Test on Xbox?
     - Is state serializable for things like saving?

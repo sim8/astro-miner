@@ -177,16 +177,4 @@ public class GrappleSystem : System
         // Update reeling speed if needed
         UpdateReelingSpeed(grappleComponent, gameTime);
     }
-
-    // public override Vector2 GetDirectionalLightSource()
-    // {
-    //     return Direction switch
-    //     {
-    //         Direction.Top => Position + new Vector2(1.06f, 0.34f),
-    //         Direction.Right => Position + new Vector2(0.70f, 0.66f),
-    //         Direction.Bottom => Position + new Vector2(0.12f, 0.58f),
-    //         Direction.Left => Position + new Vector2(0.48f, -0.28f),
-    //         _ => Position
-    //     };
-    // }
 }

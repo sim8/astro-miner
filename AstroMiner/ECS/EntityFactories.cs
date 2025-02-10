@@ -38,6 +38,13 @@ public class EntityFactories
         // Add mining component
         _ecs.AddComponent<MiningComponent>(entityId);
 
+        // Add directional light source component
+        var directionalLightSourceComponent = _ecs.AddComponent<DirectionalLightSourceComponent>(entityId);
+        directionalLightSourceComponent.TopOffset = new Vector2(0.28f, -0.30f);
+        directionalLightSourceComponent.RightOffset = new Vector2(0.32f, -0.30f);
+        directionalLightSourceComponent.BottomOffset = new Vector2(0.24f, -0.30f);
+        directionalLightSourceComponent.LeftOffset = new Vector2(0.26f, -0.28f);
+
         // Add tag component for identification
         _ecs.AddComponent<PlayerTag>(entityId);
 
@@ -74,6 +81,13 @@ public class EntityFactories
 
         // Add grapple component
         _ecs.AddComponent<GrappleComponent>(entityId);
+
+        // Add directional light source component
+        var directionalLightSourceComponent = _ecs.AddComponent<DirectionalLightSourceComponent>(entityId);
+        directionalLightSourceComponent.TopOffset = new Vector2(1.06f, 0.34f);
+        directionalLightSourceComponent.RightOffset = new Vector2(0.70f, 0.66f);
+        directionalLightSourceComponent.BottomOffset = new Vector2(0.12f, 0.58f);
+        directionalLightSourceComponent.LeftOffset = new Vector2(0.48f, -0.28f);
 
         // Add tag component for identification
         _ecs.AddComponent<MinerTag>(entityId);

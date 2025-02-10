@@ -98,3 +98,13 @@ public class GrappleComponent : Component
     public bool GrappleAvailable => GrappleCooldownRemaining == 0;
     public bool IsReelingIn => GrapplePercentToTarget == 1f && GrappleTargetIsValid;
 }
+
+public class DirectionalLightSourceComponent : Component
+{
+    public Vector2 TopOffset { get; set; }
+    public Vector2 RightOffset { get; set; }
+    public Vector2 BottomOffset { get; set; }
+    public Vector2 LeftOffset { get; set; }
+
+    public int SizePx { get; set; } = 512;
+}

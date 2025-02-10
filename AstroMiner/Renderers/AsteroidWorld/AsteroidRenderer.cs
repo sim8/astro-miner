@@ -193,6 +193,25 @@ public class AsteroidRenderer
         spriteBatch.Draw(_shared.Textures["white"], new Rectangle(0, 0, viewportWidth, viewportHeight),
             FogOfWarRenderer.FogColor * 0.8f);
 
+        foreach (var directionalLightSourceComponent in _gameState.Ecs.GetAllComponents<DirectionalLightSourceComponent>())
+        {
+            var positionComponent = _gameState.Ecs.GetComponent<PositionComponent>(directionalLightSourceComponent.EntityId);
+            var movementComponent = _gameState.Ecs.GetComponent<MovementComponent>(directionalLightSourceComponent.EntityId);
+
+            if (positionComponent.EntityId == _gameState.Ecs.PlayerEntityId && _gameState.AsteroidWorld.IsInMiner) continue;
+
+            var lightSourcePos = movementComponent.Direction switch
+            {
+                Direction.Top => positionComponent.Position + directionalLightSourceComponent.TopOffset,
+                Direction.Right => positionComponent.Position + directionalLightSourceComponent.RightOffset,
+                Direction.Bottom => positionComponent.Position + directionalLightSourceComponent.BottomOffset,
+                Direction.Left => positionComponent.Position + directionalLightSourceComponent.LeftOffset,
+                _ => positionComponent.Position
+            };
+
+            _shared.RenderDirectionalLightSource(spriteBatch, lightSourcePos, movementComponent.Direction, directionalLightSourceComponent.SizePx);
+        }
+
         // TODO
         // _shared.RenderDirectionalLightSource(spriteBatch, _gameState.AsteroidWorld.Miner.GetDirectionalLightSource(),
         //     _gameState.AsteroidWorld.Miner.Direction);
