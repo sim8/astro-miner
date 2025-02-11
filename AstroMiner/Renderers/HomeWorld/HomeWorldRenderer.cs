@@ -4,22 +4,22 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace AstroMiner.Renderers.HomeWorld;
 
-public class HomeWorldRenderer
+public class HomeWorldRenderer : BaseWorldRenderer
 {
-    private readonly RendererShared _shared;
+    private readonly GameState _gameState;
 
-    public HomeWorldRenderer(RendererShared shared)
+    public HomeWorldRenderer(RendererShared shared) : base(shared)
     {
-        _shared = shared;
+        _gameState = shared.GameState;
     }
 
-    public void RenderWorld(SpriteBatch spriteBatch)
+    public override void RenderWorld(SpriteBatch spriteBatch)
     {
-        for (var row = 0; row < _shared.GameState.HomeWorld.Grid.GetLength(0); row++)
-            for (var col = 0; col < _shared.GameState.HomeWorld.Grid.GetLength(1); col++)
-                if (_shared.GameState.HomeWorld.Grid[row, col] == WorldCellType.Filled)
-                    spriteBatch.Draw(_shared.Textures["white"],
-                        _shared.ViewHelpers.GetVisibleRectForGridCell(col, row),
+        for (var row = 0; row < _gameState.HomeWorld.Grid.GetLength(0); row++)
+            for (var col = 0; col < _gameState.HomeWorld.Grid.GetLength(1); col++)
+                if (_gameState.HomeWorld.Grid[row, col] == WorldCellType.Filled)
+                    spriteBatch.Draw(Shared.Textures["white"],
+                        Shared.ViewHelpers.GetVisibleRectForGridCell(col, row),
                         Color.White);
     }
 }

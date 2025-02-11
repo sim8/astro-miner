@@ -14,8 +14,8 @@ public class Renderer
 {
     private readonly GameState _gameState;
     private readonly RendererShared _shared;
-    private readonly AsteroidRenderer AsteroidRenderer;
-    private readonly HomeWorldRenderer HomeWorldRenderer;
+    private readonly BaseWorldRenderer _asteroidRenderer;
+    private readonly BaseWorldRenderer _homeWorldRenderer;
     private readonly DynamiteRenderer _dynamiteRenderer;
     private readonly ExplosionRenderer _explosionRenderer;
     private readonly MinerRenderer _minerRenderer;
@@ -39,8 +39,8 @@ public class Renderer
         _explosionRenderer = new ExplosionRenderer(_shared);
         _scrollingBackgroundRenderer = new ScrollingBackgroundRenderer(_shared);
         _userInterfaceRenderer = new UserInterfaceRenderer(_shared, frameCounter);
-        AsteroidRenderer = new AsteroidRenderer(_shared);
-        HomeWorldRenderer = new HomeWorldRenderer(_shared);
+        _asteroidRenderer = new AsteroidRenderer(_shared);
+        _homeWorldRenderer = new HomeWorldRenderer(_shared);
         _multiplyBlendState = new BlendState();
         _multiplyBlendState.ColorBlendFunction = BlendFunction.Add;
         _multiplyBlendState.ColorSourceBlend = Blend.DestinationColor;
@@ -48,6 +48,14 @@ public class Renderer
 
         _initializeLightingRenderTarget();
     }
+
+    private BaseWorldRenderer ActiveWorldRenderer =>
+        _gameState.ActiveWorld switch
+        {
+            World.Asteroid => _asteroidRenderer,
+            World.Home => _homeWorldRenderer,
+            _ => throw new Exception("Invalid world")
+        };
 
     public void HandleWindowResize(object sender, EventArgs e)
     {
@@ -101,18 +109,7 @@ public class Renderer
     {
         _scrollingBackgroundRenderer.RenderBackground(spriteBatch);
 
-        // TODO ActiveWorldRenderer (interface?)
-        switch (_gameState.ActiveWorld)
-        {
-            case World.Asteroid:
-                AsteroidRenderer.RenderWorld(spriteBatch);
-                break;
-            case World.Home:
-                HomeWorldRenderer.RenderWorld(spriteBatch);
-                break;
-            default:
-                throw new Exception("Invalid world");
-        }
+        ActiveWorldRenderer.RenderWorld(spriteBatch);
 
         // Render ECS entities
         foreach (var entityId in _gameState.Ecs.GetAllEntityIds())
@@ -143,15 +140,8 @@ public class Renderer
         _shared.Graphics.GraphicsDevice.Clear(Color.White);
         spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
 
-        // TODO ActiveWorldRenderer (interface?)
-        switch (_gameState.ActiveWorld)
-        {
-            case World.Asteroid:
-                AsteroidRenderer.RenderWorldOverlay(spriteBatch);
-                break;
-            default:
-                break;
-        }
+        ActiveWorldRenderer.RenderWorldOverlay(spriteBatch);
+
 
         foreach (var directionalLightSourceComponent in _gameState.Ecs.GetAllComponents<DirectionalLightSourceComponent>())
         {
@@ -172,29 +162,9 @@ public class Renderer
             _shared.RenderDirectionalLightSource(spriteBatch, lightSourcePos, movementComponent.Direction, directionalLightSourceComponent.SizePx);
         }
 
-        // TODO
-        // _shared.RenderDirectionalLightSource(spriteBatch, _gameState.AsteroidWorld.Miner.GetDirectionalLightSource(),
-        //     _gameState.AsteroidWorld.Miner.Direction);
+        // TODO radial light sources?
 
-        // if (!_gameState.AsteroidWorld.IsInMiner)
-        //     _shared.RenderDirectionalLightSource(spriteBatch, _gameState.AsteroidWorld.Player.GetDirectionalLightSource(),
-        //         _gameState.AsteroidWorld.Player.Direction, 256);
-
-        // _shared.RenderRadialLightSource(spriteBatch,
-        //     _gameState.AsteroidWorld.IsInMiner
-        //         ? _gameState.AsteroidWorld.Miner.CenterPosition
-        //         : _gameState.AsteroidWorld.Player.CenterPosition, 512, 0.4f);
-
-
-        // TODO ActiveWorldRenderer (interface?)
-        switch (_gameState.ActiveWorld)
-        {
-            case World.Asteroid:
-                AsteroidRenderer.RenderWorldLighting(spriteBatch);
-                break;
-            default:
-                break;
-        }
+        ActiveWorldRenderer.RenderWorldLighting(spriteBatch);
 
         // Render ECS entity lighting
         foreach (var entityId in _gameState.Ecs.GetAllEntityIds())
@@ -209,18 +179,9 @@ public class Renderer
         }
 
         // Final pass to apply shadows over light sources
-        // TODO ActiveWorldRenderer (interface?)
-        switch (_gameState.ActiveWorld)
-        {
-            case World.Asteroid:
-                AsteroidRenderer.RenderShadows(spriteBatch);
-                break;
-            default:
-                break;
-        }
+        ActiveWorldRenderer.RenderShadows(spriteBatch);
 
         spriteBatch.End();
-
 
         _shared.Graphics.GraphicsDevice.SetRenderTarget(null);
     }
