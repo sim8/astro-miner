@@ -12,7 +12,6 @@ namespace AstroMiner.Renderers;
 
 public class Renderer
 {
-    private readonly FrameCounter _frameCounter;
     private readonly GameState _gameState;
     private readonly RendererShared _shared;
     private readonly AsteroidRenderer AsteroidRenderer;
@@ -34,13 +33,12 @@ public class Renderer
     {
         _shared = new RendererShared(gameState, graphics, textures);
         _gameState = gameState;
-        _frameCounter = frameCounter;
         _minerRenderer = new MinerRenderer(_shared);
         _playerRenderer = new PlayerRenderer(_shared);
         _dynamiteRenderer = new DynamiteRenderer(_shared);
         _explosionRenderer = new ExplosionRenderer(_shared);
         _scrollingBackgroundRenderer = new ScrollingBackgroundRenderer(_shared);
-        _userInterfaceRenderer = new UserInterfaceRenderer(_shared);
+        _userInterfaceRenderer = new UserInterfaceRenderer(_shared, frameCounter);
         AsteroidRenderer = new AsteroidRenderer(_shared);
         HomeWorldRenderer = new HomeWorldRenderer(_shared);
         _multiplyBlendState = new BlendState();
@@ -97,8 +95,6 @@ public class Renderer
         spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
         _userInterfaceRenderer.RenderUserInterface(spriteBatch);
         spriteBatch.End();
-
-        RenderDebug(spriteBatch);
     }
 
     private void RenderScene(SpriteBatch spriteBatch)
@@ -246,17 +242,5 @@ public class Renderer
         // if (!_gameState.AsteroidWorld.IsInMiner)
         //     _shared.RenderDirectionalLightSource(spriteBatch, _gameState.AsteroidWorld.Player.GetDirectionalLightSource(),
         //         _gameState.AsteroidWorld.Player.Direction, 128, 0.3f);
-    }
-
-    // TODO move?
-    private void RenderDebug(SpriteBatch spriteBatch)
-    {
-        spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
-
-        _shared.RenderString(spriteBatch, 1000, 0, "FPS " + _frameCounter.AverageFramesPerSecond.ToString("F0"));
-
-        _shared.RenderString(spriteBatch, 1000, 40, "SEED " + _shared.GameState.AsteroidWorld.Seed);
-
-        spriteBatch.End();
     }
 }

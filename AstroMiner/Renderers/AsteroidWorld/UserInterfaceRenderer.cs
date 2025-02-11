@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace AstroMiner.Renderers.AsteroidWorld;
 
 public class UserInterfaceRenderer(
-    RendererShared shared)
+    RendererShared shared, FrameCounter frameCounter)
 {
     private readonly Color _gridColor = new(70, 125, 149);
 
@@ -35,6 +35,18 @@ public class UserInterfaceRenderer(
         if (shared.GameState.Ecs.ActiveControllableEntityIsDead ||
             shared.GameState.Ecs.ActiveControllableEntityIsOffAsteroid)
             RenderNewGameScreen(spriteBatch, shared.GameState.Ecs.ActiveControllableEntityIsDead);
+
+
+        RenderDebug(spriteBatch);
+    }
+
+    private void RenderDebug(SpriteBatch spriteBatch)
+    {
+
+        shared.RenderString(spriteBatch, 1000, 0, "FPS " + frameCounter.AverageFramesPerSecond.ToString("F0"));
+
+        shared.RenderString(spriteBatch, 1000, 40, "SEED " + shared.GameState.AsteroidWorld.Seed);
+
     }
 
     private void RenderInventory(SpriteBatch spriteBatch, int xOffset, int yoffset)
