@@ -66,6 +66,7 @@
 ## Quality
 
 - Better handling of in/out of miner + positioning
+- Better handling of world checks - very scattered atm
 - Player placement when exiting
 - Test on Xbox?
     - Is state serializable for things like saving?

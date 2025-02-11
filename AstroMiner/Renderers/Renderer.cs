@@ -112,7 +112,7 @@ public class Renderer
         ActiveWorldRenderer.RenderWorld(spriteBatch);
 
         // Render ECS entities
-        foreach (var entityId in _gameState.Ecs.GetAllEntityIds())
+        foreach (var entityId in _gameState.Ecs.EntityIdsInActiveWorldSortedByDistance)
         {
             // Render miner
             if (_gameState.Ecs.HasComponent<MinerTag>(entityId))
@@ -143,7 +143,7 @@ public class Renderer
         ActiveWorldRenderer.RenderWorldOverlay(spriteBatch);
 
 
-        foreach (var directionalLightSourceComponent in _gameState.Ecs.GetAllComponents<DirectionalLightSourceComponent>())
+        foreach (var directionalLightSourceComponent in _gameState.Ecs.GetAllComponentsInActiveWorld<DirectionalLightSourceComponent>())
         {
             var positionComponent = _gameState.Ecs.GetComponent<PositionComponent>(directionalLightSourceComponent.EntityId);
             var movementComponent = _gameState.Ecs.GetComponent<MovementComponent>(directionalLightSourceComponent.EntityId);
@@ -167,7 +167,7 @@ public class Renderer
         ActiveWorldRenderer.RenderWorldLighting(spriteBatch);
 
         // Render ECS entity lighting
-        foreach (var entityId in _gameState.Ecs.GetAllEntityIds())
+        foreach (var entityId in _gameState.Ecs.EntityIdsInActiveWorldSortedByDistance)
         {
             // Render dynamite lighting
             if (_gameState.Ecs.HasComponent<DynamiteTag>(entityId))
@@ -189,7 +189,7 @@ public class Renderer
     private void RenderAdditiveLighting(SpriteBatch spriteBatch)
     {
         // Render ECS entity lighting
-        foreach (var entityId in _gameState.Ecs.GetAllEntityIds())
+        foreach (var entityId in _gameState.Ecs.EntityIdsInActiveWorldSortedByDistance)
         {
             // Render explosion lighting
             if (_gameState.Ecs.HasComponent<ExplosionTag>(entityId))

@@ -13,9 +13,9 @@ public class HealthSystem : System
     {
     }
 
-    public void KillAllEntities()
+    public void KillAllEntitiesInWorld()
     {
-        foreach (var healthComponent in Ecs.GetAllComponents<HealthComponent>())
+        foreach (var healthComponent in Ecs.GetAllComponentsInActiveWorld<HealthComponent>())
         {
             if (!healthComponent.IsDead)
             {

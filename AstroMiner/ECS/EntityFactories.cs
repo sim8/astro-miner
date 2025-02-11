@@ -7,10 +7,12 @@ namespace AstroMiner.ECS;
 
 public class EntityFactories
 {
+    private readonly GameState _gameState;
     private readonly Ecs _ecs;
 
-    public EntityFactories(Ecs ecs)
+    public EntityFactories(Ecs ecs, GameState gameState)
     {
+        _gameState = gameState;
         _ecs = ecs;
     }
 
@@ -21,6 +23,7 @@ public class EntityFactories
         // Add position component
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
         positionComponent.Position = position;
+        positionComponent.World = _gameState.ActiveWorld;
         positionComponent.BoxSizePx = GameConfig.PlayerBoxSizePx;
         positionComponent.IsCollideable = true;
 
@@ -60,6 +63,7 @@ public class EntityFactories
 
         // Add position component
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
+        positionComponent.World = _gameState.ActiveWorld;
         positionComponent.Position = position;
         positionComponent.BoxSizePx = GameConfig.MinerBoxSizePx;
         positionComponent.IsCollideable = true;
@@ -103,6 +107,7 @@ public class EntityFactories
         var entityId = _ecs.CreateEntity();
 
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
+        positionComponent.World = _gameState.ActiveWorld;
         positionComponent.Position = position;
         positionComponent.BoxSizePx = 4; // From DynamiteSystem
         positionComponent.IsCollideable = false;
@@ -122,6 +127,7 @@ public class EntityFactories
         var entityId = _ecs.CreateEntity();
 
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
+        positionComponent.World = _gameState.ActiveWorld;
         positionComponent.Position = position;
         positionComponent.BoxSizePx = 1; // From ExplosionSystem
         positionComponent.IsCollideable = false;

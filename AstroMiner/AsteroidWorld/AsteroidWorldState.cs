@@ -62,7 +62,7 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
 
         if (MsSinceStart > GameConfig.AsteroidExplodeTimeMs)
         {
-            gameState.Ecs.HealthSystem.KillAllEntities();
+            gameState.Ecs.HealthSystem.KillAllEntitiesInWorld();
             return;
         }
 

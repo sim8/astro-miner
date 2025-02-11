@@ -8,6 +8,7 @@ namespace AstroMiner.ECS.Components;
 
 public class PositionComponent : Component
 {
+    public World World { get; set; }
     public int BoxSizePx;
     public bool IsCollideable;
     public Vector2 Position;

@@ -5,6 +5,7 @@ using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using AstroMiner.ECS.Systems;
 using Microsoft.Xna.Framework;
+using System.Linq;
 
 namespace AstroMiner.ECS;
 
@@ -18,6 +19,7 @@ public class Ecs
     private int _nextEntityId = 1;
     private readonly Dictionary<int, HashSet<Component>> _entityComponents = new();
     private readonly Dictionary<Type, HashSet<Component>> _componentsByType = new();
+    private IEnumerable<int> _entityIdsInActiveWorldSortedByDistance;
 
     // Track special entities
     private int? _playerEntityId;
@@ -30,6 +32,7 @@ public class Ecs
     public int? ActiveControllableEntityId => _activeControllableEntityId;
 
     public EntityFactories Factories { get; }
+    public IEnumerable<int> EntityIdsInActiveWorldSortedByDistance => _entityIdsInActiveWorldSortedByDistance;
 
     // Systems
     public DynamiteSystem DynamiteSystem { get; }
@@ -43,7 +46,7 @@ public class Ecs
     public Ecs(GameState gameState)
     {
         _gameState = gameState;
-        Factories = new EntityFactories(this);
+        Factories = new EntityFactories(this, gameState);
 
         // Initialize systems
         DynamiteSystem = new DynamiteSystem(this, gameState);
@@ -66,6 +69,8 @@ public class Ecs
         FallOrLavaDamageSystem.Update(gameTime, activeMiningControls);
         MiningSystem.Update(gameTime, activeMiningControls);
         GrappleSystem.Update(gameTime, activeMiningControls);
+
+        CalculateEntityIdsInActiveWorldSortedByDistance();
     }
 
     public void SetActiveControllableEntity(int entityId)
@@ -212,5 +217,27 @@ public class Ecs
         {
             yield return (T)component;
         }
+    }
+
+    public IEnumerable<T> GetAllComponentsInActiveWorld<T>() where T : Component
+    {
+        return GetAllComponents<T>()
+            .Where(component =>
+            {
+                var positionComponent = GetComponent<PositionComponent>(component.EntityId);
+                return positionComponent != null && positionComponent.World == _gameState.ActiveWorld;
+            });
+    }
+
+    private void CalculateEntityIdsInActiveWorldSortedByDistance()
+    {
+        _entityIdsInActiveWorldSortedByDistance = _entityComponents.Keys
+            .Where(entityId =>
+            {
+                var positionComponent = GetComponent<PositionComponent>(entityId);
+                return positionComponent != null && positionComponent.World == _gameState.ActiveWorld;
+            })
+            .OrderBy(entityId => GetComponent<PositionComponent>(entityId).FrontY)
+            .ToList(); // Cache the results since they'll be used multiple times per frame
     }
 }
