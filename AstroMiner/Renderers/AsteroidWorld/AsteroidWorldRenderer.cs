@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace AstroMiner.Renderers.AsteroidWorld;
 
-public class AsteroidRenderer : BaseWorldRenderer
+public class AsteroidWorldRenderer : BaseWorldRenderer
 {
     private readonly Corner[] _cornersInRenderOrder =
         [Corner.TopLeft, Corner.TopRight, Corner.BottomLeft, Corner.BottomRight];
@@ -18,7 +18,7 @@ public class AsteroidRenderer : BaseWorldRenderer
     private readonly GameState _gameState;
     private readonly Color _lavaLightColor = new(255, 231, 171);
 
-    public AsteroidRenderer(RendererShared shared) : base(shared)
+    public AsteroidWorldRenderer(RendererShared shared) : base(shared)
     {
         _gameState = shared.GameState;
         _fogOfWarRenderer = new FogOfWarRenderer(shared);

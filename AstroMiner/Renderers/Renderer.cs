@@ -14,7 +14,7 @@ public class Renderer
 {
     private readonly GameState _gameState;
     private readonly RendererShared _shared;
-    private readonly BaseWorldRenderer _asteroidRenderer;
+    private readonly BaseWorldRenderer _asteroidWorldRenderer;
     private readonly BaseWorldRenderer _homeWorldRenderer;
     private readonly DynamiteRenderer _dynamiteRenderer;
     private readonly ExplosionRenderer _explosionRenderer;
@@ -39,7 +39,7 @@ public class Renderer
         _explosionRenderer = new ExplosionRenderer(_shared);
         _scrollingBackgroundRenderer = new ScrollingBackgroundRenderer(_shared);
         _userInterfaceRenderer = new UserInterfaceRenderer(_shared, frameCounter);
-        _asteroidRenderer = new AsteroidRenderer(_shared);
+        _asteroidWorldRenderer = new AsteroidWorldRenderer(_shared);
         _homeWorldRenderer = new HomeWorldRenderer(_shared);
         _multiplyBlendState = new BlendState();
         _multiplyBlendState.ColorBlendFunction = BlendFunction.Add;
@@ -52,7 +52,7 @@ public class Renderer
     private BaseWorldRenderer ActiveWorldRenderer =>
         _gameState.ActiveWorld switch
         {
-            World.Asteroid => _asteroidRenderer,
+            World.Asteroid => _asteroidWorldRenderer,
             World.Home => _homeWorldRenderer,
             _ => throw new Exception("Invalid world")
         };
