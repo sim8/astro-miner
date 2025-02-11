@@ -35,7 +35,7 @@ public class AstroMinerGame : Game
     {
         _gameState = new GameState(_graphics);
         _renderer = new Renderer(_graphics, _textures, _gameState, _frameCounter);
-        Window.ClientSizeChanged += _renderer.AsteroidRenderer.HandleWindowResize;
+        Window.ClientSizeChanged += _renderer.HandleWindowResize;
         InitializeMiningControls();
         base.Initialize();
     }
