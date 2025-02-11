@@ -89,7 +89,7 @@ public class MovementSystem : System
 
         for (var x = topLeftCell.x; x <= bottomRightCell.x; x++)
             for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
-                if (GameState.ActiveWorld.CellIsCollideable(x, y))
+                if (GameState.ActiveWorldState.CellIsCollideable(x, y))
                     return true;
         return false;
     }

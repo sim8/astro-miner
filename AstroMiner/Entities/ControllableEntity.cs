@@ -106,9 +106,9 @@ public class ControllableEntity : Entity
         var bottomRightCell = ViewHelpers.ToGridPosition(position + new Vector2(GridBoxSize, GridBoxSize));
 
         for (var x = topLeftCell.x; x <= bottomRightCell.x; x++)
-        for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
-            if (GameState.ActiveWorld.CellIsCollideable(x, y))
-                return true;
+            for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
+                if (GameState.ActiveWorldState.CellIsCollideable(x, y))
+                    return true;
         return false;
     }
 
@@ -121,7 +121,7 @@ public class ControllableEntity : Entity
 
         var newRectangle = new RectangleF(newVector.X, newVector.Y, GridBoxSize, GridBoxSize);
 
-        foreach (var entity in GameState.ActiveWorld.ActiveEntitiesSortedByDistance)
+        foreach (var entity in GameState.ActiveWorldState.ActiveEntitiesSortedByDistance)
             if (entity != this && entity.CanCollide && newRectangle.IntersectsWith(entity.Rectangle) &&
                 !Rectangle.IntersectsWith(entity.Rectangle)) // Allow movement if currently clipping
                 return false;
@@ -160,7 +160,7 @@ public class ControllableEntity : Entity
     private void CheckIfShouldFallOrTakeDamage(GameTime gameTime)
     {
         // TODO remove
-        if (!GameState.IsOnAsteroid) return;
+        if (GameState.ActiveWorld != World.Asteroid) return;
 
         var (topLeftX, topLeftY) = ViewHelpers.ToGridPosition(Position);
         var (bottomRightX, bottomRightY) = ViewHelpers.ToGridPosition(Position + new Vector2(GridBoxSize, GridBoxSize));
@@ -169,12 +169,12 @@ public class ControllableEntity : Entity
         var someCellsAreLava = false;
 
         for (var x = topLeftX; x <= bottomRightX; x++)
-        for (var y = topLeftY; y <= bottomRightY; y++)
-        {
-            var floorType = GameState.AsteroidWorld.Grid.GetFloorType(x, y);
-            if (floorType != FloorType.Empty) allCellsAreEmpty = false;
-            if (floorType == FloorType.Lava) someCellsAreLava = true;
-        }
+            for (var y = topLeftY; y <= bottomRightY; y++)
+            {
+                var floorType = GameState.AsteroidWorld.Grid.GetFloorType(x, y);
+                if (floorType != FloorType.Empty) allCellsAreEmpty = false;
+                if (floorType == FloorType.Lava) someCellsAreLava = true;
+            }
 
         if (someCellsAreLava)
         {

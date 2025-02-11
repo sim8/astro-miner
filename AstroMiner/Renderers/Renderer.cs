@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using AstroMiner.Definitions;
 using AstroMiner.Renderers.AsteroidWorld;
 using AstroMiner.Renderers.HomeWorld;
 using AstroMiner.Utilities;
@@ -31,7 +32,7 @@ public class Renderer
 
     public void Render(SpriteBatch spriteBatch)
     {
-        if (_gameState.IsOnAsteroid) AsteroidRenderer.Render(spriteBatch);
+        if (_gameState.ActiveWorld == World.Asteroid) AsteroidRenderer.Render(spriteBatch);
         else
             HomeWorldRenderer.Render(spriteBatch);
 
