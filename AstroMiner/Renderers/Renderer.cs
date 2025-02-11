@@ -108,7 +108,7 @@ public class Renderer
                 AsteroidRenderer.RenderWorld(spriteBatch);
                 break;
             case World.Home:
-                HomeWorldRenderer.Render(spriteBatch);
+                HomeWorldRenderer.RenderWorld(spriteBatch);
                 break;
             default:
                 throw new Exception("Invalid world");
