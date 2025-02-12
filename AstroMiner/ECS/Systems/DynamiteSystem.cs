@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using AstroMiner.ECS.Components;
-using AstroMiner.Entities;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner.ECS.Systems;

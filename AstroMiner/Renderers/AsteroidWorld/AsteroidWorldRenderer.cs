@@ -1,8 +1,6 @@
 using System;
 using AstroMiner.AsteroidWorld;
 using AstroMiner.Definitions;
-using AstroMiner.Entities;
-using AstroMiner.ECS.Components;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using AstroMiner.AsteroidWorld;
 using AstroMiner.Definitions;
-using AstroMiner.Entities;
 using AstroMiner.HomeWorld;
 using AstroMiner.ECS;
 using Microsoft.Xna.Framework;

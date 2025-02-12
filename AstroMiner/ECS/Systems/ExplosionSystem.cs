@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
-using AstroMiner.Entities;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 

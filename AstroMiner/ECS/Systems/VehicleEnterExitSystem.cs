@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
-using AstroMiner.Entities;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 
