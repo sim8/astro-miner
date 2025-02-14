@@ -1,6 +1,7 @@
 using System;
 using AstroMiner.Definitions;
-using AstroMiner.Entities;
+using AstroMiner.ECS;
+using AstroMiner.ECS.Components;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner.Utilities;
@@ -16,7 +17,7 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
 
     private Rectangle AdjustRectForCamera(float x, float y, float width, float height)
     {
-        var (xPx, yPx) = GridPosToDisplayedPx(gameState.ActiveControllableEntity.CenterPosition);
+        var (xPx, yPx) = GridPosToDisplayedPx(gameState.Ecs.ActiveControllableEntityCenterPosition);
         var adjustedX = x - xPx + graphics.GraphicsDevice.Viewport.Width / 2f;
         var adjustedY = y - yPx + graphics.GraphicsDevice.Viewport.Height / 2f;
         return new Rectangle(
@@ -117,13 +118,15 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
     }
 
     // Tint red if taking damage
-    public static Color GetEntityTintColor(MiningControllableEntity entity)
+    public static Color GetEntityTintColor(Ecs ecs, int entityId)
     {
-        if (!entity.IsAnimatingDamage)
+        var healthComponent = ecs.GetComponent<HealthComponent>(entityId);
+
+        if (!healthComponent.IsAnimatingDamage)
         {
-            if (entity.LavaTimePercentToTakingDamage > 0f)
+            if (healthComponent.TimeOnLavaMs > 0)
             {
-                var gb = (int)(255 * (1f - entity.LavaTimePercentToTakingDamage));
+                var gb = (int)(255 * (1f - healthComponent.LavaTimePercentToTakingDamage));
                 return new Color(255, gb, gb, 255);
             }
 
@@ -131,13 +134,13 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         }
 
         var flashFrame =
-            (int)(entity.TotalDamageAnimationTimeMs / (GameConfig.DamageAnimationTimeMs / 8.0f));
+            (int)(healthComponent.TotalDamageAnimationTimeMs / (GameConfig.DamageAnimationTimeMs / 8.0f));
         return flashFrame % 2 == 0 ? Color.Red : Color.White;
     }
 
     public (int startCol, int startRow, int endCol, int endRow) GetVisibleGrid(int padding = 0)
     {
-        var cameraPos = gameState.ActiveControllableEntity.CenterPosition;
+        var cameraPos = gameState.Ecs.ActiveControllableEntityCenterPosition;
         var (viewportWidthPx, viewportHeightPx) = GetViewportSize();
 
         var viewportGridWidth = ConvertVisiblePxToGridUnits(viewportWidthPx);

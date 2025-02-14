@@ -1,40 +1,25 @@
 using AstroMiner.Definitions;
-using AstroMiner.Entities;
-using AstroMiner.Renderers.AsteroidWorld;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace AstroMiner.Renderers.HomeWorld;
 
-public class HomeWorldRenderer
+public class HomeWorldRenderer : BaseWorldRenderer
 {
-    private readonly PlayerRenderer _playerRenderer;
-    private readonly RendererShared _shared;
+    private readonly GameState _gameState;
 
-    public HomeWorldRenderer(RendererShared shared)
+    public HomeWorldRenderer(RendererShared shared) : base(shared)
     {
-        _shared = shared;
-        _playerRenderer = new PlayerRenderer(_shared);
+        _gameState = shared.GameState;
     }
 
-    public void Render(SpriteBatch spriteBatch)
+    public override void RenderWorld(SpriteBatch spriteBatch)
     {
-        spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
-        RenderScene(spriteBatch);
-        spriteBatch.End();
-    }
-
-    public void RenderScene(SpriteBatch spriteBatch)
-    {
-        for (var row = 0; row < _shared.GameState.HomeWorld.Grid.GetLength(0); row++)
-        for (var col = 0; col < _shared.GameState.HomeWorld.Grid.GetLength(1); col++)
-            if (_shared.GameState.HomeWorld.Grid[row, col] == WorldCellType.Filled)
-                spriteBatch.Draw(_shared.Textures["white"],
-                    _shared.ViewHelpers.GetVisibleRectForGridCell(col, row),
-                    Color.White);
-
-        foreach (var entity in _shared.GameState.HomeWorld.ActiveEntitiesSortedByDistance)
-            if (entity is PlayerEntity)
-                _playerRenderer.RenderPlayer(spriteBatch);
+        for (var row = 0; row < _gameState.HomeWorld.Grid.GetLength(0); row++)
+            for (var col = 0; col < _gameState.HomeWorld.Grid.GetLength(1); col++)
+                if (_gameState.HomeWorld.Grid[row, col] == WorldCellType.Filled)
+                    spriteBatch.Draw(Shared.Textures["white"],
+                        Shared.ViewHelpers.GetVisibleRectForGridCell(col, row),
+                        Color.White);
     }
 }
