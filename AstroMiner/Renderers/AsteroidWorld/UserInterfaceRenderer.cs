@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using AstroMiner.Definitions;
-using AstroMiner.Entities;
+using AstroMiner.ECS.Components;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,11 +9,22 @@ using Microsoft.Xna.Framework.Graphics;
 namespace AstroMiner.Renderers.AsteroidWorld;
 
 public class UserInterfaceRenderer(
-    RendererShared shared)
+    RendererShared shared, FrameCounter frameCounter)
 {
     private readonly Color _gridColor = new(70, 125, 149);
 
     public void RenderUserInterface(SpriteBatch spriteBatch)
+    {
+
+        RenderDebug(spriteBatch);
+
+        if (shared.GameState.ActiveWorld == World.Asteroid)
+        {
+            RenderAsteroidUserInterface(spriteBatch);
+        }
+    }
+
+    private void RenderAsteroidUserInterface(SpriteBatch spriteBatch)
     {
         var timeLeft = Math.Max(GameConfig.AsteroidExplodeTimeMs - shared.GameState.MsSinceStart, 0);
         var minutes = timeLeft / 60000;
@@ -27,12 +38,27 @@ public class UserInterfaceRenderer(
 
         RenderGrappleIcon(spriteBatch);
 
-        RenderHealthBar(spriteBatch, shared.GameState.AsteroidWorld.Miner, 50, 192);
-        RenderHealthBar(spriteBatch, shared.GameState.AsteroidWorld.Player, 50, 207);
+        if (shared.GameState.Ecs.MinerEntityId.HasValue)
+            RenderHealthBar(spriteBatch, shared.GameState.Ecs.MinerEntityId.Value, 50, 192);
+        if (shared.GameState.Ecs.PlayerEntityId.HasValue)
+            RenderHealthBar(spriteBatch, shared.GameState.Ecs.PlayerEntityId.Value, 50, 207);
 
-        if (shared.GameState.ActiveControllableEntity.IsDead ||
-            shared.GameState.ActiveControllableEntity.IsOffAsteroid)
-            RenderNewGameScreen(spriteBatch, shared.GameState.ActiveControllableEntity.IsDead);
+        if (shared.GameState.Ecs.ActiveControllableEntityIsDead ||
+            shared.GameState.Ecs.ActiveControllableEntityIsOffAsteroid)
+            RenderNewGameScreen(spriteBatch, shared.GameState.Ecs.ActiveControllableEntityIsDead);
+
+    }
+
+    private void RenderDebug(SpriteBatch spriteBatch)
+    {
+
+        shared.RenderString(spriteBatch, 1000, 0, "FPS " + frameCounter.AverageFramesPerSecond.ToString("F0"));
+
+        if (shared.GameState.IsOnAsteroid)
+        {
+            shared.RenderString(spriteBatch, 1000, 40, "SEED " + shared.GameState.AsteroidWorld.Seed);
+        }
+
     }
 
     private void RenderInventory(SpriteBatch spriteBatch, int xOffset, int yoffset)
@@ -51,16 +77,25 @@ public class UserInterfaceRenderer(
         }
     }
 
-    private void RenderHealthBar(SpriteBatch spriteBatch, MiningControllableEntity entity, int xOffset, int yOffset)
+    private void RenderHealthBar(SpriteBatch spriteBatch, int entityId, int xOffset, int yOffset)
     {
+        var healthComponent = shared.GameState.Ecs.GetComponent<HealthComponent>(entityId);
+        if (healthComponent == null)
+            return;
+
+        var healthBarWidth = (int)(200 * healthComponent.HealthPercentage);
         spriteBatch.Draw(shared.Textures["white"],
-            new Rectangle(xOffset, yOffset, (int)entity.Health, 3),
+            new Rectangle(xOffset, yOffset, healthBarWidth, 3),
             Color.LimeGreen);
     }
 
     private void RenderGrappleIcon(SpriteBatch spriteBatch)
     {
-        var color = shared.GameState.AsteroidWorld.Miner.GrappleAvailable
+        if (!shared.GameState.Ecs.MinerEntityId.HasValue) return;
+        var grappleComponent =
+            shared.GameState.Ecs.GetComponent<GrappleComponent>(shared.GameState.Ecs.MinerEntityId.Value);
+
+        var color = grappleComponent.GrappleAvailable
             ? Color.LimeGreen
             : _gridColor;
         spriteBatch.Draw(shared.Textures["grapple-icon"],
@@ -133,7 +168,7 @@ public class UserInterfaceRenderer(
         }
 
         var playerGridPos =
-            ViewHelpers.ToGridPosition(shared.GameState.ActiveControllableEntity.CenterPosition);
+            ViewHelpers.ToGridPosition(shared.GameState.Ecs.ActiveControllableEntityCenterPosition);
         var playerX = xOffset + playerGridPos.x * scale - playerSize / 2;
         var playerY = yOffset + playerGridPos.y * scale - playerSize / 2;
         var playerDestRect = new Rectangle((int)playerX, (int)playerY, playerSize, playerSize);

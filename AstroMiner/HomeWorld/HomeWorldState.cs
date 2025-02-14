@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using AstroMiner.Definitions;
-using AstroMiner.Entities;
+using AstroMiner.ECS.Components;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner.HomeWorld;
@@ -13,9 +13,33 @@ public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
     {
         base.Initialize();
         Grid = WorldGrid.GetOizusGrid();
-        Player = new PlayerEntity(gameState);
-        Player.Initialize(new Vector2(1.5f, 1.5f));
-        ActiveEntitiesSortedByDistance = [Player];
+
+        // Create or update ECS entities
+        if (gameState.Ecs.MinerEntityId == null)
+        {
+            gameState.Ecs.Factories.CreateMinerEntity(new Vector2(0.2f, 0.2f));
+        }
+        else
+        {
+            var minerPosition = gameState.Ecs.GetComponent<PositionComponent>(gameState.Ecs.MinerEntityId.Value);
+            minerPosition.Position = new Vector2(0.2f, 0.2f);
+            minerPosition.IsOffAsteroid = false;
+            minerPosition.World = World.Home;
+        }
+
+        if (gameState.Ecs.PlayerEntityId == null)
+        {
+            var playerEntityId = gameState.Ecs.Factories.CreatePlayerEntity(new Vector2(1.5f, 1.5f));
+            gameState.Ecs.SetActiveControllableEntity(playerEntityId);
+        }
+        else
+        {
+            var playerPosition = gameState.Ecs.GetComponent<PositionComponent>(gameState.Ecs.PlayerEntityId.Value);
+            playerPosition.Position = new Vector2(1.5f, 1.5f);
+            playerPosition.IsOffAsteroid = false;
+            playerPosition.World = World.Home;
+            gameState.Ecs.SetActiveControllableEntity(gameState.Ecs.PlayerEntityId.Value);
+        }
     }
 
     public override void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
