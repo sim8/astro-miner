@@ -15,6 +15,17 @@ public class UserInterfaceRenderer(
 
     public void RenderUserInterface(SpriteBatch spriteBatch)
     {
+
+        RenderDebug(spriteBatch);
+
+        if (shared.GameState.ActiveWorld == World.Asteroid)
+        {
+            RenderAsteroidUserInterface(spriteBatch);
+        }
+    }
+
+    private void RenderAsteroidUserInterface(SpriteBatch spriteBatch)
+    {
         var timeLeft = Math.Max(GameConfig.AsteroidExplodeTimeMs - shared.GameState.MsSinceStart, 0);
         var minutes = timeLeft / 60000;
         var seconds = timeLeft % 60000 / 1000;
@@ -36,8 +47,6 @@ public class UserInterfaceRenderer(
             shared.GameState.Ecs.ActiveControllableEntityIsOffAsteroid)
             RenderNewGameScreen(spriteBatch, shared.GameState.Ecs.ActiveControllableEntityIsDead);
 
-
-        RenderDebug(spriteBatch);
     }
 
     private void RenderDebug(SpriteBatch spriteBatch)
@@ -45,7 +54,10 @@ public class UserInterfaceRenderer(
 
         shared.RenderString(spriteBatch, 1000, 0, "FPS " + frameCounter.AverageFramesPerSecond.ToString("F0"));
 
-        shared.RenderString(spriteBatch, 1000, 40, "SEED " + shared.GameState.AsteroidWorld.Seed);
+        if (shared.GameState.IsOnAsteroid)
+        {
+            shared.RenderString(spriteBatch, 1000, 40, "SEED " + shared.GameState.AsteroidWorld.Seed);
+        }
 
     }
 

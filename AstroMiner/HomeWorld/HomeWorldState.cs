@@ -12,6 +12,11 @@ public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
     {
         base.Initialize();
         Grid = WorldGrid.GetOizusGrid();
+
+        // Create ECS entities
+        gameState.Ecs.Factories.CreateMinerEntity(new Vector2(0.2f, 0.2f));
+        var playerEntityId = gameState.Ecs.Factories.CreatePlayerEntity(new Vector2(1.5f, 1.5f));
+        gameState.Ecs.SetActiveControllableEntity(playerEntityId);
     }
 
     public override void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)

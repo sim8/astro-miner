@@ -53,8 +53,6 @@ public class GameState
     {
         Graphics = graphics;
         Initialize();
-        InitializeAsteroid();
-        // HomeWorld.Initialize();
     }
 
     public long MsSinceStart { get; private set; }
@@ -79,6 +77,7 @@ public class GameState
     public void InitializeHome()
     {
         ActiveWorld = World.Home;
+        HomeWorld.Initialize();
     }
 
     public void Initialize()
@@ -90,6 +89,8 @@ public class GameState
         HomeWorld = new HomeWorldState(this);
         CloudManager = new CloudManager(this);
         Ecs = new Ecs(this);
+
+        InitializeHome();
     }
 
     public void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
