@@ -1,17 +1,17 @@
-using Microsoft.Xna.Framework;
-using AstroMiner.Definitions;
-using System.Drawing;
-using AstroMiner.Utilities;
 using System.Collections.Generic;
+using System.Drawing;
+using AstroMiner.Definitions;
+using AstroMiner.Utilities;
+using Microsoft.Xna.Framework;
 
 namespace AstroMiner.ECS.Components;
 
 public class PositionComponent : Component
 {
-    public World World { get; set; }
     public int BoxSizePx;
     public bool IsCollideable;
     public Vector2 Position;
+    public World World { get; set; }
     public bool IsOffAsteroid { get; set; }
 
     public float GridBoxSize => (float)BoxSizePx / GameConfig.CellTextureSizePx;
@@ -44,7 +44,6 @@ public class MovementComponent : Component
 
     // Derived properties
     public Vector2 DirectionalVector => DirectionHelpers.GetDirectionalVector(1f, Direction);
-    public Vector2 VelocityVector => DirectionalVector * CurrentSpeed;
 }
 
 public class HealthComponent : Component

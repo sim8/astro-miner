@@ -1,3 +1,8 @@
+# NEXT STEPS FOR HOME WORLD (temp)
+
+- Have actual in/out component. Do we need miner reference?
+- Verrrry basic launch animation
+
 # TODO
 
 ## HOME WORLD
