@@ -30,20 +30,22 @@ public class FuseComponent : Component
     public float FusePercentLeft => TimeToExplodeMs / (float)MaxFuseTimeMs;
 }
 
+public class DirectionComponent : Component
+{
+    public Direction Direction { get; set; } = Direction.Top;
+    public Vector2 DirectionalVector => DirectionHelpers.GetDirectionalVector(1f, Direction);
+}
+
 public class MovementComponent : Component
 {
     // Movement constants
     public const float ExcessSpeedLossPerSecond = 3f;
 
     // State
-    public Direction Direction { get; set; } = Direction.Top;
     public float CurrentSpeed { get; set; }
     public float MaxSpeed { get; set; }
     public int TimeToReachMaxSpeedMs { get; set; }
     public int TimeToStopMs { get; set; }
-
-    // Derived properties
-    public Vector2 DirectionalVector => DirectionHelpers.GetDirectionalVector(1f, Direction);
 }
 
 public class HealthComponent : Component

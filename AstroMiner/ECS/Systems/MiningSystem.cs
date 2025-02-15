@@ -57,8 +57,7 @@ public class MiningSystem : System
         var drillPos = GetDrillPosition();
         var gridPos = ViewHelpers.ToGridPosition(drillPos);
 
-
-        var movementComponent = Ecs.GetComponent<MovementComponent>(Ecs.ActiveControllableEntityId.Value);
+        var directionComponent = Ecs.GetComponent<DirectionComponent>(Ecs.ActiveControllableEntityId.Value);
 
         // If we're still drilling the same row/column as last time, just accumulate time.
         if (gridPos == miningComponent.DrillingPos)
@@ -74,7 +73,7 @@ public class MiningSystem : System
             miningComponent.DrillingCells.Clear();
             miningComponent.DrillingTotalTimeRequired = 0;
 
-            if (movementComponent.Direction is Direction.Top or Direction.Bottom)
+            if (directionComponent.Direction is Direction.Top or Direction.Bottom)
             {
                 var leftX = ViewHelpers.ToXorYCoordinate(drillPos.X - miningComponent.DrillingWidth / 2);
                 var rightX = ViewHelpers.ToXorYCoordinate(drillPos.X + miningComponent.DrillingWidth / 2);
@@ -105,9 +104,10 @@ public class MiningSystem : System
     private Vector2 GetDrillPosition()
     {
         var positionComponent = Ecs.GetComponent<PositionComponent>(Ecs.ActiveControllableEntityId.Value);
-        var movementComponent = Ecs.GetComponent<MovementComponent>(Ecs.ActiveControllableEntityId.Value);
+        var directionComponent = Ecs.GetComponent<DirectionComponent>(Ecs.ActiveControllableEntityId.Value);
+
         var drillDistanceFromCenter = positionComponent.GridBoxSize / 2 + DrillDistance;
-        return positionComponent.CenterPosition + DirectionHelpers.GetDirectionalVector(drillDistanceFromCenter, movementComponent.Direction);
+        return positionComponent.CenterPosition + DirectionHelpers.GetDirectionalVector(drillDistanceFromCenter, directionComponent.Direction);
     }
 
     private void ResetDrill(MiningComponent miningComponent)

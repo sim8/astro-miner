@@ -147,10 +147,11 @@ public class Renderer
         {
             var positionComponent = _gameState.Ecs.GetComponent<PositionComponent>(directionalLightSourceComponent.EntityId);
             var movementComponent = _gameState.Ecs.GetComponent<MovementComponent>(directionalLightSourceComponent.EntityId);
+            var directionComponent = _gameState.Ecs.GetComponent<DirectionComponent>(directionalLightSourceComponent.EntityId);
 
             if (positionComponent.EntityId == _gameState.Ecs.PlayerEntityId && _gameState.AsteroidWorld.IsInMiner) continue;
 
-            var lightSourcePos = movementComponent.Direction switch
+            var lightSourcePos = directionComponent.Direction switch
             {
                 Direction.Top => positionComponent.Position + directionalLightSourceComponent.TopOffset,
                 Direction.Right => positionComponent.Position + directionalLightSourceComponent.RightOffset,
@@ -159,7 +160,7 @@ public class Renderer
                 _ => positionComponent.Position
             };
 
-            _shared.RenderDirectionalLightSource(spriteBatch, lightSourcePos, movementComponent.Direction, directionalLightSourceComponent.SizePx);
+            _shared.RenderDirectionalLightSource(spriteBatch, lightSourcePos, directionComponent.Direction, directionalLightSourceComponent.SizePx);
         }
 
         // TODO radial light sources?

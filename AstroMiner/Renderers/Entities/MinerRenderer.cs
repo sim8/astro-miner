@@ -18,6 +18,7 @@ public class MinerRenderer(
     {
         var positionComponent = shared.GameState.Ecs.GetComponent<PositionComponent>(entityId);
         var movementComponent = shared.GameState.Ecs.GetComponent<MovementComponent>(entityId);
+        var directionComponent = shared.GameState.Ecs.GetComponent<DirectionComponent>(entityId);
 
         if (positionComponent == null || movementComponent == null)
             return;
@@ -25,10 +26,10 @@ public class MinerRenderer(
         RenderGrapple(spriteBatch, entityId);
 
         var sourceRectangle = new Rectangle(
-            movementComponent.Direction is Direction.Bottom or Direction.Left
+            directionComponent.Direction is Direction.Bottom or Direction.Left
                 ? 0
                 : MinerTextureSize,
-            movementComponent.Direction is Direction.Top or Direction.Left
+            directionComponent.Direction is Direction.Top or Direction.Left
                 ? 0
                 : MinerTextureSize,
             MinerTextureSize,
@@ -39,7 +40,7 @@ public class MinerRenderer(
 
         var tintColor = ViewHelpers.GetEntityTintColor(shared.GameState.Ecs, entityId);
 
-        spriteBatch.Draw(GetTracksTexture(positionComponent.Position, movementComponent.Direction),
+        spriteBatch.Draw(GetTracksTexture(positionComponent.Position, directionComponent.Direction),
             destinationRectangle, sourceRectangle, tintColor);
         spriteBatch.Draw(shared.Textures["miner-no-tracks"], destinationRectangle, sourceRectangle, tintColor);
     }
@@ -63,6 +64,7 @@ public class MinerRenderer(
         var grappleComponent = shared.GameState.Ecs.GetComponent<GrappleComponent>(entityId);
         var movementComponent = shared.GameState.Ecs.GetComponent<MovementComponent>(entityId);
         var positionComponent = shared.GameState.Ecs.GetComponent<PositionComponent>(entityId);
+        var directionComponent = shared.GameState.Ecs.GetComponent<DirectionComponent>(entityId);
 
         if (grappleComponent == null || movementComponent == null || positionComponent == null || !grappleComponent.GrappleTarget.HasValue)
             return;
@@ -72,7 +74,7 @@ public class MinerRenderer(
         var grappleVisibleGridWidth = 0.03f;
 
         // Calculate perpendicular offset for the two grapples
-        var perpendicularDir = movementComponent.Direction switch
+        var perpendicularDir = directionComponent.Direction switch
         {
             Direction.Top or Direction.Bottom => new Vector2(1, 0),
             Direction.Left or Direction.Right => new Vector2(0, 1),
@@ -82,7 +84,7 @@ public class MinerRenderer(
         var rightGrappleOffset = perpendicularDir * (GrappleComponent.GrapplesWidth / 2);
 
         // Render left grapple
-        var leftDestRect = movementComponent.Direction switch
+        var leftDestRect = directionComponent.Direction switch
         {
             Direction.Top => shared.ViewHelpers.GetVisibleRectForObject(
                 frontPosition + leftGrappleOffset +
@@ -107,7 +109,7 @@ public class MinerRenderer(
         spriteBatch.Draw(shared.Textures["white"], leftDestRect, Color.Black);
 
         // Render right grapple
-        var rightDestRect = movementComponent.Direction switch
+        var rightDestRect = directionComponent.Direction switch
         {
             Direction.Top => shared.ViewHelpers.GetVisibleRectForObject(
                 frontPosition + rightGrappleOffset +

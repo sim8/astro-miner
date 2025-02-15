@@ -16,11 +16,12 @@ public class PlayerRenderer(
     {
         var positionComponent = shared.GameState.Ecs.GetComponent<PositionComponent>(entityId);
         var movementComponent = shared.GameState.Ecs.GetComponent<MovementComponent>(entityId);
+        var directionComponent = shared.GameState.Ecs.GetComponent<DirectionComponent>(entityId);
 
         if (positionComponent == null || movementComponent == null)
             return;
 
-        var textureFrameOffsetX = movementComponent.Direction switch
+        var textureFrameOffsetX = directionComponent.Direction switch
         {
             Direction.Bottom => 0,
             Direction.Left => PlayerTextureSizePx * 1,

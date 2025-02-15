@@ -41,11 +41,11 @@ public class GrappleSystem : System
     private void SetGrappleTarget(GrappleComponent grappleComponent)
     {
         var minGrappleLength = 1;
-        var movementComponent = Ecs.GetComponent<MovementComponent>(Ecs.ActiveControllableEntityId.Value);
+        var directionComponent = Ecs.GetComponent<DirectionComponent>(Ecs.ActiveControllableEntityId.Value);
         var frontPosition = Ecs.MovementSystem.GetFrontPosition(grappleComponent.EntityId);
-        grappleComponent.GrappleDirection = movementComponent.Direction;
+        grappleComponent.GrappleDirection = directionComponent.Direction;
 
-        var distanceToEdgeOfCell = movementComponent.Direction switch
+        var distanceToEdgeOfCell = directionComponent.Direction switch
         {
             Direction.Top => frontPosition.Y - (int)frontPosition.Y,
             Direction.Right => (int)frontPosition.X + 1 - frontPosition.X,
@@ -55,7 +55,7 @@ public class GrappleSystem : System
         };
 
         // Calculate offset vectors for the two grapples
-        var perpendicularDir = movementComponent.Direction switch
+        var perpendicularDir = directionComponent.Direction switch
         {
             Direction.Top or Direction.Bottom => new Vector2(1, 0),
             Direction.Left or Direction.Right => new Vector2(0, 1),
@@ -72,9 +72,9 @@ public class GrappleSystem : System
             var distance = Math.Min(GameConfig.MaxGrappleLength, i + distanceToNearEdgeOfCell);
 
             var leftTargetToCheck = leftGrappleStart +
-                                    DirectionHelpers.GetDirectionalVector(distance, movementComponent.Direction);
+                                    DirectionHelpers.GetDirectionalVector(distance, directionComponent.Direction);
             var rightTargetToCheck = rightGrappleStart +
-                                     DirectionHelpers.GetDirectionalVector(distance, movementComponent.Direction);
+                                     DirectionHelpers.GetDirectionalVector(distance, directionComponent.Direction);
 
             var leftCellState = GameState.AsteroidWorld.Grid.GetCellState(leftTargetToCheck);
             var rightCellState = GameState.AsteroidWorld.Grid.GetCellState(rightTargetToCheck);
@@ -110,9 +110,9 @@ public class GrappleSystem : System
 
         if (!grappleComponent.GrappleTarget.HasValue) return;
 
-        var movementComponent = Ecs.GetComponent<MovementComponent>(Ecs.ActiveControllableEntityId.Value);
+        var directionComponent = Ecs.GetComponent<DirectionComponent>(Ecs.ActiveControllableEntityId.Value);
 
-        if (movementComponent.Direction != grappleComponent.GrappleDirection)
+        if (directionComponent.Direction != grappleComponent.GrappleDirection)
         {
             // Has diverged from straight line
             ResetGrapple(grappleComponent);

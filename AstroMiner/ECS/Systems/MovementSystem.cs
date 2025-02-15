@@ -66,11 +66,15 @@ public class MovementSystem : System
 
     private void HandleDirectionChange(MovementComponent movement, Direction? selectedDirection)
     {
+        var directionComponent = Ecs.GetComponent<DirectionComponent>(movement.EntityId);
+        if (directionComponent == null) return;
+
         // Zero speed if turn 180
-        if (selectedDirection.HasValue && selectedDirection.Value == DirectionHelpers.GetOppositeDirection(movement.Direction))
+        if (selectedDirection.HasValue && selectedDirection.Value == DirectionHelpers.GetOppositeDirection(directionComponent.Direction))
             movement.CurrentSpeed = 0f;
 
-        movement.Direction = selectedDirection ?? movement.Direction;
+        if (selectedDirection.HasValue)
+            directionComponent.Direction = selectedDirection.Value;
     }
 
     public static Direction GetRotatedDirection(Direction baseDirection, Direction rotation)
@@ -134,8 +138,9 @@ public class MovementSystem : System
             var entityId = movementComponent.EntityId;
             var activeDirection = entityId == GameState.Ecs.ActiveControllableEntityId ? pressedDirection : null;
             var positionComponent = Ecs.GetComponent<PositionComponent>(entityId);
+            var directionComponent = Ecs.GetComponent<DirectionComponent>(entityId);
 
-            if (positionComponent == null)
+            if (positionComponent == null || directionComponent == null)
                 continue;
 
             // Update direction and speed
@@ -146,7 +151,7 @@ public class MovementSystem : System
             if (movementComponent.CurrentSpeed > 0)
             {
                 var distance = movementComponent.CurrentSpeed * (gameTime.ElapsedGameTime.Milliseconds / 1000f);
-                var movement = DirectionHelpers.GetDirectionalVector(distance, movementComponent.Direction);
+                var movement = DirectionHelpers.GetDirectionalVector(distance, directionComponent.Direction);
 
                 var hasCollisions = !ApplyVectorToPosIfNoCollisions(entityId, movement, positionComponent);
                 if (hasCollisions)
@@ -156,18 +161,16 @@ public class MovementSystem : System
     }
 
     public void SetPositionRelativeToDirectionalEntity(PositionComponent positionComponent, int directionalEntityId, Direction rotation,
-    bool insideEdge = false)
+        bool insideEdge = false)
     {
-
         var directionalEntityMovementComponent = Ecs.GetComponent<MovementComponent>(directionalEntityId);
         var directionalEntityPositionComponent = Ecs.GetComponent<PositionComponent>(directionalEntityId);
-        if (directionalEntityMovementComponent == null || directionalEntityPositionComponent == null) return;
-
-
+        var directionalEntityDirectionComponent = Ecs.GetComponent<DirectionComponent>(directionalEntityId);
+        if (directionalEntityMovementComponent == null || directionalEntityPositionComponent == null || directionalEntityDirectionComponent == null) return;
 
         var centerToCenterDistance =
             directionalEntityPositionComponent.GridBoxSize / 2 + (insideEdge ? -(positionComponent.GridBoxSize / 2) : positionComponent.GridBoxSize / 2);
-        var actualDirection = GetRotatedDirection(directionalEntityMovementComponent.Direction, rotation);
+        var actualDirection = GetRotatedDirection(directionalEntityDirectionComponent.Direction, rotation);
         var newCenterPos = actualDirection switch
         {
             Direction.Top => directionalEntityPositionComponent.CenterPosition + new Vector2(0, -centerToCenterDistance),
@@ -183,7 +186,7 @@ public class MovementSystem : System
     public Vector2 GetFrontPosition(int directionalEntityId)
     {
         var positionComponent = Ecs.GetComponent<PositionComponent>(directionalEntityId);
-        var movementComponent = Ecs.GetComponent<MovementComponent>(directionalEntityId);
-        return positionComponent.CenterPosition + DirectionHelpers.GetDirectionalVector(positionComponent.GridBoxSize / 2f, movementComponent.Direction);
+        var directionComponent = Ecs.GetComponent<DirectionComponent>(directionalEntityId);
+        return positionComponent.CenterPosition + DirectionHelpers.GetDirectionalVector(positionComponent.GridBoxSize / 2f, directionComponent.Direction);
     }
 }

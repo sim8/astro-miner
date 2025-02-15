@@ -27,6 +27,9 @@ public class EntityFactories
         positionComponent.BoxSizePx = GameConfig.PlayerBoxSizePx;
         positionComponent.IsCollideable = true;
 
+        // Add direction component
+        _ecs.AddComponent<DirectionComponent>(entityId);
+
         // Add movement component
         var movementComponent = _ecs.AddComponent<MovementComponent>(entityId);
         movementComponent.MaxSpeed = 4f;  // From PlayerEntity
@@ -67,6 +70,9 @@ public class EntityFactories
         positionComponent.Position = position;
         positionComponent.BoxSizePx = GameConfig.MinerBoxSizePx;
         positionComponent.IsCollideable = true;
+
+        // Add direction component
+        _ecs.AddComponent<DirectionComponent>(entityId);
 
         // Add movement component with miner-specific values
         var movementComponent = _ecs.AddComponent<MovementComponent>(entityId);
