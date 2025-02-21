@@ -193,9 +193,13 @@ public class Ecs
         return component;
     }
 
-    public void RemoveComponent<T>(int entityId, T component) where T : Component
+    public void RemoveComponent<T>(int entityId) where T : Component
     {
         if (!_entityComponents.TryGetValue(entityId, out var components))
+            return;
+
+        var component = GetComponent<T>(entityId);
+        if (component == null)
             return;
 
         components.Remove(component);

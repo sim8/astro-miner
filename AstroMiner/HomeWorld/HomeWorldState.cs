@@ -21,7 +21,6 @@ public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
 
     private void InitializeMiner()
     {
-
         var minerCellOffset = 1f - GameConfig.MinerSize / 2;
         var minerPos = new Vector2(1f + minerCellOffset, 3f + minerCellOffset);
 
@@ -33,14 +32,19 @@ public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
         minerPosition.World = World.Home;
         var minerDirection = gameState.Ecs.GetComponent<DirectionComponent>(minerEntityId);
         minerDirection.Direction = Direction.Top;
+
+        // Remove components that were added in AsteroidWorld
+        gameState.Ecs.RemoveComponent<MovementComponent>(minerEntityId);
+        gameState.Ecs.RemoveComponent<HealthComponent>(minerEntityId);
+        gameState.Ecs.RemoveComponent<MiningComponent>(minerEntityId);
+        gameState.Ecs.RemoveComponent<GrappleComponent>(minerEntityId);
+        gameState.Ecs.RemoveComponent<DirectionalLightSourceComponent>(minerEntityId);
     }
 
     private void InitializePlayer()
     {
         var playerCellOffset = GameConfig.PlayerSize / 2;
         var playerPos = new Vector2(4f + playerCellOffset, 7f + playerCellOffset);
-
-
 
         var playerEntityId = gameState.Ecs.PlayerEntityId ?? gameState.Ecs.Factories.CreatePlayerEntity(playerPos);
 
@@ -49,6 +53,11 @@ public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
         playerPosition.IsOffAsteroid = false;
         playerPosition.World = World.Home;
         gameState.Ecs.SetActiveControllableEntity(playerEntityId);
+
+        // Remove components that were added in AsteroidWorld
+        gameState.Ecs.RemoveComponent<HealthComponent>(playerEntityId);
+        gameState.Ecs.RemoveComponent<MiningComponent>(playerEntityId);
+        gameState.Ecs.RemoveComponent<DirectionalLightSourceComponent>(playerEntityId);
     }
 
     public override void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
