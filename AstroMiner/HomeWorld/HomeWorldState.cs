@@ -18,8 +18,6 @@ public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
         var minerCellOffset = 1f - GameConfig.MinerSize / 2;
         var playerCellOffset = GameConfig.PlayerSize / 2;
 
-        Console.WriteLine(playerCellOffset);
-
         var minerPos = new Vector2(1f + minerCellOffset, 3f + minerCellOffset);
         var playerPos = new Vector2(4f + playerCellOffset, 7f + playerCellOffset);
 
