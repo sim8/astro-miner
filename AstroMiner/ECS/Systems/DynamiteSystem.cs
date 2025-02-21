@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using Microsoft.Xna.Framework;
 
@@ -30,6 +31,8 @@ public class DynamiteSystem : System
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
 
     {
+        if (GameState.ActiveWorld != World.Asteroid) return;
+
         if (activeControls.Contains(MiningControls.PlaceDynamite) && !GameState.AsteroidWorld.IsInMiner)
         {
             PlaceDynamite();

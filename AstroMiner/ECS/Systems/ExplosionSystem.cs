@@ -91,6 +91,8 @@ public class ExplosionSystem : System
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
+        if (GameState.ActiveWorld != World.Asteroid) return;
+
         foreach (var explosionComponent in Ecs.GetAllComponents<ExplosionComponent>())
         {
             var entityId = explosionComponent.EntityId;

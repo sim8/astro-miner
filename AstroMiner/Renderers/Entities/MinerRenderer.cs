@@ -1,6 +1,5 @@
 using System;
 using AstroMiner.ECS.Components;
-using AstroMiner.ECS.Systems;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -17,10 +16,9 @@ public class MinerRenderer(
     public void RenderMiner(SpriteBatch spriteBatch, int entityId)
     {
         var positionComponent = shared.GameState.Ecs.GetComponent<PositionComponent>(entityId);
-        var movementComponent = shared.GameState.Ecs.GetComponent<MovementComponent>(entityId);
         var directionComponent = shared.GameState.Ecs.GetComponent<DirectionComponent>(entityId);
 
-        if (positionComponent == null || movementComponent == null)
+        if (positionComponent == null)
             return;
 
         RenderGrapple(spriteBatch, entityId);
@@ -66,11 +64,13 @@ public class MinerRenderer(
         var positionComponent = shared.GameState.Ecs.GetComponent<PositionComponent>(entityId);
         var directionComponent = shared.GameState.Ecs.GetComponent<DirectionComponent>(entityId);
 
-        if (grappleComponent == null || movementComponent == null || positionComponent == null || !grappleComponent.GrappleTarget.HasValue)
+        if (grappleComponent == null || movementComponent == null || positionComponent == null ||
+            !grappleComponent.GrappleTarget.HasValue)
             return;
 
         var frontPosition = shared.GameState.Ecs.MovementSystem.GetFrontPosition(entityId);
-        var grappleVisibleGridLength = shared.GameState.Ecs.GrappleSystem.GetDistanceToTarget(grappleComponent) * grappleComponent.GrapplePercentToTarget;
+        var grappleVisibleGridLength = shared.GameState.Ecs.GrappleSystem.GetDistanceToTarget(grappleComponent) *
+                                       grappleComponent.GrapplePercentToTarget;
         var grappleVisibleGridWidth = 0.03f;
 
         // Calculate perpendicular offset for the two grapples

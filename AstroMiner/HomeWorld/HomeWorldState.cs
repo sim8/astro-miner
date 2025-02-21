@@ -15,38 +15,40 @@ public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
         base.Initialize();
         Grid = WorldGrid.GetOizusGrid();
 
-        var minerCellOffset = 1f - GameConfig.MinerSize / 2;
-        var playerCellOffset = GameConfig.PlayerSize / 2;
+        InitializeMiner();
+        InitializePlayer();
+    }
 
+    private void InitializeMiner()
+    {
+
+        var minerCellOffset = 1f - GameConfig.MinerSize / 2;
         var minerPos = new Vector2(1f + minerCellOffset, 3f + minerCellOffset);
+
+        var minerEntityId = gameState.Ecs.MinerEntityId ?? gameState.Ecs.Factories.CreateMinerEntity(minerPos);
+
+        var minerPosition = gameState.Ecs.GetComponent<PositionComponent>(minerEntityId);
+        minerPosition.Position = minerPos;
+        minerPosition.IsOffAsteroid = false;
+        minerPosition.World = World.Home;
+        var minerDirection = gameState.Ecs.GetComponent<DirectionComponent>(minerEntityId);
+        minerDirection.Direction = Direction.Top;
+    }
+
+    private void InitializePlayer()
+    {
+        var playerCellOffset = GameConfig.PlayerSize / 2;
         var playerPos = new Vector2(4f + playerCellOffset, 7f + playerCellOffset);
 
-        // Create or update ECS entities
-        if (gameState.Ecs.MinerEntityId == null)
-        {
-            gameState.Ecs.Factories.CreateMinerEntity(minerPos);
-        }
-        else
-        {
-            var minerPosition = gameState.Ecs.GetComponent<PositionComponent>(gameState.Ecs.MinerEntityId.Value);
-            minerPosition.Position = minerPos;
-            minerPosition.IsOffAsteroid = false;
-            minerPosition.World = World.Home;
-        }
 
-        if (gameState.Ecs.PlayerEntityId == null)
-        {
-            var playerEntityId = gameState.Ecs.Factories.CreatePlayerEntity(playerPos);
-            gameState.Ecs.SetActiveControllableEntity(playerEntityId);
-        }
-        else
-        {
-            var playerPosition = gameState.Ecs.GetComponent<PositionComponent>(gameState.Ecs.PlayerEntityId.Value);
-            playerPosition.Position = playerPos;
-            playerPosition.IsOffAsteroid = false;
-            playerPosition.World = World.Home;
-            gameState.Ecs.SetActiveControllableEntity(gameState.Ecs.PlayerEntityId.Value);
-        }
+
+        var playerEntityId = gameState.Ecs.PlayerEntityId ?? gameState.Ecs.Factories.CreatePlayerEntity(playerPos);
+
+        var playerPosition = gameState.Ecs.GetComponent<PositionComponent>(playerEntityId);
+        playerPosition.Position = playerPos;
+        playerPosition.IsOffAsteroid = false;
+        playerPosition.World = World.Home;
+        gameState.Ecs.SetActiveControllableEntity(playerEntityId);
     }
 
     public override void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)

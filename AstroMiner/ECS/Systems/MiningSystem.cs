@@ -22,6 +22,12 @@ public class MiningSystem : System
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
     {
         var miningComponent = Ecs.GetComponent<MiningComponent>(Ecs.ActiveControllableEntityId.Value);
+
+        if (miningComponent == null)
+        {
+            return;
+        }
+
         if (activeMiningControls.Contains(MiningControls.Drill))
             UseDrill(gameTime, miningComponent);
         else

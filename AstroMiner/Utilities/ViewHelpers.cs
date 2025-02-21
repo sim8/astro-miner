@@ -122,6 +122,11 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
     {
         var healthComponent = ecs.GetComponent<HealthComponent>(entityId);
 
+        if (healthComponent == null)
+        {
+            return Color.White;
+        }
+
         if (!healthComponent.IsAnimatingDamage)
         {
             if (healthComponent.TimeOnLavaMs > 0)
