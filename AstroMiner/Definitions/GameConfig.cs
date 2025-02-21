@@ -40,6 +40,7 @@ public static class GameConfig
 
     // Derived consts
     public const float MinerSize = (float)MinerBoxSizePx / CellTextureSizePx;
+    public const float PlayerSize = (float)PlayerBoxSizePx / CellTextureSizePx;
 
     public static class AsteroidGen
     {
