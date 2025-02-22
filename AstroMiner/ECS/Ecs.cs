@@ -43,6 +43,7 @@ public class Ecs
     public FallOrLavaDamageSystem FallOrLavaDamageSystem { get; }
     public MiningSystem MiningSystem { get; }
     public GrappleSystem GrappleSystem { get; }
+    public LaunchSystem LaunchSystem { get; }
     public Ecs(GameState gameState)
     {
         _gameState = gameState;
@@ -57,6 +58,7 @@ public class Ecs
         FallOrLavaDamageSystem = new FallOrLavaDamageSystem(this, gameState);
         MiningSystem = new MiningSystem(this, gameState);
         GrappleSystem = new GrappleSystem(this, gameState);
+        LaunchSystem = new LaunchSystem(this, gameState);
     }
 
     public void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
@@ -69,7 +71,7 @@ public class Ecs
         FallOrLavaDamageSystem.Update(gameTime, activeMiningControls);
         MiningSystem.Update(gameTime, activeMiningControls);
         GrappleSystem.Update(gameTime, activeMiningControls);
-
+        LaunchSystem.Update(gameTime, activeMiningControls);
         CalculateEntityIdsInActiveWorldSortedByDistance();
     }
 
