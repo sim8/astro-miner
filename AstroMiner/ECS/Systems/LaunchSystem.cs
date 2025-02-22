@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using AstroMiner.Definitions;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 
@@ -6,6 +7,8 @@ namespace AstroMiner.ECS.Systems;
 
 public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
 {
+    private const int LauncherHeightPx = 120;
+    private const float LauncherGridHeight = LauncherHeightPx / (float)GameConfig.CellTextureSizePx;
     private readonly List<int> _launchLightEntities = new();
     private double _startedAt = -1;
 
