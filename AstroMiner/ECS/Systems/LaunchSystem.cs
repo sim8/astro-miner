@@ -4,18 +4,14 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner.ECS.Systems;
 
-public class LaunchSystem : System
+public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
 {
-    private double startedAt = -1;
-    private List<int> launchLightEntities = new List<int>();
-
-    public LaunchSystem(Ecs ecs, GameState gameState) : base(ecs, gameState)
-    {
-    }
+    private readonly List<int> _launchLightEntities = new();
+    private double _startedAt = -1;
 
     private bool HasJustPassedSeconds(GameTime gameTime, double seconds)
     {
-        var secondsPastThreshold = gameTime.TotalGameTime.TotalSeconds - startedAt;
+        var secondsPastThreshold = gameTime.TotalGameTime.TotalSeconds - _startedAt;
         return secondsPastThreshold >= seconds &&
                secondsPastThreshold - gameTime.ElapsedGameTime.TotalSeconds < seconds;
     }
@@ -24,47 +20,41 @@ public class LaunchSystem : System
     {
         if (GameState.AsteroidWorld.IsInMiner)
         {
-            if (startedAt == -1) startedAt = gameTime.TotalGameTime.TotalSeconds;
+            if (_startedAt == -1) _startedAt = gameTime.TotalGameTime.TotalSeconds;
 
             if (HasJustPassedSeconds(gameTime, 1))
             {
                 var pos = ViewHelpers.AbsoluteXyPxToGridPos(119, 97);
                 var id = GameState.Ecs.Factories.CreateLaunchLightEntity(pos);
-                launchLightEntities.Add(id);
+                _launchLightEntities.Add(id);
             }
 
             if (HasJustPassedSeconds(gameTime, 2))
             {
                 var pos = ViewHelpers.AbsoluteXyPxToGridPos(125, 97);
                 var id = GameState.Ecs.Factories.CreateLaunchLightEntity(pos);
-                launchLightEntities.Add(id);
+                _launchLightEntities.Add(id);
             }
 
             if (HasJustPassedSeconds(gameTime, 3))
             {
                 var pos = ViewHelpers.AbsoluteXyPxToGridPos(131, 97);
                 var id = GameState.Ecs.Factories.CreateLaunchLightEntity(pos);
-                launchLightEntities.Add(id);
+                _launchLightEntities.Add(id);
             }
 
-            if (HasJustPassedSeconds(gameTime, 4))
-            {
-                ClearLightEntities();
-            }
+            if (HasJustPassedSeconds(gameTime, 4)) ClearLightEntities();
         }
         else
         {
-            startedAt = -1;
+            _startedAt = -1;
             ClearLightEntities();
         }
     }
 
     private void ClearLightEntities()
     {
-        foreach (var entityId in launchLightEntities)
-        {
-            GameState.Ecs.DestroyEntity(entityId);
-        }
-        launchLightEntities.Clear();
+        foreach (var entityId in _launchLightEntities) GameState.Ecs.DestroyEntity(entityId);
+        _launchLightEntities.Clear();
     }
 }
