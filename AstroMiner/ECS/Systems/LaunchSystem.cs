@@ -9,13 +9,14 @@ namespace AstroMiner.ECS.Systems;
 public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
 {
     private const int LauncherHeightPx = 120;
+    private const float LaunchAcceleration = 30f;
     private const float LauncherGridHeight = LauncherHeightPx / (float)GameConfig.CellTextureSizePx;
+    private readonly List<int> _launchLightEntities = new();
+    private bool _isLaunching;
+    private float _minerLaunchSpeed;
 
     private Vector2 _minerStartPosition;
-    private readonly List<int> _launchLightEntities = new();
     private double _startedAt = -1;
-    private float _minerLaunchSpeed = 0f;
-    private bool _isLaunching = false;
 
     private bool HasJustPassedSeconds(GameTime gameTime, double seconds)
     {
@@ -31,7 +32,8 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
             if (_startedAt == -1)
             {
                 _startedAt = gameTime.TotalGameTime.TotalSeconds;
-                _minerStartPosition = gameState.Ecs.GetComponent<PositionComponent>(gameState.Ecs.MinerEntityId.Value).Position;
+                _minerStartPosition = gameState.Ecs.GetComponent<PositionComponent>(gameState.Ecs.MinerEntityId.Value)
+                    .Position;
             }
 
             if (HasJustPassedSeconds(gameTime, 1))
@@ -76,14 +78,21 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
         }
     }
 
-    private void UpdateMinerLaunchSpeed(GameTime gameTime)
+    private bool HasLeftLauncher()
     {
         var minerEntityId = gameState.Ecs.MinerEntityId;
-        if (minerEntityId == null) return;
+        if (minerEntityId == null) return false;
 
         var minerPosition = gameState.Ecs.GetComponent<PositionComponent>(minerEntityId.Value);
+        return _minerStartPosition.Y - minerPosition.Position.Y > LauncherGridHeight;
+    }
 
-        _minerLaunchSpeed += 30f * (gameTime.ElapsedGameTime.Milliseconds / 1000f);
+    private void UpdateMinerLaunchSpeed(GameTime gameTime)
+    {
+        if (HasLeftLauncher()) return;
+
+
+        _minerLaunchSpeed += LaunchAcceleration * (gameTime.ElapsedGameTime.Milliseconds / 1000f);
     }
 
     private void UpdateMinerPosition(GameTime gameTime)
