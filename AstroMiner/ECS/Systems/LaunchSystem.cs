@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner.ECS.Systems;
@@ -15,21 +15,35 @@ public class LaunchSystem : System
     private bool HasJustPassedSeconds(GameTime gameTime, double seconds)
     {
         var secondsPastThreshold = gameTime.TotalGameTime.TotalSeconds - startedAt;
-        return (secondsPastThreshold >= seconds) && (secondsPastThreshold - gameTime.ElapsedGameTime.TotalSeconds < seconds);
+        return secondsPastThreshold >= seconds &&
+               secondsPastThreshold - gameTime.ElapsedGameTime.TotalSeconds < seconds;
     }
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
         if (GameState.AsteroidWorld.IsInMiner)
         {
-            if (startedAt == -1)
+            if (startedAt == -1) startedAt = gameTime.TotalGameTime.TotalSeconds;
+
+            if (HasJustPassedSeconds(gameTime, 1))
             {
-                startedAt = gameTime.TotalGameTime.TotalSeconds;
+                var pos = ViewHelpers.AbsoluteXyPxToGridPos(119, 97);
+                var id = GameState.Ecs.Factories.CreateLaunchLightEntity(pos);
+                // TODO add to list, remove entities on count
+            }
+
+            if (HasJustPassedSeconds(gameTime, 2))
+            {
+                var pos = ViewHelpers.AbsoluteXyPxToGridPos(125, 97);
+                var id = GameState.Ecs.Factories.CreateLaunchLightEntity(pos);
+                // TODO add to list, remove entities on count
             }
 
             if (HasJustPassedSeconds(gameTime, 3))
             {
-                Console.WriteLine("hello world");
+                var pos = ViewHelpers.AbsoluteXyPxToGridPos(131, 97);
+                var id = GameState.Ecs.Factories.CreateLaunchLightEntity(pos);
+                // TODO add to list, remove entities on count
             }
         }
         else

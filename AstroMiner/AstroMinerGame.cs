@@ -80,6 +80,7 @@ public class AstroMinerGame : Game
         LoadTexture("land-background");
         LoadTexture("grapple-icon");
         LoadTexture("oizus-bg");
+        LoadTexture("launch-light");
     }
 
     protected override void Update(GameTime gameTime)

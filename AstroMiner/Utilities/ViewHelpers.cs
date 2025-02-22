@@ -122,10 +122,7 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
     {
         var healthComponent = ecs.GetComponent<HealthComponent>(entityId);
 
-        if (healthComponent == null)
-        {
-            return Color.White;
-        }
+        if (healthComponent == null) return Color.White;
 
         if (!healthComponent.IsAnimatingDamage)
         {
@@ -163,5 +160,10 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
             Math.Min(GameConfig.GridSize, endCol),
             Math.Min(GameConfig.GridSize, endRow)
         );
+    }
+
+    public static Vector2 AbsoluteXyPxToGridPos(int xPx, int yPx)
+    {
+        return new Vector2(xPx / (float)GameConfig.CellTextureSizePx, yPx / (float)GameConfig.CellTextureSizePx);
     }
 }

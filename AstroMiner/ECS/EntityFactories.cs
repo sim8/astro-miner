@@ -103,4 +103,24 @@ public class EntityFactories
 
         return entityId;
     }
+
+    public int CreateLaunchLightEntity(Vector2 position)
+    {
+        var entityId = _ecs.CreateEntity();
+
+        var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
+        positionComponent.World = _gameState.ActiveWorld;
+        positionComponent.Position = position;
+        positionComponent.BoxSizePx = 5;
+        positionComponent.IsCollideable = false;
+
+        var textureComponent = _ecs.AddComponent<TextureComponent>(entityId);
+        textureComponent.TextureName = "launch-light";
+
+        var radialLightSourceComponent = _ecs.AddComponent<RadialLightSourceComponent>(entityId);
+        radialLightSourceComponent.Tint = Color.Red;
+        radialLightSourceComponent.Radius = 10;
+
+        return entityId;
+    }
 }

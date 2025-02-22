@@ -110,3 +110,15 @@ public class DirectionalLightSourceComponent : Component
 
     public int SizePx { get; set; } = 512;
 }
+
+public class TextureComponent : Component
+{
+    public string TextureName { get; set; }
+}
+
+public class RadialLightSourceComponent : Component
+{
+    public Microsoft.Xna.Framework.Color Tint { get; set; }
+    public float Radius { get; set; }
+
+}
