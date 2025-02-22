@@ -7,6 +7,7 @@ namespace AstroMiner.ECS.Systems;
 public class LaunchSystem : System
 {
     private double startedAt = -1;
+    private List<int> launchLightEntities = new List<int>();
 
     public LaunchSystem(Ecs ecs, GameState gameState) : base(ecs, gameState)
     {
@@ -29,26 +30,41 @@ public class LaunchSystem : System
             {
                 var pos = ViewHelpers.AbsoluteXyPxToGridPos(119, 97);
                 var id = GameState.Ecs.Factories.CreateLaunchLightEntity(pos);
-                // TODO add to list, remove entities on count
+                launchLightEntities.Add(id);
             }
 
             if (HasJustPassedSeconds(gameTime, 2))
             {
                 var pos = ViewHelpers.AbsoluteXyPxToGridPos(125, 97);
                 var id = GameState.Ecs.Factories.CreateLaunchLightEntity(pos);
-                // TODO add to list, remove entities on count
+                launchLightEntities.Add(id);
             }
 
             if (HasJustPassedSeconds(gameTime, 3))
             {
                 var pos = ViewHelpers.AbsoluteXyPxToGridPos(131, 97);
                 var id = GameState.Ecs.Factories.CreateLaunchLightEntity(pos);
-                // TODO add to list, remove entities on count
+                launchLightEntities.Add(id);
+            }
+
+            if (HasJustPassedSeconds(gameTime, 4))
+            {
+                ClearLightEntities();
             }
         }
         else
         {
             startedAt = -1;
+            ClearLightEntities();
         }
+    }
+
+    private void ClearLightEntities()
+    {
+        foreach (var entityId in launchLightEntities)
+        {
+            GameState.Ecs.DestroyEntity(entityId);
+        }
+        launchLightEntities.Clear();
     }
 }
