@@ -38,13 +38,17 @@ public class MinerRenderer(
 
         var tintColor = ViewHelpers.GetEntityTintColor(shared.GameState.Ecs, entityId);
 
-        spriteBatch.Draw(GetTracksTexture(positionComponent.Position, directionComponent.Direction),
+        spriteBatch.Draw(GetTracksTexture(positionComponent.Position, directionComponent.Direction, entityId),
             destinationRectangle, sourceRectangle, tintColor);
         spriteBatch.Draw(shared.Textures["miner-no-tracks"], destinationRectangle, sourceRectangle, tintColor);
     }
 
-    private Texture2D GetTracksTexture(Vector2 position, Direction direction)
+    private Texture2D GetTracksTexture(Vector2 position, Direction direction, int entityId)
     {
+        // Movement removed when off asteroid
+        var movementComponent = shared.GameState.Ecs.GetComponent<MovementComponent>(entityId);
+        if (movementComponent == null) return shared.Textures["tracks-1"];
+
         var (gridX, gridY) = ViewHelpers.GridPosToTexturePx(position);
         switch (direction)
         {
