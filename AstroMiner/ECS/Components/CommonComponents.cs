@@ -119,6 +119,7 @@ public class TextureComponent : Component
 public class RadialLightSourceComponent : Component
 {
     public Microsoft.Xna.Framework.Color Tint { get; set; }
-    public float Radius { get; set; }
+    public int SizePx { get; set; }
+    public float Opacity { get; set; } = 1f;
 
 }

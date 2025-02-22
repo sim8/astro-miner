@@ -1,4 +1,3 @@
-using System;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using Microsoft.Xna.Framework;
@@ -7,8 +6,8 @@ namespace AstroMiner.ECS;
 
 public class EntityFactories
 {
-    private readonly GameState _gameState;
     private readonly Ecs _ecs;
+    private readonly GameState _gameState;
 
     public EntityFactories(Ecs ecs, GameState gameState)
     {
@@ -32,9 +31,9 @@ public class EntityFactories
 
         // Add movement component
         var movementComponent = _ecs.AddComponent<MovementComponent>(entityId);
-        movementComponent.MaxSpeed = 4f;  // From PlayerEntity
-        movementComponent.TimeToReachMaxSpeedMs = 0;  // From ControllableEntity default
-        movementComponent.TimeToStopMs = 0;  // From ControllableEntity default
+        movementComponent.MaxSpeed = 4f; // From PlayerEntity
+        movementComponent.TimeToReachMaxSpeedMs = 0; // From ControllableEntity default
+        movementComponent.TimeToStopMs = 0; // From ControllableEntity default
 
         // Add tag component for identification
         _ecs.AddComponent<PlayerTag>(entityId);
@@ -118,9 +117,9 @@ public class EntityFactories
         textureComponent.TextureName = "launch-light";
 
         var radialLightSourceComponent = _ecs.AddComponent<RadialLightSourceComponent>(entityId);
-        radialLightSourceComponent.Tint = Color.Red;
-        radialLightSourceComponent.Radius = 10;
-
+        radialLightSourceComponent.Tint = new Color(226, 86, 86);
+        radialLightSourceComponent.SizePx = 128;
+        radialLightSourceComponent.Opacity = 0.3f;
         return entityId;
     }
 }

@@ -187,6 +187,15 @@ public class Renderer
             // Render explosion lighting
             if (_gameState.Ecs.HasComponent<ExplosionTag>(entityId))
                 _explosionRenderer.RenderLightSource(spriteBatch, entityId);
+
+
+            if (_gameState.Ecs.HasComponent<RadialLightSourceComponent>(entityId))
+            {
+                var radialLightSourceComponent = _gameState.Ecs.GetComponent<RadialLightSourceComponent>(entityId);
+                var positionComponent = _gameState.Ecs.GetComponent<PositionComponent>(entityId);
+
+                _shared.RenderRadialLightSource(spriteBatch, positionComponent.CenterPosition, radialLightSourceComponent.Tint, radialLightSourceComponent.SizePx, radialLightSourceComponent.Opacity);
+            }
         }
 
         // Final pass to apply shadows over light sources
