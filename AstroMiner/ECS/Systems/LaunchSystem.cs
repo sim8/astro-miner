@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
@@ -9,11 +10,15 @@ namespace AstroMiner.ECS.Systems;
 public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
 {
     private const int LauncherHeightPx = 120;
-    private const float LaunchAcceleration = 30f;
+    private const float LaunchAcceleration = 3f;
+    // private const float LaunchAcceleration = 30f;
     private const float LauncherGridHeight = LauncherHeightPx / (float)GameConfig.CellTextureSizePx;
     private readonly List<int> _launchLightEntities = new();
     private int LaunchPadFrontEntityId = -1;
     private int LaunchPadRearEntityId = -1;
+
+    private Vector2 LaunchPadFrontStartPos = ViewHelpers.AbsoluteXyPxToGridPos(26, 126);
+    private Vector2 LaunchPadRearStartPos = ViewHelpers.AbsoluteXyPxToGridPos(26, 95);
     private bool _isLaunching;
     private float _minerLaunchSpeed;
 
@@ -32,13 +37,11 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
         // TODO ideally these'd be in an init()
         if (LaunchPadFrontEntityId == -1)
         {
-            var pos = ViewHelpers.AbsoluteXyPxToGridPos(26, 126);
-            LaunchPadFrontEntityId = GameState.Ecs.Factories.CreateLaunchPadFrontEntity(pos);
+            LaunchPadFrontEntityId = GameState.Ecs.Factories.CreateLaunchPadFrontEntity(LaunchPadFrontStartPos);
         }
         if (LaunchPadRearEntityId == -1)
         {
-            var pos = ViewHelpers.AbsoluteXyPxToGridPos(26, 95);
-            LaunchPadRearEntityId = GameState.Ecs.Factories.CreateLaunchPadRearEntity(pos);
+            LaunchPadRearEntityId = GameState.Ecs.Factories.CreateLaunchPadRearEntity(LaunchPadRearStartPos);
         }
 
 
@@ -81,7 +84,7 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
             if (_isLaunching)
             {
                 UpdateMinerLaunchSpeed(gameTime);
-                UpdateMinerPosition(gameTime);
+                UpdateMinerAndLaunchPadPosition(gameTime);
             }
         }
         else
@@ -110,7 +113,7 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
         _minerLaunchSpeed += LaunchAcceleration * (gameTime.ElapsedGameTime.Milliseconds / 1000f);
     }
 
-    private void UpdateMinerPosition(GameTime gameTime)
+    private void UpdateMinerAndLaunchPadPosition(GameTime gameTime)
     {
         var minerEntityId = gameState.Ecs.MinerEntityId;
         if (minerEntityId == null) return;
@@ -119,6 +122,13 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
         var movement = DirectionHelpers.GetDirectionalVector(distance, Direction.Top);
         var minerPosition = gameState.Ecs.GetComponent<PositionComponent>(minerEntityId.Value);
         minerPosition.Position += movement;
+
+        var launchPadFrontPosition = gameState.Ecs.GetComponent<PositionComponent>(LaunchPadFrontEntityId);
+        var launchPadRearPosition = gameState.Ecs.GetComponent<PositionComponent>(LaunchPadRearEntityId);
+
+        launchPadFrontPosition.Position = Vector2.Max(launchPadFrontPosition.Position + movement, LaunchPadFrontStartPos - new Vector2(0, LauncherGridHeight));
+        launchPadRearPosition.Position = Vector2.Max(launchPadRearPosition.Position + movement, LaunchPadRearStartPos - new Vector2(0, LauncherGridHeight));
+
     }
 
     private void ClearLightEntities()
