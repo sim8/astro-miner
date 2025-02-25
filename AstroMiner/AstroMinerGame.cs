@@ -82,6 +82,8 @@ public class AstroMinerGame : Game
         LoadTexture("oizus-bg");
         LoadTexture("launch-light");
         LoadTexture("scrolling-mountains");
+        LoadTexture("launch-pad-front");
+        LoadTexture("launch-pad-rear");
     }
 
     protected override void Update(GameTime gameTime)

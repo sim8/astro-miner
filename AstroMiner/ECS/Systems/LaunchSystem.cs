@@ -12,6 +12,8 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
     private const float LaunchAcceleration = 30f;
     private const float LauncherGridHeight = LauncherHeightPx / (float)GameConfig.CellTextureSizePx;
     private readonly List<int> _launchLightEntities = new();
+    private int LaunchPadFrontEntityId = -1;
+    private int LaunchPadRearEntityId = -1;
     private bool _isLaunching;
     private float _minerLaunchSpeed;
 
@@ -27,6 +29,19 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
+        // TODO ideally these'd be in an init()
+        if (LaunchPadFrontEntityId == -1)
+        {
+            var pos = ViewHelpers.AbsoluteXyPxToGridPos(26, 126);
+            LaunchPadFrontEntityId = GameState.Ecs.Factories.CreateLaunchPadFrontEntity(pos);
+        }
+        if (LaunchPadRearEntityId == -1)
+        {
+            var pos = ViewHelpers.AbsoluteXyPxToGridPos(26, 95);
+            LaunchPadRearEntityId = GameState.Ecs.Factories.CreateLaunchPadRearEntity(pos);
+        }
+
+
         if (GameState.AsteroidWorld.IsInMiner)
         {
             if (_startedAt == -1)
