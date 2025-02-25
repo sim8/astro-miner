@@ -23,7 +23,8 @@ public class EntityFactories
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
         positionComponent.Position = position;
         positionComponent.World = _gameState.ActiveWorld;
-        positionComponent.BoxSizePx = GameConfig.PlayerBoxSizePx;
+        positionComponent.WidthPx = GameConfig.PlayerBoxSizePx;
+        positionComponent.HeightPx = GameConfig.PlayerBoxSizePx;
         positionComponent.IsCollideable = true;
 
         // Add direction component
@@ -52,7 +53,8 @@ public class EntityFactories
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
         positionComponent.World = _gameState.ActiveWorld;
         positionComponent.Position = position;
-        positionComponent.BoxSizePx = GameConfig.MinerBoxSizePx;
+        positionComponent.WidthPx = GameConfig.MinerBoxSizePx;
+        positionComponent.HeightPx = GameConfig.MinerBoxSizePx;
         positionComponent.IsCollideable = true;
 
         // Add direction component
@@ -74,7 +76,8 @@ public class EntityFactories
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
         positionComponent.World = _gameState.ActiveWorld;
         positionComponent.Position = position;
-        positionComponent.BoxSizePx = 4; // From DynamiteSystem
+        positionComponent.WidthPx = 4; // From DynamiteSystem
+        positionComponent.HeightPx = 4; // From DynamiteSystem
         positionComponent.IsCollideable = false;
 
         var fuseComponent = _ecs.AddComponent<FuseComponent>(entityId);
@@ -94,7 +97,8 @@ public class EntityFactories
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
         positionComponent.World = _gameState.ActiveWorld;
         positionComponent.Position = position;
-        positionComponent.BoxSizePx = 1; // From ExplosionSystem
+        positionComponent.WidthPx = 1; // From ExplosionSystem
+        positionComponent.HeightPx = 1; // From ExplosionSystem
         positionComponent.IsCollideable = false;
 
         _ecs.AddComponent<ExplosionComponent>(entityId);
@@ -110,7 +114,8 @@ public class EntityFactories
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
         positionComponent.World = _gameState.ActiveWorld;
         positionComponent.Position = position;
-        positionComponent.BoxSizePx = 5;
+        positionComponent.WidthPx = 5;
+        positionComponent.HeightPx = 5;
         positionComponent.IsCollideable = false;
 
         var textureComponent = _ecs.AddComponent<TextureComponent>(entityId);
@@ -120,6 +125,40 @@ public class EntityFactories
         radialLightSourceComponent.Tint = new Color(226, 86, 86);
         radialLightSourceComponent.SizePx = 128;
         radialLightSourceComponent.Opacity = 0.3f;
+        return entityId;
+    }
+
+    public int CreateLaunchPadFrontEntity(Vector2 position)
+    {
+        var entityId = _ecs.CreateEntity();
+
+        var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
+        positionComponent.World = _gameState.ActiveWorld;
+        positionComponent.Position = position;
+        positionComponent.WidthPx = 76;
+        positionComponent.HeightPx = 63;
+        positionComponent.IsCollideable = false;
+
+        var textureComponent = _ecs.AddComponent<TextureComponent>(entityId);
+        textureComponent.TextureName = "launch-pad-front";
+
+        return entityId;
+    }
+
+    public int CreateLaunchPadRearEntity(Vector2 position)
+    {
+        var entityId = _ecs.CreateEntity();
+
+        var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
+        positionComponent.World = _gameState.ActiveWorld;
+        positionComponent.Position = position;
+        positionComponent.WidthPx = 76;
+        positionComponent.HeightPx = 31;
+        positionComponent.IsCollideable = false;
+
+        var textureComponent = _ecs.AddComponent<TextureComponent>(entityId);
+        textureComponent.TextureName = "launch-pad-rear";
+
         return entityId;
     }
 }

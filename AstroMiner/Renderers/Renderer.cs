@@ -135,8 +135,8 @@ public class Renderer
                 var textureComponent = _gameState.Ecs.GetComponent<TextureComponent>(entityId);
                 var positionComponent = _gameState.Ecs.GetComponent<PositionComponent>(entityId);
 
-                var sourceRectangle = new Rectangle(0, 0, positionComponent.BoxSizePx, positionComponent.BoxSizePx);
-                var destinationRectangle = _shared.ViewHelpers.GetVisibleRectForObject(positionComponent.Position, positionComponent.BoxSizePx, positionComponent.BoxSizePx);
+                var sourceRectangle = new Rectangle(0, 0, positionComponent.WidthPx, positionComponent.HeightPx);
+                var destinationRectangle = _shared.ViewHelpers.GetVisibleRectForObject(positionComponent.Position, positionComponent.WidthPx, positionComponent.HeightPx);
                 spriteBatch.Draw(_shared.Textures[textureComponent.TextureName], destinationRectangle, sourceRectangle, Color.White);
             }
         }

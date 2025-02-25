@@ -7,9 +7,6 @@ namespace AstroMiner.ECS.Systems;
 
 public class DynamiteSystem : System
 {
-    private const int FuseTimeMs = 4000;
-    private const int BoxSizePx = 4;
-
     public DynamiteSystem(Ecs ecs, GameState gameState) : base(ecs, gameState)
     {
     }

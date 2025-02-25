@@ -112,7 +112,7 @@ public class MiningSystem : System
         var positionComponent = Ecs.GetComponent<PositionComponent>(Ecs.ActiveControllableEntityId.Value);
         var directionComponent = Ecs.GetComponent<DirectionComponent>(Ecs.ActiveControllableEntityId.Value);
 
-        var drillDistanceFromCenter = positionComponent.GridBoxSize / 2 + DrillDistance;
+        var drillDistanceFromCenter = positionComponent.GridWidth / 2 + DrillDistance; // TODO should really be width OR height depending on direction. Is the same anyway for mining components
         return positionComponent.CenterPosition + DirectionHelpers.GetDirectionalVector(drillDistanceFromCenter, directionComponent.Direction);
     }
 

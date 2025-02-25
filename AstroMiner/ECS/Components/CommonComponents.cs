@@ -8,19 +8,21 @@ namespace AstroMiner.ECS.Components;
 
 public class PositionComponent : Component
 {
-    public int BoxSizePx;
+    public int WidthPx;
+    public int HeightPx;
     public bool IsCollideable;
     public Vector2 Position;
     public World World { get; set; }
     public bool IsOffAsteroid { get; set; }
 
-    public float GridBoxSize => (float)BoxSizePx / GameConfig.CellTextureSizePx;
+    public float GridWidth => (float)WidthPx / GameConfig.CellTextureSizePx;
+    public float GridHeight => (float)HeightPx / GameConfig.CellTextureSizePx;
 
-    public Vector2 CenterPosition => Position + new Vector2(GridBoxSize / 2f, GridBoxSize / 2f);
+    public Vector2 CenterPosition => Position + new Vector2(GridWidth / 2f, GridHeight / 2f);
 
-    public float FrontY => Position.Y + GridBoxSize;
+    public float FrontY => Position.Y + GridHeight;
 
-    public RectangleF Rectangle => new(Position.X, Position.Y, GridBoxSize, GridBoxSize);
+    public RectangleF Rectangle => new(Position.X, Position.Y, GridWidth, GridHeight);
 }
 
 public class FuseComponent : Component

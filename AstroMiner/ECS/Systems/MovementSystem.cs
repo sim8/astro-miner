@@ -85,10 +85,10 @@ public class MovementSystem : System
         return (Direction)newDirectionInt;
     }
 
-    private bool IsNewPositionIntersectingWithFilledCells(Vector2 position, float gridBoxSize)
+    private bool IsNewPositionIntersectingWithFilledCells(Vector2 position, float gridWidth, float gridHeight)
     {
         var topLeftCell = ViewHelpers.ToGridPosition(position);
-        var bottomRightCell = ViewHelpers.ToGridPosition(position + new Vector2(gridBoxSize, gridBoxSize));
+        var bottomRightCell = ViewHelpers.ToGridPosition(position + new Vector2(gridWidth, gridHeight));
 
         for (var x = topLeftCell.x; x <= bottomRightCell.x; x++)
             for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
@@ -100,12 +100,12 @@ public class MovementSystem : System
     private bool ApplyVectorToPosIfNoCollisions(int entityId, Vector2 vector, PositionComponent positionComponent)
     {
         var newPosition = positionComponent.Position + vector;
-        var newPositionHasCollisions = IsNewPositionIntersectingWithFilledCells(newPosition, positionComponent.GridBoxSize);
+        var newPositionHasCollisions = IsNewPositionIntersectingWithFilledCells(newPosition, positionComponent.GridWidth, positionComponent.GridHeight);
 
         if (newPositionHasCollisions) return false;
 
         // Check collisions with other entities
-        var newRectangle = new RectangleF(newPosition.X, newPosition.Y, positionComponent.GridBoxSize, positionComponent.GridBoxSize);
+        var newRectangle = new RectangleF(newPosition.X, newPosition.Y, positionComponent.GridWidth, positionComponent.GridHeight);
         var currentRectangle = positionComponent.Rectangle;
 
         foreach (var otherPositionComponent in Ecs.GetAllComponents<PositionComponent>())
@@ -169,7 +169,7 @@ public class MovementSystem : System
         if (directionalEntityMovementComponent == null || directionalEntityPositionComponent == null || directionalEntityDirectionComponent == null) return;
 
         var centerToCenterDistance =
-            directionalEntityPositionComponent.GridBoxSize / 2 + (insideEdge ? -(positionComponent.GridBoxSize / 2) : positionComponent.GridBoxSize / 2);
+            directionalEntityPositionComponent.GridWidth / 2 + (insideEdge ? -(positionComponent.GridWidth / 2) : positionComponent.GridWidth / 2); // TODO should be width OR height depending on direction. Is the same anyway for mining components
         var actualDirection = GetRotatedDirection(directionalEntityDirectionComponent.Direction, rotation);
         var newCenterPos = actualDirection switch
         {
@@ -180,13 +180,13 @@ public class MovementSystem : System
             _ => directionalEntityPositionComponent.CenterPosition
         };
 
-        positionComponent.Position = newCenterPos - new Vector2(positionComponent.GridBoxSize / 2, positionComponent.GridBoxSize / 2);
+        positionComponent.Position = newCenterPos - new Vector2(positionComponent.GridWidth / 2, positionComponent.GridHeight / 2);
     }
 
     public Vector2 GetFrontPosition(int directionalEntityId)
     {
         var positionComponent = Ecs.GetComponent<PositionComponent>(directionalEntityId);
         var directionComponent = Ecs.GetComponent<DirectionComponent>(directionalEntityId);
-        return positionComponent.CenterPosition + DirectionHelpers.GetDirectionalVector(positionComponent.GridBoxSize / 2f, directionComponent.Direction);
+        return positionComponent.CenterPosition + DirectionHelpers.GetDirectionalVector(positionComponent.GridHeight / 2f, directionComponent.Direction);
     }
 }

@@ -27,7 +27,7 @@ public class FallOrLavaDamageSystem : System
             if (healthComponent.EntityId == Ecs.PlayerEntityId && GameState.AsteroidWorld.IsInMiner) continue;
 
             var (topLeftX, topLeftY) = ViewHelpers.ToGridPosition(positionComponent.Position);
-            var (bottomRightX, bottomRightY) = ViewHelpers.ToGridPosition(positionComponent.Position + new Vector2(positionComponent.GridBoxSize, positionComponent.GridBoxSize));
+            var (bottomRightX, bottomRightY) = ViewHelpers.ToGridPosition(positionComponent.Position + new Vector2(positionComponent.GridWidth, positionComponent.GridHeight));
 
             var allCellsAreEmpty = true;
             var someCellsAreLava = false;
