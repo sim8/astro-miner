@@ -15,11 +15,11 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         return (int)Math.Ceiling(value);
     }
 
-    private Rectangle AdjustRectForCamera(float x, float y, float width, float height)
+    private Rectangle AdjustRectForCamera(float x, float y, float width, float height, float parallaxLayer = 1)
     {
         var (xPx, yPx) = GridPosToDisplayedPx(gameState.Ecs.ActiveControllableEntityCenterPosition);
-        var adjustedX = x - xPx + graphics.GraphicsDevice.Viewport.Width / 2f;
-        var adjustedY = y - yPx + graphics.GraphicsDevice.Viewport.Height / 2f;
+        var adjustedX = x - xPx * parallaxLayer + graphics.GraphicsDevice.Viewport.Width / 2f;
+        var adjustedY = y - yPx * parallaxLayer + graphics.GraphicsDevice.Viewport.Height / 2f;
         return new Rectangle(
             ConvertToRenderedPxValue_CAUTION(adjustedX),
             ConvertToRenderedPxValue_CAUTION(adjustedY),
@@ -33,11 +33,11 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         return (graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
     }
 
-    public Rectangle GetVisibleRectForGridCell(float gridX, float gridY, float widthOnGrid = 1, float heightOnGrid = 1)
+    public Rectangle GetVisibleRectForGridCell(float gridX, float gridY, float widthOnGrid = 1, float heightOnGrid = 1, float parallaxLayer = 1)
     {
         return AdjustRectForCamera(ConvertGridUnitsToVisiblePx(gridX), ConvertGridUnitsToVisiblePx(gridY),
             ConvertGridUnitsToVisiblePx(widthOnGrid),
-            ConvertGridUnitsToVisiblePx(heightOnGrid));
+            ConvertGridUnitsToVisiblePx(heightOnGrid), parallaxLayer);
     }
 
     public Rectangle GetVisibleRectForWallQuadrant(int gridX, int gridY, Corner corner)

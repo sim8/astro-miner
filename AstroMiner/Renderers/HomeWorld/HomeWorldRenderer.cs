@@ -15,6 +15,7 @@ public class HomeWorldRenderer : BaseWorldRenderer
 
     public override void RenderWorld(SpriteBatch spriteBatch)
     {
+        spriteBatch.Draw(Shared.Textures["scrolling-mountains"], Shared.ViewHelpers.GetVisibleRectForGridCell(-7, -110, 25, 125, 0.5f), Color.White);
         spriteBatch.Draw(Shared.Textures["oizus-bg"], Shared.ViewHelpers.GetVisibleRectForGridCell(0, 0, 20, 20), Color.White);
         // RenderDebugCollisionMap(spriteBatch);
     }

@@ -107,7 +107,7 @@ public class Renderer
 
     private void RenderScene(SpriteBatch spriteBatch)
     {
-        _scrollingBackgroundRenderer.RenderBackground(spriteBatch);
+        // _scrollingBackgroundRenderer.RenderBackground(spriteBatch);
 
         ActiveWorldRenderer.RenderWorld(spriteBatch);
 
