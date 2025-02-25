@@ -125,6 +125,10 @@ public class EntityFactories
         radialLightSourceComponent.Tint = new Color(226, 86, 86);
         radialLightSourceComponent.SizePx = 128;
         radialLightSourceComponent.Opacity = 0.3f;
+
+        var renderLayerComponent = _ecs.AddComponent<RenderLayerComponent>(entityId);
+        renderLayerComponent.EntityRenderLayer = EntityRenderLayer.InFrontOfWorld;
+
         return entityId;
     }
 
@@ -142,6 +146,9 @@ public class EntityFactories
         var textureComponent = _ecs.AddComponent<TextureComponent>(entityId);
         textureComponent.TextureName = "launch-pad-front";
 
+        var renderLayerComponent = _ecs.AddComponent<RenderLayerComponent>(entityId);
+        renderLayerComponent.EntityRenderLayer = EntityRenderLayer.InFrontOfWorld;
+
         return entityId;
     }
 
@@ -158,6 +165,9 @@ public class EntityFactories
 
         var textureComponent = _ecs.AddComponent<TextureComponent>(entityId);
         textureComponent.TextureName = "launch-pad-rear";
+
+        var renderLayerComponent = _ecs.AddComponent<RenderLayerComponent>(entityId);
+        renderLayerComponent.EntityRenderLayer = EntityRenderLayer.BehindWorld;
 
         return entityId;
     }

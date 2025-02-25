@@ -22,6 +22,7 @@ public class Renderer
     private readonly BlendState _multiplyBlendState;
     private readonly PlayerRenderer _playerRenderer;
     private readonly ScrollingBackgroundRenderer _scrollingBackgroundRenderer;
+    private readonly LaunchParallaxRenderer _launchParallaxRenderer;
     private readonly UserInterfaceRenderer _userInterfaceRenderer;
     private RenderTarget2D _lightingRenderTarget;
 
@@ -38,6 +39,7 @@ public class Renderer
         _dynamiteRenderer = new DynamiteRenderer(_shared);
         _explosionRenderer = new ExplosionRenderer(_shared);
         _scrollingBackgroundRenderer = new ScrollingBackgroundRenderer(_shared);
+        _launchParallaxRenderer = new LaunchParallaxRenderer(_shared);
         _userInterfaceRenderer = new UserInterfaceRenderer(_shared, frameCounter);
         _asteroidWorldRenderer = new AsteroidWorldRenderer(_shared);
         _homeWorldRenderer = new HomeWorldRenderer(_shared);
@@ -105,15 +107,15 @@ public class Renderer
         spriteBatch.End();
     }
 
-    private void RenderScene(SpriteBatch spriteBatch)
+    private void RenderEntities(SpriteBatch spriteBatch, EntityRenderLayer targetLayer)
     {
-        // _scrollingBackgroundRenderer.RenderBackground(spriteBatch);
-
-        ActiveWorldRenderer.RenderWorld(spriteBatch);
-
-        // Render ECS entities
         foreach (var entityId in _gameState.Ecs.EntityIdsInActiveWorldSortedByDistance)
         {
+            // Check if entity has the target render layer
+            var renderLayerComponent = _gameState.Ecs.GetComponent<RenderLayerComponent>(entityId);
+            var entityLayer = renderLayerComponent?.EntityRenderLayer ?? EntityRenderLayer.Default;
+            if (entityLayer != targetLayer) continue;
+
             // Render miner
             if (_gameState.Ecs.HasComponent<MinerTag>(entityId))
                 _minerRenderer.RenderMiner(spriteBatch, entityId);
@@ -140,6 +142,25 @@ public class Renderer
                 spriteBatch.Draw(_shared.Textures[textureComponent.TextureName], destinationRectangle, sourceRectangle, Color.White);
             }
         }
+    }
+
+    private void RenderScene(SpriteBatch spriteBatch)
+    {
+        _launchParallaxRenderer.Render(spriteBatch);
+        // _scrollingBackgroundRenderer.RenderBackground(spriteBatch);
+
+        // Render entities behind the world
+        RenderEntities(spriteBatch, EntityRenderLayer.BehindWorld);
+
+        // Render the world
+        ActiveWorldRenderer.RenderWorld(spriteBatch);
+
+        // Render entities in front of the world
+        RenderEntities(spriteBatch, EntityRenderLayer.InFrontOfWorld);
+
+        // Render default entities
+        RenderEntities(spriteBatch, EntityRenderLayer.Default);
+
     }
 
     private void RenderLightingToRenderTarget(SpriteBatch spriteBatch)
