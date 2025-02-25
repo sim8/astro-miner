@@ -1,6 +1,6 @@
 public enum EntityRenderLayer
 {
     BehindWorld,
-    InFrontOfWorld,
+    BehindEntities,
     Default,
 }

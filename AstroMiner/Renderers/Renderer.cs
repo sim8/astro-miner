@@ -146,21 +146,19 @@ public class Renderer
 
     private void RenderScene(SpriteBatch spriteBatch)
     {
-        _launchParallaxRenderer.Render(spriteBatch);
-        // _scrollingBackgroundRenderer.RenderBackground(spriteBatch);
+        if (_gameState.ActiveWorld == World.Asteroid || _gameState.ActiveWorld == World.Home)
+        {
+            _launchParallaxRenderer.Render(spriteBatch);
+            // _scrollingBackgroundRenderer.RenderBackground(spriteBatch);
+        }
 
-        // Render entities behind the world
         RenderEntities(spriteBatch, EntityRenderLayer.BehindWorld);
 
-        // Render the world
         ActiveWorldRenderer.RenderWorld(spriteBatch);
 
-        // Render entities in front of the world
-        RenderEntities(spriteBatch, EntityRenderLayer.InFrontOfWorld);
+        RenderEntities(spriteBatch, EntityRenderLayer.BehindEntities);
 
-        // Render default entities
         RenderEntities(spriteBatch, EntityRenderLayer.Default);
-
     }
 
     private void RenderLightingToRenderTarget(SpriteBatch spriteBatch)

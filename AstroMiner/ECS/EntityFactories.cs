@@ -127,7 +127,7 @@ public class EntityFactories
         radialLightSourceComponent.Opacity = 0.3f;
 
         var renderLayerComponent = _ecs.AddComponent<RenderLayerComponent>(entityId);
-        renderLayerComponent.EntityRenderLayer = EntityRenderLayer.InFrontOfWorld;
+        renderLayerComponent.EntityRenderLayer = EntityRenderLayer.BehindEntities;
 
         return entityId;
     }
@@ -147,7 +147,7 @@ public class EntityFactories
         textureComponent.TextureName = "launch-pad-front";
 
         var renderLayerComponent = _ecs.AddComponent<RenderLayerComponent>(entityId);
-        renderLayerComponent.EntityRenderLayer = EntityRenderLayer.InFrontOfWorld;
+        renderLayerComponent.EntityRenderLayer = EntityRenderLayer.BehindEntities;
 
         return entityId;
     }
