@@ -42,6 +42,10 @@ public static class GameConfig
     public const float MinerSize = (float)MinerBoxSizePx / CellTextureSizePx;
     public const float PlayerSize = (float)PlayerBoxSizePx / CellTextureSizePx;
 
+
+    // When crossing this Y threshold, switch to asteroid
+    public const int HomeToAsteroidPointY = -110;
+
     public static class AsteroidGen
     {
         public const float MantleRadius = 0.7f;
@@ -60,6 +64,7 @@ public static class GameConfig
         //   - Gold zones (near lava)
         public const float Perlin1NoiseScale = 0.22f;
         public const float Perlin2NoiseScale = 0.14f;
+
 
         /// <summary>
         ///     Defines the ordered list of cell generation rules when populating the grid.

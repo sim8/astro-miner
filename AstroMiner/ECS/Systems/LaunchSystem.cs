@@ -10,7 +10,7 @@ namespace AstroMiner.ECS.Systems;
 public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
 {
     private const int LauncherHeightPx = 120;
-    private const float LaunchAcceleration = 70f;
+    private const float LaunchAcceleration = 400f;
     private const float LauncherGridHeight = LauncherHeightPx / (float)GameConfig.CellTextureSizePx;
     private readonly List<int> _launchLightEntities = new();
     private int LaunchPadFrontEntityId = -1;
@@ -107,6 +107,8 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
     private void UpdateMinerLaunchSpeed(GameTime gameTime)
     {
         if (HasLeftLauncher()) return;
+
+        Console.WriteLine(_minerLaunchSpeed);
 
 
         _minerLaunchSpeed += LaunchAcceleration * (gameTime.ElapsedGameTime.Milliseconds / 1000f);
