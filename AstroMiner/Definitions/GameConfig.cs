@@ -45,6 +45,8 @@ public static class GameConfig
 
     // When crossing this Y threshold, switch to asteroid
     public const int HomeToAsteroidPointY = -110;
+    // Miner starts slightly off the asteroid
+    public const int AsteroidStartYOffset = 5;
 
     public static class AsteroidGen
     {
