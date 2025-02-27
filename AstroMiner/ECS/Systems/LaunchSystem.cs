@@ -121,7 +121,6 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
         if (minerEntityId == null) return;
 
         var distance = _minerLaunchSpeed * (gameTime.ElapsedGameTime.Milliseconds / 1000f);
-        Console.WriteLine(_minerLaunchSpeed);
         var movement = DirectionHelpers.GetDirectionalVector(distance, Direction.Top);
         var minerPosition = gameState.Ecs.GetComponent<PositionComponent>(minerEntityId.Value);
         minerPosition.Position += movement;
