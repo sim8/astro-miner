@@ -10,7 +10,8 @@ namespace AstroMiner.ECS.Systems;
 public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
 {
     private const int LauncherHeightPx = 120;
-    private const float LaunchAcceleration = 400f;
+
+    private const float MaxLaunchSpeed = 50f;
     private const float LauncherGridHeight = LauncherHeightPx / (float)GameConfig.CellTextureSizePx;
     private readonly List<int> _launchLightEntities = new();
     private int LaunchPadFrontEntityId = -1;
@@ -20,6 +21,7 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
     private Vector2 LaunchPadRearStartPos = ViewHelpers.AbsoluteXyPxToGridPos(26, 95);
     private bool _isLaunching;
     private float _minerLaunchSpeed;
+
 
     private Vector2 _minerStartPosition;
     private double _startedAt = -1;
@@ -46,6 +48,7 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
 
         if (GameState.AsteroidWorld.IsInMiner)
         {
+            Console.WriteLine(_minerLaunchSpeed);
             if (_startedAt == -1)
             {
                 _startedAt = gameTime.TotalGameTime.TotalSeconds;
@@ -112,7 +115,35 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
     {
         if (HasLeftLauncher()) return;
 
-        _minerLaunchSpeed += LaunchAcceleration * (gameTime.ElapsedGameTime.Milliseconds / 1000f);
+        // Calculate how far the miner has traveled within the launcher
+        var minerEntityId = gameState.Ecs.MinerEntityId;
+        if (minerEntityId == null) return;
+
+        var minerPosition = gameState.Ecs.GetComponent<PositionComponent>(minerEntityId.Value);
+        var distanceTraveled = _minerStartPosition.Y - minerPosition.Position.Y;
+        var distanceRemaining = LauncherGridHeight - distanceTraveled;
+
+        if (distanceRemaining <= 0)
+        {
+            // We're at the edge of the launcher, set to max speed
+            _minerLaunchSpeed = MaxLaunchSpeed;
+            return;
+        }
+
+        // Calculate time remaining based on current speed and acceleration
+        // Using the formula: v² = u² + 2as
+        // Where v is final velocity (MaxLaunchSpeed), u is current velocity (_minerLaunchSpeed)
+        // a is acceleration, and s is distance remaining
+
+        // Rearranging to find acceleration: a = (v² - u²) / (2s)
+        var requiredAcceleration = (MaxLaunchSpeed * MaxLaunchSpeed - _minerLaunchSpeed * _minerLaunchSpeed) / (2 * distanceRemaining);
+
+        // Apply the calculated acceleration for this frame
+        float deltaTime = gameTime.ElapsedGameTime.Milliseconds / 1000f;
+        _minerLaunchSpeed += requiredAcceleration * deltaTime;
+
+        // Cap the speed at MaxLaunchSpeed just to be safe
+        _minerLaunchSpeed = Math.Min(_minerLaunchSpeed, MaxLaunchSpeed);
     }
 
     private void UpdateMinerAndLaunchPadPosition(GameTime gameTime)
