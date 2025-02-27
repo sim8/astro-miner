@@ -11,7 +11,6 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
 {
     private const int LauncherHeightPx = 120;
 
-    private const float MaxLaunchSpeed = 50f;
     private const float LauncherGridHeight = LauncherHeightPx / (float)GameConfig.CellTextureSizePx;
     private readonly List<int> _launchLightEntities = new();
     private int LaunchPadFrontEntityId = -1;
@@ -126,7 +125,7 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
         if (distanceRemaining <= 0)
         {
             // We're at the edge of the launcher, set to max speed
-            _minerLaunchSpeed = MaxLaunchSpeed;
+            _minerLaunchSpeed = GameConfig.AsteroidSpeed;
             return;
         }
 
@@ -136,14 +135,14 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
         // a is acceleration, and s is distance remaining
 
         // Rearranging to find acceleration: a = (v² - u²) / (2s)
-        var requiredAcceleration = (MaxLaunchSpeed * MaxLaunchSpeed - _minerLaunchSpeed * _minerLaunchSpeed) / (2 * distanceRemaining);
+        var requiredAcceleration = (GameConfig.AsteroidSpeed * GameConfig.AsteroidSpeed - _minerLaunchSpeed * _minerLaunchSpeed) / (2 * distanceRemaining);
 
         // Apply the calculated acceleration for this frame
         float deltaTime = gameTime.ElapsedGameTime.Milliseconds / 1000f;
         _minerLaunchSpeed += requiredAcceleration * deltaTime;
 
         // Cap the speed at MaxLaunchSpeed just to be safe
-        _minerLaunchSpeed = Math.Min(_minerLaunchSpeed, MaxLaunchSpeed);
+        _minerLaunchSpeed = Math.Min(_minerLaunchSpeed, GameConfig.AsteroidSpeed);
     }
 
     private void UpdateMinerAndLaunchPadPosition(GameTime gameTime)

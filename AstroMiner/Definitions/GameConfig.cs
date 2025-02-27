@@ -48,6 +48,8 @@ public static class GameConfig
     // Miner starts slightly off the asteroid
     public const int AsteroidStartYOffset = 5;
 
+    public const float AsteroidSpeed = 30f;
+
     public static class AsteroidGen
     {
         public const float MantleRadius = 0.7f;
