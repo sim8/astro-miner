@@ -8,8 +8,13 @@ public class LaunchParallaxRenderer(RendererShared shared)
 {
     public void Render(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(shared.Textures["scrolling-mountains"],
-            shared.ViewHelpers.GetVisibleRectForGridCell(-7, GameConfig.HomeToAsteroidPointY, 25, 125, 0.5f),
+        var parallax = 0.5f;
+        spriteBatch.Draw(shared.Textures["launch-background"],
+            shared.ViewHelpers.GetVisibleRectForGridCell(-15, GameConfig.HomeToAsteroidPointY, 25, 125, parallax),
             Color.White);
+
+        // spriteBatch.Draw(shared.Textures["launch-background-repeating"],
+        //     shared.ViewHelpers.GetVisibleRectForGridCell(-7, GameConfig.HomeToAsteroidPointY - 25, 25, 25, parallax),
+        //     Color.White);
     }
 }

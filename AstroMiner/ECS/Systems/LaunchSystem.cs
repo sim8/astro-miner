@@ -47,7 +47,6 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
 
         if (GameState.AsteroidWorld.IsInMiner)
         {
-            Console.WriteLine(_minerLaunchSpeed);
             if (_startedAt == -1)
             {
                 _startedAt = gameTime.TotalGameTime.TotalSeconds;

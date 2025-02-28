@@ -81,7 +81,8 @@ public class AstroMinerGame : Game
         LoadTexture("grapple-icon");
         LoadTexture("oizus-bg");
         LoadTexture("launch-light");
-        LoadTexture("scrolling-mountains");
+        LoadTexture("launch-background");
+        LoadTexture("launch-background-repeating");
         LoadTexture("launch-pad-front");
         LoadTexture("launch-pad-rear");
     }
