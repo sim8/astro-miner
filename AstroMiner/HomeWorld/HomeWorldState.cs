@@ -21,8 +21,9 @@ public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
 
     private void InitializeMiner()
     {
-        var minerCellOffset = 1f - GameConfig.MinerSize / 2;
-        var minerPos = new Vector2(1f + minerCellOffset, 3f + minerCellOffset);
+        var posX = GameConfig.MinerHomeStartPosCenter.x - GameConfig.MinerSize / 2;
+        var posY = GameConfig.MinerHomeStartPosCenter.y - GameConfig.MinerSize / 2;
+        var minerPos = new Vector2(posX, posY);
 
         var minerEntityId = gameState.Ecs.MinerEntityId ?? gameState.Ecs.Factories.CreateMinerEntity(minerPos);
 

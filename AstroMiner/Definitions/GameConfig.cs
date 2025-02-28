@@ -49,7 +49,9 @@ public static class GameConfig
     // Miner starts slightly off the asteroid
     public const int AsteroidStartYOffset = 5;
 
-    public const float AsteroidSpeed = 30f;
+    public static readonly (int x, int y) MinerHomeStartPosCenter = (2, 4);
+
+    public const float AsteroidSpeed = 60f;
 
     public static class AsteroidGen
     {

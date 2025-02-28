@@ -144,6 +144,21 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
         _minerLaunchSpeed = Math.Min(_minerLaunchSpeed, GameConfig.AsteroidSpeed);
     }
 
+    public float GetLaunchPercentage()
+    {
+        if (GameState.ActiveWorld == World.Asteroid)
+        {
+            return 1;
+        }
+        var minerEntityId = gameState.Ecs.MinerEntityId;
+        if (minerEntityId == null) return 0;
+
+        var minerPosition = gameState.Ecs.GetComponent<PositionComponent>(minerEntityId.Value);
+        var totalDistance = _minerStartPosition.Y - GameConfig.HomeToAsteroidPointY;
+        var distanceTraveled = _minerStartPosition.Y - minerPosition.Position.Y;
+        return Math.Min(distanceTraveled / totalDistance, 1);
+    }
+
     private void UpdateMinerAndLaunchPadPosition(GameTime gameTime)
     {
         var minerEntityId = gameState.Ecs.MinerEntityId;
