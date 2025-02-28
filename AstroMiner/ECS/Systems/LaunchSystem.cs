@@ -124,7 +124,7 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
         if (distanceRemaining <= 0)
         {
             // We're at the edge of the launcher, set to max speed
-            _minerLaunchSpeed = GameConfig.AsteroidSpeed;
+            _minerLaunchSpeed = GameConfig.Launch.AsteroidSpeed;
             return;
         }
 
@@ -134,14 +134,14 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
         // a is acceleration, and s is distance remaining
 
         // Rearranging to find acceleration: a = (v² - u²) / (2s)
-        var requiredAcceleration = (GameConfig.AsteroidSpeed * GameConfig.AsteroidSpeed - _minerLaunchSpeed * _minerLaunchSpeed) / (2 * distanceRemaining);
+        var requiredAcceleration = (GameConfig.Launch.AsteroidSpeed * GameConfig.Launch.AsteroidSpeed - _minerLaunchSpeed * _minerLaunchSpeed) / (2 * distanceRemaining);
 
         // Apply the calculated acceleration for this frame
         float deltaTime = gameTime.ElapsedGameTime.Milliseconds / 1000f;
         _minerLaunchSpeed += requiredAcceleration * deltaTime;
 
         // Cap the speed at MaxLaunchSpeed just to be safe
-        _minerLaunchSpeed = Math.Min(_minerLaunchSpeed, GameConfig.AsteroidSpeed);
+        _minerLaunchSpeed = Math.Min(_minerLaunchSpeed, GameConfig.Launch.AsteroidSpeed);
     }
 
     public float GetLaunchPercentage()
@@ -154,7 +154,7 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
         if (minerEntityId == null) return 0;
 
         var minerPosition = gameState.Ecs.GetComponent<PositionComponent>(minerEntityId.Value);
-        var totalDistance = _minerStartPosition.Y - GameConfig.HomeToAsteroidPointY;
+        var totalDistance = _minerStartPosition.Y - GameConfig.Launch.HomeToAsteroidPointY;
         var distanceTraveled = _minerStartPosition.Y - minerPosition.Position.Y;
         return Math.Min(distanceTraveled / totalDistance, 1);
     }
@@ -169,7 +169,7 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
         var minerPosition = gameState.Ecs.GetComponent<PositionComponent>(minerEntityId.Value);
         minerPosition.Position += movement;
 
-        if (minerPosition.Position.Y < GameConfig.HomeToAsteroidPointY)
+        if (minerPosition.Position.Y < GameConfig.Launch.HomeToAsteroidPointY)
         {
             _minerLaunchSpeed = 3f;
             GameState.InitializeAsteroid();

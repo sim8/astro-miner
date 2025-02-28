@@ -40,7 +40,7 @@ public static class AsteroidGen
                         }
 
 
-                    return new Vector2(minerColIndex + minerCellOffset, row - 1 + minerCellOffset - GameConfig.AsteroidStartYOffset);
+                    return new Vector2(minerColIndex + minerCellOffset, row - 1 + minerCellOffset + GameConfig.Launch.AsteroidStartYOffset);
                 }
         }
 
