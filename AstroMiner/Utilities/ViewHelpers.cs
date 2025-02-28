@@ -18,10 +18,16 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
     private Rectangle AdjustRectForCamera(float x, float y, float width, float height, float parallaxLayer = 1)
     {
         var (xPx, yPx) = GridPosToDisplayedPx(gameState.Ecs.ActiveControllableEntityCenterPosition);
-        var offsetFromPlayerX = x - xPx;
-        var offsetFromPlayerY = y - yPx;
-        var adjustedX = offsetFromPlayerX * parallaxLayer + graphics.GraphicsDevice.Viewport.Width / 2f;
-        var adjustedY = offsetFromPlayerY * parallaxLayer + graphics.GraphicsDevice.Viewport.Height / 2f;
+
+        var rectCenterX = x + width / 2;
+        var rectCenterY = y + height / 2;
+
+        // Parallax calculation is applied based on distances between centers of rectangles for more predictable scaling
+        var centerOffsetFromPlayerX = (rectCenterX - xPx) * parallaxLayer;
+        var centerOffsetFromPlayerY = (rectCenterY - yPx) * parallaxLayer;
+
+        var adjustedX = centerOffsetFromPlayerX - width / 2 + graphics.GraphicsDevice.Viewport.Width / 2f;
+        var adjustedY = centerOffsetFromPlayerY - height / 2 + graphics.GraphicsDevice.Viewport.Height / 2f;
         return new Rectangle(
             ConvertToRenderedPxValue_CAUTION(adjustedX),
             ConvertToRenderedPxValue_CAUTION(adjustedY),
