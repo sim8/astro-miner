@@ -15,29 +15,21 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         return (int)Math.Ceiling(value);
     }
 
-    private Rectangle AdjustRectForCamera(float x, float y, float width, float height, float parallaxLayer = 1, (float originX, float originY)? parallaxOrigin = null)
+    private Rectangle AdjustRectForCamera(float x, float y, float width, float height, float parallaxLayer = 1)
     {
         // Get the player's center position in displayed pixels
         var (xPx, yPx) = GridPosToDisplayedPx(gameState.Ecs.ActiveControllableEntityCenterPosition);
 
-        // Use the provided parallax origin if available; otherwise default to the object's top-left (x, y)
-        float originX = parallaxOrigin?.originX ?? x;
-        float originY = parallaxOrigin?.originY ?? y;
 
-        // Calculate the parallax offset based on the chosen origin relative to the player's center,
-        // scaled by the parallaxLayer.
-        float originOffsetX = (originX - xPx) * parallaxLayer;
-        float originOffsetY = (originY - yPx) * parallaxLayer;
+        var rectCenterX = x + width / 2;
+        var rectCenterY = y + height / 2;
 
-        // Compute the object's delta from the chosen origin. This delta remains unscaled so that
-        // the object stays at its intended (x, y) when parallaxLayer is 1.
-        float deltaX = x - originX;
-        float deltaY = y - originY;
+        // Parallax calculation is applied based on distances between centers of rectangles for more predictable scaling
+        var centerOffsetFromPlayerX = (rectCenterX - xPx) * parallaxLayer;
+        var centerOffsetFromPlayerY = (rectCenterY - yPx) * parallaxLayer;
 
-        // The final adjusted position is the viewport center plus the parallax offset for the origin
-        // and the object's relative offset (delta). When parallaxLayer is near 1, the full delta is applied.
-        float adjustedX = originOffsetX + deltaX + graphics.GraphicsDevice.Viewport.Width / 2f;
-        float adjustedY = originOffsetY + deltaY + graphics.GraphicsDevice.Viewport.Height / 2f;
+        var adjustedX = centerOffsetFromPlayerX - width / 2 + graphics.GraphicsDevice.Viewport.Width / 2f;
+        var adjustedY = centerOffsetFromPlayerY - height / 2 + graphics.GraphicsDevice.Viewport.Height / 2f;
 
         return new Rectangle(
             ConvertToRenderedPxValue_CAUTION(adjustedX),
@@ -52,11 +44,12 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         return (graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
     }
 
-    public Rectangle GetVisibleRectForGridCell(float gridX, float gridY, float widthOnGrid = 1, float heightOnGrid = 1, float parallaxLayer = 1, (float originX, float originY)? parallaxOrigin = null)
+    public Rectangle GetVisibleRectForGridCell(float gridX, float gridY, float widthOnGrid = 1, float heightOnGrid = 1,
+        float parallaxLayer = 1)
     {
         return AdjustRectForCamera(ConvertGridUnitsToVisiblePx(gridX), ConvertGridUnitsToVisiblePx(gridY),
             ConvertGridUnitsToVisiblePx(widthOnGrid),
-            ConvertGridUnitsToVisiblePx(heightOnGrid), parallaxLayer, parallaxOrigin);
+            ConvertGridUnitsToVisiblePx(heightOnGrid), parallaxLayer);
     }
 
     public Rectangle GetVisibleRectForWallQuadrant(int gridX, int gridY, Corner corner)

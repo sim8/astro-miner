@@ -126,7 +126,7 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
         var (startCol, startRow, endCol, endRow) = Shared.ViewHelpers.GetVisibleGrid(padding);
 
         for (var row = startRow; row < endRow; row++)
-            for (var col = startCol; col < endCol; col++)
-                cellAction(col, row);
+        for (var col = startCol; col < endCol; col++)
+            cellAction(col, row);
     }
 }

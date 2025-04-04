@@ -44,18 +44,18 @@ public static class GameConfig
 
     public static class Launch
     {
-        public const float BackgroundParallax = 0.3f;
         // When crossing this Y threshold, switch to asteroid
         // public const int HomeToAsteroidPointY = -110;
         public const int HomeToAsteroidPointY = -300;
         // Miner starts slightly off the asteroid
+
+
         public const int AsteroidStartYOffset = 0;
 
-        public static readonly (int x, int y) MinerHomeStartPosCenter = (2, 4);
-
         public const float AsteroidSpeed = 60f;
-    }
 
+        public static readonly (int x, int y) MinerHomeStartPosCenter = (2, 4);
+    }
 
 
     public static class AsteroidGen

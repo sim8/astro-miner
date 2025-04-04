@@ -171,7 +171,7 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
 
         if (minerPosition.Position.Y < GameConfig.Launch.HomeToAsteroidPointY)
         {
-            _minerLaunchSpeed = 3f;
+            _minerLaunchSpeed = 0f; /// TODO set relative to new speed
             GameState.InitializeAsteroid();
         }
 
