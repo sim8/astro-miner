@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
@@ -45,7 +44,7 @@ public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
     private void InitializePlayer()
     {
         var playerCellOffset = GameConfig.PlayerSize / 2;
-        var playerPos = new Vector2(4f + playerCellOffset, 7f + playerCellOffset);
+        var playerPos = new Vector2(7f + playerCellOffset, 7f + playerCellOffset);
 
         var playerEntityId = gameState.Ecs.PlayerEntityId ?? gameState.Ecs.Factories.CreatePlayerEntity(playerPos);
 

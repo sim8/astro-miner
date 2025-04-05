@@ -54,7 +54,7 @@ public static class GameConfig
 
         public const float AsteroidSpeed = 60f;
 
-        public static readonly (int x, int y) MinerHomeStartPosCenter = (2, 4);
+        public static readonly (int x, int y) MinerHomeStartPosCenter = (5, 4);
     }
 
 
