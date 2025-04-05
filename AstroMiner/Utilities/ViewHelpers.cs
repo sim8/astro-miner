@@ -47,9 +47,10 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
     public Rectangle GetVisibleRectForGridCell(float gridX, float gridY, float widthOnGrid = 1, float heightOnGrid = 1,
         float parallaxLayer = 1)
     {
-        return AdjustRectForCamera(ConvertGridUnitsToVisiblePx(gridX), ConvertGridUnitsToVisiblePx(gridY),
-            ConvertGridUnitsToVisiblePx(widthOnGrid),
-            ConvertGridUnitsToVisiblePx(heightOnGrid), parallaxLayer);
+        return AdjustRectForCamera(ConvertGridUnitsToVisiblePx(gridX, parallaxLayer),
+            ConvertGridUnitsToVisiblePx(gridY, parallaxLayer),
+            ConvertGridUnitsToVisiblePx(widthOnGrid, parallaxLayer),
+            ConvertGridUnitsToVisiblePx(heightOnGrid, parallaxLayer), parallaxLayer);
     }
 
     public Rectangle GetVisibleRectForWallQuadrant(int gridX, int gridY, Corner corner)
@@ -71,9 +72,12 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         return GetVisibleRectForGridCell(quadrantX, quadrantY, 0.5f, 0.5f);
     }
 
-    private float ConvertGridUnitsToVisiblePx(float gridUnits)
+    private float ConvertGridUnitsToVisiblePx(float gridUnits, float parallaxLayer = 1f)
     {
-        return gridUnits * GameConfig.CellTextureSizePx * gameState.Camera.ScaleMultiplier;
+        // TODO fix scale issues. Scale and parallax aren't working togethrr. Scale should happen after parallax
+        // It'd be nice if scale scaled accordingly to parallax layer as well
+        var scale = parallaxLayer < 1 ? 2 : gameState.Camera.ScaleMultiplier;
+        return gridUnits * GameConfig.CellTextureSizePx * scale;
     }
 
     private float ConvertVisiblePxToGridUnits(float visiblePx)

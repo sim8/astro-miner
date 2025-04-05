@@ -87,6 +87,7 @@ public class AstroMinerGame : Game
         LoadTexture("launch-pad-rear");
         LoadTexture("mountains-nice");
         LoadTexture("mountains-nice-mask");
+        LoadTexture("mountains-nice-tiled");
     }
 
     protected override void Update(GameTime gameTime)

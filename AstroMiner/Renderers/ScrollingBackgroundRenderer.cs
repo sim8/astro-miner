@@ -6,21 +6,22 @@ namespace AstroMiner.Renderers;
 
 public class ScrollingBackgroundRenderer(RendererShared shared)
 {
-    private const int LandTextureWidthPx = 64;
-    private const int LandTextureHeightPx = 64;
+    private const int LandTextureWidthPx = 800;
+    private const int LandTextureHeightPx = 800;
 
-    private const int Scale = 4;
+    private const int Scale = 1;
 
     private const int RenderedWidth = LandTextureWidthPx * Scale;
     private const int RenderedHeight = LandTextureHeightPx * Scale;
 
-    private const int AnimationTime = 1300;
+    private const int AnimationTime = 3000;
 
     public void RenderBackground(SpriteBatch spriteBatch)
     {
         var (viewportWidth, viewportHeight) = shared.ViewHelpers.GetViewportSize();
 
-        var percentComplete = shared.GameState.MsSinceStart % AnimationTime / (float)AnimationTime;
+        var percentComplete = shared.GameState.GameTime.TotalGameTime.TotalMilliseconds % AnimationTime /
+                              (float)AnimationTime;
 
         var currentOffset = (int)(RenderedHeight * (1f - percentComplete));
 
@@ -37,7 +38,7 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
             {
                 var xPos = col * RenderedWidth;
                 spriteBatch.Draw(
-                    shared.Textures["land-background"],
+                    shared.Textures["mountains-nice-tiled"],
                     new Rectangle(xPos, yPos, RenderedWidth, RenderedHeight),
                     Color.White
                 );

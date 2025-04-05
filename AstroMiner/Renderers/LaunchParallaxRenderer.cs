@@ -17,10 +17,10 @@ public class LaunchParallaxRenderer(RendererShared shared)
     {
         spriteBatch.Draw(shared.Textures["mountains-nice"],
             shared.ViewHelpers.GetVisibleRectForGridCell(BackgroundX, gridY, 25,
-                15, parallaxLayer), Color.White);
+                20, parallaxLayer), Color.White);
         spriteBatch.Draw(shared.Textures["mountains-nice-mask"],
             shared.ViewHelpers.GetVisibleRectForGridCell(BackgroundX, gridY, 25,
-                15, parallaxLayer), Color.White * opacity);
+                20, parallaxLayer), Color.White * opacity);
     }
 
     public void Render(SpriteBatch spriteBatch)

@@ -312,3 +312,15 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:img/mountains-nice-mask.png
+
+#begin img/mountains-nice-tiled.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:img/mountains-nice-tiled.png
