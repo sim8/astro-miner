@@ -9,17 +9,20 @@ public enum WorldCellType
 public static class WorldGrid
 {
     private const string OizusWorld = """
-                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                                      X,X,X,X,-,-,X,X,X,X,X,X,X,X
-                                      X,X,X,X,-,-,-,-,X,X,X,-,-,X
-                                      X,X,X,X,X,X,X,-,X,X,X,X,-,X
-                                      X,-,-,X,X,X,X,-,X,X,X,X,-,X
-                                      X,-,-,-,-,-,-,-,-,-,-,-,-,X
-                                      X,-,-,-,-,-,-,-,-,-,-,-,-,X
-                                      X,-,-,X,X,X,X,X,X,X,X,X,X,X
-                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                      X,X,X,X,-,-,X,X,X,X,X,X,X,X,X,X,X,X
+                                      X,X,X,X,-,-,-,-,X,X,X,-,-,X,X,X,X,X
+                                      X,X,X,X,X,X,X,-,X,X,X,X,-,X,X,X,X,X
+                                      X,-,-,X,X,X,X,-,X,X,X,X,-,X,X,X,X,X
+                                      X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X,X
+                                      X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X,X
+                                      X,-,-,X,X,X,X,X,X,X,X,X,X,-,-,X,X,X
+                                      X,X,X,X,X,X,X,X,X,X,X,X,X,-,-,X,X,X
+                                      X,X,X,X,X,X,X,X,X,X,X,-,-,-,-,-,-,X
+                                      X,X,X,X,X,X,X,X,X,X,X,X,X,-,-,-,-,X
+                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
                                       """;
 
     private static WorldCellType[,] ParseWorld(string world)
