@@ -4,6 +4,7 @@ using AstroMiner.AsteroidWorld;
 using AstroMiner.Definitions;
 using AstroMiner.ECS;
 using AstroMiner.HomeWorld;
+using AstroMiner.InteriorsWorld;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
@@ -44,6 +45,7 @@ public class GameState
     public CameraState Camera;
     public CloudManager CloudManager;
     public HomeWorldState HomeWorld;
+    public InteriorsWorldState InteriorsWorld;
     public Inventory Inventory;
     public bool IsOnAsteroid;
 
@@ -67,6 +69,7 @@ public class GameState
         {
             World.Asteroid => AsteroidWorld,
             World.Home => HomeWorld,
+            World.RigRoom => InteriorsWorld,
             _ => throw new Exception("Invalid world")
         };
 
@@ -80,6 +83,13 @@ public class GameState
     {
         ActiveWorld = World.Home;
         HomeWorld.Initialize();
+    }
+
+    // TODO feels weird. Should it be a separate enum?
+    public void InitializeInterior(World interiorWorld)
+    {
+        ActiveWorld = interiorWorld;
+        InteriorsWorld.Initialize();
     }
 
     public void Initialize()

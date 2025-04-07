@@ -25,6 +25,16 @@ public static class WorldGrid
                                       X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
                                       """;
 
+    private const string RigRoomWorld = """
+                                        X,X,X,X,X,X,X,X
+                                        X,-,-,-,-,-,-,X
+                                        X,-,-,-,-,-,-,X
+                                        X,-,-,-,-,-,-,X
+                                        X,-,-,-,-,-,-,X
+                                        X,X,X,X,-,X,X,X
+                                        X,X,X,X,X,X,X,X
+                                        """;
+
     private static WorldCellType[,] ParseWorld(string world)
     {
         var rows = world.Trim().Split('\n');
