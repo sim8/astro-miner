@@ -53,8 +53,8 @@ public static class WorldGrid
     private static readonly IReadOnlyDictionary<(World world, (int x, int y)), PortalConfig> PortalsConfig =
         new Dictionary<(World world, (int x, int y)), PortalConfig>
         {
-            { (World.Home, (11, 10)), new PortalConfig(World.RigRoom, (0, 7), Direction.Top) },
-            { (World.RigRoom, (0, 7)), new PortalConfig(World.Home, (11, 10), Direction.Bottom) }
+            { (World.Home, (11, 10)), new PortalConfig(World.RigRoom, (4, 7), Direction.Top) },
+            { (World.RigRoom, (4, 7)), new PortalConfig(World.Home, (11, 10), Direction.Bottom) }
         };
 
     private static WorldCellType[,] ParseWorld(string world)

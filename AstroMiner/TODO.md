@@ -75,6 +75,7 @@
 - Player placement when exiting
 - Test on Xbox?
     - Is state serializable for things like saving?
+- Add remainder of font data - pick a different font?
 
 ## Rendering / art
 

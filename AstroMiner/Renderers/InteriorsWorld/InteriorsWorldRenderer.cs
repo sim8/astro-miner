@@ -29,17 +29,23 @@ public class InteriorsWorldRenderer(RendererShared shared) : BaseWorldRenderer(s
             spriteBatch.Draw(Shared.Textures[config.TexureName],
                 Shared.ViewHelpers.GetVisibleRectForGridCell(0, 0, config.GridWidth, config.GridHeight),
                 Color.White);
-            RenderDebugCollisionMap(spriteBatch);
+            RenderGridDebugOverlay(spriteBatch);
         }
     }
 
-    private void RenderDebugCollisionMap(SpriteBatch spriteBatch)
+    private void RenderGridDebugOverlay(SpriteBatch spriteBatch)
     {
         for (var row = 0; row < _gameState.InteriorsWorld.Grid.GetLength(0); row++)
         for (var col = 0; col < _gameState.InteriorsWorld.Grid.GetLength(1); col++)
+        {
+            var cellRect = Shared.ViewHelpers.GetVisibleRectForGridCell(col, row);
             if (_gameState.InteriorsWorld.Grid[row, col] == WorldCellType.Filled)
-                spriteBatch.Draw(Shared.Textures["white"],
-                    Shared.ViewHelpers.GetVisibleRectForGridCell(col, row),
-                    Color.Red * 0.5f);
+                spriteBatch.Draw(Shared.Textures["white"], cellRect, Color.Red * 0.5f);
+            if (_gameState.InteriorsWorld.Grid[row, col] == WorldCellType.Portal)
+                spriteBatch.Draw(Shared.Textures["white"], cellRect, Color.Green * 0.5f);
+
+            var coordinatesStr = col + " " + row;
+            shared.RenderString(spriteBatch, cellRect.X, cellRect.Y, coordinatesStr, 2);
+        }
     }
 }
