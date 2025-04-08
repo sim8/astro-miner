@@ -46,13 +46,20 @@ public class DirectionComponent : Component
     public Vector2 DirectionalVector => DirectionHelpers.GetDirectionalVector(1f, Direction);
 }
 
+public enum PortalStatus
+{
+    Departing,
+    Arriving,
+    None
+}
+
 public class MovementComponent : Component
 {
     // Movement constants
     public const float ExcessSpeedLossPerSecond = 3f;
 
     // State
-    public bool IsUsingPortal { get; set; }
+    public PortalStatus PortalStatus { get; set; } = PortalStatus.None;
     public float CurrentSpeed { get; set; }
     public float MaxSpeed { get; set; }
     public int TimeToReachMaxSpeedMs { get; set; }

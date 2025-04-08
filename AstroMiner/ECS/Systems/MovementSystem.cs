@@ -141,7 +141,7 @@ public class MovementSystem : System
         foreach (var movementComponent in Ecs.GetAllComponents<MovementComponent>())
         {
             // PortalSystem controls movement
-            if (movementComponent.IsUsingPortal) continue;
+            if (movementComponent.PortalStatus != PortalStatus.None) continue;
 
             var entityId = movementComponent.EntityId;
             var activeDirection = entityId == GameState.Ecs.ActiveControllableEntityId ? pressedDirection : null;
