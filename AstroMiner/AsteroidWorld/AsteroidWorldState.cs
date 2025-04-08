@@ -115,7 +115,10 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
         if (gameState.Ecs.ActiveControllableEntityIsDead ||
             gameState.Ecs.ActiveControllableEntityIsOffAsteroid)
             if (activeMiningControls.Contains(MiningControls.NewGameOrReturnToBase))
+            {
                 gameState.SetActiveWorldAndInitialize(World.Home);
+                gameState.HomeWorld.InitializeOrResetEntities();
+            }
 
         MsSinceStart += gameTime.ElapsedGameTime.Milliseconds;
 

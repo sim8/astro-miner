@@ -84,13 +84,6 @@ public class GameState
             InteriorsWorld.Initialize();
     }
 
-    // TODO feels weird. Should it be a separate enum?
-    public void InitializeInterior(World interiorWorld)
-    {
-        ActiveWorld = interiorWorld;
-        InteriorsWorld.Initialize();
-    }
-
     public void Initialize()
     {
         Inventory = new Inventory();
@@ -103,6 +96,7 @@ public class GameState
         Ecs = new Ecs(this);
 
         SetActiveWorldAndInitialize(World.Home);
+        HomeWorld.InitializeOrResetEntities();
     }
 
     public void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)

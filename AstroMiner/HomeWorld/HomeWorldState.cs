@@ -13,7 +13,10 @@ public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
     {
         base.Initialize();
         Grid = WorldGrid.GetOizusGrid();
+    }
 
+    public void InitializeOrResetEntities()
+    {
         InitializeMiner();
         InitializePlayer();
     }
