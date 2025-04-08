@@ -1,49 +1,28 @@
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
-using AstroMiner.Definitions;
+using System.Linq;
 using AstroMiner.ECS.Components;
 using AstroMiner.ECS.Systems;
 using Microsoft.Xna.Framework;
-using System.Linq;
 
 namespace AstroMiner.ECS;
 
 /// <summary>
-/// The World class manages all entities and their components.
-/// It provides methods for creating/destroying entities and adding/removing components.
+///     The World class manages all entities and their components.
+///     It provides methods for creating/destroying entities and adding/removing components.
 /// </summary>
 public class Ecs
 {
-    private readonly GameState _gameState;
-    private int _nextEntityId = 1;
-    private readonly Dictionary<int, HashSet<Component>> _entityComponents = new();
     private readonly Dictionary<Type, HashSet<Component>> _componentsByType = new();
-    private IEnumerable<int> _entityIdsInActiveWorldSortedByDistance;
-
-    // Track special entities
-    private int? _playerEntityId;
-    private int? _minerEntityId;
-    public int? PlayerEntityId => _playerEntityId;
-    public int? MinerEntityId => _minerEntityId;
+    private readonly Dictionary<int, HashSet<Component>> _entityComponents = new();
+    private readonly GameState _gameState;
 
     // Track the currently active controllable entity
     private int? _activeControllableEntityId;
-    public int? ActiveControllableEntityId => _activeControllableEntityId;
+    private int _nextEntityId = 1;
 
-    public EntityFactories Factories { get; }
-    public IEnumerable<int> EntityIdsInActiveWorldSortedByDistance => _entityIdsInActiveWorldSortedByDistance;
+    // Track special entities
 
-    // Systems
-    public DynamiteSystem DynamiteSystem { get; }
-    public ExplosionSystem ExplosionSystem { get; }
-    public MovementSystem MovementSystem { get; }
-    public HealthSystem HealthSystem { get; }
-    public VehicleEnterExitSystem VehicleEnterExitSystem { get; }
-    public FallOrLavaDamageSystem FallOrLavaDamageSystem { get; }
-    public MiningSystem MiningSystem { get; }
-    public GrappleSystem GrappleSystem { get; }
-    public LaunchSystem LaunchSystem { get; }
     public Ecs(GameState gameState)
     {
         _gameState = gameState;
@@ -53,6 +32,7 @@ public class Ecs
         DynamiteSystem = new DynamiteSystem(this, gameState);
         ExplosionSystem = new ExplosionSystem(this, gameState);
         MovementSystem = new MovementSystem(this, gameState);
+        PortalSystem = new PortalSystem(this, gameState);
         HealthSystem = new HealthSystem(this, gameState);
         VehicleEnterExitSystem = new VehicleEnterExitSystem(this, gameState);
         FallOrLavaDamageSystem = new FallOrLavaDamageSystem(this, gameState);
@@ -61,11 +41,57 @@ public class Ecs
         LaunchSystem = new LaunchSystem(this, gameState);
     }
 
+    public int? PlayerEntityId { get; private set; }
+
+    public int? MinerEntityId { get; private set; }
+
+    public int? ActiveControllableEntityId => _activeControllableEntityId;
+
+    public EntityFactories Factories { get; }
+    public IEnumerable<int> EntityIdsInActiveWorldSortedByDistance { get; private set; }
+
+    // Systems
+    public DynamiteSystem DynamiteSystem { get; }
+    public ExplosionSystem ExplosionSystem { get; }
+    public MovementSystem MovementSystem { get; }
+    public PortalSystem PortalSystem { get; }
+    public HealthSystem HealthSystem { get; }
+    public VehicleEnterExitSystem VehicleEnterExitSystem { get; }
+    public FallOrLavaDamageSystem FallOrLavaDamageSystem { get; }
+    public MiningSystem MiningSystem { get; }
+    public GrappleSystem GrappleSystem { get; }
+    public LaunchSystem LaunchSystem { get; }
+
+    public Vector2 ActiveControllableEntityCenterPosition => _activeControllableEntityId == null
+        ? Vector2.Zero
+        : GetComponent<PositionComponent>(_activeControllableEntityId.Value).CenterPosition;
+
+    public bool ActiveControllableEntityIsDead
+    {
+        get
+        {
+            if (_activeControllableEntityId == null) return false;
+            var healthComponent = GetComponent<HealthComponent>(_activeControllableEntityId.Value);
+            return healthComponent?.IsDead ?? false;
+        }
+    }
+
+    public bool ActiveControllableEntityIsOffAsteroid
+    {
+        get
+        {
+            if (_activeControllableEntityId == null) return false;
+            var positionComponent = GetComponent<PositionComponent>(_activeControllableEntityId.Value);
+            return positionComponent?.IsOffAsteroid ?? false;
+        }
+    }
+
     public void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
     {
         DynamiteSystem.Update(gameTime, activeMiningControls);
         ExplosionSystem.Update(gameTime, activeMiningControls);
         MovementSystem.Update(gameTime, activeMiningControls);
+        PortalSystem.Update(gameTime, activeMiningControls);
         HealthSystem.Update(gameTime, activeMiningControls);
         VehicleEnterExitSystem.Update(gameTime, activeMiningControls);
         FallOrLavaDamageSystem.Update(gameTime, activeMiningControls);
@@ -88,28 +114,6 @@ public class Ecs
         _activeControllableEntityId = null;
     }
 
-    public Vector2 ActiveControllableEntityCenterPosition => _activeControllableEntityId == null ? Vector2.Zero : GetComponent<PositionComponent>(_activeControllableEntityId.Value).CenterPosition;
-
-    public bool ActiveControllableEntityIsDead
-    {
-        get
-        {
-            if (_activeControllableEntityId == null) return false;
-            var healthComponent = GetComponent<HealthComponent>(_activeControllableEntityId.Value);
-            return healthComponent?.IsDead ?? false;
-        }
-    }
-
-    public bool ActiveControllableEntityIsOffAsteroid
-    {
-        get
-        {
-            if (_activeControllableEntityId == null) return false;
-            var positionComponent = GetComponent<PositionComponent>(_activeControllableEntityId.Value);
-            return positionComponent?.IsOffAsteroid ?? false;
-        }
-    }
-
     public bool GetIsActive(int entityId)
     {
         // If this is the active controllable entity, it's active
@@ -124,12 +128,12 @@ public class Ecs
 
     public void SetPlayerEntityId(int entityId)
     {
-        _playerEntityId = entityId;
+        PlayerEntityId = entityId;
     }
 
     public void SetMinerEntityId(int entityId)
     {
-        _minerEntityId = entityId;
+        MinerEntityId = entityId;
     }
 
     public IEnumerable<int> GetAllEntityIds()
@@ -161,20 +165,17 @@ public class Ecs
         if (!_entityComponents.TryGetValue(entityId, out var components))
             return;
 
-        foreach (var component in components)
-        {
-            _componentsByType[component.GetType()].Remove(component);
-        }
+        foreach (var component in components) _componentsByType[component.GetType()].Remove(component);
 
         _entityComponents.Remove(entityId);
 
         // Clear entity references if they're being destroyed
         if (_activeControllableEntityId == entityId)
             _activeControllableEntityId = null;
-        if (_playerEntityId == entityId)
-            _playerEntityId = null;
-        if (_minerEntityId == entityId)
-            _minerEntityId = null;
+        if (PlayerEntityId == entityId)
+            PlayerEntityId = null;
+        if (MinerEntityId == entityId)
+            MinerEntityId = null;
     }
 
     public T AddComponent<T>(int entityId) where T : Component, new()
@@ -207,10 +208,7 @@ public class Ecs
         components.Remove(component);
 
         var type = typeof(T);
-        if (_componentsByType.TryGetValue(type, out var typeComponents))
-        {
-            typeComponents.Remove(component);
-        }
+        if (_componentsByType.TryGetValue(type, out var typeComponents)) typeComponents.Remove(component);
     }
 
     public T GetComponent<T>(int entityId) where T : Component
@@ -219,10 +217,8 @@ public class Ecs
             return null;
 
         foreach (var component in components)
-        {
             if (component is T typedComponent)
                 return typedComponent;
-        }
 
         return null;
     }
@@ -233,10 +229,7 @@ public class Ecs
         if (!_componentsByType.TryGetValue(type, out var components))
             yield break;
 
-        foreach (var component in components)
-        {
-            yield return (T)component;
-        }
+        foreach (var component in components) yield return (T)component;
     }
 
     public IEnumerable<T> GetAllComponentsInActiveWorld<T>() where T : Component
@@ -251,7 +244,7 @@ public class Ecs
 
     private void CalculateEntityIdsInActiveWorldSortedByDistance()
     {
-        _entityIdsInActiveWorldSortedByDistance = _entityComponents.Keys
+        EntityIdsInActiveWorldSortedByDistance = _entityComponents.Keys
             .Where(entityId =>
             {
                 var positionComponent = GetComponent<PositionComponent>(entityId);

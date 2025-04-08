@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
@@ -135,37 +134,15 @@ public class MovementSystem : System
         return true;
     }
 
-    private void MaybeUsePortal(PositionComponent position, MovementComponent movement)
-    {
-        var (x, y) = ViewHelpers.ToGridPosition(position.CenterPosition);
-        if (GameState.ActiveWorldState.CellIsPortal(x, y))
-        {
-            var config = WorldGrid.GetPortalConfig(position.World, (x, y));
-            position.World = config.TargetWorld;
-
-            var targetCenter = new Vector2(config.Coordinates.Item1 + 0.5f, config.Coordinates.Item2 + 0.5f);
-
-            targetCenter += config.Direction switch
-            {
-                Direction.Top => new Vector2(0, -1),
-                Direction.Right => new Vector2(1, 0),
-                Direction.Bottom => new Vector2(0, 1),
-                Direction.Left => new Vector2(-1, 0),
-                _ => new Vector2()
-            };
-
-            position.SetCenterPosition(targetCenter);
-
-            GameState.SetActiveWorldAndInitialize(config.TargetWorld);
-        }
-    }
-
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
         var pressedDirection = GetDirectionFromActiveControls(activeControls);
 
         foreach (var movementComponent in Ecs.GetAllComponents<MovementComponent>())
         {
+            // PortalSystem controls movement
+            if (movementComponent.IsUsingPortal) continue;
+
             var entityId = movementComponent.EntityId;
             var activeDirection = entityId == GameState.Ecs.ActiveControllableEntityId ? pressedDirection : null;
             var positionComponent = Ecs.GetComponent<PositionComponent>(entityId);
@@ -174,10 +151,6 @@ public class MovementSystem : System
             if (positionComponent == null || directionComponent == null)
                 continue;
 
-            // TODO - if in portal, stop below controls?
-            MaybeUsePortal(positionComponent, movementComponent);
-
-            // Update direction and speed
             HandleDirectionChange(movementComponent, activeDirection);
             UpdateSpeed(movementComponent, activeDirection, gameTime);
 

@@ -40,6 +40,7 @@ public enum Direction
 
 public class GameState
 {
+    private static readonly HashSet<MiningControls> EmptyControls = new();
     public readonly GraphicsDeviceManager Graphics;
     public AsteroidWorldState AsteroidWorld;
     public CameraState Camera;
@@ -55,6 +56,8 @@ public class GameState
         Graphics = graphics;
         Initialize();
     }
+
+    public bool FreezeControls { get; set; }
 
     public Ecs Ecs { get; private set; }
     public GameTime GameTime { get; private set; }
@@ -101,11 +104,12 @@ public class GameState
 
     public void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
     {
+        var controlsToUse = FreezeControls ? EmptyControls : activeMiningControls;
         GameTime = gameTime;
-        ActiveWorldState.Update(activeMiningControls, gameTime);
+        ActiveWorldState.Update(controlsToUse, gameTime);
 
-        Camera.Update(gameTime, activeMiningControls);
+        Camera.Update(gameTime, controlsToUse);
         CloudManager.Update(gameTime);
-        Ecs.Update(gameTime, activeMiningControls);
+        Ecs.Update(gameTime, controlsToUse);
     }
 }

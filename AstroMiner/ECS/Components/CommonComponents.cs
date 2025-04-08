@@ -52,6 +52,7 @@ public class MovementComponent : Component
     public const float ExcessSpeedLossPerSecond = 3f;
 
     // State
+    public bool IsUsingPortal { get; set; }
     public float CurrentSpeed { get; set; }
     public float MaxSpeed { get; set; }
     public int TimeToReachMaxSpeedMs { get; set; }
