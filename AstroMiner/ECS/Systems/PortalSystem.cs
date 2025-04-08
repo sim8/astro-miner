@@ -75,6 +75,9 @@ public class PortalSystem : System
                         var distanceToTravel = Math.Min(distanceAtCurrentSpeed, distanceToFarSide);
                         position.Position +=
                             DirectionHelpers.GetDirectionalVector((float)distanceToTravel, direction.Direction);
+
+                        // Has reached far end of portal cell
+                        if (distanceToTravel == 0) MoveToTargetWorld(config, position);
                     }
                     else
                     {
