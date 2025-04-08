@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
@@ -40,10 +41,8 @@ public class PortalSystem : System
         {
             var entityId = movement.EntityId;
             var position = Ecs.GetComponent<PositionComponent>(entityId);
+            Console.WriteLine("Pos: " + position.Position.Y + " centerPos: " + position.CenterPosition.Y);
             var direction = Ecs.GetComponent<DirectionComponent>(entityId);
-
-            var isActiveControllableEntity = entityId == GameState.Ecs.ActiveControllableEntityId;
-
 
             var (x, y) = ViewHelpers.ToGridPosition(position.CenterPosition);
             if (GameState.ActiveWorldState.CellIsPortal(x, y))
@@ -60,6 +59,35 @@ public class PortalSystem : System
                 // 
 
                 var config = WorldGrid.GetPortalConfig(position.World, (x, y));
+
+
+                var distanceAtCurrentSpeed = movement.CurrentSpeed * (gameTime.ElapsedGameTime.Milliseconds / 1000f);
+
+                if (config.Direction == Direction.Top)
+                {
+                    var distanceFromCenter = position.CenterPosition.X - (Math.Floor(position.CenterPosition.X) + 0.5f);
+
+                    if (distanceFromCenter == 0)
+                    {
+                        direction.Direction = config.Direction;
+                        var distanceToFarSide = position.CenterPosition.Y -
+                                                (Math.Floor(position.CenterPosition.Y) + position.GridHeight / 2);
+                        var distanceToTravel = Math.Min(distanceAtCurrentSpeed, distanceToFarSide);
+                        position.Position +=
+                            DirectionHelpers.GetDirectionalVector((float)distanceToTravel, direction.Direction);
+                    }
+                    else
+                    {
+                        direction.Direction = distanceFromCenter > 0 ? Direction.Left : Direction.Right;
+                        var absDistanceToCenter = Math.Abs(distanceFromCenter);
+                        var distanceToTravel = Math.Min(distanceAtCurrentSpeed, absDistanceToCenter);
+
+                        position.Position +=
+                            DirectionHelpers.GetDirectionalVector((float)distanceToTravel, direction.Direction);
+                    }
+                }
+
+                // get AI to do this for left/right
             }
         }
     }
