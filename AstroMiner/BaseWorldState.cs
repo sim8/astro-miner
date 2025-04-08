@@ -14,4 +14,5 @@ public abstract class BaseWorldState(GameState g)
     }
 
     public abstract bool CellIsCollideable(int x, int y);
+    public abstract bool CellIsPortal(int x, int y);
 }

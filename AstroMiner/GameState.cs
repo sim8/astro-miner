@@ -73,16 +73,15 @@ public class GameState
             _ => throw new Exception("Invalid world")
         };
 
-    public void InitializeAsteroid()
+    public void SetActiveWorldAndInitialize(World world)
     {
-        ActiveWorld = World.Asteroid;
-        AsteroidWorld.Initialize();
-    }
-
-    public void InitializeHome()
-    {
-        ActiveWorld = World.Home;
-        HomeWorld.Initialize();
+        ActiveWorld = world;
+        if (world == World.Asteroid)
+            AsteroidWorld.Initialize();
+        else if (world == World.Home)
+            HomeWorld.Initialize();
+        else
+            InteriorsWorld.Initialize();
     }
 
     // TODO feels weird. Should it be a separate enum?
@@ -99,10 +98,11 @@ public class GameState
         MsSinceStart = 0;
         AsteroidWorld = new AsteroidWorldState(this);
         HomeWorld = new HomeWorldState(this);
+        InteriorsWorld = new InteriorsWorldState(this);
         CloudManager = new CloudManager(this);
         Ecs = new Ecs(this);
 
-        InitializeHome();
+        SetActiveWorldAndInitialize(World.Home);
     }
 
     public void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)

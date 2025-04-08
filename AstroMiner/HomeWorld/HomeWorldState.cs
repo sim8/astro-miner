@@ -62,7 +62,8 @@ public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
 
     public override void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
     {
-        if (activeMiningControls.Contains(MiningControls.NewGameOrReturnToBase)) gameState.InitializeAsteroid();
+        if (activeMiningControls.Contains(MiningControls.NewGameOrReturnToBase))
+            gameState.SetActiveWorldAndInitialize(World.Asteroid);
 
         base.Update(activeMiningControls, gameTime);
     }
@@ -73,5 +74,13 @@ public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
         if (x < 0 || x >= Grid.GetLength(1) || y < 0 ||
             y >= Grid.GetLength(0)) return false;
         return Grid[y, x] == WorldCellType.Filled;
+    }
+
+    public override bool CellIsPortal(int x, int y)
+    {
+        // TODO centralize out of bounds checks
+        if (x < 0 || x >= Grid.GetLength(1) || y < 0 ||
+            y >= Grid.GetLength(0)) return false;
+        return Grid[y, x] == WorldCellType.Portal;
     }
 }

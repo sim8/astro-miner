@@ -164,7 +164,7 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
         if (minerPosition.Position.Y < GameConfig.Launch.HomeToAsteroidPointY)
         {
             _minerLaunchSpeed = 0f; /// TODO set relative to new speed
-            GameState.InitializeAsteroid();
+            GameState.SetActiveWorldAndInitialize(World.Asteroid);
         }
 
         var launchPadFrontPosition = gameState.Ecs.GetComponent<PositionComponent>(LaunchPadFrontEntityId);
