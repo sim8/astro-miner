@@ -137,8 +137,7 @@ public class MovementSystem : System
 
     private void MaybeUsePortal(PositionComponent position, MovementComponent movement)
     {
-        // TODO check bottomRight too?
-        var (x, y) = ViewHelpers.ToGridPosition(position.Position);
+        var (x, y) = ViewHelpers.ToGridPosition(position.CenterPosition);
         if (GameState.ActiveWorldState.CellIsPortal(x, y))
         {
             var config = WorldGrid.GetPortalConfig(position.World, (x, y));
