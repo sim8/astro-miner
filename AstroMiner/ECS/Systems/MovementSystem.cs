@@ -143,7 +143,20 @@ public class MovementSystem : System
         {
             var config = WorldGrid.GetPortalConfig(position.World, (x, y));
             position.World = config.TargetWorld;
-            position.Position = new Vector2(config.Coordinates.Item1, config.Coordinates.Item2 - 1);
+
+            var targetCenter = new Vector2(config.Coordinates.Item1 + 0.5f, config.Coordinates.Item2 + 0.5f);
+
+            targetCenter += config.Direction switch
+            {
+                Direction.Top => new Vector2(0, -1),
+                Direction.Right => new Vector2(1, 0),
+                Direction.Bottom => new Vector2(0, 1),
+                Direction.Left => new Vector2(-1, 0),
+                _ => new Vector2()
+            };
+
+            position.SetCenterPosition(targetCenter);
+
             GameState.SetActiveWorldAndInitialize(config.TargetWorld);
         }
     }

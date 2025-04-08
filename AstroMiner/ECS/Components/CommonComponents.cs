@@ -3,15 +3,16 @@ using System.Drawing;
 using AstroMiner.Definitions;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace AstroMiner.ECS.Components;
 
 public class PositionComponent : Component
 {
-    public int WidthPx;
     public int HeightPx;
     public bool IsCollideable;
     public Vector2 Position;
+    public int WidthPx;
     public World World { get; set; }
     public bool IsOffAsteroid { get; set; }
 
@@ -23,6 +24,13 @@ public class PositionComponent : Component
     public float FrontY => Position.Y + GridHeight;
 
     public RectangleF Rectangle => new(Position.X, Position.Y, GridWidth, GridHeight);
+
+    public void SetCenterPosition(Vector2 centerPos)
+    {
+        var posX = centerPos.X - GridWidth / 2;
+        var posY = centerPos.Y - GridHeight / 2;
+        Position = new Vector2(posX, posY);
+    }
 }
 
 public class FuseComponent : Component
@@ -120,10 +128,9 @@ public class TextureComponent : Component
 
 public class RadialLightSourceComponent : Component
 {
-    public Microsoft.Xna.Framework.Color Tint { get; set; }
+    public Color Tint { get; set; }
     public int SizePx { get; set; }
     public float Opacity { get; set; } = 1f;
-
 }
 
 public class RenderLayerComponent : Component
