@@ -30,6 +30,11 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
         Seed = rnd.Next(1, 999);
     }
 
+    public override (int, int) GetGridSize()
+    {
+        return (Grid.Columns, Grid.Rows);
+    }
+
     public override void Initialize()
     {
         base.Initialize();

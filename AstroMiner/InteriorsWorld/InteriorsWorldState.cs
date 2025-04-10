@@ -29,4 +29,9 @@ public class InteriorsWorldState(GameState gameState) : BaseWorldState(gameState
             y >= Grid.GetLength(0)) return false;
         return Grid[y, x] == WorldCellType.Portal;
     }
+
+    public override (int, int) GetGridSize()
+    {
+        return (Grid.GetLength(1), Grid.GetLength(0));
+    }
 }

@@ -77,6 +77,7 @@
     - Is state serializable for things like saving?
 - Add remainder of font data - pick a different font?
 - Update collision detection - instead of rejecting moves, is there an inbetween?
+- Add another base class between interiors/home?
 
 ## Rendering / art
 

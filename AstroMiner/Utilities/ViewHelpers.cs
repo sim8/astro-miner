@@ -15,10 +15,36 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         return (int)Math.Ceiling(value);
     }
 
+    // TODO maybe this should be clamping the visible screen rather than player pos? Could reuse + cache visible grid logic?
+    private Vector2 GetCameraPos()
+    {
+        const int DistanceThreshold = 5;
+        var (cols, rows) = gameState.ActiveWorldState.GetGridSize();
+        var playerCenterPos = gameState.Ecs.ActiveControllableEntityCenterPosition;
+
+        float cameraX;
+        float cameraY;
+
+        // For the X axis, if the grid's width is too small (cannot support a margin on both sides), center the camera.
+        if (cols <= DistanceThreshold * 2)
+            cameraX = cols / 2f;
+        else
+            // Otherwise, clamp the player's X between DistanceThreshold and (cols - DistanceThreshold).
+            cameraX = Math.Clamp(playerCenterPos.X, DistanceThreshold, cols - DistanceThreshold);
+
+        // For the Y axis, do the same: center the camera if too small, or clamp otherwise.
+        if (rows <= DistanceThreshold * 2)
+            cameraY = rows / 2f;
+        else
+            cameraY = Math.Clamp(playerCenterPos.Y, DistanceThreshold, rows - DistanceThreshold);
+
+        return new Vector2(cameraX, cameraY);
+    }
+
     private Rectangle AdjustRectForCamera(float x, float y, float width, float height, float parallaxLayer = 1)
     {
-        // Get the player's center position in displayed pixels
-        var (xPx, yPx) = GridPosToDisplayedPx(gameState.Ecs.ActiveControllableEntityCenterPosition);
+        var cameraPos = GetCameraPos();
+        var (xPx, yPx) = GridPosToDisplayedPx(cameraPos);
 
 
         var rectCenterX = x + width / 2;
@@ -191,7 +217,7 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
 
     public (int startCol, int startRow, int endCol, int endRow) GetVisibleGrid(int padding = 0)
     {
-        var cameraPos = gameState.Ecs.ActiveControllableEntityCenterPosition;
+        var cameraPos = GetCameraPos();
         var (viewportWidthPx, viewportHeightPx) = GetViewportSize();
 
         var viewportGridWidth = ConvertVisiblePxToGridUnits(viewportWidthPx);
