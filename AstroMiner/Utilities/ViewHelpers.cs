@@ -152,7 +152,7 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
 
         if (config == null) return 1f;
 
-        return config.Direction switch
+        var percentageOutOfPortal = config.Direction switch
         {
             Direction.Top => position.CenterPosition.Y % 1,
             Direction.Bottom => 1 - position.CenterPosition.Y % 1,
@@ -160,6 +160,10 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
             Direction.Left => position.CenterPosition.X % 1,
             _ => 1f
         };
+
+        var percentageToCutOffOpacity = 0.5f;
+
+        return Math.Clamp((percentageOutOfPortal - percentageToCutOffOpacity) / percentageToCutOffOpacity, 0f, 1f);
     }
 
     // Tint red if taking damage

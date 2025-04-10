@@ -22,14 +22,10 @@ public class PortalSystem : System
 
         var centerPosition = config.Direction switch
         {
-            Direction.Top => new Vector2(targetX + 0.5f,
-                targetY + 1.0f - position.GridHeight / 2), // Bottom center of target cell
-            Direction.Bottom => new Vector2(targetX + 0.5f,
-                targetY + position.GridHeight / 2), // Top center of target cell
-            Direction.Left => new Vector2(targetX + 1.0f - position.GridWidth / 2,
-                targetY + 0.5f), // Right center of target cell
-            Direction.Right => new Vector2(targetX + position.GridHeight / 2,
-                targetY + 0.5f), // Left center of target cell
+            Direction.Top => new Vector2(targetX + 0.5f, targetY + 0.99f), // Bottom center of target cell
+            Direction.Bottom => new Vector2(targetX + 0.5f, targetY + 0.01f), // Top center of target cell
+            Direction.Left => new Vector2(targetX + 0.99f, targetY + 0.5f), // Right center of target cell
+            Direction.Right => new Vector2(targetX + 0.01f, targetY + 0.5f), // Left center of target cell
             _ => new Vector2(targetX + 0.5f, targetY + 0.5f)
         };
 
