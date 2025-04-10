@@ -10,9 +10,9 @@ public class HomeWorldRenderer(RendererShared shared) : BaseWorldRenderer(shared
 
     public override void RenderWorld(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(Shared.Textures["oizus-bg"], Shared.ViewHelpers.GetVisibleRectForGridCell(0, 0, 23, 20),
+        spriteBatch.Draw(Shared.Textures["oizus-bg"], Shared.ViewHelpers.GetVisibleRectForGridCell(0, 0, 40, 20),
             Color.White);
-        RenderGridDebugOverlay(spriteBatch);
+        // RenderGridDebugOverlay(spriteBatch);
     }
 
     private void RenderGridDebugOverlay(SpriteBatch spriteBatch)

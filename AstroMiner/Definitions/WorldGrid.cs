@@ -19,22 +19,28 @@ public class PortalConfig(World targetWorld, (int, int) coordinates, Direction d
 
 public static class WorldGrid
 {
-    // -------------------------------0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7
+    // -------------------------------0-------------------1-------------------2------------
+    // -------------------------------0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6
     private const string OizusWorld = """
-                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                                      X,X,X,X,-,-,X,X,X,X,X,X,X,X,X,X,X,X
-                                      X,X,X,X,-,-,-,-,X,X,X,-,-,X,X,X,X,X
-                                      X,X,X,X,X,X,X,-,X,X,X,X,-,X,X,X,X,X
-                                      X,-,-,X,X,X,X,-,X,X,X,X,-,X,X,X,X,X
-                                      X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X,X
-                                      X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X,X
-                                      X,-,-,X,X,X,X,X,X,X,X,X,X,-,-,X,X,X
-                                      X,X,X,X,X,X,X,X,X,X,X,@,X,-,-,X,X,X
-                                      X,X,X,X,X,X,X,X,X,X,X,-,-,-,-,-,-,X
-                                      X,X,X,X,X,X,X,X,X,X,X,X,X,-,-,-,-,X
-                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                      X,X,X,X,-,-,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                      X,X,X,X,-,-,-,-,X,X,X,-,-,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                      X,X,X,X,X,X,X,-,X,X,X,X,-,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                      X,-,-,X,X,X,X,-,X,X,X,X,-,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                      X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,X,X,X,X,X,X,X,X
+                                      X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,X,X,X,X,X,X,X,X
+                                      X,-,-,X,X,X,X,X,X,X,X,X,X,-,-,X,X,-,-,-,-,-,-,-,-,-,X
+                                      X,X,X,X,X,X,X,X,X,X,X,@,X,-,-,X,X,-,-,-,-,-,-,-,-,-,X
+                                      X,X,X,X,X,X,X,X,X,X,X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X
+                                      X,X,X,X,X,X,X,X,X,X,X,X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X
+                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,-,-,-,-,-,-,-,-,-,X
+                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,-,-,-,-,-,-,-,-,-,X
+                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,-,-,-,-,-,-,-,-,-,X
+                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,-,-,-,-,-,-,-,-,-,X
+                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,-,-,-,-,-,-,-,-,-,X
+                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
                                       """;
 
     // ---------------------------------0,1,2,3,4,5,6,7
