@@ -15,10 +15,15 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         return (int)Math.Ceiling(value);
     }
 
-    // TODO maybe this should be clamping the visible screen rather than player pos? Could reuse + cache visible grid logic?
+    // TODO if on portal cell, clamp to entrance
     private Vector2 GetCameraPos()
     {
-        const int DistanceThreshold = 5;
+        var (viewportGridWidth, viewportGridHeight) = GetViewportGridSize();
+
+        // TODO allow overriding this on a per world basis? Might be wonky for medium sized internal rooms
+        var widthThreshold = viewportGridWidth / 2;
+        var heightThreshold = viewportGridHeight / 2;
+
         var (cols, rows) = gameState.ActiveWorldState.GetGridSize();
         var playerCenterPos = gameState.Ecs.ActiveControllableEntityCenterPosition;
 
@@ -26,17 +31,17 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         float cameraY;
 
         // For the X axis, if the grid's width is too small (cannot support a margin on both sides), center the camera.
-        if (cols <= DistanceThreshold * 2)
+        if (cols <= widthThreshold * 2)
             cameraX = cols / 2f;
         else
-            // Otherwise, clamp the player's X between DistanceThreshold and (cols - DistanceThreshold).
-            cameraX = Math.Clamp(playerCenterPos.X, DistanceThreshold, cols - DistanceThreshold);
+            // Otherwise, clamp the player's X between widthThreshold and (cols - widthThreshold).
+            cameraX = Math.Clamp(playerCenterPos.X, widthThreshold, cols - widthThreshold);
 
         // For the Y axis, do the same: center the camera if too small, or clamp otherwise.
-        if (rows <= DistanceThreshold * 2)
+        if (rows <= heightThreshold * 2)
             cameraY = rows / 2f;
         else
-            cameraY = Math.Clamp(playerCenterPos.Y, DistanceThreshold, rows - DistanceThreshold);
+            cameraY = Math.Clamp(playerCenterPos.Y, heightThreshold, rows - heightThreshold);
 
         return new Vector2(cameraX, cameraY);
     }
@@ -68,6 +73,15 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
     public (int, int) GetViewportSize()
     {
         return (graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
+    }
+
+    private (float, float) GetViewportGridSize()
+    {
+        var (viewportWidthPx, viewportHeightPx) = GetViewportSize();
+
+        var viewportGridWidth = ConvertVisiblePxToGridUnits(viewportWidthPx);
+        var viewportGridHeight = ConvertVisiblePxToGridUnits(viewportHeightPx);
+        return (viewportGridWidth, viewportGridHeight);
     }
 
     public Rectangle GetVisibleRectForGridCell(float gridX, float gridY, float widthOnGrid = 1, float heightOnGrid = 1,
@@ -218,10 +232,7 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
     public (int startCol, int startRow, int endCol, int endRow) GetVisibleGrid(int padding = 0)
     {
         var cameraPos = GetCameraPos();
-        var (viewportWidthPx, viewportHeightPx) = GetViewportSize();
-
-        var viewportGridWidth = ConvertVisiblePxToGridUnits(viewportWidthPx);
-        var viewportGridHeight = ConvertVisiblePxToGridUnits(viewportHeightPx);
+        var (viewportGridWidth, viewportGridHeight) = GetViewportGridSize();
 
         var startCol = (int)(cameraPos.X - viewportGridWidth / 2) - padding;
         var startRow = (int)(cameraPos.Y - viewportGridHeight / 2) - padding;
