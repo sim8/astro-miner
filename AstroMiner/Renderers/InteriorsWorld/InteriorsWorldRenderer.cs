@@ -29,7 +29,7 @@ public class InteriorsWorldRenderer(RendererShared shared) : BaseWorldRenderer(s
             spriteBatch.Draw(Shared.Textures[config.TexureName],
                 Shared.ViewHelpers.GetVisibleRectForGridCell(0, 0, config.GridWidth, config.GridHeight),
                 Color.White);
-            RenderGridDebugOverlay(spriteBatch);
+            // RenderGridDebugOverlay(spriteBatch);
         }
     }
 

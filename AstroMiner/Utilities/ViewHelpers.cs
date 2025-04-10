@@ -133,8 +133,37 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         return x >= 0 && x < GameConfig.GridSize && y >= 0 && y < GameConfig.GridSize;
     }
 
-    // Tint red if taking damage
     public static Color GetEntityTintColor(Ecs ecs, int entityId)
+    {
+        var baseColor = GetEntityBaseTintColor(ecs, entityId);
+        return baseColor * GetEntityOpacityForPortal(ecs, entityId);
+    }
+
+    private static float GetEntityOpacityForPortal(Ecs ecs, int entityId)
+    {
+        var movement = ecs.GetComponent<MovementComponent>(entityId);
+        if (movement == null || movement.PortalStatus == PortalStatus.None) return 1f;
+
+        var position = ecs.GetComponent<PositionComponent>(entityId);
+
+
+        var (gridX, gridY) = ToGridPosition(position.CenterPosition);
+        var config = WorldGrid.GetPortalConfig(position.World, (gridX, gridY));
+
+        if (config == null) return 1f;
+
+        return config.Direction switch
+        {
+            Direction.Top => position.CenterPosition.Y % 1,
+            Direction.Bottom => 1 - position.CenterPosition.Y % 1,
+            Direction.Right => 1 - position.CenterPosition.X % 1,
+            Direction.Left => position.CenterPosition.X % 1,
+            _ => 1f
+        };
+    }
+
+    // Tint red if taking damage
+    private static Color GetEntityBaseTintColor(Ecs ecs, int entityId)
     {
         var healthComponent = ecs.GetComponent<HealthComponent>(entityId);
 

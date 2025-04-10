@@ -158,7 +158,7 @@ public class PortalSystem : System
             if (movement.PortalStatus == PortalStatus.None)
             {
                 movement.PortalStatus = PortalStatus.Departing;
-                movement.CurrentSpeed = movement.MaxSpeed;
+                movement.CurrentSpeed = movement.MaxSpeed / 2; // TODO walking speed?
             }
         }
     }

@@ -101,9 +101,6 @@ public static class WorldGrid
 
     public static PortalConfig GetPortalConfig(World world, (int, int) coordinates)
     {
-        if (!PortalsConfig.TryGetValue((world, coordinates), out var config))
-            throw new ArgumentException($"No portal found for World: {world} Coordinates: {coordinates}");
-
-        return config;
+        return PortalsConfig.GetValueOrDefault((world, coordinates));
     }
 }
