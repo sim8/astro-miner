@@ -15,8 +15,27 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         return (int)Math.Ceiling(value);
     }
 
-    // TODO if on portal cell, clamp to entrance
     private Vector2 GetCameraPos()
+    {
+        var playerCenterPos = gameState.Ecs.ActiveControllableEntityCenterPosition;
+        var cameraPosWithPortal = OverrideCameraPosIfUsingPortal(playerCenterPos);
+        return ClampCameraPosForGridBounds(cameraPosWithPortal);
+    }
+
+    private Vector2 OverrideCameraPosIfUsingPortal(Vector2 cameraPos)
+    {
+        if (gameState.Ecs.ActiveControllableEntityId == null) return cameraPos;
+
+        // TODO
+
+        return cameraPos;
+    }
+
+    /**
+     * Clamp camera pos so no off-grid area is shown. If grid is smaller
+     * than viewport (x or y) center instead
+     */
+    private Vector2 ClampCameraPosForGridBounds(Vector2 cameraPos)
     {
         var (viewportGridWidth, viewportGridHeight) = GetViewportGridSize();
 
@@ -25,23 +44,20 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         var heightThreshold = viewportGridHeight / 2;
 
         var (cols, rows) = gameState.ActiveWorldState.GetGridSize();
-        var playerCenterPos = gameState.Ecs.ActiveControllableEntityCenterPosition;
 
         float cameraX;
         float cameraY;
 
-        // For the X axis, if the grid's width is too small (cannot support a margin on both sides), center the camera.
+
         if (cols <= widthThreshold * 2)
             cameraX = cols / 2f;
         else
-            // Otherwise, clamp the player's X between widthThreshold and (cols - widthThreshold).
-            cameraX = Math.Clamp(playerCenterPos.X, widthThreshold, cols - widthThreshold);
+            cameraX = Math.Clamp(cameraPos.X, widthThreshold, cols - widthThreshold);
 
-        // For the Y axis, do the same: center the camera if too small, or clamp otherwise.
         if (rows <= heightThreshold * 2)
             cameraY = rows / 2f;
         else
-            cameraY = Math.Clamp(playerCenterPos.Y, heightThreshold, rows - heightThreshold);
+            cameraY = Math.Clamp(cameraPos.Y, heightThreshold, rows - heightThreshold);
 
         return new Vector2(cameraX, cameraY);
     }
