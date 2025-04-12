@@ -13,6 +13,9 @@ public static class Coordinates
 
         public static readonly (int x, int y) MinerHomeStartPosCenter = (5, 14);
         public static readonly (int x, int y) PlayerHomeStartPos = (7, 17);
+
+        public static readonly (int x, int y) HomeToRigRoomPortal = (11, 20);
+        public static readonly (int x, int y) RigToomToHomePortal = (4, 7);
     }
 
     public static class Px

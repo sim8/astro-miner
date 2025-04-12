@@ -146,7 +146,6 @@ public class PortalSystem : System
 
             var config = WorldGrid.GetPortalConfig(position.World, (gridX, gridY));
 
-
             if (movement.PortalStatus == PortalStatus.Departing)
                 MoveToDeparturePoint(movement, position, dirComp, config, gameTime);
 
