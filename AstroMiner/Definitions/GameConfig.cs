@@ -53,8 +53,6 @@ public static class GameConfig
         public const int AsteroidStartYOffset = 0;
 
         public const float AsteroidSpeed = 60f;
-
-        public static readonly (int x, int y) MinerHomeStartPosCenter = (5, 4);
     }
 
 

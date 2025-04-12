@@ -14,16 +14,20 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
     private const float LauncherGridHeight = LauncherHeightPx / (float)GameConfig.CellTextureSizePx;
     private readonly List<int> _launchLightEntities = new();
 
-    private readonly Vector2 LaunchPadFrontStartPos = ViewHelpers.AbsoluteXyPxToGridPos(122, 126);
-    private readonly Vector2 LaunchPadRearStartPos = ViewHelpers.AbsoluteXyPxToGridPos(122, 95);
+    private readonly Vector2 _launchPadFrontStartPos =
+        ViewHelpers.AbsoluteXyPxToGridPos(Coordinates.Px.LaunchPadsX, Coordinates.Px.LaunchPadFrontStartY);
+
+    private readonly Vector2 _launchPadRearStartPos =
+        ViewHelpers.AbsoluteXyPxToGridPos(Coordinates.Px.LaunchPadsX, Coordinates.Px.LaunchPadRearStartY);
+
     private bool _isLaunching;
+    private int _launchPadFrontEntityId = -1;
+    private int _launchPadRearEntityId = -1;
     private float _minerLaunchSpeed;
 
 
     private Vector2 _minerStartPosition;
     private double _startedAt = -1;
-    private int LaunchPadFrontEntityId = -1;
-    private int LaunchPadRearEntityId = -1;
 
     private bool HasJustPassedSeconds(GameTime gameTime, double seconds)
     {
@@ -35,10 +39,10 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
         // TODO ideally these'd be in an init()
-        if (LaunchPadFrontEntityId == -1)
-            LaunchPadFrontEntityId = GameState.Ecs.Factories.CreateLaunchPadFrontEntity(LaunchPadFrontStartPos);
-        if (LaunchPadRearEntityId == -1)
-            LaunchPadRearEntityId = GameState.Ecs.Factories.CreateLaunchPadRearEntity(LaunchPadRearStartPos);
+        if (_launchPadFrontEntityId == -1)
+            _launchPadFrontEntityId = GameState.Ecs.Factories.CreateLaunchPadFrontEntity(_launchPadFrontStartPos);
+        if (_launchPadRearEntityId == -1)
+            _launchPadRearEntityId = GameState.Ecs.Factories.CreateLaunchPadRearEntity(_launchPadRearStartPos);
 
 
         if (GameState.AsteroidWorld.IsInMiner)
@@ -52,21 +56,24 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
 
             if (HasJustPassedSeconds(gameTime, 1))
             {
-                var pos = ViewHelpers.AbsoluteXyPxToGridPos(215, 97);
+                var pos = ViewHelpers.AbsoluteXyPxToGridPos(Coordinates.Px.LaunchLight1X,
+                    Coordinates.Px.LaunchLightsY);
                 var id = GameState.Ecs.Factories.CreateLaunchLightEntity(pos);
                 _launchLightEntities.Add(id);
             }
 
             if (HasJustPassedSeconds(gameTime, 2))
             {
-                var pos = ViewHelpers.AbsoluteXyPxToGridPos(221, 97);
+                var pos = ViewHelpers.AbsoluteXyPxToGridPos(Coordinates.Px.LaunchLight2X,
+                    Coordinates.Px.LaunchLightsY);
                 var id = GameState.Ecs.Factories.CreateLaunchLightEntity(pos);
                 _launchLightEntities.Add(id);
             }
 
             if (HasJustPassedSeconds(gameTime, 3))
             {
-                var pos = ViewHelpers.AbsoluteXyPxToGridPos(227, 97);
+                var pos = ViewHelpers.AbsoluteXyPxToGridPos(Coordinates.Px.LaunchLight3X,
+                    Coordinates.Px.LaunchLightsY);
                 var id = GameState.Ecs.Factories.CreateLaunchLightEntity(pos);
                 _launchLightEntities.Add(id);
             }
@@ -139,18 +146,6 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
         _minerLaunchSpeed = Math.Min(_minerLaunchSpeed, GameConfig.Launch.AsteroidSpeed);
     }
 
-    public float GetLaunchPercentage()
-    {
-        if (GameState.ActiveWorld == World.Asteroid) return 1;
-        var minerEntityId = gameState.Ecs.MinerEntityId;
-        if (minerEntityId == null) return 0;
-
-        var minerPosition = gameState.Ecs.GetComponent<PositionComponent>(minerEntityId.Value);
-        var totalDistance = _minerStartPosition.Y - GameConfig.Launch.HomeToAsteroidPointY;
-        var distanceTraveled = _minerStartPosition.Y - minerPosition.Position.Y;
-        return Math.Min(distanceTraveled / totalDistance, 1);
-    }
-
     private void UpdateMinerAndLaunchPadPosition(GameTime gameTime)
     {
         var minerEntityId = gameState.Ecs.MinerEntityId;
@@ -167,13 +162,13 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
             GameState.SetActiveWorldAndInitialize(World.Asteroid);
         }
 
-        var launchPadFrontPosition = gameState.Ecs.GetComponent<PositionComponent>(LaunchPadFrontEntityId);
-        var launchPadRearPosition = gameState.Ecs.GetComponent<PositionComponent>(LaunchPadRearEntityId);
+        var launchPadFrontPosition = gameState.Ecs.GetComponent<PositionComponent>(_launchPadFrontEntityId);
+        var launchPadRearPosition = gameState.Ecs.GetComponent<PositionComponent>(_launchPadRearEntityId);
 
         launchPadFrontPosition.Position = Vector2.Max(launchPadFrontPosition.Position + movement,
-            LaunchPadFrontStartPos - new Vector2(0, LauncherGridHeight));
+            _launchPadFrontStartPos - new Vector2(0, LauncherGridHeight));
         launchPadRearPosition.Position = Vector2.Max(launchPadRearPosition.Position + movement,
-            LaunchPadRearStartPos - new Vector2(0, LauncherGridHeight));
+            _launchPadRearStartPos - new Vector2(0, LauncherGridHeight));
     }
 
     private void ClearLightEntities()
