@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
@@ -14,7 +13,10 @@ public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
     {
         base.Initialize();
         Grid = WorldGrid.GetOizusGrid();
+    }
 
+    public void InitializeOrResetEntities()
+    {
         InitializeMiner();
         InitializePlayer();
     }
@@ -45,7 +47,7 @@ public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
     private void InitializePlayer()
     {
         var playerCellOffset = GameConfig.PlayerSize / 2;
-        var playerPos = new Vector2(4f + playerCellOffset, 7f + playerCellOffset);
+        var playerPos = new Vector2(7f + playerCellOffset, 7f + playerCellOffset);
 
         var playerEntityId = gameState.Ecs.PlayerEntityId ?? gameState.Ecs.Factories.CreatePlayerEntity(playerPos);
 
@@ -63,7 +65,8 @@ public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
 
     public override void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
     {
-        if (activeMiningControls.Contains(MiningControls.NewGameOrReturnToBase)) gameState.InitializeAsteroid();
+        if (activeMiningControls.Contains(MiningControls.NewGameOrReturnToBase))
+            gameState.SetActiveWorldAndInitialize(World.Asteroid);
 
         base.Update(activeMiningControls, gameTime);
     }
@@ -74,5 +77,18 @@ public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
         if (x < 0 || x >= Grid.GetLength(1) || y < 0 ||
             y >= Grid.GetLength(0)) return false;
         return Grid[y, x] == WorldCellType.Filled;
+    }
+
+    public override bool CellIsPortal(int x, int y)
+    {
+        // TODO centralize out of bounds checks
+        if (x < 0 || x >= Grid.GetLength(1) || y < 0 ||
+            y >= Grid.GetLength(0)) return false;
+        return Grid[y, x] == WorldCellType.Portal;
+    }
+
+    public override (int, int) GetGridSize()
+    {
+        return (Grid.GetLength(1), Grid.GetLength(0));
     }
 }

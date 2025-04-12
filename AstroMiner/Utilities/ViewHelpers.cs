@@ -15,10 +15,57 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         return (int)Math.Ceiling(value);
     }
 
+    private Vector2 GetCameraPos()
+    {
+        var playerCenterPos = gameState.Ecs.ActiveControllableEntityCenterPosition;
+        var cameraPosWithPortal = OverrideCameraPosIfUsingPortal(playerCenterPos);
+        return ClampCameraPosForGridBounds(cameraPosWithPortal);
+    }
+
+    private Vector2 OverrideCameraPosIfUsingPortal(Vector2 cameraPos)
+    {
+        if (gameState.Ecs.ActiveControllableEntityId == null) return cameraPos;
+
+        // TODO
+
+        return cameraPos;
+    }
+
+    /**
+     * Clamp camera pos so no off-grid area is shown. If grid is smaller
+     * than viewport (x or y) center instead
+     */
+    private Vector2 ClampCameraPosForGridBounds(Vector2 cameraPos)
+    {
+        var (viewportGridWidth, viewportGridHeight) = GetViewportGridSize();
+
+        // TODO allow overriding this on a per world basis? Might be wonky for medium sized internal rooms
+        var widthThreshold = viewportGridWidth / 2;
+        var heightThreshold = viewportGridHeight / 2;
+
+        var (cols, rows) = gameState.ActiveWorldState.GetGridSize();
+
+        float cameraX;
+        float cameraY;
+
+
+        if (cols <= widthThreshold * 2)
+            cameraX = cols / 2f;
+        else
+            cameraX = Math.Clamp(cameraPos.X, widthThreshold, cols - widthThreshold);
+
+        if (rows <= heightThreshold * 2)
+            cameraY = rows / 2f;
+        else
+            cameraY = Math.Clamp(cameraPos.Y, heightThreshold, rows - heightThreshold);
+
+        return new Vector2(cameraX, cameraY);
+    }
+
     private Rectangle AdjustRectForCamera(float x, float y, float width, float height, float parallaxLayer = 1)
     {
-        // Get the player's center position in displayed pixels
-        var (xPx, yPx) = GridPosToDisplayedPx(gameState.Ecs.ActiveControllableEntityCenterPosition);
+        var cameraPos = GetCameraPos();
+        var (xPx, yPx) = GridPosToDisplayedPx(cameraPos);
 
 
         var rectCenterX = x + width / 2;
@@ -42,6 +89,15 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
     public (int, int) GetViewportSize()
     {
         return (graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
+    }
+
+    private (float, float) GetViewportGridSize()
+    {
+        var (viewportWidthPx, viewportHeightPx) = GetViewportSize();
+
+        var viewportGridWidth = ConvertVisiblePxToGridUnits(viewportWidthPx);
+        var viewportGridHeight = ConvertVisiblePxToGridUnits(viewportHeightPx);
+        return (viewportGridWidth, viewportGridHeight);
     }
 
     public Rectangle GetVisibleRectForGridCell(float gridX, float gridY, float widthOnGrid = 1, float heightOnGrid = 1,
@@ -133,8 +189,41 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         return x >= 0 && x < GameConfig.GridSize && y >= 0 && y < GameConfig.GridSize;
     }
 
-    // Tint red if taking damage
     public static Color GetEntityTintColor(Ecs ecs, int entityId)
+    {
+        var baseColor = GetEntityBaseTintColor(ecs, entityId);
+        return baseColor * GetEntityOpacityForPortal(ecs, entityId);
+    }
+
+    private static float GetEntityOpacityForPortal(Ecs ecs, int entityId)
+    {
+        var movement = ecs.GetComponent<MovementComponent>(entityId);
+        if (movement == null || movement.PortalStatus == PortalStatus.None) return 1f;
+
+        var position = ecs.GetComponent<PositionComponent>(entityId);
+
+
+        var (gridX, gridY) = ToGridPosition(position.CenterPosition);
+        var config = WorldGrid.GetPortalConfig(position.World, (gridX, gridY));
+
+        if (config == null) return 1f;
+
+        var percentageOutOfPortal = config.Direction switch
+        {
+            Direction.Top => position.CenterPosition.Y % 1,
+            Direction.Bottom => 1 - position.CenterPosition.Y % 1,
+            Direction.Right => 1 - position.CenterPosition.X % 1,
+            Direction.Left => position.CenterPosition.X % 1,
+            _ => 1f
+        };
+
+        var percentageToCutOffOpacity = 0.5f;
+
+        return Math.Clamp((percentageOutOfPortal - percentageToCutOffOpacity) / percentageToCutOffOpacity, 0f, 1f);
+    }
+
+    // Tint red if taking damage
+    private static Color GetEntityBaseTintColor(Ecs ecs, int entityId)
     {
         var healthComponent = ecs.GetComponent<HealthComponent>(entityId);
 
@@ -158,11 +247,8 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
 
     public (int startCol, int startRow, int endCol, int endRow) GetVisibleGrid(int padding = 0)
     {
-        var cameraPos = gameState.Ecs.ActiveControllableEntityCenterPosition;
-        var (viewportWidthPx, viewportHeightPx) = GetViewportSize();
-
-        var viewportGridWidth = ConvertVisiblePxToGridUnits(viewportWidthPx);
-        var viewportGridHeight = ConvertVisiblePxToGridUnits(viewportHeightPx);
+        var cameraPos = GetCameraPos();
+        var (viewportGridWidth, viewportGridHeight) = GetViewportGridSize();
 
         var startCol = (int)(cameraPos.X - viewportGridWidth / 2) - padding;
         var startRow = (int)(cameraPos.Y - viewportGridHeight / 2) - padding;

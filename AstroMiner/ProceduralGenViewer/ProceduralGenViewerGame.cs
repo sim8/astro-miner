@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using AstroMiner.Definitions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -44,9 +45,16 @@ public class ProceduralGenViewerGame : Game
     protected override void Initialize()
     {
         _gameState = new GameState(_graphics);
+        InitializeAsteroidForViewing();
         _renderer = new ProceduralGenViewerRenderer(_textures, _gameState, _proceduralGenViewerState);
         InitializeControls();
         base.Initialize();
+    }
+
+    private void InitializeAsteroidForViewing()
+    {
+        _gameState.Initialize();
+        _gameState.SetActiveWorldAndInitialize(World.Asteroid);
     }
 
     private void InitializeControls()
@@ -74,7 +82,8 @@ public class ProceduralGenViewerGame : Game
         var gamePadState = GamePad.GetState(PlayerIndex.One);
         var activeControls = _viewerControlsMapper.GetActiveControls(keyboardState, gamePadState);
 
-        if (activeControls.Contains(ViewerControls.NewAsteroid)) _gameState.Initialize();
+        if (activeControls.Contains(ViewerControls.NewAsteroid))
+            InitializeAsteroidForViewing();
         if (activeControls.Contains(ViewerControls.ToggleWalls))
             _proceduralGenViewerState.showWalls = !_proceduralGenViewerState.showWalls;
         if (activeControls.Contains(ViewerControls.ToggleLayers))

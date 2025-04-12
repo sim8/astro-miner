@@ -4,6 +4,7 @@ using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using AstroMiner.Renderers.AsteroidWorld;
 using AstroMiner.Renderers.HomeWorld;
+using AstroMiner.Renderers.InteriorsWorld;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -17,6 +18,7 @@ public class Renderer
     private readonly ExplosionRenderer _explosionRenderer;
     private readonly GameState _gameState;
     private readonly BaseWorldRenderer _homeWorldRenderer;
+    private readonly BaseWorldRenderer _interiorsWorldRenderer;
     private readonly LaunchParallaxRenderer _launchParallaxRenderer;
     private readonly MinerRenderer _minerRenderer;
     private readonly BlendState _multiplyBlendState;
@@ -43,6 +45,7 @@ public class Renderer
         _userInterfaceRenderer = new UserInterfaceRenderer(_shared, frameCounter);
         _asteroidWorldRenderer = new AsteroidWorldRenderer(_shared);
         _homeWorldRenderer = new HomeWorldRenderer(_shared);
+        _interiorsWorldRenderer = new InteriorsWorldRenderer(_shared);
         _multiplyBlendState = new BlendState();
         _multiplyBlendState.ColorBlendFunction = BlendFunction.Add;
         _multiplyBlendState.ColorSourceBlend = Blend.DestinationColor;
@@ -56,6 +59,7 @@ public class Renderer
         {
             World.Asteroid => _asteroidWorldRenderer,
             World.Home => _homeWorldRenderer,
+            World.RigRoom => _interiorsWorldRenderer,
             _ => throw new Exception("Invalid world")
         };
 

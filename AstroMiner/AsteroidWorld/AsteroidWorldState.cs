@@ -30,6 +30,11 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
         Seed = rnd.Next(1, 999);
     }
 
+    public override (int, int) GetGridSize()
+    {
+        return (Grid.Columns, Grid.Rows);
+    }
+
     public override void Initialize()
     {
         base.Initialize();
@@ -115,7 +120,10 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
         if (gameState.Ecs.ActiveControllableEntityIsDead ||
             gameState.Ecs.ActiveControllableEntityIsOffAsteroid)
             if (activeMiningControls.Contains(MiningControls.NewGameOrReturnToBase))
-                gameState.InitializeHome();
+            {
+                gameState.SetActiveWorldAndInitialize(World.Home);
+                gameState.HomeWorld.InitializeOrResetEntities();
+            }
 
         MsSinceStart += gameTime.ElapsedGameTime.Milliseconds;
 
@@ -138,5 +146,10 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
     public override bool CellIsCollideable(int x, int y)
     {
         return Grid.GetWallType(x, y) != WallType.Empty;
+    }
+
+    public override bool CellIsPortal(int x, int y)
+    {
+        return false;
     }
 }

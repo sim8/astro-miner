@@ -9,6 +9,8 @@ namespace AstroMiner.ECS.Systems;
 
 public class MovementSystem : System
 {
+    private readonly List<MiningControls> _activeControlsOrder = new();
+
     private readonly Dictionary<MiningControls, Direction> _directionsControlsMapping = new()
     {
         { MiningControls.MoveUp, Direction.Top },
@@ -16,8 +18,6 @@ public class MovementSystem : System
         { MiningControls.MoveDown, Direction.Bottom },
         { MiningControls.MoveLeft, Direction.Left }
     };
-
-    private readonly List<MiningControls> _activeControlsOrder = new();
 
     public MovementSystem(Ecs ecs, GameState gameState) : base(ecs, gameState)
     {
@@ -50,18 +50,21 @@ public class MovementSystem : System
         if (movement.CurrentSpeed > movement.MaxSpeed)
         {
             movement.CurrentSpeed = Math.Max(movement.MaxSpeed,
-                movement.CurrentSpeed - MovementComponent.ExcessSpeedLossPerSecond * (gameTime.ElapsedGameTime.Milliseconds / 1000f));
+                movement.CurrentSpeed - MovementComponent.ExcessSpeedLossPerSecond *
+                (gameTime.ElapsedGameTime.Milliseconds / 1000f));
             return;
         }
 
         // Existing speed update logic
         if (!selectedDirection.HasValue && movement.CurrentSpeed > 0)
             movement.CurrentSpeed = Math.Max(0,
-                movement.CurrentSpeed - movement.MaxSpeed * (gameTime.ElapsedGameTime.Milliseconds / (float)movement.TimeToStopMs));
+                movement.CurrentSpeed - movement.MaxSpeed *
+                (gameTime.ElapsedGameTime.Milliseconds / (float)movement.TimeToStopMs));
 
         if ((movement.CurrentSpeed > 0 || selectedDirection.HasValue) && selectedDirection.HasValue)
             movement.CurrentSpeed = Math.Min(movement.MaxSpeed,
-                movement.CurrentSpeed + movement.MaxSpeed * (gameTime.ElapsedGameTime.Milliseconds / (float)movement.TimeToReachMaxSpeedMs));
+                movement.CurrentSpeed + movement.MaxSpeed *
+                (gameTime.ElapsedGameTime.Milliseconds / (float)movement.TimeToReachMaxSpeedMs));
     }
 
     private void HandleDirectionChange(MovementComponent movement, Direction? selectedDirection)
@@ -70,7 +73,8 @@ public class MovementSystem : System
         if (directionComponent == null) return;
 
         // Zero speed if turn 180
-        if (selectedDirection.HasValue && selectedDirection.Value == DirectionHelpers.GetOppositeDirection(directionComponent.Direction))
+        if (selectedDirection.HasValue && selectedDirection.Value ==
+            DirectionHelpers.GetOppositeDirection(directionComponent.Direction))
             movement.CurrentSpeed = 0f;
 
         if (selectedDirection.HasValue)
@@ -91,21 +95,23 @@ public class MovementSystem : System
         var bottomRightCell = ViewHelpers.ToGridPosition(position + new Vector2(gridWidth, gridHeight));
 
         for (var x = topLeftCell.x; x <= bottomRightCell.x; x++)
-            for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
-                if (GameState.ActiveWorldState.CellIsCollideable(x, y))
-                    return true;
+        for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
+            if (GameState.ActiveWorldState.CellIsCollideable(x, y))
+                return true;
         return false;
     }
 
     private bool ApplyVectorToPosIfNoCollisions(int entityId, Vector2 vector, PositionComponent positionComponent)
     {
         var newPosition = positionComponent.Position + vector;
-        var newPositionHasCollisions = IsNewPositionIntersectingWithFilledCells(newPosition, positionComponent.GridWidth, positionComponent.GridHeight);
+        var newPositionHasCollisions = IsNewPositionIntersectingWithFilledCells(newPosition,
+            positionComponent.GridWidth, positionComponent.GridHeight);
 
         if (newPositionHasCollisions) return false;
 
         // Check collisions with other entities
-        var newRectangle = new RectangleF(newPosition.X, newPosition.Y, positionComponent.GridWidth, positionComponent.GridHeight);
+        var newRectangle = new RectangleF(newPosition.X, newPosition.Y, positionComponent.GridWidth,
+            positionComponent.GridHeight);
         var currentRectangle = positionComponent.Rectangle;
 
         foreach (var otherPositionComponent in Ecs.GetAllComponents<PositionComponent>())
@@ -119,10 +125,9 @@ public class MovementSystem : System
             if (otherPositionComponent.EntityId == Ecs.PlayerEntityId && GameState.AsteroidWorld.IsInMiner) continue;
 
             if (newRectangle.IntersectsWith(otherPositionComponent.Rectangle) &&
-                !currentRectangle.IntersectsWith(otherPositionComponent.Rectangle)) // Allow movement if currently clipping
-            {
+                !currentRectangle.IntersectsWith(otherPositionComponent
+                    .Rectangle)) // Allow movement if currently clipping
                 return false;
-            }
         }
 
         positionComponent.Position += vector;
@@ -135,6 +140,9 @@ public class MovementSystem : System
 
         foreach (var movementComponent in Ecs.GetAllComponents<MovementComponent>())
         {
+            // PortalSystem controls movement
+            if (movementComponent.PortalStatus != PortalStatus.None) continue;
+
             var entityId = movementComponent.EntityId;
             var activeDirection = entityId == GameState.Ecs.ActiveControllableEntityId ? pressedDirection : null;
             var positionComponent = Ecs.GetComponent<PositionComponent>(entityId);
@@ -143,7 +151,6 @@ public class MovementSystem : System
             if (positionComponent == null || directionComponent == null)
                 continue;
 
-            // Update direction and speed
             HandleDirectionChange(movementComponent, activeDirection);
             UpdateSpeed(movementComponent, activeDirection, gameTime);
 
@@ -160,33 +167,45 @@ public class MovementSystem : System
         }
     }
 
-    public void SetPositionRelativeToDirectionalEntity(PositionComponent positionComponent, int directionalEntityId, Direction rotation,
+    public void SetPositionRelativeToDirectionalEntity(PositionComponent positionComponent, int directionalEntityId,
+        Direction rotation,
         bool insideEdge = false)
     {
         var directionalEntityMovementComponent = Ecs.GetComponent<MovementComponent>(directionalEntityId);
         var directionalEntityPositionComponent = Ecs.GetComponent<PositionComponent>(directionalEntityId);
         var directionalEntityDirectionComponent = Ecs.GetComponent<DirectionComponent>(directionalEntityId);
-        if (directionalEntityMovementComponent == null || directionalEntityPositionComponent == null || directionalEntityDirectionComponent == null) return;
+        if (directionalEntityMovementComponent == null || directionalEntityPositionComponent == null ||
+            directionalEntityDirectionComponent == null) return;
 
         var centerToCenterDistance =
-            directionalEntityPositionComponent.GridWidth / 2 + (insideEdge ? -(positionComponent.GridWidth / 2) : positionComponent.GridWidth / 2); // TODO should be width OR height depending on direction. Is the same anyway for mining components
+            directionalEntityPositionComponent.GridWidth / 2 +
+            (insideEdge
+                ? -(positionComponent.GridWidth / 2)
+                : positionComponent.GridWidth /
+                  2); // TODO should be width OR height depending on direction. Is the same anyway for mining components
         var actualDirection = GetRotatedDirection(directionalEntityDirectionComponent.Direction, rotation);
         var newCenterPos = actualDirection switch
         {
-            Direction.Top => directionalEntityPositionComponent.CenterPosition + new Vector2(0, -centerToCenterDistance),
-            Direction.Right => directionalEntityPositionComponent.CenterPosition + new Vector2(centerToCenterDistance, 0),
-            Direction.Bottom => directionalEntityPositionComponent.CenterPosition + new Vector2(0, centerToCenterDistance),
-            Direction.Left => directionalEntityPositionComponent.CenterPosition + new Vector2(-centerToCenterDistance, 0),
+            Direction.Top => directionalEntityPositionComponent.CenterPosition +
+                             new Vector2(0, -centerToCenterDistance),
+            Direction.Right => directionalEntityPositionComponent.CenterPosition +
+                               new Vector2(centerToCenterDistance, 0),
+            Direction.Bottom => directionalEntityPositionComponent.CenterPosition +
+                                new Vector2(0, centerToCenterDistance),
+            Direction.Left => directionalEntityPositionComponent.CenterPosition +
+                              new Vector2(-centerToCenterDistance, 0),
             _ => directionalEntityPositionComponent.CenterPosition
         };
 
-        positionComponent.Position = newCenterPos - new Vector2(positionComponent.GridWidth / 2, positionComponent.GridHeight / 2);
+        positionComponent.Position =
+            newCenterPos - new Vector2(positionComponent.GridWidth / 2, positionComponent.GridHeight / 2);
     }
 
     public Vector2 GetFrontPosition(int directionalEntityId)
     {
         var positionComponent = Ecs.GetComponent<PositionComponent>(directionalEntityId);
         var directionComponent = Ecs.GetComponent<DirectionComponent>(directionalEntityId);
-        return positionComponent.CenterPosition + DirectionHelpers.GetDirectionalVector(positionComponent.GridHeight / 2f, directionComponent.Direction);
+        return positionComponent.CenterPosition +
+               DirectionHelpers.GetDirectionalVector(positionComponent.GridHeight / 2f, directionComponent.Direction);
     }
 }

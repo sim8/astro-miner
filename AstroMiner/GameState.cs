@@ -4,6 +4,7 @@ using AstroMiner.AsteroidWorld;
 using AstroMiner.Definitions;
 using AstroMiner.ECS;
 using AstroMiner.HomeWorld;
+using AstroMiner.InteriorsWorld;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
@@ -39,11 +40,13 @@ public enum Direction
 
 public class GameState
 {
+    private static readonly HashSet<MiningControls> EmptyControls = new();
     public readonly GraphicsDeviceManager Graphics;
     public AsteroidWorldState AsteroidWorld;
     public CameraState Camera;
     public CloudManager CloudManager;
     public HomeWorldState HomeWorld;
+    public InteriorsWorldState InteriorsWorld;
     public Inventory Inventory;
     public bool IsOnAsteroid;
 
@@ -53,6 +56,8 @@ public class GameState
         Graphics = graphics;
         Initialize();
     }
+
+    public bool FreezeControls { get; set; }
 
     public Ecs Ecs { get; private set; }
     public GameTime GameTime { get; private set; }
@@ -67,19 +72,19 @@ public class GameState
         {
             World.Asteroid => AsteroidWorld,
             World.Home => HomeWorld,
+            World.RigRoom => InteriorsWorld,
             _ => throw new Exception("Invalid world")
         };
 
-    public void InitializeAsteroid()
+    public void SetActiveWorldAndInitialize(World world)
     {
-        ActiveWorld = World.Asteroid;
-        AsteroidWorld.Initialize();
-    }
-
-    public void InitializeHome()
-    {
-        ActiveWorld = World.Home;
-        HomeWorld.Initialize();
+        ActiveWorld = world;
+        if (world == World.Asteroid)
+            AsteroidWorld.Initialize();
+        else if (world == World.Home)
+            HomeWorld.Initialize();
+        else
+            InteriorsWorld.Initialize();
     }
 
     public void Initialize()
@@ -89,19 +94,22 @@ public class GameState
         MsSinceStart = 0;
         AsteroidWorld = new AsteroidWorldState(this);
         HomeWorld = new HomeWorldState(this);
+        InteriorsWorld = new InteriorsWorldState(this);
         CloudManager = new CloudManager(this);
         Ecs = new Ecs(this);
 
-        InitializeHome();
+        SetActiveWorldAndInitialize(World.Home);
+        HomeWorld.InitializeOrResetEntities();
     }
 
     public void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
     {
+        var controlsToUse = FreezeControls ? EmptyControls : activeMiningControls;
         GameTime = gameTime;
-        ActiveWorldState.Update(activeMiningControls, gameTime);
+        ActiveWorldState.Update(controlsToUse, gameTime);
 
-        Camera.Update(gameTime, activeMiningControls);
+        Camera.Update(gameTime, controlsToUse);
         CloudManager.Update(gameTime);
-        Ecs.Update(gameTime, activeMiningControls);
+        Ecs.Update(gameTime, controlsToUse);
     }
 }
