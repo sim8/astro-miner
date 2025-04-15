@@ -8,6 +8,7 @@ public static class GameConfig
 {
     public const int MinerBoxSizePx = 38;
     public const int PlayerBoxSizePx = 18;
+    public const float BaseZoomLevel = 2f;
     public const float ZoomLevelMiner = 2f;
     public const float ZoomLevelPlayer = 3f;
     public const int CellTextureSizePx = 32;

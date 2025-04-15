@@ -105,6 +105,8 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
     public Rectangle GetVisibleRectForGridCell(float gridX, float gridY, float widthOnGrid = 1, float heightOnGrid = 1,
         float parallaxLayer = 1)
     {
+        // TODO if parallax layer < 1 try scaling width but NOT x/y (rect should be centered though within original pos)
+        // then adjust parallax offset too above?
         return AdjustRectForCamera(ConvertGridUnitsToVisiblePx(gridX, parallaxLayer),
             ConvertGridUnitsToVisiblePx(gridY, parallaxLayer),
             ConvertGridUnitsToVisiblePx(widthOnGrid, parallaxLayer),
@@ -134,17 +136,18 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
     {
         // TODO fix scale issues. Scale and parallax aren't working togethrr. Scale should happen after parallax
         // It'd be nice if scale scaled accordingly to parallax layer as well
-        return gridUnits * GameConfig.CellTextureSizePx * gameState.Camera.ScaleMultiplier;
+        var zoomLevel = parallaxLayer < 1f ? 2f : gameState.Camera.ZoomLevel;
+        return gridUnits * GameConfig.CellTextureSizePx * zoomLevel;
     }
 
     private float ConvertVisiblePxToGridUnits(float visiblePx)
     {
-        return visiblePx / (GameConfig.CellTextureSizePx * gameState.Camera.ScaleMultiplier);
+        return visiblePx / (GameConfig.CellTextureSizePx * gameState.Camera.ZoomLevel);
     }
 
     private float ConvertTexturePxToVisiblePx(int numToScale)
     {
-        return numToScale * gameState.Camera.ScaleMultiplier;
+        return numToScale * gameState.Camera.ZoomLevel;
     }
 
     public Rectangle GetVisibleRectForObject(Vector2 objectPos, int textureWidth, int textureHeight,

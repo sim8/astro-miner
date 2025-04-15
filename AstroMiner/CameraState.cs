@@ -19,14 +19,14 @@ public class CameraState
     public CameraState(GameState gameState)
     {
         _gameState = gameState;
-        ScaleMultiplier = GameConfig.ZoomLevelPlayer;
+        ZoomLevel = GameConfig.ZoomLevelPlayer;
         // Initialize the transition state
-        _startScale = ScaleMultiplier;
-        _endScale = ScaleMultiplier;
+        _startScale = ZoomLevel;
+        _endScale = ZoomLevel;
         _zoomTransitionElapsed = 0;
     }
 
-    public float ScaleMultiplier { get; private set; }
+    public float ZoomLevel { get; private set; }
 
     public void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
     {
@@ -42,7 +42,7 @@ public class CameraState
         if (Math.Abs(currentTarget - _endScale) > 0.0001f)
         {
             // Start a new transition towards the new target
-            _startScale = ScaleMultiplier;
+            _startScale = ZoomLevel;
             _endScale = currentTarget;
             _zoomTransitionElapsed = 0;
         }
@@ -50,12 +50,12 @@ public class CameraState
         var totalDifference = _endScale - _startScale;
 
         // Evaluate how close we currently are to the target
-        var currentDifference = _endScale - ScaleMultiplier;
+        var currentDifference = _endScale - ZoomLevel;
 
         // If the current difference is negligible, just set it and return
         if (Math.Abs(currentDifference) < 0.0001f)
         {
-            ScaleMultiplier = _endScale;
+            ZoomLevel = _endScale;
             return;
         }
 
@@ -71,9 +71,9 @@ public class CameraState
         var easedFraction = (float)((1.0 - Math.Cos(Math.PI * fraction)) / 2.0);
 
         // Interpolate
-        ScaleMultiplier = _startScale + totalDifference * easedFraction;
+        ZoomLevel = _startScale + totalDifference * easedFraction;
 
         // Once we're done (fraction = 1.0), clamp to the exact target
-        if (fraction >= 1.0f) ScaleMultiplier = _endScale;
+        if (fraction >= 1.0f) ZoomLevel = _endScale;
     }
 }
