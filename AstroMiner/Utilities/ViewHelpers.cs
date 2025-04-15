@@ -39,7 +39,6 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
     {
         var (viewportGridWidth, viewportGridHeight) = GetViewportGridSize();
 
-        // TODO allow overriding this on a per world basis? Might be wonky for medium sized internal rooms
         var widthThreshold = viewportGridWidth / 2;
         var heightThreshold = viewportGridHeight / 2;
 
@@ -48,11 +47,14 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         float cameraX;
         float cameraY;
 
+        // Remove clamping for Oizus left (pier)
+        var leftThreshold = gameState.ActiveWorld == World.Home ? 0 : widthThreshold;
+
 
         if (cols <= widthThreshold * 2)
             cameraX = cols / 2f;
         else
-            cameraX = Math.Clamp(cameraPos.X, widthThreshold, cols - widthThreshold);
+            cameraX = Math.Clamp(cameraPos.X, leftThreshold, cols - widthThreshold);
 
         if (rows <= heightThreshold * 2)
             cameraY = rows / 2f;

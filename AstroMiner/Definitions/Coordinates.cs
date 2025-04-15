@@ -10,11 +10,13 @@ public static class Coordinates
         public const int ParallaxMountains1Y = 10;
         public const int ParallaxMountains2Y = -40;
         public const int ParallaxMountains3Y = -90;
+        public const int UnderRocksX = 10;
+        public const int UnderRocksY = 20;
 
         public static readonly (int x, int y) MinerHomeStartPosCenter = (5, 14);
         public static readonly (int x, int y) PlayerHomeStartPos = (7, 17);
 
-        public static readonly (int x, int y) HomeToRigRoomPortal = (11, 20);
+        public static readonly (int x, int y) HomeToRigRoomPortal = (12, 20);
         public static readonly (int x, int y) RigToomToHomePortal = (4, 7);
     }
 

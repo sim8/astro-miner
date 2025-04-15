@@ -28,5 +28,9 @@ public class LaunchParallaxRenderer(RendererShared shared)
         RenderLayer(spriteBatch, Coordinates.Grid.ParallaxMountains3Y, 0.1f, 0.85f);
         RenderLayer(spriteBatch, Coordinates.Grid.ParallaxMountains2Y, 0.15f, 0.6f);
         RenderLayer(spriteBatch, Coordinates.Grid.ParallaxMountains1Y, 0.2f, 0.3f);
+
+        spriteBatch.Draw(shared.Textures["oizus-rocks-under"],
+            shared.ViewHelpers.GetVisibleRectForGridCell(Coordinates.Grid.UnderRocksX, Coordinates.Grid.UnderRocksY, 23,
+                20, 0.6f), Color.White);
     }
 }

@@ -88,6 +88,7 @@ public class AstroMinerGame : Game
         LoadTexture("mountains-nice");
         LoadTexture("mountains-nice-mask");
         LoadTexture("mountains-nice-tiled");
+        LoadTexture("oizus-rocks-under");
         LoadTexture("rig-room");
     }
 
