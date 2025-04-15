@@ -134,8 +134,7 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
     {
         // TODO fix scale issues. Scale and parallax aren't working togethrr. Scale should happen after parallax
         // It'd be nice if scale scaled accordingly to parallax layer as well
-        var scale = parallaxLayer < 1 ? 2 : gameState.Camera.ScaleMultiplier;
-        return gridUnits * GameConfig.CellTextureSizePx * scale;
+        return gridUnits * GameConfig.CellTextureSizePx * gameState.Camera.ScaleMultiplier;
     }
 
     private float ConvertVisiblePxToGridUnits(float visiblePx)

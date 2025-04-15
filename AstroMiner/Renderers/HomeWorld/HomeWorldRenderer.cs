@@ -14,7 +14,9 @@ public class HomeWorldRenderer(RendererShared shared) : BaseWorldRenderer(shared
             Shared.ViewHelpers.GetVisibleRectForGridCell(0, 0, Coordinates.Grid.OizusWidth,
                 Coordinates.Grid.OizusHeight),
             Color.White);
-        // RenderGridDebugOverlay(spriteBatch);
+        spriteBatch.Draw(Shared.Textures["white"],
+            Shared.ViewHelpers.GetVisibleRectForGridCell(12, 18, 1, 1, 0.5f), Color.Blue);
+        RenderGridDebugOverlay(spriteBatch);
     }
 
     private void RenderGridDebugOverlay(SpriteBatch spriteBatch)
@@ -29,7 +31,7 @@ public class HomeWorldRenderer(RendererShared shared) : BaseWorldRenderer(shared
                 spriteBatch.Draw(Shared.Textures["white"], cellRect, Color.Green * 0.5f);
 
             var coordinatesStr = col + " " + row;
-            shared.RenderString(spriteBatch, cellRect.X, cellRect.Y, coordinatesStr, 2);
+            shared.RenderString(spriteBatch, cellRect.X, cellRect.Y, coordinatesStr, 1);
         }
     }
 }
