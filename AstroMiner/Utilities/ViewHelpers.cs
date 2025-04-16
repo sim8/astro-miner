@@ -47,8 +47,9 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         float cameraX;
         float cameraY;
 
-        // Remove clamping for Oizus left (pier)
+        // Remove clamping for Oizus left (pier) and top (launch sequence)
         var leftThreshold = gameState.ActiveWorld == World.Home ? 0 : widthThreshold;
+        var topThreshold = gameState.ActiveWorld == World.Home ? -1000 : widthThreshold;
 
 
         if (cols <= widthThreshold * 2)
@@ -59,7 +60,7 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         if (rows <= heightThreshold * 2)
             cameraY = rows / 2f;
         else
-            cameraY = Math.Clamp(cameraPos.Y, heightThreshold, rows - heightThreshold);
+            cameraY = Math.Clamp(cameraPos.Y, topThreshold, rows - heightThreshold);
 
         return new Vector2(cameraX, cameraY);
     }
@@ -96,6 +97,9 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
     private (float, float) GetViewportGridSize()
     {
         var (viewportWidthPx, viewportHeightPx) = GetViewportSize();
+
+        // 2560 (80)
+        // 1440 (45)
 
         var viewportGridWidth = ConvertVisiblePxToGridUnits(viewportWidthPx);
         var viewportGridHeight = ConvertVisiblePxToGridUnits(viewportHeightPx);

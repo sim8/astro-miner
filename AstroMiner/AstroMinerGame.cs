@@ -51,7 +51,6 @@ public class AstroMinerGame : Game
         _miningControlMapper.AddMapping(MiningControls.PlaceDynamite, Keys.R, Buttons.RightShoulder, false);
         _miningControlMapper.AddMapping(MiningControls.UseGrapple, Keys.G, Buttons.LeftTrigger, true);
         _miningControlMapper.AddMapping(MiningControls.NewGameOrReturnToBase, Keys.N, Buttons.Start, false);
-        _miningControlMapper.AddMapping(MiningControls.CycleZoom, Keys.Z, Buttons.Back, false);
     }
 
     private void LoadTexture(string name)

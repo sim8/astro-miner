@@ -26,7 +26,6 @@ public enum MiningControls
     // Miner-only
     UseGrapple,
 
-    CycleZoom,
     NewGameOrReturnToBase // TODO factor out
 }
 

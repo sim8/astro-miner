@@ -10,7 +10,6 @@ public class CameraState
     private const int ZoomTransitionMs = 800;
     private readonly GameState _gameState;
     private float _endScale;
-    private float _selectedZoom = 2f; // Default zoom level
 
     // Fields for handling transitions
     private float _startScale;
@@ -26,19 +25,15 @@ public class CameraState
         _zoomTransitionElapsed = 0;
     }
 
+    private float BaseScaleMultiplier =>
+        _gameState.AsteroidWorld.IsInMiner ? GameConfig.ZoomLevelMiner : GameConfig.ZoomLevelPlayer;
+
     public float ScaleMultiplier { get; private set; }
 
     public void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
     {
-        if (activeMiningControls.Contains(MiningControls.CycleZoom))
-            _selectedZoom = _selectedZoom switch
-            {
-                2f => 3f,
-                3f => 2f
-            };
-
         // Check if target scale changed (e.g., player switched from miner to player or vice versa)
-        var currentTarget = _selectedZoom;
+        var currentTarget = BaseScaleMultiplier;
         if (Math.Abs(currentTarget - _endScale) > 0.0001f)
         {
             // Start a new transition towards the new target
