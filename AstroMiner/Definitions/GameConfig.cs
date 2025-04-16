@@ -59,6 +59,23 @@ public static class GameConfig
         public const float AsteroidSpeed = 60f;
     }
 
+    /**
+     * TODO measure if this actually works at BaseSpeed + multiples of
+     */
+    public static class Speeds
+    {
+        /**
+         * At 60fps (and resolution of 32x32) equates to moving at 1 pixel per frame.
+         * Ideally all speeds should be multiples of this to appear smooth on screen
+         */
+        private const float Base = 1.953125f;
+
+
+        public const float Walking = Base;
+        public const float Running = Base * 2;
+        public const float Reeling = Base * 6;
+    }
+
 
     public static class AsteroidGen
     {

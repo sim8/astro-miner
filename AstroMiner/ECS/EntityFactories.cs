@@ -32,7 +32,7 @@ public class EntityFactories
 
         // Add movement component
         var movementComponent = _ecs.AddComponent<MovementComponent>(entityId);
-        movementComponent.MaxSpeed = 4f; // From PlayerEntity
+        movementComponent.MaxSpeed = GameConfig.Speeds.Running;
         movementComponent.TimeToReachMaxSpeedMs = 0; // From ControllableEntity default
         movementComponent.TimeToStopMs = 0; // From ControllableEntity default
 

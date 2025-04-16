@@ -64,7 +64,7 @@ public class AsteroidWorldState(GameState gameState) : BaseWorldState(gameState)
 
         // Add movement component with miner-specific values
         var movementComponent = gameState.Ecs.AddComponent<MovementComponent>(entityId);
-        movementComponent.MaxSpeed = 4f; // From MinerEntity
+        movementComponent.MaxSpeed = GameConfig.Speeds.Running;
         movementComponent.TimeToReachMaxSpeedMs = 600; // From MinerEntity
         movementComponent.TimeToStopMs = 400; // From MinerEntity
 

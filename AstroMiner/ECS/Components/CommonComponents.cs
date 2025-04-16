@@ -103,7 +103,7 @@ public class GrappleComponent : Component
 {
     // Constants
     public const float ReelingBaseSpeed = 7f;
-    public const float ReelingMaxSpeed = 11f;
+    public const float ReelingMaxSpeed = GameConfig.Speeds.Reeling;
     public const float GrapplesWidth = 0.4f;
 
     public int GrappleCooldownRemaining { get; set; } = 0;
