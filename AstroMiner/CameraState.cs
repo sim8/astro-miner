@@ -18,7 +18,7 @@ public class CameraState
     public CameraState(GameState gameState)
     {
         _gameState = gameState;
-        ScaleMultiplier = GameConfig.ZoomLevelPlayer;
+        ScaleMultiplier = GetBaseZoomLevel();
         // Initialize the transition state
         _startScale = ScaleMultiplier;
         _endScale = ScaleMultiplier;
@@ -26,9 +26,25 @@ public class CameraState
     }
 
     private float BaseScaleMultiplier =>
-        _gameState.AsteroidWorld.IsInMiner ? GameConfig.ZoomLevelMiner : GameConfig.ZoomLevelPlayer;
+        _gameState.AsteroidWorld.IsInMiner ? GetBaseZoomLevel() : GetBaseZoomLevel() + 1;
 
     public float ScaleMultiplier { get; private set; }
+
+    private int GetBaseZoomLevel()
+    {
+        var viewportGridWidth =
+            (int)Math.Ceiling((float)_gameState.Graphics.GraphicsDevice.Viewport.Width / GameConfig.CellTextureSizePx);
+        var viewportGridHeight =
+            (int)Math.Ceiling((float)_gameState.Graphics.GraphicsDevice.Viewport.Height / GameConfig.CellTextureSizePx);
+
+        var zoom = 1;
+
+        // Increase zoom until both dimensions are within the allowed max
+        while (viewportGridWidth / zoom > GameConfig.MaxGridWidth ||
+               viewportGridHeight / zoom > GameConfig.MaxGridHeight) zoom++;
+
+        return zoom;
+    }
 
     public void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
     {

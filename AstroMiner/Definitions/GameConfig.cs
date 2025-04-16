@@ -8,8 +8,12 @@ public static class GameConfig
 {
     public const int MinerBoxSizePx = 38;
     public const int PlayerBoxSizePx = 18;
-    public const float ZoomLevelMiner = 2f;
-    public const float ZoomLevelPlayer = 3f;
+
+    // Ensures a maximum grid resolution to be displayed (zoom level dynamically to achieve this)
+    // Means e.g. background textures can be max 960px wide (30*32)
+    public const int MaxGridWidth = 30;
+    public const int MaxGridHeight = 20;
+
     public const int CellTextureSizePx = 32;
     public const int GridSize = 200;
     public const float MinEmbarkingDistance = 1.2f;
