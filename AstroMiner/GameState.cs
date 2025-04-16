@@ -47,7 +47,6 @@ public class GameState
     public HomeWorldState HomeWorld;
     public InteriorsWorldState InteriorsWorld;
     public Inventory Inventory;
-    public bool IsOnAsteroid;
 
     public GameState(
         GraphicsDeviceManager graphics)
