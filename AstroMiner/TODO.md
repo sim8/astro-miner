@@ -83,7 +83,6 @@
 
 - Fix zoom in/out!
     - Have another go at pixel perfection
-    - Subpixel rendering? Movement is also kind of janky
 - Drilling animation
 - Darker overlay near center
 - Gem entities (collectable)

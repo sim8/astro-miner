@@ -19,6 +19,7 @@ public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
     {
         InitializeMiner();
         InitializePlayer();
+        gameState.Ecs.LaunchSystem.Reset();
     }
 
     private void InitializeMiner()
@@ -47,7 +48,8 @@ public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
     private void InitializePlayer()
     {
         var playerCellOffset = GameConfig.PlayerSize / 2;
-        var playerPos = new Vector2(Coordinates.Grid.PlayerHomeStartPos.x + playerCellOffset, Coordinates.Grid.PlayerHomeStartPos.y + playerCellOffset);
+        var playerPos = new Vector2(Coordinates.Grid.PlayerHomeStartPos.x + playerCellOffset,
+            Coordinates.Grid.PlayerHomeStartPos.y + playerCellOffset);
 
         var playerEntityId = gameState.Ecs.PlayerEntityId ?? gameState.Ecs.Factories.CreatePlayerEntity(playerPos);
 

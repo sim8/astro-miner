@@ -36,6 +36,23 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
                secondsPastThreshold - gameTime.ElapsedGameTime.TotalSeconds < seconds;
     }
 
+    public void Reset()
+    {
+        _isLaunching = false;
+        _startedAt = -1;
+        _minerLaunchSpeed = 0f;
+        ClearLightEntities();
+
+        if (_launchPadFrontEntityId == -1)
+            _launchPadFrontEntityId = GameState.Ecs.Factories.CreateLaunchPadFrontEntity(_launchPadFrontStartPos);
+        else
+            gameState.Ecs.GetComponent<PositionComponent>(_launchPadFrontEntityId).Position = _launchPadFrontStartPos;
+        if (_launchPadRearEntityId == -1)
+            _launchPadRearEntityId = GameState.Ecs.Factories.CreateLaunchPadRearEntity(_launchPadRearStartPos);
+        else
+            gameState.Ecs.GetComponent<PositionComponent>(_launchPadRearEntityId).Position = _launchPadRearStartPos;
+    }
+
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
         // TODO ideally these'd be in an init()
@@ -92,10 +109,7 @@ public class LaunchSystem(Ecs ecs, GameState gameState) : System(ecs, gameState)
         }
         else
         {
-            _isLaunching = false;
-            _startedAt = -1;
-            _minerLaunchSpeed = 0f;
-            ClearLightEntities();
+            Reset();
         }
     }
 
