@@ -19,34 +19,18 @@ public enum ViewerControls
     ToggleWalls
 }
 
-public class ProceduralGenViewerGame : Game
+public class ProceduralGenViewerGame : BaseGame
 {
-    private readonly GraphicsDeviceManager _graphics;
     private readonly ProceduralGenViewerState _proceduralGenViewerState = new();
-
-    private readonly Dictionary<string, Texture2D> _textures = new();
     private readonly ControlMapper<ViewerControls> _viewerControlsMapper = new();
     private GameState _gameState;
     private ProceduralGenViewerRenderer _renderer;
-    private SpriteBatch _spriteBatch;
-
-
-    public ProceduralGenViewerGame()
-    {
-        _graphics = new GraphicsDeviceManager(this);
-        _graphics.PreferredBackBufferWidth = 1280;
-        _graphics.PreferredBackBufferHeight = 1024;
-        _graphics.IsFullScreen = false;
-        Window.AllowUserResizing = true;
-        Content.RootDirectory = "Content";
-        IsMouseVisible = true;
-    }
 
     protected override void Initialize()
     {
-        _gameState = new GameState(_graphics);
+        _gameState = new GameState(Graphics);
         InitializeAsteroidForViewing();
-        _renderer = new ProceduralGenViewerRenderer(_textures, _gameState, _proceduralGenViewerState);
+        _renderer = new ProceduralGenViewerRenderer(Textures, _gameState, _proceduralGenViewerState);
         InitializeControls();
         base.Initialize();
     }
@@ -57,21 +41,16 @@ public class ProceduralGenViewerGame : Game
         _gameState.SetActiveWorldAndInitialize(World.Asteroid);
     }
 
-    private void InitializeControls()
+    protected override void InitializeControls()
     {
         _viewerControlsMapper.AddMapping(ViewerControls.NewAsteroid, Keys.N, Buttons.A, false);
         _viewerControlsMapper.AddMapping(ViewerControls.ToggleLayers, Keys.L, Buttons.RightShoulder, false);
         _viewerControlsMapper.AddMapping(ViewerControls.ToggleWalls, Keys.W, Buttons.LeftShoulder, false);
     }
 
-    private void LoadTexture(string name)
-    {
-        _textures[name] = Content.Load<Texture2D>($"img/{name}");
-    }
-
     protected override void LoadContent()
     {
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
+        SpriteBatch = new SpriteBatch(GraphicsDevice);
         LoadTexture("white");
         LoadTexture("dogica-font");
     }
@@ -95,9 +74,7 @@ public class ProceduralGenViewerGame : Game
     protected override void Draw(GameTime gameTime)
     {
         GraphicsDevice.Clear(Color.Black);
-
-        _renderer.Render(_spriteBatch);
-
+        _renderer.Render(SpriteBatch);
         base.Draw(gameTime);
     }
 }

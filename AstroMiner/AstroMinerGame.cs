@@ -7,28 +7,11 @@ using Microsoft.Xna.Framework.Input;
 
 namespace AstroMiner;
 
-public class AstroMinerGame : Game
+public class AstroMinerGame : BaseGame
 {
     private readonly ControlMapper<MiningControls> _miningControlMapper = new();
     public readonly FrameCounter FrameCounter = new();
-
-    public readonly GraphicsDeviceManager Graphics;
-
-    public readonly Dictionary<string, Texture2D> Textures = new();
     private Renderer _renderer;
-    private SpriteBatch _spriteBatch;
-
-
-    public AstroMinerGame()
-    {
-        Graphics = new GraphicsDeviceManager(this);
-        Graphics.PreferredBackBufferWidth = 1280;
-        Graphics.PreferredBackBufferHeight = 1024;
-        Graphics.IsFullScreen = false;
-        Window.AllowUserResizing = true;
-        Content.RootDirectory = "Content";
-        IsMouseVisible = true;
-    }
 
     public GameState State { get; private set; }
 
@@ -37,11 +20,11 @@ public class AstroMinerGame : Game
         State = new GameState(this);
         _renderer = new Renderer(this);
         Window.ClientSizeChanged += _renderer.HandleWindowResize;
-        InitializeMiningControls();
+        InitializeControls();
         base.Initialize();
     }
 
-    private void InitializeMiningControls()
+    protected override void InitializeControls()
     {
         _miningControlMapper.AddMapping(MiningControls.MoveUp, Keys.W, Buttons.LeftThumbstickUp, true);
         _miningControlMapper.AddMapping(MiningControls.MoveRight, Keys.D, Buttons.LeftThumbstickRight, true);
@@ -61,7 +44,7 @@ public class AstroMinerGame : Game
 
     protected override void LoadContent()
     {
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
+        SpriteBatch = new SpriteBatch(GraphicsDevice);
         LoadTexture("dogica-font");
         LoadTexture("gradient-set");
         LoadTexture("white");
@@ -112,7 +95,7 @@ public class AstroMinerGame : Game
 
         GraphicsDevice.Clear(Color.Black);
 
-        _renderer.Render(_spriteBatch);
+        _renderer.Render(SpriteBatch);
 
         base.Draw(gameTime);
     }
