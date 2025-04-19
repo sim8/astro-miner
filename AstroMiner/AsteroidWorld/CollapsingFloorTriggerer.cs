@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner.AsteroidWorld;
 
-public class CollapsingFloorTriggerer(AstroMinerGame game)
+public class CollapsingFloorTriggerer(BaseGame game)
 {
     private const int TriggerIntervalMs = 2222; // Interval to trigger MaybeCollapseFloors in milliseconds
     private const int Distance = 5;

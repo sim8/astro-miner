@@ -10,10 +10,8 @@ namespace AstroMiner;
 public class AstroMinerGame : BaseGame
 {
     private readonly ControlMapper<MiningControls> _miningControlMapper = new();
-    public readonly FrameCounter FrameCounter = new();
-    private Renderer _renderer;
 
-    public GameState State { get; private set; }
+    private Renderer _renderer;
 
     protected override void Initialize()
     {

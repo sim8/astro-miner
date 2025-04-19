@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner.Utilities;
 
-public class ViewHelpers(AstroMinerGame game, GraphicsDeviceManager graphics)
+public class ViewHelpers(BaseGame game, GraphicsDeviceManager graphics)
 {
     // Should only be used at very end of calc pipeline
     private int ConvertToRenderedPxValue_CAUTION(double value)

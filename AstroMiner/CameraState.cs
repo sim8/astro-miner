@@ -8,14 +8,14 @@ namespace AstroMiner;
 public class CameraState
 {
     private const int ZoomTransitionMs = 800;
-    private readonly AstroMinerGame _game;
+    private readonly BaseGame _game;
     private float _endScale;
 
     // Fields for handling transitions
     private float _startScale;
     private int _zoomTransitionElapsed;
 
-    public CameraState(AstroMinerGame game)
+    public CameraState(BaseGame game)
     {
         _game = game;
         ScaleMultiplier = GetBaseZoomLevel();

@@ -19,7 +19,7 @@ public class CloudManager
     // Render foreground at full resolution
     public const int ForegroundCloudSizePx = 1024;
     public const int BackgroundCloudSizePx = (int)(ForegroundCloudSizePx * BgCloudScale);
-    private readonly AstroMinerGame _game;
+    private readonly BaseGame _game;
 
     private readonly Random _rng = new();
 
@@ -32,7 +32,7 @@ public class CloudManager
     private float _timeSinceLastCloudBg;
     private float _timeSinceLastCloudFg;
 
-    public CloudManager(AstroMinerGame game)
+    public CloudManager(BaseGame game)
     {
         _game = game;
         // Initialize first random spawn times

@@ -40,7 +40,7 @@ public enum Direction
 public class GameState
 {
     private static readonly HashSet<MiningControls> EmptyControls = new();
-    private readonly AstroMinerGame _game;
+    private readonly BaseGame _game;
     public AsteroidWorldState AsteroidWorld;
     public CameraState Camera;
     public CloudManager CloudManager;
@@ -49,7 +49,7 @@ public class GameState
     public Inventory Inventory;
 
     public GameState(
-        AstroMinerGame game)
+        BaseGame game)
     {
         _game = game;
         Initialize();

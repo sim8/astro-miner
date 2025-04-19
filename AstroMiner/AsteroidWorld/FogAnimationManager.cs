@@ -8,9 +8,9 @@ public class FogAnimationManager
 {
     private const float BaseFadeOutDurationMs = 70f;
     private readonly HashSet<(int x, int y)> _activeFadingCells = new();
-    private readonly AstroMinerGame _game;
+    private readonly BaseGame _game;
 
-    public FogAnimationManager(AstroMinerGame game)
+    public FogAnimationManager(BaseGame game)
     {
         _game = game;
     }

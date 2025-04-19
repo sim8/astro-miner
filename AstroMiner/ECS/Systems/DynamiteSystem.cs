@@ -7,7 +7,7 @@ namespace AstroMiner.ECS.Systems;
 
 public class DynamiteSystem : System
 {
-    public DynamiteSystem(Ecs ecs, AstroMinerGame game) : base(ecs, game)
+    public DynamiteSystem(Ecs ecs, BaseGame game) : base(ecs, game)
     {
     }
 

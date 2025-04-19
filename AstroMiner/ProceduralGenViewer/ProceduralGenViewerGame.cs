@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using AstroMiner.Definitions;
+﻿using AstroMiner.Definitions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -28,7 +27,7 @@ public class ProceduralGenViewerGame : BaseGame
 
     protected override void Initialize()
     {
-        _gameState = new GameState(Graphics);
+        State = new GameState(this);
         InitializeAsteroidForViewing();
         _renderer = new ProceduralGenViewerRenderer(Textures, _gameState, _proceduralGenViewerState);
         InitializeControls();

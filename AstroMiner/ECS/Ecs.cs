@@ -15,7 +15,7 @@ public class Ecs
 {
     private readonly Dictionary<Type, HashSet<Component>> _componentsByType = new();
     private readonly Dictionary<int, HashSet<Component>> _entityComponents = new();
-    private readonly AstroMinerGame _game;
+    private readonly BaseGame _game;
 
     // Track the currently active controllable entity
     private int? _activeControllableEntityId;
@@ -23,7 +23,7 @@ public class Ecs
 
     // Track special entities
 
-    public Ecs(AstroMinerGame game)
+    public Ecs(BaseGame game)
     {
         _game = game;
         Factories = new EntityFactories(this, game);

@@ -9,9 +9,9 @@ namespace AstroMiner.ECS;
 public abstract class System
 {
     protected readonly Ecs Ecs;
-    protected readonly AstroMinerGame game;
+    protected readonly BaseGame game;
 
-    protected System(Ecs ecs, AstroMinerGame _game)
+    protected System(Ecs ecs, BaseGame _game)
     {
         Ecs = ecs;
         game = _game;

@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner.ECS.Systems;
 
-public class LaunchSystem(Ecs ecs, AstroMinerGame game) : System(ecs, game)
+public class LaunchSystem(Ecs ecs, BaseGame game) : System(ecs, game)
 {
     private const int LauncherHeightPx = 120;
 

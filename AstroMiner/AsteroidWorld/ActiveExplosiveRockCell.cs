@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner.AsteroidWorld;
 
-public class ActiveExplosiveRockCell(AstroMinerGame game, (int x, int y) gridPos, int timeToExplodeMs = 3000)
+public class ActiveExplosiveRockCell(BaseGame game, (int x, int y) gridPos, int timeToExplodeMs = 3000)
 {
     private readonly (int X, int Y) Position = gridPos;
     public int TimeToExplodeMs = timeToExplodeMs;

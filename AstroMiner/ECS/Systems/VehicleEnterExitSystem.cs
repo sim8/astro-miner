@@ -8,7 +8,7 @@ namespace AstroMiner.ECS.Systems;
 
 public class VehicleEnterExitSystem : System
 {
-    public VehicleEnterExitSystem(Ecs ecs, AstroMinerGame game) : base(ecs, game)
+    public VehicleEnterExitSystem(Ecs ecs, BaseGame game) : base(ecs, game)
     {
     }
 

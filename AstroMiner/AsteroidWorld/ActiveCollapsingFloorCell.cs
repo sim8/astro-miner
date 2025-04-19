@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner.AsteroidWorld;
 
-public class ActiveCollapsingFloorCell(AstroMinerGame game, (int x, int y) gridPos)
+public class ActiveCollapsingFloorCell(BaseGame game, (int x, int y) gridPos)
 {
     public int TimeToCollapse = GameConfig.CollapsingFloorSpreadTime;
 

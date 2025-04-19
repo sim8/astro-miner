@@ -19,7 +19,7 @@ public class MovementSystem : System
         { MiningControls.MoveLeft, Direction.Left }
     };
 
-    public MovementSystem(Ecs ecs, AstroMinerGame game) : base(ecs, game)
+    public MovementSystem(Ecs ecs, BaseGame game) : base(ecs, game)
     {
     }
 

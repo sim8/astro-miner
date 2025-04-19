@@ -10,7 +10,7 @@ public class MiningSystem : System
 {
     private const float DrillDistance = 0.2f;
 
-    public MiningSystem(Ecs ecs, AstroMinerGame game) : base(ecs, game)
+    public MiningSystem(Ecs ecs, BaseGame game) : base(ecs, game)
     {
     }
 

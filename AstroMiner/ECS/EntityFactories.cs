@@ -7,9 +7,9 @@ namespace AstroMiner.ECS;
 public class EntityFactories
 {
     private readonly Ecs _ecs;
-    private readonly AstroMinerGame _game;
+    private readonly BaseGame _game;
 
-    public EntityFactories(Ecs ecs, AstroMinerGame game)
+    public EntityFactories(Ecs ecs, BaseGame game)
     {
         _game = game;
         _ecs = ecs;

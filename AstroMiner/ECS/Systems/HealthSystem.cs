@@ -8,7 +8,7 @@ namespace AstroMiner.ECS.Systems;
 
 public class HealthSystem : System
 {
-    public HealthSystem(Ecs ecs, AstroMinerGame game) : base(ecs, game)
+    public HealthSystem(Ecs ecs, BaseGame game) : base(ecs, game)
     {
     }
 

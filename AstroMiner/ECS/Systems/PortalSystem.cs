@@ -9,7 +9,7 @@ namespace AstroMiner.ECS.Systems;
 
 public class PortalSystem : System
 {
-    public PortalSystem(Ecs ecs, AstroMinerGame game) : base(ecs, game)
+    public PortalSystem(Ecs ecs, BaseGame game) : base(ecs, game)
     {
     }
 

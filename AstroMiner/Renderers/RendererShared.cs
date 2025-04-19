@@ -7,9 +7,9 @@ using Microsoft.Xna.Framework.Graphics;
 namespace AstroMiner.Renderers;
 
 public class RendererShared(
-    AstroMinerGame game)
+    BaseGame game)
 {
-    public readonly AstroMinerGame Game = game;
+    public readonly BaseGame Game = game;
     public readonly GameState GameState = game.State;
     public readonly GraphicsDeviceManager Graphics = game.Graphics;
     public readonly Dictionary<string, Texture2D> Textures = game.Textures;

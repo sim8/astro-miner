@@ -9,7 +9,7 @@ namespace AstroMiner.ECS.Systems;
 
 public class GrappleSystem : System
 {
-    public GrappleSystem(Ecs ecs, AstroMinerGame game) : base(ecs, game)
+    public GrappleSystem(Ecs ecs, BaseGame game) : base(ecs, game)
     {
     }
 

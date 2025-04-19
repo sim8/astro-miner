@@ -17,7 +17,7 @@ public class ExplosionSystem : System
     public const float ExplosionRadius = 4f;
     public const int BoxSizePx = 1;
 
-    public ExplosionSystem(Ecs ecs, AstroMinerGame game) : base(ecs, game)
+    public ExplosionSystem(Ecs ecs, BaseGame game) : base(ecs, game)
     {
     }
 

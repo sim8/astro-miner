@@ -72,14 +72,14 @@ public static class Tilesets
         { Corner.BottomRight, (0, 0) }
     };
 
-    public static bool CellIsTilesetType(AstroMinerGame game, int x, int y)
+    public static bool CellIsTilesetType(BaseGame game, int x, int y)
     {
         var wallType = game.State.AsteroidWorld.Grid.GetWallType(x, y);
         return WallTypeTextureIndex.ContainsKey(wallType);
     }
 
     // Find the tile to render based on corner's 3 neighbors
-    private static int GetWallQuadrantTileKey(AstroMinerGame game, int x, int y, Corner corner)
+    private static int GetWallQuadrantTileKey(BaseGame game, int x, int y, Corner corner)
     {
         var (topLeftXOffset, topLeftYOffset) = GetTopLeftOffsetFor2X2[corner];
 
@@ -96,7 +96,7 @@ public static class Tilesets
     }
 
     // Find the tile to render based on corner's 3 neighbors + return texture index within Tileset.png
-    private static (int, int) GetFloorQuadrantTileKeyAndTextureIndex(AstroMinerGame game, int x, int y, Corner corner)
+    private static (int, int) GetFloorQuadrantTileKeyAndTextureIndex(BaseGame game, int x, int y, Corner corner)
     {
         var (topLeftXOffset, topLeftYOffset) = GetTopLeftOffsetFor2X2[corner];
 
@@ -129,7 +129,7 @@ public static class Tilesets
 
     // Find px offset within main texture for a given quadrant
     // TODO save this to CellState
-    private static (int, int) GetWallQuadrantTextureOffset(AstroMinerGame game, int col, int row, Corner corner)
+    private static (int, int) GetWallQuadrantTextureOffset(BaseGame game, int col, int row, Corner corner)
     {
         // Walls tileset has one quadrant's space above each actual quadrant for overlaying texture.
         // Each quadrant is rendered at double height, overlaying the one behind it
@@ -160,7 +160,7 @@ public static class Tilesets
         return (quadrantX, quadrantY);
     }
 
-    private static (int, int) GetFloorQuadrantTextureOffset(AstroMinerGame game, int col, int row, Corner corner)
+    private static (int, int) GetFloorQuadrantTextureOffset(BaseGame game, int col, int row, Corner corner)
     {
         // Walls tileset has one quadrant's space above each actual quadrant for overlaying texture.
         // Each quadrant is rendered at double height, overlaying the one behind it
@@ -186,7 +186,7 @@ public static class Tilesets
         return (quadrantX, quadrantY);
     }
 
-    public static Rectangle GetWallQuadrantSourceRect(AstroMinerGame game, int col, int row, Corner corner)
+    public static Rectangle GetWallQuadrantSourceRect(BaseGame game, int col, int row, Corner corner)
     {
         var (x, y) = GetWallQuadrantTextureOffset(game, col, row, corner);
 
@@ -194,7 +194,7 @@ public static class Tilesets
         return new Rectangle(x, y, QuadrantTextureSizePx, QuadrantTextureSizePx * 2);
     }
 
-    public static Rectangle GetFloorQuadrantSourceRect(AstroMinerGame game, int col, int row, Corner corner)
+    public static Rectangle GetFloorQuadrantSourceRect(BaseGame game, int col, int row, Corner corner)
     {
         var (x, y) = GetFloorQuadrantTextureOffset(game, col, row, corner);
         return new Rectangle(x, y, QuadrantTextureSizePx, QuadrantTextureSizePx);

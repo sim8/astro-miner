@@ -9,7 +9,7 @@ namespace AstroMiner.ECS.Systems;
 
 public class FallOrLavaDamageSystem : System
 {
-    public FallOrLavaDamageSystem(Ecs ecs, AstroMinerGame game) : base(ecs, game)
+    public FallOrLavaDamageSystem(Ecs ecs, BaseGame game) : base(ecs, game)
     {
     }
 

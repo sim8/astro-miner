@@ -32,7 +32,7 @@ public class CellState(WallType wallType, FloorType floorType, AsteroidLayer lay
 ///     Grid state is primarily 2d array of cell types.
 ///     Cells can be "activated" to be called in Update loop
 /// </summary>
-public class GridState(AstroMinerGame game, CellState[,] grid)
+public class GridState(BaseGame game, CellState[,] grid)
 {
     private static readonly CellState _outOfBoundsCell = new(WallType.Empty, FloorType.Empty, AsteroidLayer.None);
 

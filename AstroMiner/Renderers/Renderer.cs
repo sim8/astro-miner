@@ -14,7 +14,7 @@ public class Renderer
     private readonly BaseWorldRenderer _asteroidWorldRenderer;
     private readonly DynamiteRenderer _dynamiteRenderer;
     private readonly ExplosionRenderer _explosionRenderer;
-    private readonly AstroMinerGame _game;
+    private readonly BaseGame _game;
     private readonly BaseWorldRenderer _homeWorldRenderer;
     private readonly BaseWorldRenderer _interiorsWorldRenderer;
     private readonly LaunchParallaxRenderer _launchParallaxRenderer;
@@ -27,7 +27,7 @@ public class Renderer
     private RenderTarget2D _lightingRenderTarget;
 
     public Renderer(
-        AstroMinerGame game)
+        BaseGame game)
     {
         _game = game;
         _shared = new RendererShared(_game);

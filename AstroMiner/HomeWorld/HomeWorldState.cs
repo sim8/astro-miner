@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner.HomeWorld;
 
-public class HomeWorldState(AstroMinerGame game) : BaseWorldState(game)
+public class HomeWorldState(BaseGame game) : BaseWorldState(game)
 {
     public WorldCellType[,] Grid;
 
