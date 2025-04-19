@@ -37,23 +37,15 @@ public enum Direction
     Left
 }
 
-public class GameState
+public class GameState(BaseGame game)
 {
     private static readonly HashSet<MiningControls> EmptyControls = new();
-    private readonly BaseGame _game;
     public AsteroidWorldState AsteroidWorld;
     public CameraState Camera;
     public CloudManager CloudManager;
     public HomeWorldState HomeWorld;
     public InteriorsWorldState InteriorsWorld;
     public Inventory Inventory;
-
-    public GameState(
-        BaseGame game)
-    {
-        _game = game;
-        Initialize();
-    }
 
     public bool FreezeControls { get; set; }
 
@@ -88,13 +80,13 @@ public class GameState
     public void Initialize()
     {
         Inventory = new Inventory();
-        Camera = new CameraState(_game);
+        Camera = new CameraState(game);
         MsSinceStart = 0;
-        AsteroidWorld = new AsteroidWorldState(_game);
-        HomeWorld = new HomeWorldState(_game);
-        InteriorsWorld = new InteriorsWorldState(_game);
-        CloudManager = new CloudManager(_game);
-        Ecs = new Ecs(_game);
+        AsteroidWorld = new AsteroidWorldState(game);
+        HomeWorld = new HomeWorldState(game);
+        InteriorsWorld = new InteriorsWorldState(game);
+        CloudManager = new CloudManager(game);
+        Ecs = new Ecs(game);
 
         SetActiveWorldAndInitialize(World.Home);
         HomeWorld.InitializeOrResetEntities();

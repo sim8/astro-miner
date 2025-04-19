@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using AstroMiner.Renderers;
-using AstroMiner.Utilities;
+﻿using AstroMiner.Renderers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -16,6 +14,7 @@ public class AstroMinerGame : BaseGame
     protected override void Initialize()
     {
         State = new GameState(this);
+        State.Initialize();
         _renderer = new Renderer(this);
         Window.ClientSizeChanged += _renderer.HandleWindowResize;
         InitializeControls();
@@ -33,11 +32,6 @@ public class AstroMinerGame : BaseGame
         _miningControlMapper.AddMapping(MiningControls.PlaceDynamite, Keys.R, Buttons.RightShoulder, false);
         _miningControlMapper.AddMapping(MiningControls.UseGrapple, Keys.G, Buttons.LeftTrigger, true);
         _miningControlMapper.AddMapping(MiningControls.NewGameOrReturnToBase, Keys.N, Buttons.Start, false);
-    }
-
-    private void LoadTexture(string name)
-    {
-        Textures[name] = Content.Load<Texture2D>($"img/{name}");
     }
 
     protected override void LoadContent()

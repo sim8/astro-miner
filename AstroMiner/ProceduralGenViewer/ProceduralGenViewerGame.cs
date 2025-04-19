@@ -22,22 +22,22 @@ public class ProceduralGenViewerGame : BaseGame
 {
     private readonly ProceduralGenViewerState _proceduralGenViewerState = new();
     private readonly ControlMapper<ViewerControls> _viewerControlsMapper = new();
-    private GameState _gameState;
     private ProceduralGenViewerRenderer _renderer;
 
     protected override void Initialize()
     {
         State = new GameState(this);
+        State.Initialize();
         InitializeAsteroidForViewing();
-        _renderer = new ProceduralGenViewerRenderer(Textures, _gameState, _proceduralGenViewerState);
+        _renderer = new ProceduralGenViewerRenderer(Textures, State, _proceduralGenViewerState);
         InitializeControls();
         base.Initialize();
     }
 
     private void InitializeAsteroidForViewing()
     {
-        _gameState.Initialize();
-        _gameState.SetActiveWorldAndInitialize(World.Asteroid);
+        State.Initialize();
+        State.SetActiveWorldAndInitialize(World.Asteroid);
     }
 
     protected override void InitializeControls()
