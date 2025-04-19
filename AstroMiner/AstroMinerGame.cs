@@ -7,40 +7,22 @@ using Microsoft.Xna.Framework.Input;
 
 namespace AstroMiner;
 
-public class AstroMinerGame : Game
+public class AstroMinerGame : BaseGame
 {
-    private readonly FrameCounter _frameCounter = new();
-
-    private readonly GraphicsDeviceManager _graphics;
     private readonly ControlMapper<MiningControls> _miningControlMapper = new();
 
-    private readonly Dictionary<string, Texture2D> _textures = new();
-    private GameState _gameState;
     private Renderer _renderer;
-    private SpriteBatch _spriteBatch;
-
-
-    public AstroMinerGame()
-    {
-        _graphics = new GraphicsDeviceManager(this);
-        _graphics.PreferredBackBufferWidth = 1280;
-        _graphics.PreferredBackBufferHeight = 1024;
-        _graphics.IsFullScreen = false;
-        Window.AllowUserResizing = true;
-        Content.RootDirectory = "Content";
-        IsMouseVisible = true;
-    }
 
     protected override void Initialize()
     {
-        _gameState = new GameState(_graphics);
-        _renderer = new Renderer(_graphics, _textures, _gameState, _frameCounter);
+        State = new GameState(this);
+        _renderer = new Renderer(this);
         Window.ClientSizeChanged += _renderer.HandleWindowResize;
-        InitializeMiningControls();
+        InitializeControls();
         base.Initialize();
     }
 
-    private void InitializeMiningControls()
+    protected override void InitializeControls()
     {
         _miningControlMapper.AddMapping(MiningControls.MoveUp, Keys.W, Buttons.LeftThumbstickUp, true);
         _miningControlMapper.AddMapping(MiningControls.MoveRight, Keys.D, Buttons.LeftThumbstickRight, true);
@@ -55,12 +37,12 @@ public class AstroMinerGame : Game
 
     private void LoadTexture(string name)
     {
-        _textures[name] = Content.Load<Texture2D>($"img/{name}");
+        Textures[name] = Content.Load<Texture2D>($"img/{name}");
     }
 
     protected override void LoadContent()
     {
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
+        SpriteBatch = new SpriteBatch(GraphicsDevice);
         LoadTexture("dogica-font");
         LoadTexture("gradient-set");
         LoadTexture("white");
@@ -98,7 +80,7 @@ public class AstroMinerGame : Game
 
         var activeMiningControls = _miningControlMapper.GetActiveControls(keyboardState, gamePadState);
 
-        _gameState.Update(activeMiningControls, gameTime);
+        State.Update(activeMiningControls, gameTime);
 
         base.Update(gameTime);
     }
@@ -106,12 +88,12 @@ public class AstroMinerGame : Game
     protected override void Draw(GameTime gameTime)
     {
         var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        _frameCounter.Update(deltaTime);
+        FrameCounter.Update(deltaTime);
 
 
         GraphicsDevice.Clear(Color.Black);
 
-        _renderer.Render(_spriteBatch);
+        _renderer.Render(SpriteBatch);
 
         base.Draw(gameTime);
     }

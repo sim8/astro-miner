@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
 
-public abstract class BaseWorldState(GameState g)
+public abstract class BaseWorldState(BaseGame g)
 {
     public virtual void Initialize()
     {
