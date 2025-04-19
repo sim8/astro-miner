@@ -15,7 +15,7 @@ public class Ecs
 {
     private readonly Dictionary<Type, HashSet<Component>> _componentsByType = new();
     private readonly Dictionary<int, HashSet<Component>> _entityComponents = new();
-    private readonly GameState _gameState;
+    private readonly AstroMinerGame _game;
 
     // Track the currently active controllable entity
     private int? _activeControllableEntityId;
@@ -23,22 +23,22 @@ public class Ecs
 
     // Track special entities
 
-    public Ecs(GameState gameState)
+    public Ecs(AstroMinerGame game)
     {
-        _gameState = gameState;
-        Factories = new EntityFactories(this, gameState);
+        _game = game;
+        Factories = new EntityFactories(this, game);
 
         // Initialize systems
-        DynamiteSystem = new DynamiteSystem(this, gameState);
-        ExplosionSystem = new ExplosionSystem(this, gameState);
-        MovementSystem = new MovementSystem(this, gameState);
-        PortalSystem = new PortalSystem(this, gameState);
-        HealthSystem = new HealthSystem(this, gameState);
-        VehicleEnterExitSystem = new VehicleEnterExitSystem(this, gameState);
-        FallOrLavaDamageSystem = new FallOrLavaDamageSystem(this, gameState);
-        MiningSystem = new MiningSystem(this, gameState);
-        GrappleSystem = new GrappleSystem(this, gameState);
-        LaunchSystem = new LaunchSystem(this, gameState);
+        DynamiteSystem = new DynamiteSystem(this, game);
+        ExplosionSystem = new ExplosionSystem(this, game);
+        MovementSystem = new MovementSystem(this, game);
+        PortalSystem = new PortalSystem(this, game);
+        HealthSystem = new HealthSystem(this, game);
+        VehicleEnterExitSystem = new VehicleEnterExitSystem(this, game);
+        FallOrLavaDamageSystem = new FallOrLavaDamageSystem(this, game);
+        MiningSystem = new MiningSystem(this, game);
+        GrappleSystem = new GrappleSystem(this, game);
+        LaunchSystem = new LaunchSystem(this, game);
     }
 
     public int? PlayerEntityId { get; private set; }
@@ -238,7 +238,7 @@ public class Ecs
             .Where(component =>
             {
                 var positionComponent = GetComponent<PositionComponent>(component.EntityId);
-                return positionComponent != null && positionComponent.World == _gameState.ActiveWorld;
+                return positionComponent != null && positionComponent.World == _game.State.ActiveWorld;
             });
     }
 
@@ -248,7 +248,7 @@ public class Ecs
             .Where(entityId =>
             {
                 var positionComponent = GetComponent<PositionComponent>(entityId);
-                return positionComponent != null && positionComponent.World == _gameState.ActiveWorld;
+                return positionComponent != null && positionComponent.World == _game.State.ActiveWorld;
             })
             .OrderBy(entityId => GetComponent<PositionComponent>(entityId).FrontY)
             .ToList(); // Cache the results since they'll be used multiple times per frame

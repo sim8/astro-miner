@@ -40,7 +40,7 @@ public enum Direction
 public class GameState
 {
     private static readonly HashSet<MiningControls> EmptyControls = new();
-    public readonly GraphicsDeviceManager Graphics;
+    private readonly AstroMinerGame _game;
     public AsteroidWorldState AsteroidWorld;
     public CameraState Camera;
     public CloudManager CloudManager;
@@ -49,9 +49,9 @@ public class GameState
     public Inventory Inventory;
 
     public GameState(
-        GraphicsDeviceManager graphics)
+        AstroMinerGame game)
     {
-        Graphics = graphics;
+        _game = game;
         Initialize();
     }
 
@@ -88,13 +88,13 @@ public class GameState
     public void Initialize()
     {
         Inventory = new Inventory();
-        Camera = new CameraState(this);
+        Camera = new CameraState(_game);
         MsSinceStart = 0;
-        AsteroidWorld = new AsteroidWorldState(this);
-        HomeWorld = new HomeWorldState(this);
-        InteriorsWorld = new InteriorsWorldState(this);
-        CloudManager = new CloudManager(this);
-        Ecs = new Ecs(this);
+        AsteroidWorld = new AsteroidWorldState(_game);
+        HomeWorld = new HomeWorldState(_game);
+        InteriorsWorld = new InteriorsWorldState(_game);
+        CloudManager = new CloudManager(_game);
+        Ecs = new Ecs(_game);
 
         SetActiveWorldAndInitialize(World.Home);
         HomeWorld.InitializeOrResetEntities();

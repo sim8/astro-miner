@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using AstroMiner.Renderers.AsteroidWorld;
 using AstroMiner.Renderers.HomeWorld;
 using AstroMiner.Renderers.InteriorsWorld;
-using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -16,7 +14,7 @@ public class Renderer
     private readonly BaseWorldRenderer _asteroidWorldRenderer;
     private readonly DynamiteRenderer _dynamiteRenderer;
     private readonly ExplosionRenderer _explosionRenderer;
-    private readonly GameState _gameState;
+    private readonly AstroMinerGame _game;
     private readonly BaseWorldRenderer _homeWorldRenderer;
     private readonly BaseWorldRenderer _interiorsWorldRenderer;
     private readonly LaunchParallaxRenderer _launchParallaxRenderer;
@@ -29,20 +27,17 @@ public class Renderer
     private RenderTarget2D _lightingRenderTarget;
 
     public Renderer(
-        GraphicsDeviceManager graphics,
-        Dictionary<string, Texture2D> textures,
-        GameState gameState,
-        FrameCounter frameCounter)
+        AstroMinerGame game)
     {
-        _shared = new RendererShared(gameState, graphics, textures);
-        _gameState = gameState;
+        _game = game;
+        _shared = new RendererShared(_game);
         _minerRenderer = new MinerRenderer(_shared);
         _playerRenderer = new PlayerRenderer(_shared);
         _dynamiteRenderer = new DynamiteRenderer(_shared);
         _explosionRenderer = new ExplosionRenderer(_shared);
         _scrollingBackgroundRenderer = new ScrollingBackgroundRenderer(_shared);
         _launchParallaxRenderer = new LaunchParallaxRenderer(_shared);
-        _userInterfaceRenderer = new UserInterfaceRenderer(_shared, frameCounter);
+        _userInterfaceRenderer = new UserInterfaceRenderer(_shared, game.FrameCounter);
         _asteroidWorldRenderer = new AsteroidWorldRenderer(_shared);
         _homeWorldRenderer = new HomeWorldRenderer(_shared);
         _interiorsWorldRenderer = new InteriorsWorldRenderer(_shared);
@@ -55,7 +50,7 @@ public class Renderer
     }
 
     private BaseWorldRenderer ActiveWorldRenderer =>
-        _gameState.ActiveWorld switch
+        _game.State.ActiveWorld switch
         {
             World.Asteroid => _asteroidWorldRenderer,
             World.Home => _homeWorldRenderer,
@@ -113,33 +108,33 @@ public class Renderer
 
     private void RenderEntities(SpriteBatch spriteBatch, EntityRenderLayer targetLayer)
     {
-        foreach (var entityId in _gameState.Ecs.EntityIdsInActiveWorldSortedByDistance)
+        foreach (var entityId in _game.State.Ecs.EntityIdsInActiveWorldSortedByDistance)
         {
             // Check if entity has the target render layer
-            var renderLayerComponent = _gameState.Ecs.GetComponent<RenderLayerComponent>(entityId);
+            var renderLayerComponent = _game.State.Ecs.GetComponent<RenderLayerComponent>(entityId);
             var entityLayer = renderLayerComponent?.EntityRenderLayer ?? EntityRenderLayer.Default;
             if (entityLayer != targetLayer) continue;
 
             // Render miner
-            if (_gameState.Ecs.HasComponent<MinerTag>(entityId))
+            if (_game.State.Ecs.HasComponent<MinerTag>(entityId))
                 _minerRenderer.RenderMiner(spriteBatch, entityId);
 
             // Render dynamite
-            if (_gameState.Ecs.HasComponent<DynamiteTag>(entityId))
+            if (_game.State.Ecs.HasComponent<DynamiteTag>(entityId))
                 _dynamiteRenderer.RenderDynamite(spriteBatch, entityId);
 
             // Render explosions
-            if (_gameState.Ecs.HasComponent<ExplosionTag>(entityId))
+            if (_game.State.Ecs.HasComponent<ExplosionTag>(entityId))
                 _explosionRenderer.RenderExplosion(spriteBatch, entityId);
 
             // Render player
-            if (_gameState.Ecs.HasComponent<PlayerTag>(entityId) && !_gameState.AsteroidWorld.IsInMiner)
+            if (_game.State.Ecs.HasComponent<PlayerTag>(entityId) && !_game.State.AsteroidWorld.IsInMiner)
                 _playerRenderer.RenderPlayer(spriteBatch, entityId);
 
-            if (_gameState.Ecs.HasComponent<TextureComponent>(entityId))
+            if (_game.State.Ecs.HasComponent<TextureComponent>(entityId))
             {
-                var textureComponent = _gameState.Ecs.GetComponent<TextureComponent>(entityId);
-                var positionComponent = _gameState.Ecs.GetComponent<PositionComponent>(entityId);
+                var textureComponent = _game.State.Ecs.GetComponent<TextureComponent>(entityId);
+                var positionComponent = _game.State.Ecs.GetComponent<PositionComponent>(entityId);
 
                 var sourceRectangle = new Rectangle(0, 0, positionComponent.WidthPx, positionComponent.HeightPx);
                 var destinationRectangle = _shared.ViewHelpers.GetVisibleRectForObject(positionComponent.Position,
@@ -152,7 +147,7 @@ public class Renderer
 
     private void RenderScene(SpriteBatch spriteBatch)
     {
-        if (_gameState.ActiveWorld == World.Asteroid || _gameState.ActiveWorld == World.Home)
+        if (_game.State.ActiveWorld == World.Asteroid || _game.State.ActiveWorld == World.Home)
         {
             _scrollingBackgroundRenderer.RenderBackground(spriteBatch);
             _launchParallaxRenderer.Render(spriteBatch);
@@ -178,18 +173,18 @@ public class Renderer
         ActiveWorldRenderer.RenderWorldOverlay(spriteBatch);
 
 
-        foreach (var directionalLightSourceComponent in _gameState.Ecs
+        foreach (var directionalLightSourceComponent in _game.State.Ecs
                      .GetAllComponentsInActiveWorld<DirectionalLightSourceComponent>())
         {
             var positionComponent =
-                _gameState.Ecs.GetComponent<PositionComponent>(directionalLightSourceComponent.EntityId);
+                _game.State.Ecs.GetComponent<PositionComponent>(directionalLightSourceComponent.EntityId);
             var movementComponent =
-                _gameState.Ecs.GetComponent<MovementComponent>(directionalLightSourceComponent.EntityId);
+                _game.State.Ecs.GetComponent<MovementComponent>(directionalLightSourceComponent.EntityId);
             var directionComponent =
-                _gameState.Ecs.GetComponent<DirectionComponent>(directionalLightSourceComponent.EntityId);
+                _game.State.Ecs.GetComponent<DirectionComponent>(directionalLightSourceComponent.EntityId);
 
-            if (positionComponent.EntityId == _gameState.Ecs.PlayerEntityId &&
-                _gameState.AsteroidWorld.IsInMiner) continue;
+            if (positionComponent.EntityId == _game.State.Ecs.PlayerEntityId &&
+                _game.State.AsteroidWorld.IsInMiner) continue;
 
             var lightSourcePos = directionComponent.Direction switch
             {
@@ -209,21 +204,21 @@ public class Renderer
         ActiveWorldRenderer.RenderWorldLighting(spriteBatch);
 
         // Render ECS entity lighting
-        foreach (var entityId in _gameState.Ecs.EntityIdsInActiveWorldSortedByDistance)
+        foreach (var entityId in _game.State.Ecs.EntityIdsInActiveWorldSortedByDistance)
         {
             // Render dynamite lighting
-            if (_gameState.Ecs.HasComponent<DynamiteTag>(entityId))
+            if (_game.State.Ecs.HasComponent<DynamiteTag>(entityId))
                 _dynamiteRenderer.RenderLightSource(spriteBatch, entityId);
 
             // Render explosion lighting
-            if (_gameState.Ecs.HasComponent<ExplosionTag>(entityId))
+            if (_game.State.Ecs.HasComponent<ExplosionTag>(entityId))
                 _explosionRenderer.RenderLightSource(spriteBatch, entityId);
 
 
-            if (_gameState.Ecs.HasComponent<RadialLightSourceComponent>(entityId))
+            if (_game.State.Ecs.HasComponent<RadialLightSourceComponent>(entityId))
             {
-                var radialLightSourceComponent = _gameState.Ecs.GetComponent<RadialLightSourceComponent>(entityId);
-                var positionComponent = _gameState.Ecs.GetComponent<PositionComponent>(entityId);
+                var radialLightSourceComponent = _game.State.Ecs.GetComponent<RadialLightSourceComponent>(entityId);
+                var positionComponent = _game.State.Ecs.GetComponent<PositionComponent>(entityId);
 
                 _shared.RenderRadialLightSource(spriteBatch, positionComponent.CenterPosition,
                     radialLightSourceComponent.Tint, radialLightSourceComponent.SizePx,
@@ -242,17 +237,17 @@ public class Renderer
     private void RenderAdditiveLighting(SpriteBatch spriteBatch)
     {
         // Render ECS entity lighting
-        foreach (var entityId in _gameState.Ecs.EntityIdsInActiveWorldSortedByDistance)
+        foreach (var entityId in _game.State.Ecs.EntityIdsInActiveWorldSortedByDistance)
             // Render explosion lighting
-            if (_gameState.Ecs.HasComponent<ExplosionTag>(entityId))
+            if (_game.State.Ecs.HasComponent<ExplosionTag>(entityId))
                 _explosionRenderer.RenderAdditiveLightSource(spriteBatch, entityId);
 
         // TODO
-        // _shared.RenderDirectionalLightSource(spriteBatch, _gameState.AsteroidWorld.Miner.GetDirectionalLightSource(),
-        //     _gameState.AsteroidWorld.Miner.Direction, 192, 0.4f);
+        // _shared.RenderDirectionalLightSource(spriteBatch, _game.State.AsteroidWorld.Miner.GetDirectionalLightSource(),
+        //     _game.State.AsteroidWorld.Miner.Direction, 192, 0.4f);
 
-        // if (!_gameState.AsteroidWorld.IsInMiner)
-        //     _shared.RenderDirectionalLightSource(spriteBatch, _gameState.AsteroidWorld.Player.GetDirectionalLightSource(),
-        //         _gameState.AsteroidWorld.Player.Direction, 128, 0.3f);
+        // if (!_game.State.AsteroidWorld.IsInMiner)
+        //     _shared.RenderDirectionalLightSource(spriteBatch, _game.State.AsteroidWorld.Player.GetDirectionalLightSource(),
+        //         _game.State.AsteroidWorld.Player.Direction, 128, 0.3f);
     }
 }

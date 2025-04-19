@@ -9,7 +9,7 @@ namespace AstroMiner.ECS.Systems;
 
 public class GrappleSystem : System
 {
-    public GrappleSystem(Ecs ecs, GameState gameState) : base(ecs, gameState)
+    public GrappleSystem(Ecs ecs, AstroMinerGame game) : base(ecs, game)
     {
     }
 
@@ -76,8 +76,8 @@ public class GrappleSystem : System
             var rightTargetToCheck = rightGrappleStart +
                                      DirectionHelpers.GetDirectionalVector(distance, directionComponent.Direction);
 
-            var leftCellState = GameState.AsteroidWorld.Grid.GetCellState(leftTargetToCheck);
-            var rightCellState = GameState.AsteroidWorld.Grid.GetCellState(rightTargetToCheck);
+            var leftCellState = game.State.AsteroidWorld.Grid.GetCellState(leftTargetToCheck);
+            var rightCellState = game.State.AsteroidWorld.Grid.GetCellState(rightTargetToCheck);
 
             // If either grapple hits a wall, break
             if (leftCellState.WallType != WallType.Empty || rightCellState.WallType != WallType.Empty) break;
@@ -148,14 +148,14 @@ public class GrappleSystem : System
 
         // Gradually ramp up to max reeling speed
         var speedIncrease = (GrappleComponent.ReelingMaxSpeed - GrappleComponent.ReelingBaseSpeed) *
-            (gameTime.ElapsedGameTime.Milliseconds / 5000f);
+                            (gameTime.ElapsedGameTime.Milliseconds / 5000f);
         movementComponent.CurrentSpeed = Math.Min(GrappleComponent.ReelingMaxSpeed,
             movementComponent.CurrentSpeed + speedIncrease);
     }
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
     {
-        if (GameState.ActiveWorld != World.Asteroid) return;
+        if (game.State.ActiveWorld != World.Asteroid) return;
 
         var grappleComponent = Ecs.GetComponent<GrappleComponent>(Ecs.ActiveControllableEntityId.Value);
 

@@ -7,33 +7,32 @@ namespace AstroMiner.ECS.Systems;
 
 public class DynamiteSystem : System
 {
-    public DynamiteSystem(Ecs ecs, GameState gameState) : base(ecs, gameState)
+    public DynamiteSystem(Ecs ecs, AstroMinerGame game) : base(ecs, game)
     {
     }
 
     public void PlaceDynamite()
     {
-        if (GameState.Inventory.numDynamite <= 0) return;
+        if (game.State.Inventory.numDynamite <= 0) return;
         if (Ecs.PlayerEntityId == null) return;
 
         var playerPositionComponent = Ecs.GetComponent<PositionComponent>(Ecs.PlayerEntityId.Value);
         if (playerPositionComponent == null) return;
 
-        GameState.Inventory.numDynamite--;
+        game.State.Inventory.numDynamite--;
         var dynamiteEntity = Ecs.Factories.CreateDynamiteEntity(playerPositionComponent.CenterPosition);
         var dynamitePositionComponent = Ecs.GetComponent<PositionComponent>(dynamiteEntity);
-        Ecs.MovementSystem.SetPositionRelativeToDirectionalEntity(dynamitePositionComponent, Ecs.PlayerEntityId.Value, Direction.Top);
+        Ecs.MovementSystem.SetPositionRelativeToDirectionalEntity(dynamitePositionComponent, Ecs.PlayerEntityId.Value,
+            Direction.Top);
     }
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
 
     {
-        if (GameState.ActiveWorld != World.Asteroid) return;
+        if (game.State.ActiveWorld != World.Asteroid) return;
 
-        if (activeControls.Contains(MiningControls.PlaceDynamite) && !GameState.AsteroidWorld.IsInMiner)
-        {
+        if (activeControls.Contains(MiningControls.PlaceDynamite) && !game.State.AsteroidWorld.IsInMiner)
             PlaceDynamite();
-        }
         foreach (var fuseComponent in Ecs.GetAllComponents<FuseComponent>())
         {
             fuseComponent.TimeToExplodeMs -= gameTime.ElapsedGameTime.Milliseconds;
@@ -41,7 +40,7 @@ public class DynamiteSystem : System
             if (fuseComponent.TimeToExplodeMs <= 0)
             {
                 var positionComponent = Ecs.GetComponent<PositionComponent>(fuseComponent.EntityId);
-                GameState.Ecs.Factories.CreateExplosionEntity(positionComponent.CenterPosition);
+                game.State.Ecs.Factories.CreateExplosionEntity(positionComponent.CenterPosition);
                 Ecs.DestroyEntity(fuseComponent.EntityId);
             }
         }

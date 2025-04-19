@@ -2,7 +2,7 @@ using AstroMiner.Definitions;
 
 namespace AstroMiner.InteriorsWorld;
 
-public class InteriorsWorldState(GameState gameState) : BaseWorldState(gameState)
+public class InteriorsWorldState(AstroMinerGame game) : BaseWorldState(game)
 {
     public WorldCellType[,] Grid;
 

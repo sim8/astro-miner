@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using AstroMiner.Utilities;
@@ -10,8 +8,7 @@ namespace AstroMiner.ECS.Systems;
 
 public class VehicleEnterExitSystem : System
 {
-
-    public VehicleEnterExitSystem(Ecs ecs, GameState gameState) : base(ecs, gameState)
+    public VehicleEnterExitSystem(Ecs ecs, AstroMinerGame game) : base(ecs, game)
     {
     }
 
@@ -20,9 +17,8 @@ public class VehicleEnterExitSystem : System
     {
         if (activeControls.Contains(MiningControls.EnterOrExit))
         {
-            if (GameState.AsteroidWorld.IsInMiner)
+            if (game.State.AsteroidWorld.IsInMiner)
             {
-
                 // Set player as active controllable entity
                 Ecs.SetActiveControllableEntity(Ecs.PlayerEntityId.Value);
 
@@ -34,11 +30,10 @@ public class VehicleEnterExitSystem : System
             }
             else
             {
-                if (EntityHelpers.GetDistanceBetween(Ecs, Ecs.PlayerEntityId.Value, Ecs.MinerEntityId.Value) < GameConfig.MinEmbarkingDistance)
-                {
+                if (EntityHelpers.GetDistanceBetween(Ecs, Ecs.PlayerEntityId.Value, Ecs.MinerEntityId.Value) <
+                    GameConfig.MinEmbarkingDistance)
                     // Set miner as active controllable entity
                     Ecs.SetActiveControllableEntity(Ecs.MinerEntityId.Value);
-                }
             }
             // TODO: Disembark?
             // ActiveControllableEntity.Disembark();

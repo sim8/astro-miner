@@ -72,41 +72,41 @@ public static class Tilesets
         { Corner.BottomRight, (0, 0) }
     };
 
-    public static bool CellIsTilesetType(GameState gameState, int x, int y)
+    public static bool CellIsTilesetType(AstroMinerGame game, int x, int y)
     {
-        var wallType = gameState.AsteroidWorld.Grid.GetWallType(x, y);
+        var wallType = game.State.AsteroidWorld.Grid.GetWallType(x, y);
         return WallTypeTextureIndex.ContainsKey(wallType);
     }
 
     // Find the tile to render based on corner's 3 neighbors
-    private static int GetWallQuadrantTileKey(GameState gameState, int x, int y, Corner corner)
+    private static int GetWallQuadrantTileKey(AstroMinerGame game, int x, int y, Corner corner)
     {
         var (topLeftXOffset, topLeftYOffset) = GetTopLeftOffsetFor2X2[corner];
 
         var twoByTwoX = x + topLeftXOffset;
         var twoByTwoY = y + topLeftYOffset;
 
-        var isTopLeftTileset = CellIsTilesetType(gameState, twoByTwoX, twoByTwoY);
-        var isTopRightTileset = CellIsTilesetType(gameState, twoByTwoX + 1, twoByTwoY);
-        var isBottomLeftTileset = CellIsTilesetType(gameState, twoByTwoX, twoByTwoY + 1);
-        var isBottomRightTileset = CellIsTilesetType(gameState, twoByTwoX + 1, twoByTwoY + 1);
+        var isTopLeftTileset = CellIsTilesetType(game, twoByTwoX, twoByTwoY);
+        var isTopRightTileset = CellIsTilesetType(game, twoByTwoX + 1, twoByTwoY);
+        var isBottomLeftTileset = CellIsTilesetType(game, twoByTwoX, twoByTwoY + 1);
+        var isBottomRightTileset = CellIsTilesetType(game, twoByTwoX + 1, twoByTwoY + 1);
 
         return RampKeys.CreateKey(isTopLeftTileset, isTopRightTileset, isBottomLeftTileset,
             isBottomRightTileset);
     }
 
     // Find the tile to render based on corner's 3 neighbors + return texture index within Tileset.png
-    private static (int, int) GetFloorQuadrantTileKeyAndTextureIndex(GameState gameState, int x, int y, Corner corner)
+    private static (int, int) GetFloorQuadrantTileKeyAndTextureIndex(AstroMinerGame game, int x, int y, Corner corner)
     {
         var (topLeftXOffset, topLeftYOffset) = GetTopLeftOffsetFor2X2[corner];
 
         var twoByTwoX = x + topLeftXOffset;
         var twoByTwoY = y + topLeftYOffset;
 
-        var topLeft = gameState.AsteroidWorld.Grid.GetFloorType(twoByTwoX, twoByTwoY);
-        var topRight = gameState.AsteroidWorld.Grid.GetFloorType(twoByTwoX + 1, twoByTwoY);
-        var bottomLeft = gameState.AsteroidWorld.Grid.GetFloorType(twoByTwoX, twoByTwoY + 1);
-        var bottomRight = gameState.AsteroidWorld.Grid.GetFloorType(twoByTwoX + 1, twoByTwoY + 1);
+        var topLeft = game.State.AsteroidWorld.Grid.GetFloorType(twoByTwoX, twoByTwoY);
+        var topRight = game.State.AsteroidWorld.Grid.GetFloorType(twoByTwoX + 1, twoByTwoY);
+        var bottomLeft = game.State.AsteroidWorld.Grid.GetFloorType(twoByTwoX, twoByTwoY + 1);
+        var bottomRight = game.State.AsteroidWorld.Grid.GetFloorType(twoByTwoX + 1, twoByTwoY + 1);
 
         // Dual grid system doesn't normally allow for > 2 textures adjoining. Deriving the texture to use from the neighbors.
         // When adding more floor types will likely need a priority order for textures + try and ensure they don't adjoin
@@ -129,20 +129,20 @@ public static class Tilesets
 
     // Find px offset within main texture for a given quadrant
     // TODO save this to CellState
-    private static (int, int) GetWallQuadrantTextureOffset(GameState gameState, int col, int row, Corner corner)
+    private static (int, int) GetWallQuadrantTextureOffset(AstroMinerGame game, int col, int row, Corner corner)
     {
         // Walls tileset has one quadrant's space above each actual quadrant for overlaying texture.
         // Each quadrant is rendered at double height, overlaying the one behind it
         // // TODO - change/centralize this logic? Will need doing for floor tilesets
 
         // For the cell quadrant, work out which tile to use
-        var tileKey = GetWallQuadrantTileKey(gameState, col, row, corner);
+        var tileKey = GetWallQuadrantTileKey(game, col, row, corner);
 
         // Get the grid x,y of that tile within the default dual tileset
         var (textureGridX, textureGridY) = RampKeyToTextureOffset[tileKey];
 
         // Get grid index of cellType tileset within main texture
-        var wallType = gameState.AsteroidWorld.Grid.GetWallType(col, row);
+        var wallType = game.State.AsteroidWorld.Grid.GetWallType(col, row);
 
         var textureTilesetX = WallTypeTextureIndex[wallType] * TextureGridWidth;
 
@@ -160,14 +160,14 @@ public static class Tilesets
         return (quadrantX, quadrantY);
     }
 
-    private static (int, int) GetFloorQuadrantTextureOffset(GameState gameState, int col, int row, Corner corner)
+    private static (int, int) GetFloorQuadrantTextureOffset(AstroMinerGame game, int col, int row, Corner corner)
     {
         // Walls tileset has one quadrant's space above each actual quadrant for overlaying texture.
         // Each quadrant is rendered at double height, overlaying the one behind it
         // // TODO - change/centralize this logic? Will need doing for floor tilesets
 
         // For the cell quadrant, work out which tile to use
-        var (tileKey, textureIndex) = GetFloorQuadrantTileKeyAndTextureIndex(gameState, col, row, corner);
+        var (tileKey, textureIndex) = GetFloorQuadrantTileKeyAndTextureIndex(game, col, row, corner);
 
         // Get the grid x,y of that tile within the default dual tileset
         var (textureGridX, textureGridY) = RampKeyToTextureOffset[tileKey];
@@ -186,17 +186,17 @@ public static class Tilesets
         return (quadrantX, quadrantY);
     }
 
-    public static Rectangle GetWallQuadrantSourceRect(GameState gameState, int col, int row, Corner corner)
+    public static Rectangle GetWallQuadrantSourceRect(AstroMinerGame game, int col, int row, Corner corner)
     {
-        var (x, y) = GetWallQuadrantTextureOffset(gameState, col, row, corner);
+        var (x, y) = GetWallQuadrantTextureOffset(game, col, row, corner);
 
         // Each tile quadrant has one quadrant above it in texture for any overlaying visuals. Render at double height
         return new Rectangle(x, y, QuadrantTextureSizePx, QuadrantTextureSizePx * 2);
     }
 
-    public static Rectangle GetFloorQuadrantSourceRect(GameState gameState, int col, int row, Corner corner)
+    public static Rectangle GetFloorQuadrantSourceRect(AstroMinerGame game, int col, int row, Corner corner)
     {
-        var (x, y) = GetFloorQuadrantTextureOffset(gameState, col, row, corner);
+        var (x, y) = GetFloorQuadrantTextureOffset(game, col, row, corner);
         return new Rectangle(x, y, QuadrantTextureSizePx, QuadrantTextureSizePx);
     }
 }

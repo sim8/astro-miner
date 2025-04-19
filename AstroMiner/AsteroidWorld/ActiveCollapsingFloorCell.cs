@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner.AsteroidWorld;
 
-public class ActiveCollapsingFloorCell(GameState gameState, (int x, int y) gridPos)
+public class ActiveCollapsingFloorCell(AstroMinerGame game, (int x, int y) gridPos)
 {
     public int TimeToCollapse = GameConfig.CollapsingFloorSpreadTime;
 
@@ -13,11 +13,11 @@ public class ActiveCollapsingFloorCell(GameState gameState, (int x, int y) gridP
         if (TimeToCollapse <= 0)
         {
             GridState.Map4Neighbors(gridPos.x, gridPos.y,
-                (nx, ny) => { gameState.AsteroidWorld.Grid.ActivateCollapsingFloorCell(nx, ny); });
+                (nx, ny) => { game.State.AsteroidWorld.Grid.ActivateCollapsingFloorCell(nx, ny); });
 
-            gameState.AsteroidWorld.Grid.GetCellState(gridPos.x, gridPos.y).FloorType = FloorType.Lava;
+            game.State.AsteroidWorld.Grid.GetCellState(gridPos.x, gridPos.y).FloorType = FloorType.Lava;
 
-            gameState.AsteroidWorld.Grid.DeactiveCollapsingFloorCell(gridPos.x, gridPos.y);
+            game.State.AsteroidWorld.Grid.DeactiveCollapsingFloorCell(gridPos.x, gridPos.y);
         }
     }
 }

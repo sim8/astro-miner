@@ -32,7 +32,7 @@ public class CellState(WallType wallType, FloorType floorType, AsteroidLayer lay
 ///     Grid state is primarily 2d array of cell types.
 ///     Cells can be "activated" to be called in Update loop
 /// </summary>
-public class GridState(GameState gameState, CellState[,] grid)
+public class GridState(AstroMinerGame game, CellState[,] grid)
 {
     private static readonly CellState _outOfBoundsCell = new(WallType.Empty, FloorType.Empty, AsteroidLayer.None);
 
@@ -62,7 +62,7 @@ public class GridState(GameState gameState, CellState[,] grid)
             return;
         }
 
-        _activeExplosiveRockCells.Add((x, y), new ActiveExplosiveRockCell(gameState, (x, y), timeToExplodeMs));
+        _activeExplosiveRockCells.Add((x, y), new ActiveExplosiveRockCell(game, (x, y), timeToExplodeMs));
     }
 
     public void ActivateCollapsingFloorCell(int x, int y)
@@ -71,7 +71,7 @@ public class GridState(GameState gameState, CellState[,] grid)
         if (_activeCollapsingFloorCells.ContainsKey((x, y)) || GetFloorType(x, y) != FloorType.LavaCracks ||
             GetWallType(x, y) != WallType.Empty) return;
 
-        _activeCollapsingFloorCells.Add((x, y), new ActiveCollapsingFloorCell(gameState, (x, y)));
+        _activeCollapsingFloorCells.Add((x, y), new ActiveCollapsingFloorCell(game, (x, y)));
     }
 
     public void DeactivateExplosiveRockCell(int x, int y)
@@ -127,7 +127,7 @@ public class GridState(GameState gameState, CellState[,] grid)
 
         ClearWall(x, y);
 
-        if (wallConfig.Drop.HasValue && addToInventory) gameState.Inventory.AddResource(wallConfig.Drop.Value);
+        if (wallConfig.Drop.HasValue && addToInventory) game.State.Inventory.AddResource(wallConfig.Drop.Value);
     }
 
     public void ClearWall(int x, int y)
@@ -180,7 +180,7 @@ public class GridState(GameState gameState, CellState[,] grid)
         {
             if (isInitializing)
                 cellState.FogOpacity = 0f;
-            else if (cellState.FogOpacity > 0f) gameState.AsteroidWorld.FogAnimationManager.AddFadingCell(x, y);
+            else if (cellState.FogOpacity > 0f) game.State.AsteroidWorld.FogAnimationManager.AddFadingCell(x, y);
         }
 
 

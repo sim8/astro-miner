@@ -9,32 +9,33 @@ namespace AstroMiner;
 
 public class AstroMinerGame : Game
 {
-    private readonly FrameCounter _frameCounter = new();
-
-    private readonly GraphicsDeviceManager _graphics;
     private readonly ControlMapper<MiningControls> _miningControlMapper = new();
+    public readonly FrameCounter FrameCounter = new();
 
-    private readonly Dictionary<string, Texture2D> _textures = new();
-    private GameState _gameState;
+    public readonly GraphicsDeviceManager Graphics;
+
+    public readonly Dictionary<string, Texture2D> Textures = new();
     private Renderer _renderer;
     private SpriteBatch _spriteBatch;
 
 
     public AstroMinerGame()
     {
-        _graphics = new GraphicsDeviceManager(this);
-        _graphics.PreferredBackBufferWidth = 1280;
-        _graphics.PreferredBackBufferHeight = 1024;
-        _graphics.IsFullScreen = false;
+        Graphics = new GraphicsDeviceManager(this);
+        Graphics.PreferredBackBufferWidth = 1280;
+        Graphics.PreferredBackBufferHeight = 1024;
+        Graphics.IsFullScreen = false;
         Window.AllowUserResizing = true;
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
 
+    public GameState State { get; private set; }
+
     protected override void Initialize()
     {
-        _gameState = new GameState(_graphics);
-        _renderer = new Renderer(_graphics, _textures, _gameState, _frameCounter);
+        State = new GameState(this);
+        _renderer = new Renderer(this);
         Window.ClientSizeChanged += _renderer.HandleWindowResize;
         InitializeMiningControls();
         base.Initialize();
@@ -55,7 +56,7 @@ public class AstroMinerGame : Game
 
     private void LoadTexture(string name)
     {
-        _textures[name] = Content.Load<Texture2D>($"img/{name}");
+        Textures[name] = Content.Load<Texture2D>($"img/{name}");
     }
 
     protected override void LoadContent()
@@ -98,7 +99,7 @@ public class AstroMinerGame : Game
 
         var activeMiningControls = _miningControlMapper.GetActiveControls(keyboardState, gamePadState);
 
-        _gameState.Update(activeMiningControls, gameTime);
+        State.Update(activeMiningControls, gameTime);
 
         base.Update(gameTime);
     }
@@ -106,7 +107,7 @@ public class AstroMinerGame : Game
     protected override void Draw(GameTime gameTime)
     {
         var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        _frameCounter.Update(deltaTime);
+        FrameCounter.Update(deltaTime);
 
 
         GraphicsDevice.Clear(Color.Black);

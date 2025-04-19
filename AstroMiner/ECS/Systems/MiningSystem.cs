@@ -8,11 +8,11 @@ namespace AstroMiner.ECS.Systems;
 
 public class MiningSystem : System
 {
-    public MiningSystem(Ecs ecs, GameState gameState) : base(ecs, gameState)
+    private const float DrillDistance = 0.2f;
+
+    public MiningSystem(Ecs ecs, AstroMinerGame game) : base(ecs, game)
     {
     }
-
-    private const float DrillDistance = 0.2f;
 
     // public virtual void Disembark()
     // {
@@ -23,10 +23,7 @@ public class MiningSystem : System
     {
         var miningComponent = Ecs.GetComponent<MiningComponent>(Ecs.ActiveControllableEntityId.Value);
 
-        if (miningComponent == null)
-        {
-            return;
-        }
+        if (miningComponent == null) return;
 
         if (activeMiningControls.Contains(MiningControls.Drill))
             UseDrill(gameTime, miningComponent);
@@ -39,15 +36,15 @@ public class MiningSystem : System
         if (!ViewHelpers.IsValidGridPosition(x, y))
             return;
 
-        var wallType = GameState.AsteroidWorld.Grid.GetWallType(x, y);
+        var wallType = game.State.AsteroidWorld.Grid.GetWallType(x, y);
 
         if (wallType == WallType.ExplosiveRock)
         {
-            GameState.AsteroidWorld.Grid.ActivateExplosiveRockCell(x, y, 100);
+            game.State.AsteroidWorld.Grid.ActivateExplosiveRockCell(x, y, 100);
             return; // No point adding to drilling time
         }
 
-        var wallTypeConfig = GameState.AsteroidWorld.Grid.GetWallTypeConfig(x, y);
+        var wallTypeConfig = game.State.AsteroidWorld.Grid.GetWallTypeConfig(x, y);
         if (wallTypeConfig is { IsMineable: true })
             miningComponent.DrillingTotalTimeRequired += wallTypeConfig.DrillTimeMs;
         miningComponent.DrillingCells.Add((x, y));
@@ -94,13 +91,14 @@ public class MiningSystem : System
         }
 
         // Once we've drilled long enough to exceed the sum of all drill times, mine them all.
-        if (!miningComponent.DrillingCellsMined && miningComponent.DrillingTotalTimeRequired > 0 && miningComponent.DrillingMs >= miningComponent.DrillingTotalTimeRequired)
+        if (!miningComponent.DrillingCellsMined && miningComponent.DrillingTotalTimeRequired > 0 &&
+            miningComponent.DrillingMs >= miningComponent.DrillingTotalTimeRequired)
         {
             foreach (var (x, y) in miningComponent.DrillingCells)
             {
-                var wallTypeConfig = GameState.AsteroidWorld.Grid.GetWallTypeConfig(x, y);
+                var wallTypeConfig = game.State.AsteroidWorld.Grid.GetWallTypeConfig(x, y);
                 if (wallTypeConfig is { IsMineable: true })
-                    GameState.AsteroidWorld.Grid.MineWall(x, y, miningComponent.CanAddToInventory);
+                    game.State.AsteroidWorld.Grid.MineWall(x, y, miningComponent.CanAddToInventory);
             }
 
             miningComponent.DrillingCellsMined = true;
@@ -112,8 +110,11 @@ public class MiningSystem : System
         var positionComponent = Ecs.GetComponent<PositionComponent>(Ecs.ActiveControllableEntityId.Value);
         var directionComponent = Ecs.GetComponent<DirectionComponent>(Ecs.ActiveControllableEntityId.Value);
 
-        var drillDistanceFromCenter = positionComponent.GridWidth / 2 + DrillDistance; // TODO should really be width OR height depending on direction. Is the same anyway for mining components
-        return positionComponent.CenterPosition + DirectionHelpers.GetDirectionalVector(drillDistanceFromCenter, directionComponent.Direction);
+        var drillDistanceFromCenter =
+            positionComponent.GridWidth / 2 +
+            DrillDistance; // TODO should really be width OR height depending on direction. Is the same anyway for mining components
+        return positionComponent.CenterPosition +
+               DirectionHelpers.GetDirectionalVector(drillDistanceFromCenter, directionComponent.Direction);
     }
 
     private void ResetDrill(MiningComponent miningComponent)

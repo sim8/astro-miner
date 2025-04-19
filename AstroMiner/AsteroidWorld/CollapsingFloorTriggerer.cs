@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner.AsteroidWorld;
 
-public class CollapsingFloorTriggerer(GameState gameState)
+public class CollapsingFloorTriggerer(AstroMinerGame game)
 {
     private const int TriggerIntervalMs = 2222; // Interval to trigger MaybeCollapseFloors in milliseconds
     private const int Distance = 5;
@@ -16,19 +16,19 @@ public class CollapsingFloorTriggerer(GameState gameState)
 
     private void MaybeCollapseFloors()
     {
-        var (playerX, playerY) = ViewHelpers.ToGridPosition(gameState.Ecs.ActiveControllableEntityCenterPosition);
+        var (playerX, playerY) = ViewHelpers.ToGridPosition(game.State.Ecs.ActiveControllableEntityCenterPosition);
 
         // Iterate through cells within 10 rows/columns of player
         for (var y = Math.Max(0, playerY - Distance); y <= playerY + Distance; y++)
-            for (var x = Math.Max(0, playerX - Distance); x <= playerX + Distance; x++)
-                if (gameState.AsteroidWorld.Grid.GetFloorType(x, y) == FloorType.LavaCracks && _random.Next(150) == 0)
-                {
-                    // Only collapse if there's a lava neighbor
-                    var hasLavaNeighbor =
-                        gameState.AsteroidWorld.Grid.CheckNeighbors(x, y, cell => cell.FloorType == FloorType.Lava);
-                    if (hasLavaNeighbor)
-                        gameState.AsteroidWorld.Grid.ActivateCollapsingFloorCell(x, y);
-                }
+        for (var x = Math.Max(0, playerX - Distance); x <= playerX + Distance; x++)
+            if (game.State.AsteroidWorld.Grid.GetFloorType(x, y) == FloorType.LavaCracks && _random.Next(150) == 0)
+            {
+                // Only collapse if there's a lava neighbor
+                var hasLavaNeighbor =
+                    game.State.AsteroidWorld.Grid.CheckNeighbors(x, y, cell => cell.FloorType == FloorType.Lava);
+                if (hasLavaNeighbor)
+                    game.State.AsteroidWorld.Grid.ActivateCollapsingFloorCell(x, y);
+            }
     }
 
     public void Update(GameTime gameTime)
