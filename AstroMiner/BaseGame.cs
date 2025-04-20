@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using AstroMiner.Storage;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,8 +9,8 @@ namespace AstroMiner;
 public abstract class BaseGame : Game
 {
     public readonly FrameCounter FrameCounter = new();
+    public readonly GameStateStorage GameStateStorage = new();
     public readonly GraphicsDeviceManager Graphics;
-    public GameState State { get; protected set; }
     public readonly Dictionary<string, Texture2D> Textures = new();
     protected SpriteBatch SpriteBatch;
 
@@ -23,6 +24,8 @@ public abstract class BaseGame : Game
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
+
+    public GameState State { get; protected set; }
 
     // Common method for loading textures
     protected void LoadTexture(string name)
