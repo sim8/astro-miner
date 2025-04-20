@@ -70,7 +70,7 @@ public class LaunchSystem(Ecs ecs, BaseGame game) : System(ecs, game)
         {
             if (_startedAt == -1)
             {
-                game.GameStateStorage.SaveState(game.StateManager);
+                game.GameStateStorage.SaveState(game.Model);
                 _startedAt = gameTime.TotalGameTime.TotalSeconds;
                 _minerStartPosition = game.StateManager.Ecs
                     .GetComponent<PositionComponent>(game.StateManager.Ecs.MinerEntityId.Value)
