@@ -155,7 +155,7 @@ public class GrappleSystem : System
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
     {
-        if (game.StateManager.ActiveWorld != World.Asteroid) return;
+        if (game.Model.ActiveWorld != World.Asteroid) return;
 
         var grappleComponent = Ecs.GetComponent<GrappleComponent>(Ecs.ActiveControllableEntityId.Value);
 

@@ -238,7 +238,7 @@ public class Ecs
             .Where(component =>
             {
                 var positionComponent = GetComponent<PositionComponent>(component.EntityId);
-                return positionComponent != null && positionComponent.World == _game.StateManager.ActiveWorld;
+                return positionComponent != null && positionComponent.World == _game.Model.ActiveWorld;
             });
     }
 
@@ -248,7 +248,7 @@ public class Ecs
             .Where(entityId =>
             {
                 var positionComponent = GetComponent<PositionComponent>(entityId);
-                return positionComponent != null && positionComponent.World == _game.StateManager.ActiveWorld;
+                return positionComponent != null && positionComponent.World == _game.Model.ActiveWorld;
             })
             .OrderBy(entityId => GetComponent<PositionComponent>(entityId).FrontY)
             .ToList(); // Cache the results since they'll be used multiple times per frame

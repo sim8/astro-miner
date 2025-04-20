@@ -54,7 +54,7 @@ public class HealthSystem : System
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
-        if (game.StateManager.ActiveWorld != World.Asteroid) return;
+        if (game.Model.ActiveWorld != World.Asteroid) return;
 
         // Update damage animation state
         foreach (var healthComponent in Ecs.GetAllComponents<HealthComponent>())

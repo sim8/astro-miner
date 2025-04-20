@@ -18,7 +18,7 @@ public class UserInterfaceRenderer(
     {
         RenderDebug(spriteBatch);
 
-        if (shared.GameStateManager.ActiveWorld == World.Asteroid) RenderAsteroidUserInterface(spriteBatch);
+        if (shared.Game.Model.ActiveWorld == World.Asteroid) RenderAsteroidUserInterface(spriteBatch);
     }
 
     private void RenderAsteroidUserInterface(SpriteBatch spriteBatch)
@@ -49,7 +49,7 @@ public class UserInterfaceRenderer(
     {
         shared.RenderString(spriteBatch, 1000, 0, "FPS " + frameCounter.AverageFramesPerSecond.ToString("F0"));
 
-        if (shared.GameStateManager.ActiveWorld == World.Asteroid)
+        if (shared.Game.Model.ActiveWorld == World.Asteroid)
             shared.RenderString(spriteBatch, 1000, 40, "SEED " + shared.GameStateManager.AsteroidWorld.Seed);
     }
 

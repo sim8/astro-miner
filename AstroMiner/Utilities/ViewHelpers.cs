@@ -48,8 +48,8 @@ public class ViewHelpers(BaseGame game, GraphicsDeviceManager graphics)
         float cameraY;
 
         // Remove clamping for Oizus left (pier) and top (launch sequence)
-        var leftThreshold = game.StateManager.ActiveWorld == World.Home ? 0 : widthThreshold;
-        var topThreshold = game.StateManager.ActiveWorld == World.Home ? -1000 : widthThreshold;
+        var leftThreshold = game.Model.ActiveWorld == World.Home ? 0 : widthThreshold;
+        var topThreshold = game.Model.ActiveWorld == World.Home ? -1000 : widthThreshold;
 
 
         if (cols <= widthThreshold * 2)

@@ -29,7 +29,7 @@ public class DynamiteSystem : System
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
 
     {
-        if (game.StateManager.ActiveWorld != World.Asteroid) return;
+        if (game.Model.ActiveWorld != World.Asteroid) return;
 
         if (activeControls.Contains(MiningControls.PlaceDynamite) && !game.StateManager.AsteroidWorld.IsInMiner)
             PlaceDynamite();

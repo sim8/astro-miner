@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using AstroMiner.Model;
 using AstroMiner.Storage;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
@@ -24,6 +25,8 @@ public abstract class BaseGame : Game
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
+
+    public GameModel Model { get; set; } = new();
 
     public GameStateManager StateManager { get; protected set; }
 

@@ -24,7 +24,7 @@ public class InteriorsWorldRenderer(RendererShared shared) : BaseWorldRenderer(s
 
     public override void RenderWorld(SpriteBatch spriteBatch)
     {
-        if (InteriorsRenderConfigs.TryGetValue(shared.GameStateManager.ActiveWorld, out var config))
+        if (InteriorsRenderConfigs.TryGetValue(shared.Game.Model.ActiveWorld, out var config))
             spriteBatch.Draw(Shared.Textures[config.TexureName],
                 Shared.ViewHelpers.GetVisibleRectForGridCell(0, 0, config.GridWidth, config.GridHeight),
                 Color.White);

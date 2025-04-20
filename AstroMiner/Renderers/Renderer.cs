@@ -50,7 +50,7 @@ public class Renderer
     }
 
     private BaseWorldRenderer ActiveWorldRenderer =>
-        _game.StateManager.ActiveWorld switch
+        _game.Model.ActiveWorld switch
         {
             World.Asteroid => _asteroidWorldRenderer,
             World.Home => _homeWorldRenderer,
@@ -147,7 +147,7 @@ public class Renderer
 
     private void RenderScene(SpriteBatch spriteBatch)
     {
-        if (_game.StateManager.ActiveWorld == World.Asteroid || _game.StateManager.ActiveWorld == World.Home)
+        if (_game.Model.ActiveWorld == World.Asteroid || _game.Model.ActiveWorld == World.Home)
         {
             _scrollingBackgroundRenderer.RenderBackground(spriteBatch);
             _launchParallaxRenderer.Render(spriteBatch);

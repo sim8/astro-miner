@@ -121,7 +121,7 @@ public class LaunchSystem(Ecs ecs, BaseGame game) : System(ecs, game)
 
     private bool HasLeftLauncher()
     {
-        if (game.StateManager.ActiveWorld == World.Asteroid) return true;
+        if (game.Model.ActiveWorld == World.Asteroid) return true;
         var minerEntityId = game.StateManager.Ecs.MinerEntityId;
         if (minerEntityId == null) return false;
 

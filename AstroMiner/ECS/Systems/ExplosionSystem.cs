@@ -89,7 +89,7 @@ public class ExplosionSystem : System
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
-        if (game.StateManager.ActiveWorld != World.Asteroid) return;
+        if (game.Model.ActiveWorld != World.Asteroid) return;
 
         foreach (var explosionComponent in Ecs.GetAllComponents<ExplosionComponent>())
         {

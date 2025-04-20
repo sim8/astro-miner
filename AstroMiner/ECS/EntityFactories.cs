@@ -22,7 +22,7 @@ public class EntityFactories
         // Add position component
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
         positionComponent.Position = position;
-        positionComponent.World = _game.StateManager.ActiveWorld;
+        positionComponent.World = _game.Model.ActiveWorld;
         positionComponent.WidthPx = GameConfig.PlayerBoxSizePx;
         positionComponent.HeightPx = GameConfig.PlayerBoxSizePx;
         positionComponent.IsCollideable = true;
@@ -51,7 +51,7 @@ public class EntityFactories
 
         // Add position component
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
-        positionComponent.World = _game.StateManager.ActiveWorld;
+        positionComponent.World = _game.Model.ActiveWorld;
         positionComponent.Position = position;
         positionComponent.WidthPx = GameConfig.MinerBoxSizePx;
         positionComponent.HeightPx = GameConfig.MinerBoxSizePx;
@@ -74,7 +74,7 @@ public class EntityFactories
         var entityId = _ecs.CreateEntity();
 
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
-        positionComponent.World = _game.StateManager.ActiveWorld;
+        positionComponent.World = _game.Model.ActiveWorld;
         positionComponent.Position = position;
         positionComponent.WidthPx = 4; // From DynamiteSystem
         positionComponent.HeightPx = 4; // From DynamiteSystem
@@ -95,7 +95,7 @@ public class EntityFactories
         var entityId = _ecs.CreateEntity();
 
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
-        positionComponent.World = _game.StateManager.ActiveWorld;
+        positionComponent.World = _game.Model.ActiveWorld;
         positionComponent.Position = position;
         positionComponent.WidthPx = 1; // From ExplosionSystem
         positionComponent.HeightPx = 1; // From ExplosionSystem
@@ -112,7 +112,7 @@ public class EntityFactories
         var entityId = _ecs.CreateEntity();
 
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
-        positionComponent.World = _game.StateManager.ActiveWorld;
+        positionComponent.World = _game.Model.ActiveWorld;
         positionComponent.Position = position;
         positionComponent.WidthPx = 5;
         positionComponent.HeightPx = 5;
@@ -137,7 +137,7 @@ public class EntityFactories
         var entityId = _ecs.CreateEntity();
 
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
-        positionComponent.World = _game.StateManager.ActiveWorld;
+        positionComponent.World = _game.Model.ActiveWorld;
         positionComponent.Position = position;
         positionComponent.WidthPx = 76;
         positionComponent.HeightPx = 63;
@@ -157,7 +157,7 @@ public class EntityFactories
         var entityId = _ecs.CreateEntity();
 
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
-        positionComponent.World = _game.StateManager.ActiveWorld;
+        positionComponent.World = _game.Model.ActiveWorld;
         positionComponent.Position = position;
         positionComponent.WidthPx = 76;
         positionComponent.HeightPx = 31;

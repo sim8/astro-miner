@@ -54,11 +54,9 @@ public class GameStateManager(BaseGame game)
 
     public long MsSinceStart { get; private set; }
 
-    public World ActiveWorld { get; private set; }
-
 
     public BaseWorldState ActiveWorldState =>
-        ActiveWorld switch
+        game.Model.ActiveWorld switch
         {
             World.Asteroid => AsteroidWorld,
             World.Home => HomeWorld,
@@ -68,7 +66,7 @@ public class GameStateManager(BaseGame game)
 
     public void SetActiveWorldAndInitialize(World world)
     {
-        ActiveWorld = world;
+        game.Model.ActiveWorld = world;
         if (world == World.Asteroid)
             AsteroidWorld.Initialize();
         else if (world == World.Home)
