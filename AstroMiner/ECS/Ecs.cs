@@ -13,8 +13,6 @@ namespace AstroMiner.ECS;
 /// </summary>
 public class Ecs
 {
-    private readonly Dictionary<Type, HashSet<Component>> _componentsByType = new();
-    private readonly Dictionary<int, HashSet<Component>> _entityComponents = new();
     private readonly BaseGame _game;
 
 
@@ -96,10 +94,11 @@ public class Ecs
         LaunchSystem.Update(gameTime, activeMiningControls);
         CalculateEntityIdsInActiveWorldSortedByDistance();
     }
+    
 
     public void SetActiveControllableEntity(int entityId)
     {
-        if (!_entityComponents.ContainsKey(entityId))
+        if (!_game.Model.Ecs.EntityComponents.ContainsKey(entityId))
             return;
 
         _game.Model.Ecs.ActiveControllableEntityId = entityId;
@@ -134,12 +133,12 @@ public class Ecs
 
     public IEnumerable<int> GetAllEntityIds()
     {
-        return _entityComponents.Keys;
+        return _game.Model.Ecs.EntityComponents.Keys;
     }
 
     public bool HasComponent<T>(int entityId) where T : Component
     {
-        if (!_entityComponents.TryGetValue(entityId, out var components))
+        if (!_game.Model.Ecs.EntityComponents.TryGetValue(entityId, out var components))
             return false;
 
         foreach (var component in components)
@@ -152,18 +151,18 @@ public class Ecs
     public int CreateEntity()
     {
         var entityId = _game.Model.Ecs.NextEntityId++;
-        _entityComponents[entityId] = new HashSet<Component>();
+        _game.Model.Ecs.EntityComponents[entityId] = new HashSet<Component>();
         return entityId;
     }
 
     public void DestroyEntity(int entityId)
     {
-        if (!_entityComponents.TryGetValue(entityId, out var components))
+        if (!_game.Model.Ecs.EntityComponents.TryGetValue(entityId, out var components))
             return;
 
-        foreach (var component in components) _componentsByType[component.GetType()].Remove(component);
+        foreach (var component in components) _game.Model.Ecs.ComponentsByType[component.GetType()].Remove(component);
 
-        _entityComponents.Remove(entityId);
+        _game.Model.Ecs.EntityComponents.Remove(entityId);
 
         // Clear entity references if they're being destroyed
         if (ActiveControllableEntityId == entityId)
@@ -178,23 +177,23 @@ public class Ecs
     {
         var component = new T { EntityId = entityId };
 
-        if (!_entityComponents.ContainsKey(entityId))
-            _entityComponents[entityId] = new HashSet<Component>();
+        if (!_game.Model.Ecs.EntityComponents.ContainsKey(entityId))
+            _game.Model.Ecs.EntityComponents[entityId] = new HashSet<Component>();
 
-        _entityComponents[entityId].Add(component);
+        _game.Model.Ecs.EntityComponents[entityId].Add(component);
 
         var type = typeof(T);
-        if (!_componentsByType.ContainsKey(type))
-            _componentsByType[type] = new HashSet<Component>();
+        if (!_game.Model.Ecs.ComponentsByType.ContainsKey(type))
+            _game.Model.Ecs.ComponentsByType[type] = new HashSet<Component>();
 
-        _componentsByType[type].Add(component);
+        _game.Model.Ecs.ComponentsByType[type].Add(component);
 
         return component;
     }
 
     public void RemoveComponent<T>(int entityId) where T : Component
     {
-        if (!_entityComponents.TryGetValue(entityId, out var components))
+        if (!_game.Model.Ecs.EntityComponents.TryGetValue(entityId, out var components))
             return;
 
         var component = GetComponent<T>(entityId);
@@ -204,12 +203,12 @@ public class Ecs
         components.Remove(component);
 
         var type = typeof(T);
-        if (_componentsByType.TryGetValue(type, out var typeComponents)) typeComponents.Remove(component);
+        if (_game.Model.Ecs.ComponentsByType.TryGetValue(type, out var typeComponents)) typeComponents.Remove(component);
     }
 
     public T GetComponent<T>(int entityId) where T : Component
     {
-        if (!_entityComponents.TryGetValue(entityId, out var components))
+        if (!_game.Model.Ecs.EntityComponents.TryGetValue(entityId, out var components))
             return null;
 
         foreach (var component in components)
@@ -222,7 +221,7 @@ public class Ecs
     public IEnumerable<T> GetAllComponents<T>() where T : Component
     {
         var type = typeof(T);
-        if (!_componentsByType.TryGetValue(type, out var components))
+        if (!_game.Model.Ecs.ComponentsByType.TryGetValue(type, out var components))
             yield break;
 
         foreach (var component in components) yield return (T)component;
@@ -240,7 +239,7 @@ public class Ecs
 
     private void CalculateEntityIdsInActiveWorldSortedByDistance()
     {
-        EntityIdsInActiveWorldSortedByDistance = _entityComponents.Keys
+        EntityIdsInActiveWorldSortedByDistance = _game.Model.Ecs.EntityComponents.Keys
             .Where(entityId =>
             {
                 var positionComponent = GetComponent<PositionComponent>(entityId);

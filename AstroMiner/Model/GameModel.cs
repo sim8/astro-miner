@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using AstroMiner.Definitions;
+using AstroMiner.ECS;
 
 namespace AstroMiner.Model;
 
@@ -14,6 +16,8 @@ public class GameModel
 [Serializable]
 public class EcsModel
 {
+    public Dictionary<Type, HashSet<Component>> ComponentsByType { get; set; }
+    public Dictionary<int, HashSet<Component>> EntityComponents { get; set; }
     public int? ActiveControllableEntityId { get; set; }
     public int NextEntityId { get; set; }
     public int? PlayerEntityId { get; set; }
@@ -34,7 +38,9 @@ public static class GameModelHelpers
                 ActiveControllableEntityId = null,
                 NextEntityId = 1,
                 PlayerEntityId = null,
-                MinerEntityId = null
+                MinerEntityId = null,
+                ComponentsByType = new Dictionary<Type, HashSet<Component>>(),
+                EntityComponents = new Dictionary<int, HashSet<Component>>()
             }
         };
     }
