@@ -32,7 +32,7 @@ public class PortalSystem : System
         position.SetCenterPosition(centerPosition);
 
         // Only change active world if this entity is the player.
-        if (position.EntityId == game.StateManager.Ecs.ActiveControllableEntityId)
+        if (position.EntityId == game.Model.Ecs.ActiveControllableEntityId)
             game.StateManager.SetActiveWorldAndInitialize(config.TargetWorld);
     }
 

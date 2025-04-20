@@ -110,7 +110,7 @@ public class GrappleSystem : System
 
         if (!grappleComponent.GrappleTarget.HasValue) return;
 
-        var directionComponent = Ecs.GetComponent<DirectionComponent>(Ecs.ActiveControllableEntityId.Value);
+        var directionComponent = Ecs.GetComponent<DirectionComponent>(game.Model.Ecs.ActiveControllableEntityId.Value);
 
         if (directionComponent.Direction != grappleComponent.GrappleDirection)
         {
@@ -157,7 +157,7 @@ public class GrappleSystem : System
     {
         if (game.Model.ActiveWorld != World.Asteroid) return;
 
-        var grappleComponent = Ecs.GetComponent<GrappleComponent>(Ecs.ActiveControllableEntityId.Value);
+        var grappleComponent = Ecs.GetComponent<GrappleComponent>(game.Model.Ecs.ActiveControllableEntityId.Value);
 
         if (grappleComponent is null) return;
 

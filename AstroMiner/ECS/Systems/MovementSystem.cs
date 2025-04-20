@@ -146,7 +146,7 @@ public class MovementSystem : System
 
             var entityId = movementComponent.EntityId;
             var activeDirection =
-                entityId == game.StateManager.Ecs.ActiveControllableEntityId ? pressedDirection : null;
+                entityId == game.Model.Ecs.ActiveControllableEntityId.Value ? pressedDirection : null;
             var positionComponent = Ecs.GetComponent<PositionComponent>(entityId);
             var directionComponent = Ecs.GetComponent<DirectionComponent>(entityId);
 

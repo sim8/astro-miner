@@ -24,7 +24,7 @@ public class ViewHelpers(BaseGame game, GraphicsDeviceManager graphics)
 
     private Vector2 OverrideCameraPosIfUsingPortal(Vector2 cameraPos)
     {
-        if (game.StateManager.Ecs.ActiveControllableEntityId == null) return cameraPos;
+        if (game.Model.Ecs.ActiveControllableEntityId == null) return cameraPos;
 
         // TODO
 

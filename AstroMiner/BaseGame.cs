@@ -26,7 +26,8 @@ public abstract class BaseGame : Game
         IsMouseVisible = true;
     }
 
-    public GameModel Model { get; set; } = new();
+    // TODO load from storage
+    public GameModel Model { get; } = GameModelHelpers.CreateNewGameModel();
 
     public GameStateManager StateManager { get; protected set; }
 

@@ -17,8 +17,6 @@ public class Ecs
     private readonly Dictionary<int, HashSet<Component>> _entityComponents = new();
     private readonly BaseGame _game;
 
-    // Track the currently active controllable entity
-    private int? _activeControllableEntityId;
     private int _nextEntityId = 1;
 
     // Track special entities
@@ -45,7 +43,7 @@ public class Ecs
 
     public int? MinerEntityId { get; private set; }
 
-    public int? ActiveControllableEntityId => _activeControllableEntityId;
+    public int? ActiveControllableEntityId => _game.Model.Ecs.ActiveControllableEntityId;
 
     public EntityFactories Factories { get; }
     public IEnumerable<int> EntityIdsInActiveWorldSortedByDistance { get; private set; }
@@ -62,16 +60,16 @@ public class Ecs
     public GrappleSystem GrappleSystem { get; }
     public LaunchSystem LaunchSystem { get; }
 
-    public Vector2 ActiveControllableEntityCenterPosition => _activeControllableEntityId == null
+    public Vector2 ActiveControllableEntityCenterPosition => ActiveControllableEntityId == null
         ? Vector2.Zero
-        : GetComponent<PositionComponent>(_activeControllableEntityId.Value).CenterPosition;
+        : GetComponent<PositionComponent>(ActiveControllableEntityId.Value).CenterPosition;
 
     public bool ActiveControllableEntityIsDead
     {
         get
         {
-            if (_activeControllableEntityId == null) return false;
-            var healthComponent = GetComponent<HealthComponent>(_activeControllableEntityId.Value);
+            if (ActiveControllableEntityId == null) return false;
+            var healthComponent = GetComponent<HealthComponent>(ActiveControllableEntityId.Value);
             return healthComponent?.IsDead ?? false;
         }
     }
@@ -80,8 +78,8 @@ public class Ecs
     {
         get
         {
-            if (_activeControllableEntityId == null) return false;
-            var positionComponent = GetComponent<PositionComponent>(_activeControllableEntityId.Value);
+            if (ActiveControllableEntityId == null) return false;
+            var positionComponent = GetComponent<PositionComponent>(ActiveControllableEntityId.Value);
             return positionComponent?.IsOffAsteroid ?? false;
         }
     }
@@ -106,18 +104,18 @@ public class Ecs
         if (!_entityComponents.ContainsKey(entityId))
             return;
 
-        _activeControllableEntityId = entityId;
+        _game.Model.Ecs.ActiveControllableEntityId = entityId;
     }
 
     public void DeactivateControllableEntity()
     {
-        _activeControllableEntityId = null;
+        _game.Model.Ecs.ActiveControllableEntityId = null;
     }
 
     public bool GetIsActive(int entityId)
     {
         // If this is the active controllable entity, it's active
-        if (entityId == _activeControllableEntityId)
+        if (entityId == ActiveControllableEntityId)
             return true;
 
         // If it doesn't have a MovementComponent component, it's always active
@@ -170,8 +168,8 @@ public class Ecs
         _entityComponents.Remove(entityId);
 
         // Clear entity references if they're being destroyed
-        if (_activeControllableEntityId == entityId)
-            _activeControllableEntityId = null;
+        if (ActiveControllableEntityId == entityId)
+            _game.Model.Ecs.ActiveControllableEntityId = null;
         if (PlayerEntityId == entityId)
             PlayerEntityId = null;
         if (MinerEntityId == entityId)

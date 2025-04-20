@@ -20,8 +20,8 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
 
     public long MsSinceStart { get; private set; }
 
-    public bool IsInMiner => game.StateManager.Ecs.ActiveControllableEntityId != null &&
-                             game.StateManager.Ecs.HasComponent<MinerTag>(game.StateManager.Ecs
+    public bool IsInMiner => game.Model.Ecs.ActiveControllableEntityId != null &&
+                             game.StateManager.Ecs.HasComponent<MinerTag>(game.Model.Ecs
                                  .ActiveControllableEntityId
                                  .Value);
 
