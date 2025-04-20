@@ -57,7 +57,7 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
 
     private void InitializeMiner(Vector2 minerPos)
     {
-        var entityId = game.StateManager.Ecs.MinerEntityId.Value;
+        var entityId = game.Model.Ecs.MinerEntityId.Value;
 
         var minerPosition = game.StateManager.Ecs.GetComponent<PositionComponent>(entityId);
         minerPosition.Position = minerPos;
@@ -90,12 +90,12 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
         directionalLightSourceComponent.LeftOffset = new Vector2(0.48f, -0.28f);
 
         // TODO needed?
-        game.StateManager.Ecs.SetActiveControllableEntity(game.StateManager.Ecs.MinerEntityId.Value);
+        game.StateManager.Ecs.SetActiveControllableEntity(game.Model.Ecs.MinerEntityId.Value);
     }
 
     private void InitializePlayer(Vector2 playerPos)
     {
-        var entityId = game.StateManager.Ecs.PlayerEntityId.Value;
+        var entityId = game.Model.Ecs.PlayerEntityId.Value;
 
         var playerPosition = game.StateManager.Ecs.GetComponent<PositionComponent>(entityId);
         playerPosition.Position = playerPos;

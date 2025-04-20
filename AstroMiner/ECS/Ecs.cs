@@ -17,7 +17,6 @@ public class Ecs
     private readonly Dictionary<int, HashSet<Component>> _entityComponents = new();
     private readonly BaseGame _game;
 
-    private int _nextEntityId = 1;
 
     // Track special entities
 
@@ -38,10 +37,6 @@ public class Ecs
         GrappleSystem = new GrappleSystem(this, game);
         LaunchSystem = new LaunchSystem(this, game);
     }
-
-    public int? PlayerEntityId { get; private set; }
-
-    public int? MinerEntityId { get; private set; }
 
     public int? ActiveControllableEntityId => _game.Model.Ecs.ActiveControllableEntityId;
 
@@ -83,6 +78,9 @@ public class Ecs
             return positionComponent?.IsOffAsteroid ?? false;
         }
     }
+
+    public int? PlayerEntityId => _game.Model.Ecs.PlayerEntityId;
+    public int? MinerEntityId => _game.Model.Ecs.MinerEntityId;
 
     public void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
     {
@@ -126,12 +124,12 @@ public class Ecs
 
     public void SetPlayerEntityId(int entityId)
     {
-        PlayerEntityId = entityId;
+        _game.Model.Ecs.PlayerEntityId = entityId;
     }
 
     public void SetMinerEntityId(int entityId)
     {
-        MinerEntityId = entityId;
+        _game.Model.Ecs.MinerEntityId = entityId;
     }
 
     public IEnumerable<int> GetAllEntityIds()
@@ -153,7 +151,7 @@ public class Ecs
 
     public int CreateEntity()
     {
-        var entityId = _nextEntityId++;
+        var entityId = _game.Model.Ecs.NextEntityId++;
         _entityComponents[entityId] = new HashSet<Component>();
         return entityId;
     }
@@ -170,10 +168,10 @@ public class Ecs
         // Clear entity references if they're being destroyed
         if (ActiveControllableEntityId == entityId)
             _game.Model.Ecs.ActiveControllableEntityId = null;
-        if (PlayerEntityId == entityId)
-            PlayerEntityId = null;
-        if (MinerEntityId == entityId)
-            MinerEntityId = null;
+        if (_game.Model.Ecs.PlayerEntityId == entityId)
+            _game.Model.Ecs.PlayerEntityId = null;
+        if (_game.Model.Ecs.MinerEntityId == entityId)
+            _game.Model.Ecs.MinerEntityId = null;
     }
 
     public T AddComponent<T>(int entityId) where T : Component, new()

@@ -15,6 +15,10 @@ public class GameModel
 public class EcsModel
 {
     public int? ActiveControllableEntityId { get; set; }
+    public int NextEntityId { get; set; }
+    public int? PlayerEntityId { get; set; }
+
+    public int? MinerEntityId { get; set; }
 }
 
 public static class GameModelHelpers
@@ -27,7 +31,10 @@ public static class GameModelHelpers
             TotalPlaytimeMs = 0,
             Ecs = new EcsModel
             {
-                ActiveControllableEntityId = null
+                ActiveControllableEntityId = null,
+                NextEntityId = 1,
+                PlayerEntityId = null,
+                MinerEntityId = null
             }
         };
     }
