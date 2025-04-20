@@ -76,8 +76,8 @@ public class GrappleSystem : System
             var rightTargetToCheck = rightGrappleStart +
                                      DirectionHelpers.GetDirectionalVector(distance, directionComponent.Direction);
 
-            var leftCellState = game.State.AsteroidWorld.Grid.GetCellState(leftTargetToCheck);
-            var rightCellState = game.State.AsteroidWorld.Grid.GetCellState(rightTargetToCheck);
+            var leftCellState = game.StateManager.AsteroidWorld.Grid.GetCellState(leftTargetToCheck);
+            var rightCellState = game.StateManager.AsteroidWorld.Grid.GetCellState(rightTargetToCheck);
 
             // If either grapple hits a wall, break
             if (leftCellState.WallType != WallType.Empty || rightCellState.WallType != WallType.Empty) break;
@@ -155,7 +155,7 @@ public class GrappleSystem : System
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
     {
-        if (game.State.ActiveWorld != World.Asteroid) return;
+        if (game.StateManager.ActiveWorld != World.Asteroid) return;
 
         var grappleComponent = Ecs.GetComponent<GrappleComponent>(Ecs.ActiveControllableEntityId.Value);
 

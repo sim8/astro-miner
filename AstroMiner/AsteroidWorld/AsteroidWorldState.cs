@@ -20,8 +20,9 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
 
     public long MsSinceStart { get; private set; }
 
-    public bool IsInMiner => game.State.Ecs.ActiveControllableEntityId != null &&
-                             game.State.Ecs.HasComponent<MinerTag>(game.State.Ecs.ActiveControllableEntityId
+    public bool IsInMiner => game.StateManager.Ecs.ActiveControllableEntityId != null &&
+                             game.StateManager.Ecs.HasComponent<MinerTag>(game.StateManager.Ecs
+                                 .ActiveControllableEntityId
                                  .Value);
 
     private void InitSeed()
@@ -56,59 +57,61 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
 
     private void InitializeMiner(Vector2 minerPos)
     {
-        var entityId = game.State.Ecs.MinerEntityId.Value;
+        var entityId = game.StateManager.Ecs.MinerEntityId.Value;
 
-        var minerPosition = game.State.Ecs.GetComponent<PositionComponent>(entityId);
+        var minerPosition = game.StateManager.Ecs.GetComponent<PositionComponent>(entityId);
         minerPosition.Position = minerPos;
         minerPosition.World = World.Asteroid;
 
         // Add movement component with miner-specific values
-        var movementComponent = game.State.Ecs.AddComponent<MovementComponent>(entityId);
+        var movementComponent = game.StateManager.Ecs.AddComponent<MovementComponent>(entityId);
         movementComponent.MaxSpeed = GameConfig.Speeds.Running;
         movementComponent.TimeToReachMaxSpeedMs = 600; // From MinerEntity
         movementComponent.TimeToStopMs = 400; // From MinerEntity
 
         // Add health component
-        var healthComponent = game.State.Ecs.AddComponent<HealthComponent>(entityId);
+        var healthComponent = game.StateManager.Ecs.AddComponent<HealthComponent>(entityId);
         healthComponent.MaxHealth = GameConfig.MinerMaxHealth;
         healthComponent.CurrentHealth = GameConfig.MinerMaxHealth;
 
         // Add mining component
-        var miningComponent = game.State.Ecs.AddComponent<MiningComponent>(entityId);
+        var miningComponent = game.StateManager.Ecs.AddComponent<MiningComponent>(entityId);
         miningComponent.DrillingWidth = 0.9f;
 
         // Add grapple component
-        game.State.Ecs.AddComponent<GrappleComponent>(entityId);
+        game.StateManager.Ecs.AddComponent<GrappleComponent>(entityId);
 
         // Add directional light source component
-        var directionalLightSourceComponent = game.State.Ecs.AddComponent<DirectionalLightSourceComponent>(entityId);
+        var directionalLightSourceComponent =
+            game.StateManager.Ecs.AddComponent<DirectionalLightSourceComponent>(entityId);
         directionalLightSourceComponent.TopOffset = new Vector2(1.06f, 0.34f);
         directionalLightSourceComponent.RightOffset = new Vector2(0.70f, 0.66f);
         directionalLightSourceComponent.BottomOffset = new Vector2(0.12f, 0.58f);
         directionalLightSourceComponent.LeftOffset = new Vector2(0.48f, -0.28f);
 
         // TODO needed?
-        game.State.Ecs.SetActiveControllableEntity(game.State.Ecs.MinerEntityId.Value);
+        game.StateManager.Ecs.SetActiveControllableEntity(game.StateManager.Ecs.MinerEntityId.Value);
     }
 
     private void InitializePlayer(Vector2 playerPos)
     {
-        var entityId = game.State.Ecs.PlayerEntityId.Value;
+        var entityId = game.StateManager.Ecs.PlayerEntityId.Value;
 
-        var playerPosition = game.State.Ecs.GetComponent<PositionComponent>(entityId);
+        var playerPosition = game.StateManager.Ecs.GetComponent<PositionComponent>(entityId);
         playerPosition.Position = playerPos;
         playerPosition.World = World.Asteroid;
 
         // Add health component
-        var healthComponent = game.State.Ecs.AddComponent<HealthComponent>(entityId);
+        var healthComponent = game.StateManager.Ecs.AddComponent<HealthComponent>(entityId);
         healthComponent.MaxHealth = GameConfig.PlayerMaxHealth;
         healthComponent.CurrentHealth = GameConfig.PlayerMaxHealth;
 
         // Add mining component
-        game.State.Ecs.AddComponent<MiningComponent>(entityId);
+        game.StateManager.Ecs.AddComponent<MiningComponent>(entityId);
 
         // Add directional light source component
-        var directionalLightSourceComponent = game.State.Ecs.AddComponent<DirectionalLightSourceComponent>(entityId);
+        var directionalLightSourceComponent =
+            game.StateManager.Ecs.AddComponent<DirectionalLightSourceComponent>(entityId);
         directionalLightSourceComponent.TopOffset = new Vector2(0.28f, -0.30f);
         directionalLightSourceComponent.RightOffset = new Vector2(0.32f, -0.30f);
         directionalLightSourceComponent.BottomOffset = new Vector2(0.24f, -0.30f);
@@ -117,19 +120,19 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
 
     public override void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
     {
-        if (game.State.Ecs.ActiveControllableEntityIsDead ||
-            game.State.Ecs.ActiveControllableEntityIsOffAsteroid)
+        if (game.StateManager.Ecs.ActiveControllableEntityIsDead ||
+            game.StateManager.Ecs.ActiveControllableEntityIsOffAsteroid)
             if (activeMiningControls.Contains(MiningControls.NewGameOrReturnToBase))
             {
-                game.State.SetActiveWorldAndInitialize(World.Home);
-                game.State.HomeWorld.InitializeOrResetEntities();
+                game.StateManager.SetActiveWorldAndInitialize(World.Home);
+                game.StateManager.HomeWorld.InitializeOrResetEntities();
             }
 
         MsSinceStart += gameTime.ElapsedGameTime.Milliseconds;
 
         if (MsSinceStart > GameConfig.AsteroidExplodeTimeMs)
         {
-            game.State.Ecs.HealthSystem.KillAllEntitiesInWorld();
+            game.StateManager.Ecs.HealthSystem.KillAllEntitiesInWorld();
             return;
         }
 

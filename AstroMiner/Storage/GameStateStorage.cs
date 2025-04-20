@@ -10,11 +10,11 @@ public class GameStateStorage
         Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
         "game_save.json");
 
-    public void SaveState(GameState gameState)
+    public void SaveState(GameStateManager gameStateManager)
     {
         try
         {
-            var jsonString = JsonSerializer.Serialize(gameState);
+            var jsonString = JsonSerializer.Serialize(gameStateManager);
             File.WriteAllText(SaveFilePath, jsonString);
         }
         catch (Exception ex)
@@ -23,15 +23,15 @@ public class GameStateStorage
         }
     }
 
-    public GameState LoadState(BaseGame game)
+    public GameStateManager LoadState(BaseGame game)
     {
         try
         {
             if (File.Exists(SaveFilePath))
             {
                 var jsonString = File.ReadAllText(SaveFilePath);
-                var gameState = JsonSerializer.Deserialize<GameState>(jsonString);
-                return gameState ?? new GameState(game);
+                var gameState = JsonSerializer.Deserialize<GameStateManager>(jsonString);
+                return gameState ?? new GameStateManager(game);
             }
         }
         catch (Exception ex)
@@ -40,6 +40,6 @@ public class GameStateStorage
         }
 
         // Return a new game state if loading fails or file doesn't exist
-        return new GameState(game);
+        return new GameStateManager(game);
     }
 }

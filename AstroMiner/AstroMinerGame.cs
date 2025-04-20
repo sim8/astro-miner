@@ -13,8 +13,8 @@ public class AstroMinerGame : BaseGame
 
     protected override void Initialize()
     {
-        State = new GameState(this);
-        State.Initialize();
+        StateManager = new GameStateManager(this);
+        StateManager.Initialize();
         _renderer = new Renderer(this);
         Window.ClientSizeChanged += _renderer.HandleWindowResize;
         InitializeControls();
@@ -74,7 +74,7 @@ public class AstroMinerGame : BaseGame
 
         var activeMiningControls = _miningControlMapper.GetActiveControls(keyboardState, gamePadState);
 
-        State.Update(activeMiningControls, gameTime);
+        StateManager.Update(activeMiningControls, gameTime);
 
         base.Update(gameTime);
     }

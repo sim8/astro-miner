@@ -127,7 +127,7 @@ public class GridState(BaseGame game, CellState[,] grid)
 
         ClearWall(x, y);
 
-        if (wallConfig.Drop.HasValue && addToInventory) game.State.Inventory.AddResource(wallConfig.Drop.Value);
+        if (wallConfig.Drop.HasValue && addToInventory) game.StateManager.Inventory.AddResource(wallConfig.Drop.Value);
     }
 
     public void ClearWall(int x, int y)
@@ -180,7 +180,7 @@ public class GridState(BaseGame game, CellState[,] grid)
         {
             if (isInitializing)
                 cellState.FogOpacity = 0f;
-            else if (cellState.FogOpacity > 0f) game.State.AsteroidWorld.FogAnimationManager.AddFadingCell(x, y);
+            else if (cellState.FogOpacity > 0f) game.StateManager.AsteroidWorld.FogAnimationManager.AddFadingCell(x, y);
         }
 
 

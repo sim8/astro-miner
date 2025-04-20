@@ -1,0 +1,5 @@
+Plan
+
+SerializableState.cs?
+Only serialiable state in there
+Transient state can live in other classes

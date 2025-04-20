@@ -10,7 +10,7 @@ public class RendererShared(
     BaseGame game)
 {
     public readonly BaseGame Game = game;
-    public readonly GameState GameState = game.State;
+    public readonly GameStateManager GameStateManager = game.StateManager;
     public readonly GraphicsDeviceManager Graphics = game.Graphics;
     public readonly Dictionary<string, Texture2D> Textures = game.Textures;
     public readonly ViewHelpers ViewHelpers = new(game, game.Graphics);

@@ -19,7 +19,7 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
     {
         var (viewportWidth, viewportHeight) = shared.ViewHelpers.GetViewportSize();
 
-        var percentComplete = shared.GameState.GameTime.TotalGameTime.TotalMilliseconds % AnimationTime /
+        var percentComplete = shared.GameStateManager.GameTime.TotalGameTime.TotalMilliseconds % AnimationTime /
                               (float)AnimationTime;
 
         var currentOffset = (int)(RenderedHeight * (1f - percentComplete));
@@ -49,14 +49,14 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
 
     private void RenderClouds(SpriteBatch spriteBatch)
     {
-        foreach (var cloud in shared.GameState.CloudManager.CloudsBg)
+        foreach (var cloud in shared.GameStateManager.CloudManager.CloudsBg)
             spriteBatch.Draw(
                 shared.Textures["cloud-background"],
                 new Rectangle((int)cloud.X, (int)cloud.Y, CloudManager.BackgroundCloudSizePx,
                     CloudManager.BackgroundCloudSizePx),
                 Color.White
             );
-        foreach (var cloud in shared.GameState.CloudManager.CloudsFg)
+        foreach (var cloud in shared.GameStateManager.CloudManager.CloudsFg)
             spriteBatch.Draw(
                 shared.Textures["cloud-background"],
                 new Rectangle((int)cloud.X, (int)cloud.Y, CloudManager.ForegroundCloudSizePx,

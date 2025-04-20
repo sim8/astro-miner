@@ -15,8 +15,8 @@ public class MinerRenderer(
 
     public void RenderMiner(SpriteBatch spriteBatch, int entityId)
     {
-        var positionComponent = shared.GameState.Ecs.GetComponent<PositionComponent>(entityId);
-        var directionComponent = shared.GameState.Ecs.GetComponent<DirectionComponent>(entityId);
+        var positionComponent = shared.GameStateManager.Ecs.GetComponent<PositionComponent>(entityId);
+        var directionComponent = shared.GameStateManager.Ecs.GetComponent<DirectionComponent>(entityId);
 
         if (positionComponent == null)
             return;
@@ -36,7 +36,7 @@ public class MinerRenderer(
         var destinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(positionComponent.Position,
             MinerTextureSize, MinerTextureSize, MinerBoxOffsetX, MinerBoxOffsetY);
 
-        var tintColor = ViewHelpers.GetEntityTintColor(shared.GameState.Ecs, entityId);
+        var tintColor = ViewHelpers.GetEntityTintColor(shared.GameStateManager.Ecs, entityId);
 
         spriteBatch.Draw(GetTracksTexture(positionComponent.Position, directionComponent.Direction, entityId),
             destinationRectangle, sourceRectangle, tintColor);
@@ -46,7 +46,7 @@ public class MinerRenderer(
     private Texture2D GetTracksTexture(Vector2 position, Direction direction, int entityId)
     {
         // Movement removed when off asteroid
-        var movementComponent = shared.GameState.Ecs.GetComponent<MovementComponent>(entityId);
+        var movementComponent = shared.GameStateManager.Ecs.GetComponent<MovementComponent>(entityId);
         if (movementComponent == null) return shared.Textures["tracks-1"];
 
         var (gridX, gridY) = ViewHelpers.GridPosToTexturePx(position);
@@ -63,17 +63,17 @@ public class MinerRenderer(
 
     private void RenderGrapple(SpriteBatch spriteBatch, int entityId)
     {
-        var grappleComponent = shared.GameState.Ecs.GetComponent<GrappleComponent>(entityId);
-        var movementComponent = shared.GameState.Ecs.GetComponent<MovementComponent>(entityId);
-        var positionComponent = shared.GameState.Ecs.GetComponent<PositionComponent>(entityId);
-        var directionComponent = shared.GameState.Ecs.GetComponent<DirectionComponent>(entityId);
+        var grappleComponent = shared.GameStateManager.Ecs.GetComponent<GrappleComponent>(entityId);
+        var movementComponent = shared.GameStateManager.Ecs.GetComponent<MovementComponent>(entityId);
+        var positionComponent = shared.GameStateManager.Ecs.GetComponent<PositionComponent>(entityId);
+        var directionComponent = shared.GameStateManager.Ecs.GetComponent<DirectionComponent>(entityId);
 
         if (grappleComponent == null || movementComponent == null || positionComponent == null ||
             !grappleComponent.GrappleTarget.HasValue)
             return;
 
-        var frontPosition = shared.GameState.Ecs.MovementSystem.GetFrontPosition(entityId);
-        var grappleVisibleGridLength = shared.GameState.Ecs.GrappleSystem.GetDistanceToTarget(grappleComponent) *
+        var frontPosition = shared.GameStateManager.Ecs.MovementSystem.GetFrontPosition(entityId);
+        var grappleVisibleGridLength = shared.GameStateManager.Ecs.GrappleSystem.GetDistanceToTarget(grappleComponent) *
                                        grappleComponent.GrapplePercentToTarget;
         var grappleVisibleGridWidth = 0.03f;
 

@@ -27,8 +27,8 @@ public class DynamiteRenderer(
 
     public void RenderDynamite(SpriteBatch spriteBatch, int entityId)
     {
-        var positionComponent = shared.GameState.Ecs.GetComponent<PositionComponent>(entityId);
-        var fuseComponent = shared.GameState.Ecs.GetComponent<FuseComponent>(entityId);
+        var positionComponent = shared.GameStateManager.Ecs.GetComponent<PositionComponent>(entityId);
+        var fuseComponent = shared.GameStateManager.Ecs.GetComponent<FuseComponent>(entityId);
 
         if (positionComponent == null || fuseComponent == null)
             return;
@@ -64,8 +64,8 @@ public class DynamiteRenderer(
 
     public void RenderLightSource(SpriteBatch spriteBatch, int entityId)
     {
-        var positionComponent = shared.GameState.Ecs.GetComponent<PositionComponent>(entityId);
-        var fuseComponent = shared.GameState.Ecs.GetComponent<FuseComponent>(entityId);
+        var positionComponent = shared.GameStateManager.Ecs.GetComponent<PositionComponent>(entityId);
+        var fuseComponent = shared.GameStateManager.Ecs.GetComponent<FuseComponent>(entityId);
 
         if (positionComponent == null || fuseComponent == null)
             return;

@@ -26,7 +26,7 @@ public class CameraState
     }
 
     private float BaseScaleMultiplier =>
-        _game.State.AsteroidWorld.IsInMiner && _game.State.ActiveWorld == World.Asteroid
+        _game.StateManager.AsteroidWorld.IsInMiner && _game.StateManager.ActiveWorld == World.Asteroid
             ? GetBaseZoomLevel()
             : GetBaseZoomLevel() + 1;
 

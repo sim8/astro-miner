@@ -49,12 +49,12 @@ public class HealthSystem : System
         // Create explosion at entity position
         var positionComponent = Ecs.GetComponent<PositionComponent>(entityId);
         if (positionComponent != null)
-            game.State.Ecs.Factories.CreateExplosionEntity(positionComponent.CenterPosition);
+            game.StateManager.Ecs.Factories.CreateExplosionEntity(positionComponent.CenterPosition);
     }
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
-        if (game.State.ActiveWorld != World.Asteroid) return;
+        if (game.StateManager.ActiveWorld != World.Asteroid) return;
 
         // Update damage animation state
         foreach (var healthComponent in Ecs.GetAllComponents<HealthComponent>())

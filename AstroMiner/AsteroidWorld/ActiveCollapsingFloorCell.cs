@@ -13,11 +13,11 @@ public class ActiveCollapsingFloorCell(BaseGame game, (int x, int y) gridPos)
         if (TimeToCollapse <= 0)
         {
             GridState.Map4Neighbors(gridPos.x, gridPos.y,
-                (nx, ny) => { game.State.AsteroidWorld.Grid.ActivateCollapsingFloorCell(nx, ny); });
+                (nx, ny) => { game.StateManager.AsteroidWorld.Grid.ActivateCollapsingFloorCell(nx, ny); });
 
-            game.State.AsteroidWorld.Grid.GetCellState(gridPos.x, gridPos.y).FloorType = FloorType.Lava;
+            game.StateManager.AsteroidWorld.Grid.GetCellState(gridPos.x, gridPos.y).FloorType = FloorType.Lava;
 
-            game.State.AsteroidWorld.Grid.DeactiveCollapsingFloorCell(gridPos.x, gridPos.y);
+            game.StateManager.AsteroidWorld.Grid.DeactiveCollapsingFloorCell(gridPos.x, gridPos.y);
         }
     }
 }

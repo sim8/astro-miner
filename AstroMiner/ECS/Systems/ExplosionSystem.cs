@@ -28,14 +28,14 @@ public class ExplosionSystem : System
 
         foreach (var (x, y) in explodedCells)
             // If x,y = gridPos, already triggered explosion
-            if (game.State.AsteroidWorld.Grid.GetWallType(x, y) == WallType.ExplosiveRock && (x, y) != gridPos)
+            if (game.StateManager.AsteroidWorld.Grid.GetWallType(x, y) == WallType.ExplosiveRock && (x, y) != gridPos)
             {
-                game.State.AsteroidWorld.Grid.ActivateExplosiveRockCell(x, y, 300);
+                game.StateManager.AsteroidWorld.Grid.ActivateExplosiveRockCell(x, y, 300);
             }
             else
             {
-                game.State.AsteroidWorld.Grid.ClearWall(x, y);
-                game.State.AsteroidWorld.Grid.ActivateCollapsingFloorCell(x, y);
+                game.StateManager.AsteroidWorld.Grid.ClearWall(x, y);
+                game.StateManager.AsteroidWorld.Grid.ActivateCollapsingFloorCell(x, y);
             }
     }
 
@@ -43,7 +43,7 @@ public class ExplosionSystem : System
     {
         foreach (var healthComponent in Ecs.GetAllComponents<HealthComponent>())
         {
-            if (healthComponent.EntityId == Ecs.PlayerEntityId && game.State.AsteroidWorld.IsInMiner) continue;
+            if (healthComponent.EntityId == Ecs.PlayerEntityId && game.StateManager.AsteroidWorld.IsInMiner) continue;
 
             if (healthComponent.IsDead) continue;
 
@@ -56,7 +56,7 @@ public class ExplosionSystem : System
             {
                 var damagePercentage = 1f - distance / ExplosionRadius;
                 var damage = (int)(GameConfig.ExplosionMaxDamage * damagePercentage);
-                game.State.Ecs.HealthSystem.TakeDamage(healthComponent.EntityId, damage);
+                game.StateManager.Ecs.HealthSystem.TakeDamage(healthComponent.EntityId, damage);
             }
         }
     }
@@ -67,9 +67,9 @@ public class ExplosionSystem : System
 
         // Calculate the bounds to iterate over, based on the radius
         var startX = Math.Max(0, (int)Math.Floor(centerX - radius));
-        var endX = Math.Min(game.State.AsteroidWorld.Grid.Columns - 1, (int)Math.Ceiling(centerX + radius));
+        var endX = Math.Min(game.StateManager.AsteroidWorld.Grid.Columns - 1, (int)Math.Ceiling(centerX + radius));
         var startY = Math.Max(0, (int)Math.Floor(centerY - radius));
-        var endY = Math.Min(game.State.AsteroidWorld.Grid.Rows - 1, (int)Math.Ceiling(centerY + radius));
+        var endY = Math.Min(game.StateManager.AsteroidWorld.Grid.Rows - 1, (int)Math.Ceiling(centerY + radius));
 
         // Iterate through the grid cells within these bounds
         for (var i = startX; i <= endX; i++)
@@ -89,7 +89,7 @@ public class ExplosionSystem : System
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
-        if (game.State.ActiveWorld != World.Asteroid) return;
+        if (game.StateManager.ActiveWorld != World.Asteroid) return;
 
         foreach (var explosionComponent in Ecs.GetAllComponents<ExplosionComponent>())
         {

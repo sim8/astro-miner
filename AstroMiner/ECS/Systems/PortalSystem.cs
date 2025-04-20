@@ -32,8 +32,8 @@ public class PortalSystem : System
         position.SetCenterPosition(centerPosition);
 
         // Only change active world if this entity is the player.
-        if (position.EntityId == game.State.Ecs.ActiveControllableEntityId)
-            game.State.SetActiveWorldAndInitialize(config.TargetWorld);
+        if (position.EntityId == game.StateManager.Ecs.ActiveControllableEntityId)
+            game.StateManager.SetActiveWorldAndInitialize(config.TargetWorld);
     }
 
     private void MoveToDeparturePoint(MovementComponent movement, PositionComponent position,
@@ -114,8 +114,8 @@ public class PortalSystem : System
         var (topLeftGridX, topLeftGridY) = ViewHelpers.ToGridPosition(position.Position);
         var (bottomRightGridX, bottomRightGridY) =
             ViewHelpers.ToGridPosition(position.Position + new Vector2(position.GridWidth, position.GridHeight));
-        if (!game.State.ActiveWorldState.CellIsPortal(topLeftGridX, topLeftGridY) &&
-            !game.State.ActiveWorldState.CellIsPortal(bottomRightGridX, bottomRightGridY))
+        if (!game.StateManager.ActiveWorldState.CellIsPortal(topLeftGridX, topLeftGridY) &&
+            !game.StateManager.ActiveWorldState.CellIsPortal(bottomRightGridX, bottomRightGridY))
         {
             movement.PortalStatus = PortalStatus.None;
         }
@@ -141,7 +141,7 @@ public class PortalSystem : System
             if (movement.PortalStatus == PortalStatus.Arriving)
                 MoveToArrivalPoint(position, movement, dirComp, gameTime);
 
-            if (!game.State.ActiveWorldState.CellIsPortal(gridX, gridY))
+            if (!game.StateManager.ActiveWorldState.CellIsPortal(gridX, gridY))
                 continue;
 
             var config = WorldGrid.GetPortalConfig(position.World, (gridX, gridY));

@@ -26,11 +26,11 @@ public class FogAnimationManager
 
         foreach (var (x, y) in _activeFadingCells)
         {
-            var cell = _game.State.AsteroidWorld.Grid.GetCellState(x, y);
+            var cell = _game.StateManager.AsteroidWorld.Grid.GetCellState(x, y);
 
 
             var distanceFromPlayer = Vector2.Distance(new Vector2(x + 0.5f, y + 0.5f),
-                _game.State.Ecs.ActiveControllableEntityCenterPosition);
+                _game.StateManager.Ecs.ActiveControllableEntityCenterPosition);
 
             cell.FogOpacity = Math.Max(0,
                 cell.FogOpacity - gameTime.ElapsedGameTime.Milliseconds / (BaseFadeOutDurationMs * distanceFromPlayer));

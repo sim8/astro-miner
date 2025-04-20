@@ -37,7 +37,7 @@ public enum Direction
     Left
 }
 
-public class GameState(BaseGame game)
+public class GameStateManager(BaseGame game)
 {
     private static readonly HashSet<MiningControls> EmptyControls = new();
     public AsteroidWorldState AsteroidWorld;

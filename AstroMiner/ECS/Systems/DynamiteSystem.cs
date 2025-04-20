@@ -13,13 +13,13 @@ public class DynamiteSystem : System
 
     public void PlaceDynamite()
     {
-        if (game.State.Inventory.numDynamite <= 0) return;
+        if (game.StateManager.Inventory.numDynamite <= 0) return;
         if (Ecs.PlayerEntityId == null) return;
 
         var playerPositionComponent = Ecs.GetComponent<PositionComponent>(Ecs.PlayerEntityId.Value);
         if (playerPositionComponent == null) return;
 
-        game.State.Inventory.numDynamite--;
+        game.StateManager.Inventory.numDynamite--;
         var dynamiteEntity = Ecs.Factories.CreateDynamiteEntity(playerPositionComponent.CenterPosition);
         var dynamitePositionComponent = Ecs.GetComponent<PositionComponent>(dynamiteEntity);
         Ecs.MovementSystem.SetPositionRelativeToDirectionalEntity(dynamitePositionComponent, Ecs.PlayerEntityId.Value,
@@ -29,9 +29,9 @@ public class DynamiteSystem : System
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
 
     {
-        if (game.State.ActiveWorld != World.Asteroid) return;
+        if (game.StateManager.ActiveWorld != World.Asteroid) return;
 
-        if (activeControls.Contains(MiningControls.PlaceDynamite) && !game.State.AsteroidWorld.IsInMiner)
+        if (activeControls.Contains(MiningControls.PlaceDynamite) && !game.StateManager.AsteroidWorld.IsInMiner)
             PlaceDynamite();
         foreach (var fuseComponent in Ecs.GetAllComponents<FuseComponent>())
         {
@@ -40,7 +40,7 @@ public class DynamiteSystem : System
             if (fuseComponent.TimeToExplodeMs <= 0)
             {
                 var positionComponent = Ecs.GetComponent<PositionComponent>(fuseComponent.EntityId);
-                game.State.Ecs.Factories.CreateExplosionEntity(positionComponent.CenterPosition);
+                game.StateManager.Ecs.Factories.CreateExplosionEntity(positionComponent.CenterPosition);
                 Ecs.DestroyEntity(fuseComponent.EntityId);
             }
         }

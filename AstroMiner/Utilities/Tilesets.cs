@@ -74,7 +74,7 @@ public static class Tilesets
 
     public static bool CellIsTilesetType(BaseGame game, int x, int y)
     {
-        var wallType = game.State.AsteroidWorld.Grid.GetWallType(x, y);
+        var wallType = game.StateManager.AsteroidWorld.Grid.GetWallType(x, y);
         return WallTypeTextureIndex.ContainsKey(wallType);
     }
 
@@ -103,10 +103,10 @@ public static class Tilesets
         var twoByTwoX = x + topLeftXOffset;
         var twoByTwoY = y + topLeftYOffset;
 
-        var topLeft = game.State.AsteroidWorld.Grid.GetFloorType(twoByTwoX, twoByTwoY);
-        var topRight = game.State.AsteroidWorld.Grid.GetFloorType(twoByTwoX + 1, twoByTwoY);
-        var bottomLeft = game.State.AsteroidWorld.Grid.GetFloorType(twoByTwoX, twoByTwoY + 1);
-        var bottomRight = game.State.AsteroidWorld.Grid.GetFloorType(twoByTwoX + 1, twoByTwoY + 1);
+        var topLeft = game.StateManager.AsteroidWorld.Grid.GetFloorType(twoByTwoX, twoByTwoY);
+        var topRight = game.StateManager.AsteroidWorld.Grid.GetFloorType(twoByTwoX + 1, twoByTwoY);
+        var bottomLeft = game.StateManager.AsteroidWorld.Grid.GetFloorType(twoByTwoX, twoByTwoY + 1);
+        var bottomRight = game.StateManager.AsteroidWorld.Grid.GetFloorType(twoByTwoX + 1, twoByTwoY + 1);
 
         // Dual grid system doesn't normally allow for > 2 textures adjoining. Deriving the texture to use from the neighbors.
         // When adding more floor types will likely need a priority order for textures + try and ensure they don't adjoin
@@ -142,7 +142,7 @@ public static class Tilesets
         var (textureGridX, textureGridY) = RampKeyToTextureOffset[tileKey];
 
         // Get grid index of cellType tileset within main texture
-        var wallType = game.State.AsteroidWorld.Grid.GetWallType(col, row);
+        var wallType = game.StateManager.AsteroidWorld.Grid.GetWallType(col, row);
 
         var textureTilesetX = WallTypeTextureIndex[wallType] * TextureGridWidth;
 

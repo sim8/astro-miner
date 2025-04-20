@@ -16,18 +16,20 @@ public class CollapsingFloorTriggerer(BaseGame game)
 
     private void MaybeCollapseFloors()
     {
-        var (playerX, playerY) = ViewHelpers.ToGridPosition(game.State.Ecs.ActiveControllableEntityCenterPosition);
+        var (playerX, playerY) =
+            ViewHelpers.ToGridPosition(game.StateManager.Ecs.ActiveControllableEntityCenterPosition);
 
         // Iterate through cells within 10 rows/columns of player
         for (var y = Math.Max(0, playerY - Distance); y <= playerY + Distance; y++)
         for (var x = Math.Max(0, playerX - Distance); x <= playerX + Distance; x++)
-            if (game.State.AsteroidWorld.Grid.GetFloorType(x, y) == FloorType.LavaCracks && _random.Next(150) == 0)
+            if (game.StateManager.AsteroidWorld.Grid.GetFloorType(x, y) == FloorType.LavaCracks &&
+                _random.Next(150) == 0)
             {
                 // Only collapse if there's a lava neighbor
                 var hasLavaNeighbor =
-                    game.State.AsteroidWorld.Grid.CheckNeighbors(x, y, cell => cell.FloorType == FloorType.Lava);
+                    game.StateManager.AsteroidWorld.Grid.CheckNeighbors(x, y, cell => cell.FloorType == FloorType.Lava);
                 if (hasLavaNeighbor)
-                    game.State.AsteroidWorld.Grid.ActivateCollapsingFloorCell(x, y);
+                    game.StateManager.AsteroidWorld.Grid.ActivateCollapsingFloorCell(x, y);
             }
     }
 

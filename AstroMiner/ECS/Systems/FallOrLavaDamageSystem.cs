@@ -15,7 +15,7 @@ public class FallOrLavaDamageSystem : System
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
-        if (game.State.ActiveWorld != World.Asteroid) return;
+        if (game.StateManager.ActiveWorld != World.Asteroid) return;
 
         foreach (var healthComponent in Ecs.GetAllComponents<HealthComponent>())
         {
@@ -24,7 +24,7 @@ public class FallOrLavaDamageSystem : System
             var positionComponent = Ecs.GetComponent<PositionComponent>(healthComponent.EntityId);
             if (positionComponent == null) continue;
 
-            if (healthComponent.EntityId == Ecs.PlayerEntityId && game.State.AsteroidWorld.IsInMiner) continue;
+            if (healthComponent.EntityId == Ecs.PlayerEntityId && game.StateManager.AsteroidWorld.IsInMiner) continue;
 
             var (topLeftX, topLeftY) = ViewHelpers.ToGridPosition(positionComponent.Position);
             var (bottomRightX, bottomRightY) = ViewHelpers.ToGridPosition(positionComponent.Position +
@@ -37,7 +37,7 @@ public class FallOrLavaDamageSystem : System
             for (var x = topLeftX; x <= bottomRightX; x++)
             for (var y = topLeftY; y <= bottomRightY; y++)
             {
-                var floorType = game.State.AsteroidWorld.Grid.GetFloorType(x, y);
+                var floorType = game.StateManager.AsteroidWorld.Grid.GetFloorType(x, y);
                 if (floorType != FloorType.Empty) allCellsAreEmpty = false;
                 if (floorType == FloorType.Lava) someCellsAreLava = true;
             }
@@ -48,7 +48,7 @@ public class FallOrLavaDamageSystem : System
             {
                 healthComponent.TimeOnLavaMs += gameTime.ElapsedGameTime.Milliseconds;
                 if (healthComponent.TimeOnLavaMs >= GameConfig.LavaDamageDelayMs)
-                    game.State.Ecs.HealthSystem.TakeDamage(healthComponent.EntityId,
+                    game.StateManager.Ecs.HealthSystem.TakeDamage(healthComponent.EntityId,
                         (float)GameConfig.LavaDamagePerSecond / 1000 * gameTime.ElapsedGameTime.Milliseconds);
             }
             else if (healthComponent.TimeOnLavaMs > 0)

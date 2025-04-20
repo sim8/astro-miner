@@ -25,7 +25,7 @@ public abstract class BaseGame : Game
         IsMouseVisible = true;
     }
 
-    public GameState State { get; protected set; }
+    public GameStateManager StateManager { get; protected set; }
 
     // Common method for loading textures
     protected void LoadTexture(string name)

@@ -18,12 +18,12 @@ public class UserInterfaceRenderer(
     {
         RenderDebug(spriteBatch);
 
-        if (shared.GameState.ActiveWorld == World.Asteroid) RenderAsteroidUserInterface(spriteBatch);
+        if (shared.GameStateManager.ActiveWorld == World.Asteroid) RenderAsteroidUserInterface(spriteBatch);
     }
 
     private void RenderAsteroidUserInterface(SpriteBatch spriteBatch)
     {
-        var timeLeft = Math.Max(GameConfig.AsteroidExplodeTimeMs - shared.GameState.MsSinceStart, 0);
+        var timeLeft = Math.Max(GameConfig.AsteroidExplodeTimeMs - shared.GameStateManager.MsSinceStart, 0);
         var minutes = timeLeft / 60000;
         var seconds = timeLeft % 60000 / 1000;
         shared.RenderString(spriteBatch, 0, 0, minutes.ToString("D2") + " " + seconds.ToString("D2"), 6);
@@ -35,22 +35,22 @@ public class UserInterfaceRenderer(
 
         RenderGrappleIcon(spriteBatch);
 
-        if (shared.GameState.Ecs.MinerEntityId.HasValue)
-            RenderHealthBar(spriteBatch, shared.GameState.Ecs.MinerEntityId.Value, 50, 192);
-        if (shared.GameState.Ecs.PlayerEntityId.HasValue)
-            RenderHealthBar(spriteBatch, shared.GameState.Ecs.PlayerEntityId.Value, 50, 207);
+        if (shared.GameStateManager.Ecs.MinerEntityId.HasValue)
+            RenderHealthBar(spriteBatch, shared.GameStateManager.Ecs.MinerEntityId.Value, 50, 192);
+        if (shared.GameStateManager.Ecs.PlayerEntityId.HasValue)
+            RenderHealthBar(spriteBatch, shared.GameStateManager.Ecs.PlayerEntityId.Value, 50, 207);
 
-        if (shared.GameState.Ecs.ActiveControllableEntityIsDead ||
-            shared.GameState.Ecs.ActiveControllableEntityIsOffAsteroid)
-            RenderNewGameScreen(spriteBatch, shared.GameState.Ecs.ActiveControllableEntityIsDead);
+        if (shared.GameStateManager.Ecs.ActiveControllableEntityIsDead ||
+            shared.GameStateManager.Ecs.ActiveControllableEntityIsOffAsteroid)
+            RenderNewGameScreen(spriteBatch, shared.GameStateManager.Ecs.ActiveControllableEntityIsDead);
     }
 
     private void RenderDebug(SpriteBatch spriteBatch)
     {
         shared.RenderString(spriteBatch, 1000, 0, "FPS " + frameCounter.AverageFramesPerSecond.ToString("F0"));
 
-        if (shared.GameState.ActiveWorld == World.Asteroid)
-            shared.RenderString(spriteBatch, 1000, 40, "SEED " + shared.GameState.AsteroidWorld.Seed);
+        if (shared.GameStateManager.ActiveWorld == World.Asteroid)
+            shared.RenderString(spriteBatch, 1000, 40, "SEED " + shared.GameStateManager.AsteroidWorld.Seed);
     }
 
     private void RenderInventory(SpriteBatch spriteBatch, int xOffset, int yoffset)
@@ -58,9 +58,9 @@ public class UserInterfaceRenderer(
         var resourceLineHeight = 40;
 
         shared.RenderString(spriteBatch, xOffset, yoffset,
-            "DYNAMITE " + shared.GameState.Inventory.numDynamite);
+            "DYNAMITE " + shared.GameStateManager.Inventory.numDynamite);
 
-        foreach (var (inventoryResource, index) in shared.GameState.Inventory.resources.Select((r, i) => (r, i)))
+        foreach (var (inventoryResource, index) in shared.GameStateManager.Inventory.resources.Select((r, i) => (r, i)))
         {
             var lineYOffset = yoffset + resourceLineHeight * (index + 1);
             var resourceConfig = ResourceTypes.GetConfig(inventoryResource.Type);
@@ -71,7 +71,7 @@ public class UserInterfaceRenderer(
 
     private void RenderHealthBar(SpriteBatch spriteBatch, int entityId, int xOffset, int yOffset)
     {
-        var healthComponent = shared.GameState.Ecs.GetComponent<HealthComponent>(entityId);
+        var healthComponent = shared.GameStateManager.Ecs.GetComponent<HealthComponent>(entityId);
         if (healthComponent == null)
             return;
 
@@ -83,9 +83,9 @@ public class UserInterfaceRenderer(
 
     private void RenderGrappleIcon(SpriteBatch spriteBatch)
     {
-        if (!shared.GameState.Ecs.MinerEntityId.HasValue) return;
+        if (!shared.GameStateManager.Ecs.MinerEntityId.HasValue) return;
         var grappleComponent =
-            shared.GameState.Ecs.GetComponent<GrappleComponent>(shared.GameState.Ecs.MinerEntityId.Value);
+            shared.GameStateManager.Ecs.GetComponent<GrappleComponent>(shared.GameStateManager.Ecs.MinerEntityId.Value);
 
         var color = grappleComponent.GrappleAvailable
             ? Color.LimeGreen
@@ -150,7 +150,7 @@ public class UserInterfaceRenderer(
                 _gridColor);
         }
 
-        foreach (var gameStateEdgeCell in shared.GameState.AsteroidWorld.EdgeCells)
+        foreach (var gameStateEdgeCell in shared.GameStateManager.AsteroidWorld.EdgeCells)
         {
             var x = xOffset + gameStateEdgeCell.x * scale;
             var y = yOffset + gameStateEdgeCell.y * scale;
@@ -160,7 +160,7 @@ public class UserInterfaceRenderer(
         }
 
         var playerGridPos =
-            ViewHelpers.ToGridPosition(shared.GameState.Ecs.ActiveControllableEntityCenterPosition);
+            ViewHelpers.ToGridPosition(shared.GameStateManager.Ecs.ActiveControllableEntityCenterPosition);
         var playerX = xOffset + playerGridPos.x * scale - playerSize / 2;
         var playerY = yOffset + playerGridPos.y * scale - playerSize / 2;
         var playerDestRect = new Rectangle((int)playerX, (int)playerY, playerSize, playerSize);

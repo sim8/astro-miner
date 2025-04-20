@@ -17,7 +17,7 @@ public class VehicleEnterExitSystem : System
     {
         if (activeControls.Contains(MiningControls.EnterOrExit))
         {
-            if (game.State.AsteroidWorld.IsInMiner)
+            if (game.StateManager.AsteroidWorld.IsInMiner)
             {
                 // Set player as active controllable entity
                 Ecs.SetActiveControllableEntity(Ecs.PlayerEntityId.Value);

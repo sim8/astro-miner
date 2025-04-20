@@ -26,18 +26,18 @@ public class ProceduralGenViewerGame : BaseGame
 
     protected override void Initialize()
     {
-        State = new GameState(this);
-        State.Initialize();
+        StateManager = new GameStateManager(this);
+        StateManager.Initialize();
         InitializeAsteroidForViewing();
-        _renderer = new ProceduralGenViewerRenderer(Textures, State, _proceduralGenViewerState);
+        _renderer = new ProceduralGenViewerRenderer(Textures, StateManager, _proceduralGenViewerState);
         InitializeControls();
         base.Initialize();
     }
 
     private void InitializeAsteroidForViewing()
     {
-        State.Initialize();
-        State.SetActiveWorldAndInitialize(World.Asteroid);
+        StateManager.Initialize();
+        StateManager.SetActiveWorldAndInitialize(World.Asteroid);
     }
 
     protected override void InitializeControls()
