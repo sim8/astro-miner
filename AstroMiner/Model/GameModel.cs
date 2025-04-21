@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
-using System.Reflection;
 
 namespace AstroMiner.Model;
 
@@ -79,22 +78,9 @@ public static class GameModelHelpers
                     DynamiteTag = new Dictionary<int, DynamiteTag>(),
                     PlayerTag = new Dictionary<int, PlayerTag>(),
                     MinerTag = new Dictionary<int, MinerTag>(),
-                    ExplosionTag = new Dictionary<int, ExplosionTag>(),
+                    ExplosionTag = new Dictionary<int, ExplosionTag>()
                 }
             }
         };
-    }
-
-    public static void ForEachComponentDictionary(ComponentsByEntityId components, Action<object> callback)
-    {
-        var properties = typeof(ComponentsByEntityId).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-        foreach (var property in properties)
-        {
-            var dictionary = property.GetValue(components);
-            if (dictionary != null)
-            {
-                callback(dictionary);
-            }
-        }
     }
 }

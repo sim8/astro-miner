@@ -127,14 +127,7 @@ public class Ecs
 
     public bool HasComponent<T>(int entityId) where T : Component
     {
-        if (!_game.Model.Ecs.EntityComponents.TryGetValue(entityId, out var components))
-            return false;
-
-        foreach (var component in components)
-            if (component is T)
-                return true;
-
-        return false;
+        return GetComponentsOfType<T>().ContainsKey(entityId);
     }
 
     public int CreateEntity()
@@ -146,12 +139,7 @@ public class Ecs
 
     public void DestroyEntity(int entityId)
     {
-        if (!_game.Model.Ecs.EntityComponents.TryGetValue(entityId, out var components))
-            return;
-
-        foreach (var component in components) _game.Model.Ecs.ComponentsByType[component.GetType()].Remove(component);
-
-        _game.Model.Ecs.EntityComponents.Remove(entityId);
+        ForEachComponentType(components => components.Remove(entityId));
 
         // Clear entity references if they're being destroyed
         if (ActiveControllableEntityId == entityId)
@@ -178,30 +166,12 @@ public class Ecs
 
     public void RemoveComponent<T>(int entityId) where T : Component
     {
-        if (!_game.Model.Ecs.EntityComponents.TryGetValue(entityId, out var components))
-            return;
-
-        var component = GetComponent<T>(entityId);
-        if (component == null)
-            return;
-
-        components.Remove(component);
-
-        var type = typeof(T);
-        if (_game.Model.Ecs.ComponentsByType.TryGetValue(type, out var typeComponents))
-            typeComponents.Remove(component);
+        GetComponentsOfType<T>().Remove(entityId);
     }
 
     public T GetComponent<T>(int entityId) where T : Component
     {
-        if (!_game.Model.Ecs.EntityComponents.TryGetValue(entityId, out var components))
-            return null;
-
-        foreach (var component in components)
-            if (component is T typedComponent)
-                return typedComponent;
-
-        return null;
+        return GetComponentsOfType<T>().TryGetValue(entityId, out var component) ? (T)component : null;
     }
 
     public IEnumerable<T> GetAllComponents<T>() where T : Component
@@ -234,7 +204,7 @@ public class Ecs
             .ToList(); // Cache the results since they'll be used multiple times per frame
     }
 
-    public Dictionary<int, T> GetComponentsOfType<T>() where T : class
+    private Dictionary<int, T> GetComponentsOfType<T>() where T : class
     {
         var componentsByEntityId = _game.Model.Ecs.ComponentsByEntityId;
 
@@ -274,7 +244,7 @@ public class Ecs
         throw new ArgumentException($"No handler for type {typeof(T)} in GetComponentsOfType");
     }
 
-    public void ForEachComponentType(Action<object> callback)
+    private void ForEachComponentType(Action<Dictionary<int, object>> callback)
     {
         var properties = typeof(ComponentsByEntityId).GetProperties(BindingFlags.Public | BindingFlags.Instance);
         foreach (var property in properties)
@@ -282,7 +252,8 @@ public class Ecs
             var dictionary = property.GetValue(_game.Model.Ecs.ComponentsByEntityId);
             if (dictionary != null)
             {
-                callback(dictionary);
+                // Cast to Dictionary<int, object> since we know the structure
+                callback(dictionary as Dictionary<int, object>);
             }
         }
     }
