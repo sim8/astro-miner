@@ -12,29 +12,41 @@ public class UIState(BaseGame game)
         Root.FixedWidth = game.Graphics.GraphicsDevice.Viewport.Width;
         Root.FixedHeight = game.Graphics.GraphicsDevice.Viewport.Height;
 
+        var container = new UIElement(game)
+        {
+            BackgroundColor = Color.Green
+        };
+
+
         // Add example UI elements
-        Root.Children.Add(new UIElement(game)
+        container.Children.Add(new UIElement(game)
         {
             BackgroundColor = Color.LightGray,
             FixedWidth = 200,
-            FixedHeight = 100,
-            X = 50,
-            Y = 50
+            FixedHeight = 100
         });
 
-        Root.Children.Add(new UIElement(game)
+        container.Children.Add(new UIElement(game)
         {
             BackgroundColor = Color.DarkBlue,
             FixedWidth = 150,
-            FixedHeight = 75,
-            X = 300,
-            Y = 150
+            FixedHeight = 75
         });
+
+        Root.Children.Add(container);
     }
 
     public void Update(GameTime gameTime)
     {
         Root.FixedWidth = game.Graphics.GraphicsDevice.Viewport.Width;
         Root.FixedHeight = game.Graphics.GraphicsDevice.Viewport.Height;
+
+        Root.ComputeDimensions();
+        Root.ComputePositions(0, 0);
+
+        // TODO
+        // 1. Update UI
+        // 2. Calculate sizes
+        // 3. Calculate position
     }
 }

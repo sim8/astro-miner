@@ -119,6 +119,7 @@ public class GameStateManager(BaseGame game)
         Camera.Update(gameTime, controlsToUse);
         CloudManager.Update(gameTime);
         Ecs.Update(gameTime, controlsToUse);
+        UIState.Update(gameTime);
 
         if (activeMiningControls.Contains(MiningControls.SaveGame)) SaveGameTEMP();
     }
