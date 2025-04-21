@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Drawing;
+using System.Text.Json.Serialization;
 using AstroMiner.Definitions;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
@@ -9,20 +10,31 @@ namespace AstroMiner.ECS.Components;
 
 public class PositionComponent : Component
 {
+    [JsonInclude]
     public int HeightPx;
+
+    [JsonInclude]
     public bool IsCollideable;
+
+    [JsonInclude]
     public Vector2 Position;
+
+    [JsonInclude]
     public int WidthPx;
+
     public World World { get; set; }
     public bool IsOffAsteroid { get; set; }
 
     public float GridWidth => (float)WidthPx / GameConfig.CellTextureSizePx;
     public float GridHeight => (float)HeightPx / GameConfig.CellTextureSizePx;
 
+    [JsonIgnore]
     public Vector2 CenterPosition => Position + new Vector2(GridWidth / 2f, GridHeight / 2f);
 
+    [JsonIgnore]
     public float FrontY => Position.Y + GridHeight;
 
+    [JsonIgnore]
     public RectangleF Rectangle => new(Position.X, Position.Y, GridWidth, GridHeight);
 
     public void SetCenterPosition(Vector2 centerPos)
