@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using AstroMiner.ECS.Components;
 using AstroMiner.ECS.Systems;
+using AstroMiner.Model;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner.ECS;
@@ -94,19 +96,11 @@ public class Ecs
         LaunchSystem.Update(gameTime, activeMiningControls);
         CalculateEntityIdsInActiveWorldSortedByDistance();
     }
-    
+
 
     public void SetActiveControllableEntity(int entityId)
     {
-        if (!_game.Model.Ecs.EntityComponents.ContainsKey(entityId))
-            return;
-
         _game.Model.Ecs.ActiveControllableEntityId = entityId;
-    }
-
-    public void DeactivateControllableEntity()
-    {
-        _game.Model.Ecs.ActiveControllableEntityId = null;
     }
 
     public bool GetIsActive(int entityId)
@@ -131,11 +125,6 @@ public class Ecs
         _game.Model.Ecs.MinerEntityId = entityId;
     }
 
-    public IEnumerable<int> GetAllEntityIds()
-    {
-        return _game.Model.Ecs.EntityComponents.Keys;
-    }
-
     public bool HasComponent<T>(int entityId) where T : Component
     {
         if (!_game.Model.Ecs.EntityComponents.TryGetValue(entityId, out var components))
@@ -151,7 +140,7 @@ public class Ecs
     public int CreateEntity()
     {
         var entityId = _game.Model.Ecs.NextEntityId++;
-        _game.Model.Ecs.EntityComponents[entityId] = new HashSet<Component>();
+        // _game.Model.Ecs.EntityComponents[entityId] = new HashSet<Component>();
         return entityId;
     }
 
@@ -177,16 +166,12 @@ public class Ecs
     {
         var component = new T { EntityId = entityId };
 
-        if (!_game.Model.Ecs.EntityComponents.ContainsKey(entityId))
-            _game.Model.Ecs.EntityComponents[entityId] = new HashSet<Component>();
+        var components = GetComponentsOfType<T>();
 
-        _game.Model.Ecs.EntityComponents[entityId].Add(component);
+        if (components.ContainsKey(entityId))
+            throw new ArgumentException($"Entity {entityId} already has a component of type {typeof(T)}");
 
-        var type = typeof(T);
-        if (!_game.Model.Ecs.ComponentsByType.ContainsKey(type))
-            _game.Model.Ecs.ComponentsByType[type] = new HashSet<Component>();
-
-        _game.Model.Ecs.ComponentsByType[type].Add(component);
+        components[entityId] = component;
 
         return component;
     }
@@ -203,7 +188,8 @@ public class Ecs
         components.Remove(component);
 
         var type = typeof(T);
-        if (_game.Model.Ecs.ComponentsByType.TryGetValue(type, out var typeComponents)) typeComponents.Remove(component);
+        if (_game.Model.Ecs.ComponentsByType.TryGetValue(type, out var typeComponents))
+            typeComponents.Remove(component);
     }
 
     public T GetComponent<T>(int entityId) where T : Component
@@ -220,11 +206,9 @@ public class Ecs
 
     public IEnumerable<T> GetAllComponents<T>() where T : Component
     {
-        var type = typeof(T);
-        if (!_game.Model.Ecs.ComponentsByType.TryGetValue(type, out var components))
-            yield break;
+        var components = GetComponentsOfType<T>();
 
-        foreach (var component in components) yield return (T)component;
+        foreach (var component in components.Values) yield return (T)component;
     }
 
     public IEnumerable<T> GetAllComponentsInActiveWorld<T>() where T : Component
@@ -239,7 +223,8 @@ public class Ecs
 
     private void CalculateEntityIdsInActiveWorldSortedByDistance()
     {
-        EntityIdsInActiveWorldSortedByDistance = _game.Model.Ecs.EntityComponents.Keys
+        // TODO simplify only needs calling once
+        EntityIdsInActiveWorldSortedByDistance = GetComponentsOfType<PositionComponent>().Keys
             .Where(entityId =>
             {
                 var positionComponent = GetComponent<PositionComponent>(entityId);
@@ -247,5 +232,58 @@ public class Ecs
             })
             .OrderBy(entityId => GetComponent<PositionComponent>(entityId).FrontY)
             .ToList(); // Cache the results since they'll be used multiple times per frame
+    }
+
+    public Dictionary<int, T> GetComponentsOfType<T>() where T : class
+    {
+        var componentsByEntityId = _game.Model.Ecs.ComponentsByEntityId;
+
+        if (typeof(T) == typeof(PositionComponent))
+            return componentsByEntityId.Position as Dictionary<int, T>;
+        if (typeof(T) == typeof(FuseComponent))
+            return componentsByEntityId.Fuse as Dictionary<int, T>;
+        if (typeof(T) == typeof(DirectionComponent))
+            return componentsByEntityId.Direction as Dictionary<int, T>;
+        if (typeof(T) == typeof(MovementComponent))
+            return componentsByEntityId.Movement as Dictionary<int, T>;
+        if (typeof(T) == typeof(HealthComponent))
+            return componentsByEntityId.Health as Dictionary<int, T>;
+        if (typeof(T) == typeof(MiningComponent))
+            return componentsByEntityId.Mining as Dictionary<int, T>;
+        if (typeof(T) == typeof(GrappleComponent))
+            return componentsByEntityId.Grapple as Dictionary<int, T>;
+        if (typeof(T) == typeof(DirectionalLightSourceComponent))
+            return componentsByEntityId.DirectionalLightSource as Dictionary<int, T>;
+        if (typeof(T) == typeof(TextureComponent))
+            return componentsByEntityId.Texture as Dictionary<int, T>;
+        if (typeof(T) == typeof(RadialLightSourceComponent))
+            return componentsByEntityId.RadialLightSource as Dictionary<int, T>;
+        if (typeof(T) == typeof(RenderLayerComponent))
+            return componentsByEntityId.RenderLayer as Dictionary<int, T>;
+        if (typeof(T) == typeof(ExplosionComponent))
+            return componentsByEntityId.Explosion as Dictionary<int, T>;
+        if (typeof(T) == typeof(DynamiteTag))
+            return componentsByEntityId.DynamiteTag as Dictionary<int, T>;
+        if (typeof(T) == typeof(PlayerTag))
+            return componentsByEntityId.PlayerTag as Dictionary<int, T>;
+        if (typeof(T) == typeof(MinerTag))
+            return componentsByEntityId.MinerTag as Dictionary<int, T>;
+        if (typeof(T) == typeof(ExplosionTag))
+            return componentsByEntityId.ExplosionTag as Dictionary<int, T>;
+
+        throw new ArgumentException($"No handler for type {typeof(T)} in GetComponentsOfType");
+    }
+
+    public void ForEachComponentType(Action<object> callback)
+    {
+        var properties = typeof(ComponentsByEntityId).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        foreach (var property in properties)
+        {
+            var dictionary = property.GetValue(_game.Model.Ecs.ComponentsByEntityId);
+            if (dictionary != null)
+            {
+                callback(dictionary);
+            }
+        }
     }
 }

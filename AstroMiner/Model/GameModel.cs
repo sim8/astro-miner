@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using AstroMiner.Definitions;
-using AstroMiner.ECS;
+using AstroMiner.ECS.Components;
+using System.Reflection;
 
 namespace AstroMiner.Model;
 
@@ -16,13 +17,34 @@ public class GameModel
 [Serializable]
 public class EcsModel
 {
-    public Dictionary<Type, HashSet<Component>> ComponentsByType { get; set; }
-    public Dictionary<int, HashSet<Component>> EntityComponents { get; set; }
+    public ComponentsByEntityId ComponentsByEntityId { get; set; }
     public int? ActiveControllableEntityId { get; set; }
     public int NextEntityId { get; set; }
+    public int NextComponentId { get; set; }
     public int? PlayerEntityId { get; set; }
 
     public int? MinerEntityId { get; set; }
+}
+
+[Serializable]
+public class ComponentsByEntityId
+{
+    public Dictionary<int, PositionComponent> Position { get; set; }
+    public Dictionary<int, FuseComponent> Fuse { get; set; }
+    public Dictionary<int, DirectionComponent> Direction { get; set; }
+    public Dictionary<int, MovementComponent> Movement { get; set; }
+    public Dictionary<int, HealthComponent> Health { get; set; }
+    public Dictionary<int, MiningComponent> Mining { get; set; }
+    public Dictionary<int, GrappleComponent> Grapple { get; set; }
+    public Dictionary<int, DirectionalLightSourceComponent> DirectionalLightSource { get; set; }
+    public Dictionary<int, TextureComponent> Texture { get; set; }
+    public Dictionary<int, RadialLightSourceComponent> RadialLightSource { get; set; }
+    public Dictionary<int, RenderLayerComponent> RenderLayer { get; set; }
+    public Dictionary<int, ExplosionComponent> Explosion { get; set; }
+    public Dictionary<int, DynamiteTag> DynamiteTag { get; set; }
+    public Dictionary<int, PlayerTag> PlayerTag { get; set; }
+    public Dictionary<int, MinerTag> MinerTag { get; set; }
+    public Dictionary<int, ExplosionTag> ExplosionTag { get; set; }
 }
 
 public static class GameModelHelpers
@@ -37,11 +59,42 @@ public static class GameModelHelpers
             {
                 ActiveControllableEntityId = null,
                 NextEntityId = 1,
+                NextComponentId = 1,
                 PlayerEntityId = null,
                 MinerEntityId = null,
-                ComponentsByType = new Dictionary<Type, HashSet<Component>>(),
-                EntityComponents = new Dictionary<int, HashSet<Component>>()
+                ComponentsByEntityId = new ComponentsByEntityId
+                {
+                    Position = new Dictionary<int, PositionComponent>(),
+                    Fuse = new Dictionary<int, FuseComponent>(),
+                    Direction = new Dictionary<int, DirectionComponent>(),
+                    Movement = new Dictionary<int, MovementComponent>(),
+                    Health = new Dictionary<int, HealthComponent>(),
+                    Mining = new Dictionary<int, MiningComponent>(),
+                    Grapple = new Dictionary<int, GrappleComponent>(),
+                    DirectionalLightSource = new Dictionary<int, DirectionalLightSourceComponent>(),
+                    Texture = new Dictionary<int, TextureComponent>(),
+                    RadialLightSource = new Dictionary<int, RadialLightSourceComponent>(),
+                    RenderLayer = new Dictionary<int, RenderLayerComponent>(),
+                    Explosion = new Dictionary<int, ExplosionComponent>(),
+                    DynamiteTag = new Dictionary<int, DynamiteTag>(),
+                    PlayerTag = new Dictionary<int, PlayerTag>(),
+                    MinerTag = new Dictionary<int, MinerTag>(),
+                    ExplosionTag = new Dictionary<int, ExplosionTag>(),
+                }
             }
         };
+    }
+
+    public static void ForEachComponentDictionary(ComponentsByEntityId components, Action<object> callback)
+    {
+        var properties = typeof(ComponentsByEntityId).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        foreach (var property in properties)
+        {
+            var dictionary = property.GetValue(components);
+            if (dictionary != null)
+            {
+                callback(dictionary);
+            }
+        }
     }
 }
