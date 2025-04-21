@@ -11,10 +11,12 @@ public class UIState(BaseGame game)
         Root = new UIElement(game);
         Root.FixedWidth = game.Graphics.GraphicsDevice.Viewport.Width;
         Root.FixedHeight = game.Graphics.GraphicsDevice.Viewport.Height;
+        Root.ChildrenAlign = ChildrenAlign.Center;
 
         var container = new UIElement(game)
         {
-            BackgroundColor = Color.Green
+            BackgroundColor = Color.Green,
+            ChildrenAlign = ChildrenAlign.Center
         };
 
 

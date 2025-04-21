@@ -38,6 +38,8 @@ public class UIElement(BaseGame game)
     public int ComputedHeight => FixedHeight ?? ChildrenHeight;
 
     public ChildrenDirection ChildrenDirection { get; set; } = ChildrenDirection.Column;
+    public ChildrenJustify ChildrenJustify { get; set; } = ChildrenJustify.Start;
+    public ChildrenAlign ChildrenAlign { get; set; } = ChildrenAlign.Start;
 
     public int X { get; set; }
     public int Y { get; set; }
@@ -49,13 +51,6 @@ public class UIElement(BaseGame game)
             spriteBatch.Draw(game.Textures["white"],
                 new Rectangle(X, Y, ComputedWidth, ComputedHeight),
                 BackgroundColor.Value);
-
-        if (BackgroundColor.HasValue && ComputedHeight == 0)
-        {
-            var wow = 2;
-        }
-        // if (BackgroundColor.HasValue) Console.WriteLine("Rendering size: " + ComputedWidth + "," + ComputedHeight);
-
         foreach (var child in Children) child.Render(spriteBatch);
     }
 
@@ -103,11 +98,24 @@ public class UIElement(BaseGame game)
 
         if (ChildrenDirection == ChildrenDirection.Column)
         {
-            var cursorX = originX;
+            // var cursorX = ChildrenAlign switch
+            // {
+            //     ChildrenAlign.Start => originX,
+            //     ChildrenAlign.Center => originX + ComputedWidth / 2 - ChildrenWidth / 2,
+            //     ChildrenAlign.End => originX + ComputedWidth - ChildrenWidth,
+            //     _ => throw new ArgumentOutOfRangeException()
+            // };
             var cursorY = originY;
             foreach (var child in Children)
             {
-                child.ComputePositions(cursorX, cursorY);
+                var childX = ChildrenAlign switch
+                {
+                    ChildrenAlign.Start => originX,
+                    ChildrenAlign.Center => originX + ComputedWidth / 2 - child.ComputedWidth / 2,
+                    ChildrenAlign.End => originX + ComputedWidth - child.ComputedWidth,
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+                child.ComputePositions(childX, cursorY);
                 cursorY += child.ComputedHeight;
             }
         }
