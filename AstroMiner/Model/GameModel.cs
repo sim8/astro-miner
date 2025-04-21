@@ -11,6 +11,7 @@ public class GameModel
     public World ActiveWorld { get; set; }
     public long TotalPlaytimeMs { get; set; }
     public EcsModel Ecs { get; set; }
+    public Launch Launch { get; set; }
 }
 
 [Serializable]
@@ -44,6 +45,15 @@ public class ComponentsByEntityId
     public Dictionary<int, PlayerTag> PlayerTag { get; set; }
     public Dictionary<int, MinerTag> MinerTag { get; set; }
     public Dictionary<int, ExplosionTag> ExplosionTag { get; set; }
+}
+
+[Serializable]
+public class Launch
+{
+    public bool IsLaunching { get; set; }
+    public int LaunchPadFrontEntityId { get; set; }
+    public int LaunchPadRearEntityId { get; set; }
+    public float MinerLaunchSpeed { get; set; }
 }
 
 public static class GameModelHelpers
@@ -80,6 +90,13 @@ public static class GameModelHelpers
                     MinerTag = new Dictionary<int, MinerTag>(),
                     ExplosionTag = new Dictionary<int, ExplosionTag>()
                 }
+            },
+            Launch = new Launch
+            {
+                LaunchPadFrontEntityId = -1,
+                LaunchPadRearEntityId = -1,
+                IsLaunching = false,
+                MinerLaunchSpeed = 0f
             }
         };
     }
