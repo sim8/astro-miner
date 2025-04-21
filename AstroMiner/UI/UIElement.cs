@@ -98,13 +98,6 @@ public class UIElement(BaseGame game)
 
         if (ChildrenDirection == ChildrenDirection.Column)
         {
-            // var cursorX = ChildrenAlign switch
-            // {
-            //     ChildrenAlign.Start => originX,
-            //     ChildrenAlign.Center => originX + ComputedWidth / 2 - ChildrenWidth / 2,
-            //     ChildrenAlign.End => originX + ComputedWidth - ChildrenWidth,
-            //     _ => throw new ArgumentOutOfRangeException()
-            // };
             var cursorY = originY;
             foreach (var child in Children)
             {
