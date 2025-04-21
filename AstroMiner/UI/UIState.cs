@@ -6,12 +6,12 @@ public class UIState(BaseGame game)
 {
     public UIElement Root { get; private set; }
 
-    public void Initialize()
+    public UIElement GetTree()
     {
-        Root = new UIElement(game);
-        Root.FixedWidth = game.Graphics.GraphicsDevice.Viewport.Width;
-        Root.FixedHeight = game.Graphics.GraphicsDevice.Viewport.Height;
-        Root.ChildrenAlign = ChildrenAlign.Center;
+        var root = new UIElement(game);
+        root.FixedWidth = game.Graphics.GraphicsDevice.Viewport.Width;
+        root.FixedHeight = game.Graphics.GraphicsDevice.Viewport.Height;
+        root.ChildrenAlign = ChildrenAlign.Center;
 
         var container = new UIElement(game)
         {
@@ -19,8 +19,6 @@ public class UIState(BaseGame game)
             ChildrenAlign = ChildrenAlign.Center
         };
 
-
-        // Add example UI elements
         container.Children.Add(new UIElement(game)
         {
             BackgroundColor = Color.LightGray,
@@ -35,11 +33,14 @@ public class UIState(BaseGame game)
             FixedHeight = 75
         });
 
-        Root.Children.Add(container);
+        root.Children.Add(container);
+
+        return root;
     }
 
     public void Update(GameTime gameTime)
     {
+        Root = GetTree();
         Root.FixedWidth = game.Graphics.GraphicsDevice.Viewport.Width;
         Root.FixedHeight = game.Graphics.GraphicsDevice.Viewport.Height;
 

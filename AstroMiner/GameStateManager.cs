@@ -97,7 +97,6 @@ public class GameStateManager(BaseGame game)
         CloudManager = new CloudManager(game);
         Ecs = new Ecs(game);
         UIState = new UIState(game);
-        UIState.Initialize();
 
         if (!game.StateManager.Ecs.PlayerEntityId.HasValue) SetUpNewGame();
 
