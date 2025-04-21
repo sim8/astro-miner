@@ -4,6 +4,7 @@ using AstroMiner.ECS.Components;
 using AstroMiner.Renderers.AsteroidWorld;
 using AstroMiner.Renderers.HomeWorld;
 using AstroMiner.Renderers.InteriorsWorld;
+using AstroMiner.Renderers.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -23,6 +24,7 @@ public class Renderer
     private readonly PlayerRenderer _playerRenderer;
     private readonly ScrollingBackgroundRenderer _scrollingBackgroundRenderer;
     private readonly RendererShared _shared;
+    private readonly UIRenderer _uiRenderer;
     private readonly UserInterfaceRenderer _userInterfaceRenderer;
     private RenderTarget2D _lightingRenderTarget;
 
@@ -31,6 +33,7 @@ public class Renderer
     {
         _game = game;
         _shared = new RendererShared(_game);
+        _uiRenderer = new UIRenderer(_game);
         _minerRenderer = new MinerRenderer(_shared);
         _playerRenderer = new PlayerRenderer(_shared);
         _dynamiteRenderer = new DynamiteRenderer(_shared);
@@ -103,6 +106,7 @@ public class Renderer
         // Lastly, draw UI
         spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
         _userInterfaceRenderer.RenderUserInterface(spriteBatch);
+        _uiRenderer.Render(spriteBatch);
         spriteBatch.End();
     }
 

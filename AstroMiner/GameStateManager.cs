@@ -5,6 +5,7 @@ using AstroMiner.Definitions;
 using AstroMiner.ECS;
 using AstroMiner.HomeWorld;
 using AstroMiner.InteriorsWorld;
+using AstroMiner.UI;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
@@ -47,6 +48,7 @@ public class GameStateManager(BaseGame game)
     public HomeWorldState HomeWorld;
     public InteriorsWorldState InteriorsWorld;
     public Inventory Inventory;
+    public UIState UIState;
 
     public bool FreezeControls { get; set; }
 
@@ -94,6 +96,8 @@ public class GameStateManager(BaseGame game)
         InteriorsWorld = new InteriorsWorldState(game);
         CloudManager = new CloudManager(game);
         Ecs = new Ecs(game);
+        UIState = new UIState(game);
+        UIState.Initialize();
 
         if (!game.StateManager.Ecs.PlayerEntityId.HasValue) SetUpNewGame();
 
