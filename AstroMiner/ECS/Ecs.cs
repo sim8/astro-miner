@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using AstroMiner.ECS.Components;
 using AstroMiner.ECS.Systems;
-using AstroMiner.Model;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner.ECS;
@@ -139,7 +137,22 @@ public class Ecs
 
     public void DestroyEntity(int entityId)
     {
-        ForEachComponentType(components => components.Remove(entityId));
+        _game.Model.Ecs.ComponentsByEntityId.Position.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.Fuse.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.Direction.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.Movement.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.Health.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.Mining.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.Grapple.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.DirectionalLightSource.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.Texture.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.RadialLightSource.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.RenderLayer.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.Explosion.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.DynamiteTag.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.PlayerTag.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.MinerTag.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.ExplosionTag.Remove(entityId);
 
         // Clear entity references if they're being destroyed
         if (ActiveControllableEntityId == entityId)
@@ -171,14 +184,14 @@ public class Ecs
 
     public T GetComponent<T>(int entityId) where T : Component
     {
-        return GetComponentsOfType<T>().TryGetValue(entityId, out var component) ? (T)component : null;
+        return GetComponentsOfType<T>().TryGetValue(entityId, out var component) ? component : null;
     }
 
     public IEnumerable<T> GetAllComponents<T>() where T : Component
     {
         var components = GetComponentsOfType<T>();
 
-        foreach (var component in components.Values) yield return (T)component;
+        foreach (var component in components.Values) yield return component;
     }
 
     public IEnumerable<T> GetAllComponentsInActiveWorld<T>() where T : Component
@@ -242,19 +255,5 @@ public class Ecs
             return componentsByEntityId.ExplosionTag as Dictionary<int, T>;
 
         throw new ArgumentException($"No handler for type {typeof(T)} in GetComponentsOfType");
-    }
-
-    private void ForEachComponentType(Action<Dictionary<int, object>> callback)
-    {
-        var properties = typeof(ComponentsByEntityId).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-        foreach (var property in properties)
-        {
-            var dictionary = property.GetValue(_game.Model.Ecs.ComponentsByEntityId);
-            if (dictionary != null)
-            {
-                // Cast to Dictionary<int, object> since we know the structure
-                callback(dictionary as Dictionary<int, object>);
-            }
-        }
     }
 }
