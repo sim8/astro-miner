@@ -32,6 +32,7 @@ public class AstroMinerGame : BaseGame
         _miningControlMapper.AddMapping(MiningControls.PlaceDynamite, Keys.R, Buttons.RightShoulder, false);
         _miningControlMapper.AddMapping(MiningControls.UseGrapple, Keys.G, Buttons.LeftTrigger, true);
         _miningControlMapper.AddMapping(MiningControls.NewGameOrReturnToBase, Keys.N, Buttons.Start, false);
+        _miningControlMapper.AddMapping(MiningControls.SaveGame, Keys.B, Buttons.Back, false); // TEMP
     }
 
     protected override void LoadContent()

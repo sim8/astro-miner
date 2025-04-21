@@ -26,7 +26,8 @@ public enum MiningControls
     // Miner-only
     UseGrapple,
 
-    NewGameOrReturnToBase // TODO factor out
+    NewGameOrReturnToBase, // TODO factor out
+    SaveGame // TEMP
 }
 
 public enum Direction
@@ -75,6 +76,12 @@ public class GameStateManager(BaseGame game)
             InteriorsWorld.Initialize();
     }
 
+    // TODO probably lots?
+    private void SetUpNewGame()
+    {
+        HomeWorld.InitializeOrResetEntities();
+    }
+
     public void Initialize()
     {
         // game.Model = GameModelHelpers.CreateNewGameModel();
@@ -88,8 +95,15 @@ public class GameStateManager(BaseGame game)
         CloudManager = new CloudManager(game);
         Ecs = new Ecs(game);
 
-        SetActiveWorldAndInitialize(World.Home);
-        HomeWorld.InitializeOrResetEntities();
+        if (!game.StateManager.Ecs.PlayerEntityId.HasValue) SetUpNewGame();
+
+        SetActiveWorldAndInitialize(game.Model.ActiveWorld);
+    }
+
+    private void SaveGameTEMP()
+    {
+        game.GameStateStorage.SaveState(game.Model);
+        Console.WriteLine("saved!");
     }
 
     public void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
@@ -101,5 +115,7 @@ public class GameStateManager(BaseGame game)
         Camera.Update(gameTime, controlsToUse);
         CloudManager.Update(gameTime);
         Ecs.Update(gameTime, controlsToUse);
+
+        if (activeMiningControls.Contains(MiningControls.SaveGame)) SaveGameTEMP();
     }
 }
