@@ -19,7 +19,7 @@ public class CloudManager
     // Render foreground at full resolution
     public const int ForegroundCloudSizePx = 1024;
     public const int BackgroundCloudSizePx = (int)(ForegroundCloudSizePx * BgCloudScale);
-    private readonly GameState _gameState;
+    private readonly BaseGame _game;
 
     private readonly Random _rng = new();
 
@@ -32,9 +32,9 @@ public class CloudManager
     private float _timeSinceLastCloudBg;
     private float _timeSinceLastCloudFg;
 
-    public CloudManager(GameState gameState)
+    public CloudManager(BaseGame game)
     {
-        _gameState = gameState;
+        _game = game;
         // Initialize first random spawn times
         _nextBgSpawnTime = GetRandomInterval(MinBgSpawnInterval, MaxBgSpawnInterval);
         _nextFgSpawnTime = GetRandomInterval(MinFgSpawnInterval, MaxFgSpawnInterval);
@@ -69,7 +69,7 @@ public class CloudManager
             var c = CloudsBg[i];
             c.Y += BgCloudSpeed * elapsedSec;
 
-            if (c.Y > _gameState.Graphics.GraphicsDevice.Viewport.Height) CloudsBg.RemoveAt(i);
+            if (c.Y > _game.Graphics.GraphicsDevice.Viewport.Height) CloudsBg.RemoveAt(i);
         }
 
         for (var i = CloudsFg.Count - 1; i >= 0; i--)
@@ -77,14 +77,14 @@ public class CloudManager
             var c = CloudsFg[i];
             c.Y += FgCloudSpeed * elapsedSec;
 
-            if (c.Y > _gameState.Graphics.GraphicsDevice.Viewport.Height) CloudsFg.RemoveAt(i);
+            if (c.Y > _game.Graphics.GraphicsDevice.Viewport.Height) CloudsFg.RemoveAt(i);
         }
     }
 
     private void SpawnCloud(bool isForeground)
     {
         var size = isForeground ? ForegroundCloudSizePx : BackgroundCloudSizePx;
-        var xPos = (float)(_rng.NextDouble() * (_gameState.Graphics.GraphicsDevice.Viewport.Width + size)) - size;
+        var xPos = (float)(_rng.NextDouble() * (_game.Graphics.GraphicsDevice.Viewport.Width + size)) - size;
 
         var yPos = -size;
 

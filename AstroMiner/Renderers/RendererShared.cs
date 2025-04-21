@@ -7,14 +7,13 @@ using Microsoft.Xna.Framework.Graphics;
 namespace AstroMiner.Renderers;
 
 public class RendererShared(
-    GameState gameState,
-    GraphicsDeviceManager graphics,
-    Dictionary<string, Texture2D> textures)
+    BaseGame game)
 {
-    public readonly GameState GameState = gameState;
-    public readonly GraphicsDeviceManager Graphics = graphics;
-    public readonly Dictionary<string, Texture2D> Textures = textures;
-    public readonly ViewHelpers ViewHelpers = new(gameState, graphics);
+    public readonly BaseGame Game = game;
+    public readonly GameStateManager GameStateManager = game.StateManager;
+    public readonly GraphicsDeviceManager Graphics = game.Graphics;
+    public readonly Dictionary<string, Texture2D> Textures = game.Textures;
+    public readonly ViewHelpers ViewHelpers = new(game, game.Graphics);
 
     public void RenderRadialLightSource(SpriteBatch spriteBatch, Vector2 pos, Color color, int size = 256,
         float opacity = 1)

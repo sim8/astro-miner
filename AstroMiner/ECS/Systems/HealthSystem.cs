@@ -8,21 +8,19 @@ namespace AstroMiner.ECS.Systems;
 
 public class HealthSystem : System
 {
-    public HealthSystem(Ecs ecs, GameState gameState) : base(ecs, gameState)
+    public HealthSystem(Ecs ecs, BaseGame game) : base(ecs, game)
     {
     }
 
     public void KillAllEntitiesInWorld()
     {
         foreach (var healthComponent in Ecs.GetAllComponentsInActiveWorld<HealthComponent>())
-        {
             if (!healthComponent.IsDead)
             {
                 healthComponent.CurrentHealth = 0;
                 healthComponent.IsDead = true;
                 OnEntityDeath(healthComponent.EntityId);
             }
-        }
     }
 
     public void TakeDamage(int entityId, float damage)
@@ -51,16 +49,15 @@ public class HealthSystem : System
         // Create explosion at entity position
         var positionComponent = Ecs.GetComponent<PositionComponent>(entityId);
         if (positionComponent != null)
-            GameState.Ecs.Factories.CreateExplosionEntity(positionComponent.CenterPosition);
+            game.StateManager.Ecs.Factories.CreateExplosionEntity(positionComponent.CenterPosition);
     }
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
-        if (GameState.ActiveWorld != World.Asteroid) return;
+        if (game.Model.ActiveWorld != World.Asteroid) return;
 
         // Update damage animation state
         foreach (var healthComponent in Ecs.GetAllComponents<HealthComponent>())
-        {
             if (healthComponent.IsAnimatingDamage)
             {
                 // Update animation timers
@@ -75,6 +72,5 @@ public class HealthSystem : System
                     healthComponent.IsAnimatingDamage = false;
                 }
             }
-        }
     }
 }

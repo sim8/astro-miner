@@ -26,7 +26,8 @@ public enum MiningControls
     // Miner-only
     UseGrapple,
 
-    NewGameOrReturnToBase // TODO factor out
+    NewGameOrReturnToBase, // TODO factor out
+    SaveGame // TEMP
 }
 
 public enum Direction
@@ -37,23 +38,15 @@ public enum Direction
     Left
 }
 
-public class GameState
+public class GameStateManager(BaseGame game)
 {
     private static readonly HashSet<MiningControls> EmptyControls = new();
-    public readonly GraphicsDeviceManager Graphics;
     public AsteroidWorldState AsteroidWorld;
     public CameraState Camera;
     public CloudManager CloudManager;
     public HomeWorldState HomeWorld;
     public InteriorsWorldState InteriorsWorld;
     public Inventory Inventory;
-
-    public GameState(
-        GraphicsDeviceManager graphics)
-    {
-        Graphics = graphics;
-        Initialize();
-    }
 
     public bool FreezeControls { get; set; }
 
@@ -62,11 +55,9 @@ public class GameState
 
     public long MsSinceStart { get; private set; }
 
-    public World ActiveWorld { get; private set; }
-
 
     public BaseWorldState ActiveWorldState =>
-        ActiveWorld switch
+        game.Model.ActiveWorld switch
         {
             World.Asteroid => AsteroidWorld,
             World.Home => HomeWorld,
@@ -76,7 +67,7 @@ public class GameState
 
     public void SetActiveWorldAndInitialize(World world)
     {
-        ActiveWorld = world;
+        game.Model.ActiveWorld = world;
         if (world == World.Asteroid)
             AsteroidWorld.Initialize();
         else if (world == World.Home)
@@ -85,19 +76,34 @@ public class GameState
             InteriorsWorld.Initialize();
     }
 
+    // TODO probably lots?
+    private void SetUpNewGame()
+    {
+        HomeWorld.InitializeOrResetEntities();
+    }
+
     public void Initialize()
     {
+        // game.Model = GameModelHelpers.CreateNewGameModel();
+        game.Model = game.GameStateStorage.LoadState();
         Inventory = new Inventory();
-        Camera = new CameraState(this);
+        Camera = new CameraState(game);
         MsSinceStart = 0;
-        AsteroidWorld = new AsteroidWorldState(this);
-        HomeWorld = new HomeWorldState(this);
-        InteriorsWorld = new InteriorsWorldState(this);
-        CloudManager = new CloudManager(this);
-        Ecs = new Ecs(this);
+        AsteroidWorld = new AsteroidWorldState(game);
+        HomeWorld = new HomeWorldState(game);
+        InteriorsWorld = new InteriorsWorldState(game);
+        CloudManager = new CloudManager(game);
+        Ecs = new Ecs(game);
 
-        SetActiveWorldAndInitialize(World.Home);
-        HomeWorld.InitializeOrResetEntities();
+        if (!game.StateManager.Ecs.PlayerEntityId.HasValue) SetUpNewGame();
+
+        SetActiveWorldAndInitialize(game.Model.ActiveWorld);
+    }
+
+    private void SaveGameTEMP()
+    {
+        game.GameStateStorage.SaveState(game.Model);
+        Console.WriteLine("saved!");
     }
 
     public void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
@@ -109,5 +115,7 @@ public class GameState
         Camera.Update(gameTime, controlsToUse);
         CloudManager.Update(gameTime);
         Ecs.Update(gameTime, controlsToUse);
+
+        if (activeMiningControls.Contains(MiningControls.SaveGame)) SaveGameTEMP();
     }
 }

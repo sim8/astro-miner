@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner.Utilities;
 
-public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
+public class ViewHelpers(BaseGame game, GraphicsDeviceManager graphics)
 {
     // Should only be used at very end of calc pipeline
     private int ConvertToRenderedPxValue_CAUTION(double value)
@@ -17,14 +17,14 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
 
     private Vector2 GetCameraPos()
     {
-        var playerCenterPos = gameState.Ecs.ActiveControllableEntityCenterPosition;
+        var playerCenterPos = game.StateManager.Ecs.ActiveControllableEntityCenterPosition;
         var cameraPosWithPortal = OverrideCameraPosIfUsingPortal(playerCenterPos);
         return ClampCameraPosForGridBounds(cameraPosWithPortal);
     }
 
     private Vector2 OverrideCameraPosIfUsingPortal(Vector2 cameraPos)
     {
-        if (gameState.Ecs.ActiveControllableEntityId == null) return cameraPos;
+        if (game.Model.Ecs.ActiveControllableEntityId == null) return cameraPos;
 
         // TODO
 
@@ -42,14 +42,14 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
         var widthThreshold = viewportGridWidth / 2;
         var heightThreshold = viewportGridHeight / 2;
 
-        var (cols, rows) = gameState.ActiveWorldState.GetGridSize();
+        var (cols, rows) = game.StateManager.ActiveWorldState.GetGridSize();
 
         float cameraX;
         float cameraY;
 
         // Remove clamping for Oizus left (pier) and top (launch sequence)
-        var leftThreshold = gameState.ActiveWorld == World.Home ? 0 : widthThreshold;
-        var topThreshold = gameState.ActiveWorld == World.Home ? -1000 : widthThreshold;
+        var leftThreshold = game.Model.ActiveWorld == World.Home ? 0 : widthThreshold;
+        var topThreshold = game.Model.ActiveWorld == World.Home ? -1000 : widthThreshold;
 
 
         if (cols <= widthThreshold * 2)
@@ -136,17 +136,17 @@ public class ViewHelpers(GameState gameState, GraphicsDeviceManager graphics)
 
     private float ConvertGridUnitsToVisiblePx(float gridUnits, float parallaxLayer = 1f)
     {
-        return gridUnits * GameConfig.CellTextureSizePx * gameState.Camera.ScaleMultiplier;
+        return gridUnits * GameConfig.CellTextureSizePx * game.StateManager.Camera.ScaleMultiplier;
     }
 
     private float ConvertVisiblePxToGridUnits(float visiblePx)
     {
-        return visiblePx / (GameConfig.CellTextureSizePx * gameState.Camera.ScaleMultiplier);
+        return visiblePx / (GameConfig.CellTextureSizePx * game.StateManager.Camera.ScaleMultiplier);
     }
 
     private float ConvertTexturePxToVisiblePx(int numToScale)
     {
-        return numToScale * gameState.Camera.ScaleMultiplier;
+        return numToScale * game.StateManager.Camera.ScaleMultiplier;
     }
 
     public Rectangle GetVisibleRectForObject(Vector2 objectPos, int textureWidth, int textureHeight,

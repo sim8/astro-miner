@@ -8,16 +8,16 @@ namespace AstroMiner;
 public class CameraState
 {
     private const int ZoomTransitionMs = 800;
-    private readonly GameState _gameState;
+    private readonly BaseGame _game;
     private float _endScale;
 
     // Fields for handling transitions
     private float _startScale;
     private int _zoomTransitionElapsed;
 
-    public CameraState(GameState gameState)
+    public CameraState(BaseGame game)
     {
-        _gameState = gameState;
+        _game = game;
         ScaleMultiplier = GetBaseZoomLevel();
         // Initialize the transition state
         _startScale = ScaleMultiplier;
@@ -26,7 +26,7 @@ public class CameraState
     }
 
     private float BaseScaleMultiplier =>
-        _gameState.AsteroidWorld.IsInMiner && _gameState.ActiveWorld == World.Asteroid
+        _game.StateManager.AsteroidWorld.IsInMiner && _game.Model.ActiveWorld == World.Asteroid
             ? GetBaseZoomLevel()
             : GetBaseZoomLevel() + 1;
 
@@ -35,9 +35,10 @@ public class CameraState
     private int GetBaseZoomLevel()
     {
         var viewportGridWidth =
-            (int)Math.Ceiling((float)_gameState.Graphics.GraphicsDevice.Viewport.Width / GameConfig.CellTextureSizePx);
+            (int)Math.Ceiling((float)_game.Graphics.GraphicsDevice.Viewport.Width / GameConfig.CellTextureSizePx);
         var viewportGridHeight =
-            (int)Math.Ceiling((float)_gameState.Graphics.GraphicsDevice.Viewport.Height / GameConfig.CellTextureSizePx);
+            (int)Math.Ceiling((float)_game.Graphics.GraphicsDevice.Viewport.Height /
+                              GameConfig.CellTextureSizePx);
 
         var zoom = 1;
 

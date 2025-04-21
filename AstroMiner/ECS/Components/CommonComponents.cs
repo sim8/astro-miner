@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Drawing;
+using System.Text.Json.Serialization;
 using AstroMiner.Definitions;
-using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Color = Microsoft.Xna.Framework.Color;
 
@@ -9,21 +9,25 @@ namespace AstroMiner.ECS.Components;
 
 public class PositionComponent : Component
 {
-    public int HeightPx;
-    public bool IsCollideable;
-    public Vector2 Position;
-    public int WidthPx;
+    public int HeightPx { get; set; }
+
+    public bool IsCollideable { get; set; }
+
+    public Vector2 Position { get; set; }
+
+    public int WidthPx { get; set; }
+
     public World World { get; set; }
     public bool IsOffAsteroid { get; set; }
 
-    public float GridWidth => (float)WidthPx / GameConfig.CellTextureSizePx;
-    public float GridHeight => (float)HeightPx / GameConfig.CellTextureSizePx;
+    [JsonIgnore] public float GridWidth => (float)WidthPx / GameConfig.CellTextureSizePx;
+    [JsonIgnore] public float GridHeight => (float)HeightPx / GameConfig.CellTextureSizePx;
 
-    public Vector2 CenterPosition => Position + new Vector2(GridWidth / 2f, GridHeight / 2f);
+    [JsonIgnore] public Vector2 CenterPosition => Position + new Vector2(GridWidth / 2f, GridHeight / 2f);
 
-    public float FrontY => Position.Y + GridHeight;
+    [JsonIgnore] public float FrontY => Position.Y + GridHeight;
 
-    public RectangleF Rectangle => new(Position.X, Position.Y, GridWidth, GridHeight);
+    [JsonIgnore] public RectangleF Rectangle => new(Position.X, Position.Y, GridWidth, GridHeight);
 
     public void SetCenterPosition(Vector2 centerPos)
     {
@@ -37,13 +41,12 @@ public class FuseComponent : Component
 {
     public int MaxFuseTimeMs { get; set; }
     public int TimeToExplodeMs { get; set; }
-    public float FusePercentLeft => TimeToExplodeMs / (float)MaxFuseTimeMs;
+    [JsonIgnore] public float FusePercentLeft => TimeToExplodeMs / (float)MaxFuseTimeMs;
 }
 
 public class DirectionComponent : Component
 {
     public Direction Direction { get; set; } = Direction.Top;
-    public Vector2 DirectionalVector => DirectionHelpers.GetDirectionalVector(1f, Direction);
 }
 
 public enum PortalStatus
@@ -81,8 +84,8 @@ public class HealthComponent : Component
     public int TimeOnLavaMs { get; set; }
     public bool IsOnLava { get; set; }
 
-    public float HealthPercentage => CurrentHealth / MaxHealth;
-    public float LavaTimePercentToTakingDamage => TimeOnLavaMs / (float)GameConfig.LavaDamageDelayMs;
+    [JsonIgnore] public float HealthPercentage => CurrentHealth / MaxHealth;
+    [JsonIgnore] public float LavaTimePercentToTakingDamage => TimeOnLavaMs / (float)GameConfig.LavaDamageDelayMs;
 }
 
 // TODO rename Drill
@@ -115,8 +118,8 @@ public class GrappleComponent : Component
     public Vector2? GrappleTarget { get; set; } = null;
 
     // Derived
-    public bool GrappleAvailable => GrappleCooldownRemaining == 0;
-    public bool IsReelingIn => GrapplePercentToTarget == 1f && GrappleTargetIsValid;
+    [JsonIgnore] public bool GrappleAvailable => GrappleCooldownRemaining == 0;
+    [JsonIgnore] public bool IsReelingIn => GrapplePercentToTarget == 1f && GrappleTargetIsValid;
 }
 
 public class DirectionalLightSourceComponent : Component

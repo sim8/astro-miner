@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner.AsteroidWorld;
 
-public class ActiveExplosiveRockCell(GameState gameState, (int x, int y) gridPos, int timeToExplodeMs = 3000)
+public class ActiveExplosiveRockCell(BaseGame game, (int x, int y) gridPos, int timeToExplodeMs = 3000)
 {
     private readonly (int X, int Y) Position = gridPos;
     public int TimeToExplodeMs = timeToExplodeMs;
@@ -13,8 +13,8 @@ public class ActiveExplosiveRockCell(GameState gameState, (int x, int y) gridPos
         if (TimeToExplodeMs <= 0)
         {
             var explosionPos = new Vector2(Position.X + 0.5f, Position.Y + 0.5f);
-            gameState.Ecs.Factories.CreateExplosionEntity(explosionPos);
-            gameState.AsteroidWorld.Grid.DeactivateExplosiveRockCell(Position.X, Position.Y);
+            game.StateManager.Ecs.Factories.CreateExplosionEntity(explosionPos);
+            game.StateManager.AsteroidWorld.Grid.DeactivateExplosiveRockCell(Position.X, Position.Y);
         }
     }
 }

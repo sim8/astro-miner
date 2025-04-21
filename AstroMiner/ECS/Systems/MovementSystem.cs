@@ -19,7 +19,7 @@ public class MovementSystem : System
         { MiningControls.MoveLeft, Direction.Left }
     };
 
-    public MovementSystem(Ecs ecs, GameState gameState) : base(ecs, gameState)
+    public MovementSystem(Ecs ecs, BaseGame game) : base(ecs, game)
     {
     }
 
@@ -96,7 +96,7 @@ public class MovementSystem : System
 
         for (var x = topLeftCell.x; x <= bottomRightCell.x; x++)
         for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
-            if (GameState.ActiveWorldState.CellIsCollideable(x, y))
+            if (game.StateManager.ActiveWorldState.CellIsCollideable(x, y))
                 return true;
         return false;
     }
@@ -122,7 +122,8 @@ public class MovementSystem : System
 
             if (otherPositionComponent.World != positionComponent.World) continue;
 
-            if (otherPositionComponent.EntityId == Ecs.PlayerEntityId && GameState.AsteroidWorld.IsInMiner) continue;
+            if (otherPositionComponent.EntityId == Ecs.PlayerEntityId &&
+                game.StateManager.AsteroidWorld.IsInMiner) continue;
 
             if (newRectangle.IntersectsWith(otherPositionComponent.Rectangle) &&
                 !currentRectangle.IntersectsWith(otherPositionComponent
@@ -144,7 +145,8 @@ public class MovementSystem : System
             if (movementComponent.PortalStatus != PortalStatus.None) continue;
 
             var entityId = movementComponent.EntityId;
-            var activeDirection = entityId == GameState.Ecs.ActiveControllableEntityId ? pressedDirection : null;
+            var activeDirection =
+                entityId == game.Model.Ecs.ActiveControllableEntityId.Value ? pressedDirection : null;
             var positionComponent = Ecs.GetComponent<PositionComponent>(entityId);
             var directionComponent = Ecs.GetComponent<DirectionComponent>(entityId);
 

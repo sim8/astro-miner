@@ -9,13 +9,13 @@ namespace AstroMiner.ECS.Systems;
 
 public class FallOrLavaDamageSystem : System
 {
-    public FallOrLavaDamageSystem(Ecs ecs, GameState gameState) : base(ecs, gameState)
+    public FallOrLavaDamageSystem(Ecs ecs, BaseGame game) : base(ecs, game)
     {
     }
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
-        if (GameState.ActiveWorld != World.Asteroid) return;
+        if (game.Model.ActiveWorld != World.Asteroid) return;
 
         foreach (var healthComponent in Ecs.GetAllComponents<HealthComponent>())
         {
@@ -24,22 +24,22 @@ public class FallOrLavaDamageSystem : System
             var positionComponent = Ecs.GetComponent<PositionComponent>(healthComponent.EntityId);
             if (positionComponent == null) continue;
 
-            if (healthComponent.EntityId == Ecs.PlayerEntityId && GameState.AsteroidWorld.IsInMiner) continue;
+            if (healthComponent.EntityId == Ecs.PlayerEntityId && game.StateManager.AsteroidWorld.IsInMiner) continue;
 
             var (topLeftX, topLeftY) = ViewHelpers.ToGridPosition(positionComponent.Position);
-            var (bottomRightX, bottomRightY) = ViewHelpers.ToGridPosition(positionComponent.Position + new Vector2(positionComponent.GridWidth, positionComponent.GridHeight));
+            var (bottomRightX, bottomRightY) = ViewHelpers.ToGridPosition(positionComponent.Position +
+                                                                          new Vector2(positionComponent.GridWidth,
+                                                                              positionComponent.GridHeight));
 
             var allCellsAreEmpty = true;
             var someCellsAreLava = false;
 
             for (var x = topLeftX; x <= bottomRightX; x++)
+            for (var y = topLeftY; y <= bottomRightY; y++)
             {
-                for (var y = topLeftY; y <= bottomRightY; y++)
-                {
-                    var floorType = GameState.AsteroidWorld.Grid.GetFloorType(x, y);
-                    if (floorType != FloorType.Empty) allCellsAreEmpty = false;
-                    if (floorType == FloorType.Lava) someCellsAreLava = true;
-                }
+                var floorType = game.StateManager.AsteroidWorld.Grid.GetFloorType(x, y);
+                if (floorType != FloorType.Empty) allCellsAreEmpty = false;
+                if (floorType == FloorType.Lava) someCellsAreLava = true;
             }
 
             healthComponent.IsOnLava = someCellsAreLava;
@@ -48,19 +48,16 @@ public class FallOrLavaDamageSystem : System
             {
                 healthComponent.TimeOnLavaMs += gameTime.ElapsedGameTime.Milliseconds;
                 if (healthComponent.TimeOnLavaMs >= GameConfig.LavaDamageDelayMs)
-                {
-                    GameState.Ecs.HealthSystem.TakeDamage(healthComponent.EntityId, (float)GameConfig.LavaDamagePerSecond / 1000 * gameTime.ElapsedGameTime.Milliseconds);
-                }
+                    game.StateManager.Ecs.HealthSystem.TakeDamage(healthComponent.EntityId,
+                        (float)GameConfig.LavaDamagePerSecond / 1000 * gameTime.ElapsedGameTime.Milliseconds);
             }
             else if (healthComponent.TimeOnLavaMs > 0)
             {
-                healthComponent.TimeOnLavaMs = Math.Max(0, healthComponent.TimeOnLavaMs - gameTime.ElapsedGameTime.Milliseconds);
+                healthComponent.TimeOnLavaMs =
+                    Math.Max(0, healthComponent.TimeOnLavaMs - gameTime.ElapsedGameTime.Milliseconds);
             }
 
-            if (allCellsAreEmpty)
-            {
-                positionComponent.IsOffAsteroid = true;
-            }
+            if (allCellsAreEmpty) positionComponent.IsOffAsteroid = true;
         }
     }
 }

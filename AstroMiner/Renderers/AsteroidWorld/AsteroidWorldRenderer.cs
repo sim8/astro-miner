@@ -13,12 +13,12 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
         [Corner.TopLeft, Corner.TopRight, Corner.BottomLeft, Corner.BottomRight];
 
     private readonly FogOfWarRenderer _fogOfWarRenderer;
-    private readonly GameState _gameState;
+    private readonly GameStateManager _gameStateManager;
     private readonly Color _lavaLightColor = new(255, 231, 171);
 
     public AsteroidWorldRenderer(RendererShared shared) : base(shared)
     {
-        _gameState = shared.GameState;
+        _gameStateManager = shared.GameStateManager;
         _fogOfWarRenderer = new FogOfWarRenderer(shared);
     }
 
@@ -28,26 +28,31 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
             1, // Account for textures with vertical overlap
             (col, row) =>
             {
-                var cellState = _gameState.AsteroidWorld.Grid.GetCellState(col, row);
+                var cellState = _gameStateManager.AsteroidWorld.Grid.GetCellState(col, row);
 
                 foreach (var corner in _cornersInRenderOrder)
                 {
                     // Render floor
                     var floorQuadrantSourceRect =
-                        Tilesets.GetFloorQuadrantSourceRect(_gameState, col, row, corner);
+                        Tilesets.GetFloorQuadrantSourceRect(Shared.Game, col, row, corner);
                     spriteBatch.Draw(Shared.Textures["tileset"],
                         Shared.ViewHelpers.GetVisibleRectForFloorQuadrant(col, row, corner),
                         floorQuadrantSourceRect,
                         Color.White);
 
                     // Render wall
-                    if (Tilesets.CellIsTilesetType(_gameState, col, row))
+                    if (Tilesets.CellIsTilesetType(Shared.Game, col, row))
                     {
                         var dualTilesetSourceRect =
-                            Tilesets.GetWallQuadrantSourceRect(_gameState, col, row, corner);
+                            Tilesets.GetWallQuadrantSourceRect(Shared.Game, col, row, corner);
 
-                        var tintColor = _gameState.AsteroidWorld.Grid.ExplosiveRockCellIsActive(col, row) ? Color.Red :
-                            cellState.WallType == WallType.LooseRock ? Color.LightGreen : Color.White;
+                        var tintColor = _gameStateManager.AsteroidWorld.Grid.ExplosiveRockCellIsActive(col, row)
+                            ?
+                            Color.Red
+                            :
+                            cellState.WallType == WallType.LooseRock
+                                ? Color.LightGreen
+                                : Color.White;
 
                         spriteBatch.Draw(Shared.Textures["tileset"],
                             Shared.ViewHelpers.GetVisibleRectForWallQuadrant(col, row, corner),
@@ -56,7 +61,7 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
                     }
                 }
 
-                if (_gameState.AsteroidWorld.Grid.GetFloorType(col, row) == FloorType.LavaCracks)
+                if (_gameStateManager.AsteroidWorld.Grid.GetFloorType(col, row) == FloorType.LavaCracks)
                     spriteBatch.Draw(Shared.Textures["cracks"],
                         Shared.ViewHelpers.GetVisibleRectForGridCell(col, row),
                         Color.White);
@@ -81,7 +86,7 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
             1, // Only lava, small light source
             (col, row) =>
             {
-                if (_gameState.AsteroidWorld.Grid.GetFloorType(col, row) == FloorType.Lava)
+                if (_gameStateManager.AsteroidWorld.Grid.GetFloorType(col, row) == FloorType.Lava)
                 {
                     var pos = new Vector2(col + 0.5f, row + 0.5f);
                     Shared.RenderRadialLightSource(spriteBatch, pos, _lavaLightColor, 150, 0.6f);
@@ -92,7 +97,7 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
         LoopVisibleCells(FogOfWarRenderer.FogGradientGridRadius,
             (col, row) =>
             {
-                var cellState = _gameState.AsteroidWorld.Grid.GetCellState(col, row);
+                var cellState = _gameStateManager.AsteroidWorld.Grid.GetCellState(col, row);
                 var showOverlay = cellState.DistanceToExploredFloor >= 2 ||
                                   cellState.DistanceToExploredFloor ==
                                   CellState.UninitializedOrAboveMax;
@@ -109,7 +114,7 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
         LoopVisibleCells(FogOfWarRenderer.FogGradientGridRadius,
             (col, row) =>
             {
-                var cellState = _gameState.AsteroidWorld.Grid.GetCellState(col, row);
+                var cellState = _gameStateManager.AsteroidWorld.Grid.GetCellState(col, row);
                 var showOverlay = cellState.DistanceToExploredFloor >= 2 ||
                                   cellState.DistanceToExploredFloor ==
                                   CellState.UninitializedOrAboveMax;

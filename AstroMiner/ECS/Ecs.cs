@@ -13,39 +13,30 @@ namespace AstroMiner.ECS;
 /// </summary>
 public class Ecs
 {
-    private readonly Dictionary<Type, HashSet<Component>> _componentsByType = new();
-    private readonly Dictionary<int, HashSet<Component>> _entityComponents = new();
-    private readonly GameState _gameState;
+    private readonly BaseGame _game;
 
-    // Track the currently active controllable entity
-    private int? _activeControllableEntityId;
-    private int _nextEntityId = 1;
 
     // Track special entities
 
-    public Ecs(GameState gameState)
+    public Ecs(BaseGame game)
     {
-        _gameState = gameState;
-        Factories = new EntityFactories(this, gameState);
+        _game = game;
+        Factories = new EntityFactories(this, game);
 
         // Initialize systems
-        DynamiteSystem = new DynamiteSystem(this, gameState);
-        ExplosionSystem = new ExplosionSystem(this, gameState);
-        MovementSystem = new MovementSystem(this, gameState);
-        PortalSystem = new PortalSystem(this, gameState);
-        HealthSystem = new HealthSystem(this, gameState);
-        VehicleEnterExitSystem = new VehicleEnterExitSystem(this, gameState);
-        FallOrLavaDamageSystem = new FallOrLavaDamageSystem(this, gameState);
-        MiningSystem = new MiningSystem(this, gameState);
-        GrappleSystem = new GrappleSystem(this, gameState);
-        LaunchSystem = new LaunchSystem(this, gameState);
+        DynamiteSystem = new DynamiteSystem(this, game);
+        ExplosionSystem = new ExplosionSystem(this, game);
+        MovementSystem = new MovementSystem(this, game);
+        PortalSystem = new PortalSystem(this, game);
+        HealthSystem = new HealthSystem(this, game);
+        VehicleEnterExitSystem = new VehicleEnterExitSystem(this, game);
+        FallOrLavaDamageSystem = new FallOrLavaDamageSystem(this, game);
+        MiningSystem = new MiningSystem(this, game);
+        GrappleSystem = new GrappleSystem(this, game);
+        LaunchSystem = new LaunchSystem(this, game);
     }
 
-    public int? PlayerEntityId { get; private set; }
-
-    public int? MinerEntityId { get; private set; }
-
-    public int? ActiveControllableEntityId => _activeControllableEntityId;
+    public int? ActiveControllableEntityId => _game.Model.Ecs.ActiveControllableEntityId;
 
     public EntityFactories Factories { get; }
     public IEnumerable<int> EntityIdsInActiveWorldSortedByDistance { get; private set; }
@@ -62,16 +53,16 @@ public class Ecs
     public GrappleSystem GrappleSystem { get; }
     public LaunchSystem LaunchSystem { get; }
 
-    public Vector2 ActiveControllableEntityCenterPosition => _activeControllableEntityId == null
+    public Vector2 ActiveControllableEntityCenterPosition => ActiveControllableEntityId == null
         ? Vector2.Zero
-        : GetComponent<PositionComponent>(_activeControllableEntityId.Value).CenterPosition;
+        : GetComponent<PositionComponent>(ActiveControllableEntityId.Value).CenterPosition;
 
     public bool ActiveControllableEntityIsDead
     {
         get
         {
-            if (_activeControllableEntityId == null) return false;
-            var healthComponent = GetComponent<HealthComponent>(_activeControllableEntityId.Value);
+            if (ActiveControllableEntityId == null) return false;
+            var healthComponent = GetComponent<HealthComponent>(ActiveControllableEntityId.Value);
             return healthComponent?.IsDead ?? false;
         }
     }
@@ -80,11 +71,14 @@ public class Ecs
     {
         get
         {
-            if (_activeControllableEntityId == null) return false;
-            var positionComponent = GetComponent<PositionComponent>(_activeControllableEntityId.Value);
+            if (ActiveControllableEntityId == null) return false;
+            var positionComponent = GetComponent<PositionComponent>(ActiveControllableEntityId.Value);
             return positionComponent?.IsOffAsteroid ?? false;
         }
     }
+
+    public int? PlayerEntityId => _game.Model.Ecs.PlayerEntityId;
+    public int? MinerEntityId => _game.Model.Ecs.MinerEntityId;
 
     public void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
     {
@@ -101,23 +95,16 @@ public class Ecs
         CalculateEntityIdsInActiveWorldSortedByDistance();
     }
 
+
     public void SetActiveControllableEntity(int entityId)
     {
-        if (!_entityComponents.ContainsKey(entityId))
-            return;
-
-        _activeControllableEntityId = entityId;
-    }
-
-    public void DeactivateControllableEntity()
-    {
-        _activeControllableEntityId = null;
+        _game.Model.Ecs.ActiveControllableEntityId = entityId;
     }
 
     public bool GetIsActive(int entityId)
     {
         // If this is the active controllable entity, it's active
-        if (entityId == _activeControllableEntityId)
+        if (entityId == ActiveControllableEntityId)
             return true;
 
         // If it doesn't have a MovementComponent component, it's always active
@@ -128,108 +115,83 @@ public class Ecs
 
     public void SetPlayerEntityId(int entityId)
     {
-        PlayerEntityId = entityId;
+        _game.Model.Ecs.PlayerEntityId = entityId;
     }
 
     public void SetMinerEntityId(int entityId)
     {
-        MinerEntityId = entityId;
-    }
-
-    public IEnumerable<int> GetAllEntityIds()
-    {
-        return _entityComponents.Keys;
+        _game.Model.Ecs.MinerEntityId = entityId;
     }
 
     public bool HasComponent<T>(int entityId) where T : Component
     {
-        if (!_entityComponents.TryGetValue(entityId, out var components))
-            return false;
-
-        foreach (var component in components)
-            if (component is T)
-                return true;
-
-        return false;
+        return GetComponentsOfType<T>().ContainsKey(entityId);
     }
 
     public int CreateEntity()
     {
-        var entityId = _nextEntityId++;
-        _entityComponents[entityId] = new HashSet<Component>();
+        var entityId = _game.Model.Ecs.NextEntityId++;
+        // _game.Model.Ecs.EntityComponents[entityId] = new HashSet<Component>();
         return entityId;
     }
 
     public void DestroyEntity(int entityId)
     {
-        if (!_entityComponents.TryGetValue(entityId, out var components))
-            return;
-
-        foreach (var component in components) _componentsByType[component.GetType()].Remove(component);
-
-        _entityComponents.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.Position.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.Fuse.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.Direction.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.Movement.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.Health.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.Mining.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.Grapple.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.DirectionalLightSource.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.Texture.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.RadialLightSource.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.RenderLayer.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.Explosion.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.DynamiteTag.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.PlayerTag.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.MinerTag.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.ExplosionTag.Remove(entityId);
 
         // Clear entity references if they're being destroyed
-        if (_activeControllableEntityId == entityId)
-            _activeControllableEntityId = null;
-        if (PlayerEntityId == entityId)
-            PlayerEntityId = null;
-        if (MinerEntityId == entityId)
-            MinerEntityId = null;
+        if (ActiveControllableEntityId == entityId)
+            _game.Model.Ecs.ActiveControllableEntityId = null;
+        if (_game.Model.Ecs.PlayerEntityId == entityId)
+            _game.Model.Ecs.PlayerEntityId = null;
+        if (_game.Model.Ecs.MinerEntityId == entityId)
+            _game.Model.Ecs.MinerEntityId = null;
     }
 
     public T AddComponent<T>(int entityId) where T : Component, new()
     {
         var component = new T { EntityId = entityId };
 
-        if (!_entityComponents.ContainsKey(entityId))
-            _entityComponents[entityId] = new HashSet<Component>();
+        var components = GetComponentsOfType<T>();
 
-        _entityComponents[entityId].Add(component);
+        if (components.ContainsKey(entityId))
+            throw new ArgumentException($"Entity {entityId} already has a component of type {typeof(T)}");
 
-        var type = typeof(T);
-        if (!_componentsByType.ContainsKey(type))
-            _componentsByType[type] = new HashSet<Component>();
-
-        _componentsByType[type].Add(component);
+        components[entityId] = component;
 
         return component;
     }
 
     public void RemoveComponent<T>(int entityId) where T : Component
     {
-        if (!_entityComponents.TryGetValue(entityId, out var components))
-            return;
-
-        var component = GetComponent<T>(entityId);
-        if (component == null)
-            return;
-
-        components.Remove(component);
-
-        var type = typeof(T);
-        if (_componentsByType.TryGetValue(type, out var typeComponents)) typeComponents.Remove(component);
+        GetComponentsOfType<T>().Remove(entityId);
     }
 
     public T GetComponent<T>(int entityId) where T : Component
     {
-        if (!_entityComponents.TryGetValue(entityId, out var components))
-            return null;
-
-        foreach (var component in components)
-            if (component is T typedComponent)
-                return typedComponent;
-
-        return null;
+        return GetComponentsOfType<T>().TryGetValue(entityId, out var component) ? component : null;
     }
 
     public IEnumerable<T> GetAllComponents<T>() where T : Component
     {
-        var type = typeof(T);
-        if (!_componentsByType.TryGetValue(type, out var components))
-            yield break;
+        var components = GetComponentsOfType<T>();
 
-        foreach (var component in components) yield return (T)component;
+        foreach (var component in components.Values) yield return component;
     }
 
     public IEnumerable<T> GetAllComponentsInActiveWorld<T>() where T : Component
@@ -238,19 +200,60 @@ public class Ecs
             .Where(component =>
             {
                 var positionComponent = GetComponent<PositionComponent>(component.EntityId);
-                return positionComponent != null && positionComponent.World == _gameState.ActiveWorld;
+                return positionComponent != null && positionComponent.World == _game.Model.ActiveWorld;
             });
     }
 
     private void CalculateEntityIdsInActiveWorldSortedByDistance()
     {
-        EntityIdsInActiveWorldSortedByDistance = _entityComponents.Keys
+        // TODO simplify only needs calling once
+        EntityIdsInActiveWorldSortedByDistance = GetComponentsOfType<PositionComponent>().Keys
             .Where(entityId =>
             {
                 var positionComponent = GetComponent<PositionComponent>(entityId);
-                return positionComponent != null && positionComponent.World == _gameState.ActiveWorld;
+                return positionComponent != null && positionComponent.World == _game.Model.ActiveWorld;
             })
             .OrderBy(entityId => GetComponent<PositionComponent>(entityId).FrontY)
             .ToList(); // Cache the results since they'll be used multiple times per frame
+    }
+
+    private Dictionary<int, T> GetComponentsOfType<T>() where T : class
+    {
+        var componentsByEntityId = _game.Model.Ecs.ComponentsByEntityId;
+
+        if (typeof(T) == typeof(PositionComponent))
+            return componentsByEntityId.Position as Dictionary<int, T>;
+        if (typeof(T) == typeof(FuseComponent))
+            return componentsByEntityId.Fuse as Dictionary<int, T>;
+        if (typeof(T) == typeof(DirectionComponent))
+            return componentsByEntityId.Direction as Dictionary<int, T>;
+        if (typeof(T) == typeof(MovementComponent))
+            return componentsByEntityId.Movement as Dictionary<int, T>;
+        if (typeof(T) == typeof(HealthComponent))
+            return componentsByEntityId.Health as Dictionary<int, T>;
+        if (typeof(T) == typeof(MiningComponent))
+            return componentsByEntityId.Mining as Dictionary<int, T>;
+        if (typeof(T) == typeof(GrappleComponent))
+            return componentsByEntityId.Grapple as Dictionary<int, T>;
+        if (typeof(T) == typeof(DirectionalLightSourceComponent))
+            return componentsByEntityId.DirectionalLightSource as Dictionary<int, T>;
+        if (typeof(T) == typeof(TextureComponent))
+            return componentsByEntityId.Texture as Dictionary<int, T>;
+        if (typeof(T) == typeof(RadialLightSourceComponent))
+            return componentsByEntityId.RadialLightSource as Dictionary<int, T>;
+        if (typeof(T) == typeof(RenderLayerComponent))
+            return componentsByEntityId.RenderLayer as Dictionary<int, T>;
+        if (typeof(T) == typeof(ExplosionComponent))
+            return componentsByEntityId.Explosion as Dictionary<int, T>;
+        if (typeof(T) == typeof(DynamiteTag))
+            return componentsByEntityId.DynamiteTag as Dictionary<int, T>;
+        if (typeof(T) == typeof(PlayerTag))
+            return componentsByEntityId.PlayerTag as Dictionary<int, T>;
+        if (typeof(T) == typeof(MinerTag))
+            return componentsByEntityId.MinerTag as Dictionary<int, T>;
+        if (typeof(T) == typeof(ExplosionTag))
+            return componentsByEntityId.ExplosionTag as Dictionary<int, T>;
+
+        throw new ArgumentException($"No handler for type {typeof(T)} in GetComponentsOfType");
     }
 }

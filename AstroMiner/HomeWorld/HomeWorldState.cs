@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner.HomeWorld;
 
-public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
+public class HomeWorldState(BaseGame game) : BaseWorldState(game)
 {
     public WorldCellType[,] Grid;
 
@@ -19,7 +19,7 @@ public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
     {
         InitializeMiner();
         InitializePlayer();
-        gameState.Ecs.LaunchSystem.Reset();
+        game.StateManager.Ecs.LaunchSystem.Reset();
     }
 
     private void InitializeMiner()
@@ -28,21 +28,22 @@ public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
         var posY = Coordinates.Grid.MinerHomeStartPosCenter.y - GameConfig.MinerSize / 2;
         var minerPos = new Vector2(posX, posY);
 
-        var minerEntityId = gameState.Ecs.MinerEntityId ?? gameState.Ecs.Factories.CreateMinerEntity(minerPos);
+        var minerEntityId = game.StateManager.Ecs.MinerEntityId ??
+                            game.StateManager.Ecs.Factories.CreateMinerEntity(minerPos);
 
-        var minerPosition = gameState.Ecs.GetComponent<PositionComponent>(minerEntityId);
+        var minerPosition = game.StateManager.Ecs.GetComponent<PositionComponent>(minerEntityId);
         minerPosition.Position = minerPos;
         minerPosition.IsOffAsteroid = false;
         minerPosition.World = World.Home;
-        var minerDirection = gameState.Ecs.GetComponent<DirectionComponent>(minerEntityId);
+        var minerDirection = game.StateManager.Ecs.GetComponent<DirectionComponent>(minerEntityId);
         minerDirection.Direction = Direction.Top;
 
         // Remove components that were added in AsteroidWorld
-        gameState.Ecs.RemoveComponent<MovementComponent>(minerEntityId);
-        gameState.Ecs.RemoveComponent<HealthComponent>(minerEntityId);
-        gameState.Ecs.RemoveComponent<MiningComponent>(minerEntityId);
-        gameState.Ecs.RemoveComponent<GrappleComponent>(minerEntityId);
-        gameState.Ecs.RemoveComponent<DirectionalLightSourceComponent>(minerEntityId);
+        game.StateManager.Ecs.RemoveComponent<MovementComponent>(minerEntityId);
+        game.StateManager.Ecs.RemoveComponent<HealthComponent>(minerEntityId);
+        game.StateManager.Ecs.RemoveComponent<MiningComponent>(minerEntityId);
+        game.StateManager.Ecs.RemoveComponent<GrappleComponent>(minerEntityId);
+        game.StateManager.Ecs.RemoveComponent<DirectionalLightSourceComponent>(minerEntityId);
     }
 
     private void InitializePlayer()
@@ -51,24 +52,25 @@ public class HomeWorldState(GameState gameState) : BaseWorldState(gameState)
         var playerPos = new Vector2(Coordinates.Grid.PlayerHomeStartPos.x + playerCellOffset,
             Coordinates.Grid.PlayerHomeStartPos.y + playerCellOffset);
 
-        var playerEntityId = gameState.Ecs.PlayerEntityId ?? gameState.Ecs.Factories.CreatePlayerEntity(playerPos);
+        var playerEntityId = game.StateManager.Ecs.PlayerEntityId ??
+                             game.StateManager.Ecs.Factories.CreatePlayerEntity(playerPos);
 
-        var playerPosition = gameState.Ecs.GetComponent<PositionComponent>(playerEntityId);
+        var playerPosition = game.StateManager.Ecs.GetComponent<PositionComponent>(playerEntityId);
         playerPosition.Position = playerPos;
         playerPosition.IsOffAsteroid = false;
         playerPosition.World = World.Home;
-        gameState.Ecs.SetActiveControllableEntity(playerEntityId);
+        game.StateManager.Ecs.SetActiveControllableEntity(playerEntityId);
 
         // Remove components that were added in AsteroidWorld
-        gameState.Ecs.RemoveComponent<HealthComponent>(playerEntityId);
-        gameState.Ecs.RemoveComponent<MiningComponent>(playerEntityId);
-        gameState.Ecs.RemoveComponent<DirectionalLightSourceComponent>(playerEntityId);
+        game.StateManager.Ecs.RemoveComponent<HealthComponent>(playerEntityId);
+        game.StateManager.Ecs.RemoveComponent<MiningComponent>(playerEntityId);
+        game.StateManager.Ecs.RemoveComponent<DirectionalLightSourceComponent>(playerEntityId);
     }
 
     public override void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
     {
         if (activeMiningControls.Contains(MiningControls.NewGameOrReturnToBase))
-            gameState.SetActiveWorldAndInitialize(World.Asteroid);
+            game.StateManager.SetActiveWorldAndInitialize(World.Asteroid);
 
         base.Update(activeMiningControls, gameTime);
     }

@@ -9,7 +9,7 @@ namespace AstroMiner.ECS.Systems;
 
 public class PortalSystem : System
 {
-    public PortalSystem(Ecs ecs, GameState gameState) : base(ecs, gameState)
+    public PortalSystem(Ecs ecs, BaseGame game) : base(ecs, game)
     {
     }
 
@@ -32,8 +32,8 @@ public class PortalSystem : System
         position.SetCenterPosition(centerPosition);
 
         // Only change active world if this entity is the player.
-        if (position.EntityId == GameState.Ecs.ActiveControllableEntityId)
-            GameState.SetActiveWorldAndInitialize(config.TargetWorld);
+        if (position.EntityId == game.Model.Ecs.ActiveControllableEntityId)
+            game.StateManager.SetActiveWorldAndInitialize(config.TargetWorld);
     }
 
     private void MoveToDeparturePoint(MovementComponent movement, PositionComponent position,
@@ -114,8 +114,8 @@ public class PortalSystem : System
         var (topLeftGridX, topLeftGridY) = ViewHelpers.ToGridPosition(position.Position);
         var (bottomRightGridX, bottomRightGridY) =
             ViewHelpers.ToGridPosition(position.Position + new Vector2(position.GridWidth, position.GridHeight));
-        if (!GameState.ActiveWorldState.CellIsPortal(topLeftGridX, topLeftGridY) &&
-            !GameState.ActiveWorldState.CellIsPortal(bottomRightGridX, bottomRightGridY))
+        if (!game.StateManager.ActiveWorldState.CellIsPortal(topLeftGridX, topLeftGridY) &&
+            !game.StateManager.ActiveWorldState.CellIsPortal(bottomRightGridX, bottomRightGridY))
         {
             movement.PortalStatus = PortalStatus.None;
         }
@@ -141,7 +141,7 @@ public class PortalSystem : System
             if (movement.PortalStatus == PortalStatus.Arriving)
                 MoveToArrivalPoint(position, movement, dirComp, gameTime);
 
-            if (!GameState.ActiveWorldState.CellIsPortal(gridX, gridY))
+            if (!game.StateManager.ActiveWorldState.CellIsPortal(gridX, gridY))
                 continue;
 
             var config = WorldGrid.GetPortalConfig(position.World, (gridX, gridY));
