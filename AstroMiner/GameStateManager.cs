@@ -77,6 +77,8 @@ public class GameStateManager(BaseGame game)
 
     public void Initialize()
     {
+        // game.Model = GameModelHelpers.CreateNewGameModel();
+        game.Model = game.GameStateStorage.LoadState();
         Inventory = new Inventory();
         Camera = new CameraState(game);
         MsSinceStart = 0;
