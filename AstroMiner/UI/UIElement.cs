@@ -63,38 +63,36 @@ public class UIElement(Dictionary<string, Texture2D> textures)
         ComputedWidth = FullWidth ? parentWidth : FixedWidth ?? 0;
         ComputedHeight = FullHeight ? parentHeight : FixedHeight ?? 0;
 
-        if (ChildrenDirection == ChildrenDirection.Column)
-        {
-            var maxWidth = 0;
-            var totalHeight = 0;
-            foreach (var child in Children)
-            {
-                var (childWidth, childHeight) = child.ComputeDimensions(ComputedWidth, ComputedHeight);
-                maxWidth = Math.Max(maxWidth, childWidth);
-                totalHeight += childHeight;
-            }
+        bool isColumn = ChildrenDirection == ChildrenDirection.Column;
+        int primarySize = 0;
+        int secondarySize = 0;
 
-            // If we didn't have fixed dimensions, use child dimensions
-            if (!FullWidth && !FixedWidth.HasValue) ComputedWidth = maxWidth;
-            if (!FullHeight && !FixedHeight.HasValue) ComputedHeight = totalHeight;
-
-            return (maxWidth, totalHeight);
-        }
-
-        var totalWidth = 0;
-        var maxHeight = 0;
         foreach (var child in Children)
         {
             var (childWidth, childHeight) = child.ComputeDimensions(ComputedWidth, ComputedHeight);
-            totalWidth += childWidth;
-            maxHeight = Math.Max(maxHeight, childHeight);
+
+            if (isColumn)
+            {
+                // In column layout, primary is height (sum), secondary is width (max)
+                primarySize += childHeight;
+                secondarySize = Math.Max(secondarySize, childWidth);
+            }
+            else
+            {
+                // In row layout, primary is width (sum), secondary is height (max)
+                primarySize += childWidth;
+                secondarySize = Math.Max(secondarySize, childHeight);
+            }
         }
 
         // If we didn't have fixed dimensions, use child dimensions
-        if (!FullWidth && !FixedWidth.HasValue) ComputedWidth = totalWidth;
-        if (!FullHeight && !FixedHeight.HasValue) ComputedHeight = maxHeight;
+        if (!FullWidth && !FixedWidth.HasValue)
+            ComputedWidth = isColumn ? secondarySize : primarySize;
 
-        return (totalWidth, maxHeight);
+        if (!FullHeight && !FixedHeight.HasValue)
+            ComputedHeight = isColumn ? primarySize : secondarySize;
+
+        return isColumn ? (secondarySize, primarySize) : (primarySize, secondarySize);
     }
 
     public (int, int) ComputeDimensions(int parentWidth, int parentHeight)
@@ -112,96 +110,79 @@ public class UIElement(Dictionary<string, Texture2D> textures)
         X = originX;
         Y = originY;
 
-        // Position children within this element
-        if (ChildrenDirection == ChildrenDirection.Column)
-        {
-            int totalChildrenHeight = 0;
-            foreach (var child in Children)
-            {
-                totalChildrenHeight += child.ComputedHeight;
-            }
+        bool isColumn = ChildrenDirection == ChildrenDirection.Column;
 
-            // Calculate spacing for SpaceBetween
-            float spacing = 0;
+        // Get total size of children along primary axis
+        int totalChildrenSize = 0;
+        foreach (var child in Children)
+        {
+            totalChildrenSize += isColumn ? child.ComputedHeight : child.ComputedWidth;
+        }
+
+        // Calculate spacing for SpaceBetween
+        float spacing = 0;
+        if (ChildrenJustify == ChildrenJustify.SpaceBetween && Children.Count > 1)
+        {
+            int availableSpace = isColumn ? ComputedHeight : ComputedWidth;
+            spacing = (availableSpace - totalChildrenSize) / (float)(Children.Count - 1);
+        }
+
+        // Set starting position for primary axis
+        int primaryPos = isColumn ? Y : X;
+
+        // Adjust starting position based on justify
+        if (ChildrenJustify == ChildrenJustify.End)
+        {
+            int availableSpace = isColumn ? ComputedHeight : ComputedWidth;
+            primaryPos += availableSpace - totalChildrenSize;
+        }
+        // No adjustment needed for Start
+
+        foreach (var child in Children)
+        {
+            // Calculate secondary axis position (based on alignment)
+            int secondaryPos = CalculateSecondaryPosition(child, isColumn);
+
+            // Set child position
+            if (isColumn)
+                child.ComputePositions(secondaryPos, primaryPos);
+            else
+                child.ComputePositions(primaryPos, secondaryPos);
+
+            // Move cursor by child size along primary axis
+            primaryPos += isColumn ? child.ComputedHeight : child.ComputedWidth;
+
+            // Add spacing if needed
             if (ChildrenJustify == ChildrenJustify.SpaceBetween && Children.Count > 1)
             {
-                spacing = (ComputedHeight - totalChildrenHeight) / (float)(Children.Count - 1);
+                primaryPos += (int)spacing;
             }
+        }
+    }
 
-            var cursorY = Y;
-
-            // Adjust starting position based on justify
-            if (ChildrenJustify == ChildrenJustify.End)
+    private int CalculateSecondaryPosition(UIElement child, bool isColumn)
+    {
+        if (isColumn)
+        {
+            // Column layout: Secondary is X position
+            return ChildrenAlign switch
             {
-                cursorY = Y + ComputedHeight - totalChildrenHeight;
-            }
-            else if (ChildrenJustify == ChildrenJustify.Start)
-            {
-                // No adjustment needed for Start
-            }
-
-            foreach (var child in Children)
-            {
-                var childX = ChildrenAlign switch
-                {
-                    ChildrenAlign.Start => X,
-                    ChildrenAlign.Center => X + ComputedWidth / 2 - child.ComputedWidth / 2,
-                    ChildrenAlign.End => X + ComputedWidth - child.ComputedWidth,
-                    _ => throw new ArgumentOutOfRangeException()
-                };
-                child.ComputePositions(childX, cursorY);
-                cursorY += child.ComputedHeight;
-
-                if (ChildrenJustify == ChildrenJustify.SpaceBetween && Children.Count > 1)
-                {
-                    cursorY += (int)spacing;
-                }
-            }
+                ChildrenAlign.Start => X,
+                ChildrenAlign.Center => X + ComputedWidth / 2 - child.ComputedWidth / 2,
+                ChildrenAlign.End => X + ComputedWidth - child.ComputedWidth,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
         else
         {
-            int totalChildrenWidth = 0;
-            foreach (var child in Children)
+            // Row layout: Secondary is Y position
+            return ChildrenAlign switch
             {
-                totalChildrenWidth += child.ComputedWidth;
-            }
-
-            // Calculate spacing for SpaceBetween
-            float spacing = 0;
-            if (ChildrenJustify == ChildrenJustify.SpaceBetween && Children.Count > 1)
-            {
-                spacing = (ComputedWidth - totalChildrenWidth) / (float)(Children.Count - 1);
-            }
-
-            var cursorX = X;
-
-            // Adjust starting position based on justify
-            if (ChildrenJustify == ChildrenJustify.End)
-            {
-                cursorX = X + ComputedWidth - totalChildrenWidth;
-            }
-            else if (ChildrenJustify == ChildrenJustify.Start)
-            {
-                // No adjustment needed for Start
-            }
-
-            foreach (var child in Children)
-            {
-                var childY = ChildrenAlign switch
-                {
-                    ChildrenAlign.Start => Y,
-                    ChildrenAlign.Center => Y + ComputedHeight / 2 - child.ComputedHeight / 2,
-                    ChildrenAlign.End => Y + ComputedHeight - child.ComputedHeight,
-                    _ => throw new ArgumentOutOfRangeException()
-                };
-                child.ComputePositions(cursorX, childY);
-                cursorX += child.ComputedWidth;
-
-                if (ChildrenJustify == ChildrenJustify.SpaceBetween && Children.Count > 1)
-                {
-                    cursorX += (int)spacing;
-                }
-            }
+                ChildrenAlign.Start => Y,
+                ChildrenAlign.Center => Y + ComputedHeight / 2 - child.ComputedHeight / 2,
+                ChildrenAlign.End => Y + ComputedHeight - child.ComputedHeight,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
     }
 }
