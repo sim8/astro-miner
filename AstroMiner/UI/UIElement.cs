@@ -31,11 +31,14 @@ public class UIElement(Dictionary<string, Texture2D> textures)
     public int? FixedWidth { get; set; }
     public int? FixedHeight { get; set; }
 
+    public bool FullWidth { get; set; } = false;
+    public bool FullHeight { get; set; } = false;
+
     public int ChildrenWidth { get; set; }
     public int ChildrenHeight { get; set; }
 
-    public int ComputedWidth => FixedWidth ?? ChildrenWidth;
-    public int ComputedHeight => FixedHeight ?? ChildrenHeight;
+    public int ComputedWidth { get; private set; }
+    public int ComputedHeight { get; private set; }
 
     public ChildrenDirection ChildrenDirection { get; set; } = ChildrenDirection.Column;
     public ChildrenJustify ChildrenJustify { get; set; } = ChildrenJustify.Start;
@@ -54,7 +57,7 @@ public class UIElement(Dictionary<string, Texture2D> textures)
         foreach (var child in Children) child.Render(spriteBatch);
     }
 
-    private (int, int) ComputeChildDimensions()
+    private (int, int) ComputeChildDimensions(int parentWidth, int parentHeight)
     {
         if (ChildrenDirection == ChildrenDirection.Column)
         {
@@ -62,7 +65,7 @@ public class UIElement(Dictionary<string, Texture2D> textures)
             var totalHeight = 0;
             foreach (var child in Children)
             {
-                var (childWidth, childHeight) = child.ComputeDimensions();
+                var (childWidth, childHeight) = child.ComputeDimensions(parentWidth, parentHeight);
                 maxWidth = Math.Max(maxWidth, childWidth);
                 totalHeight += childHeight;
             }
@@ -74,7 +77,7 @@ public class UIElement(Dictionary<string, Texture2D> textures)
         var maxHeight = 0;
         foreach (var child in Children)
         {
-            var (childWidth, childHeight) = child.ComputeDimensions();
+            var (childWidth, childHeight) = child.ComputeDimensions(parentWidth, parentHeight);
             totalWidth += childWidth;
             maxHeight = Math.Max(maxHeight, childHeight);
         }
@@ -82,13 +85,16 @@ public class UIElement(Dictionary<string, Texture2D> textures)
         return (totalWidth, maxHeight);
     }
 
-    public (int, int) ComputeDimensions()
+    public (int, int) ComputeDimensions(int parentWidth, int parentHeight)
     {
-        var (width, height) = ComputeChildDimensions();
+        var (width, height) = ComputeChildDimensions(parentWidth, parentHeight);
         ChildrenWidth = width;
         ChildrenHeight = height;
 
-        return (FixedWidth ?? width, FixedHeight ?? height);
+        ComputedWidth = FullWidth ? parentWidth : FixedWidth ?? width;
+        ComputedHeight = FullHeight ? parentHeight : FixedHeight ?? height;
+
+        return (ComputedWidth, ComputedHeight);
     }
 
     public void ComputePositions(int originX, int originY)

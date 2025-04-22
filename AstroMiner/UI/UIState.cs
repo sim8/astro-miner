@@ -10,31 +10,42 @@ public class UIState(BaseGame game)
     {
         var root = new UIElement(game.Textures)
         {
-            FixedWidth = game.Graphics.GraphicsDevice.Viewport.Width,
-            FixedHeight = game.Graphics.GraphicsDevice.Viewport.Height,
+            FullWidth = true,
+            FullHeight = true,
+            ChildrenDirection = ChildrenDirection.Column,
             ChildrenAlign = ChildrenAlign.Center,
+            ChildrenJustify = ChildrenJustify.SpaceBetween,
             Children =
             [
                 new UIElement(game.Textures)
                 {
                     BackgroundColor = Color.Green,
-                    ChildrenAlign = ChildrenAlign.Center,
+                    FullWidth = true,
+                    ChildrenAlign = ChildrenAlign.Start,
+                    ChildrenDirection = ChildrenDirection.Row,
+                    ChildrenJustify = ChildrenJustify.SpaceBetween,
                     Children =
                     [
                         new UIElement(game.Textures)
                         {
-                            BackgroundColor = Color.LightGray,
+                            BackgroundColor = Color.Yellow,
                             FixedWidth = 200,
                             FixedHeight = 100
                         },
 
                         new UIElement(game.Textures)
                         {
-                            BackgroundColor = Color.DarkBlue,
+                            BackgroundColor = Color.Red,
                             FixedWidth = 150,
                             FixedHeight = 75
                         }
                     ]
+                },
+                new UIElement(game.Textures)
+                {
+                    BackgroundColor = Color.Gold,
+                    FixedWidth = 200,
+                    FixedHeight = 100
                 }
             ]
         };
@@ -45,10 +56,8 @@ public class UIState(BaseGame game)
     public void Update(GameTime gameTime)
     {
         Root = GetTree();
-        Root.FixedWidth = game.Graphics.GraphicsDevice.Viewport.Width;
-        Root.FixedHeight = game.Graphics.GraphicsDevice.Viewport.Height;
 
-        Root.ComputeDimensions();
+        Root.ComputeDimensions(game.Graphics.GraphicsDevice.Viewport.Width, game.Graphics.GraphicsDevice.Viewport.Height);
         Root.ComputePositions(0, 0);
     }
 }
