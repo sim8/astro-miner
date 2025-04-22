@@ -58,7 +58,7 @@ public class UIElementTests
         root.Children.Add(container);
 
         // Act
-        root.ComputeDimensions();
+        root.ComputeDimensions(800, 600); // Pass in some parent dimensions (e.g., screen size)
         root.ComputePositions(0, 0);
 
         // Assert
@@ -124,7 +124,7 @@ public class UIElementTests
         root.Children.Add(container);
 
         // Act
-        root.ComputeDimensions();
+        root.ComputeDimensions(800, 600); // Pass in some parent dimensions (e.g., screen size)
         root.ComputePositions(0, 0);
 
         // Assert
@@ -197,7 +197,7 @@ public class UIElementTests
         rowParent.Children.Add(child3);
 
         // Test the row layout with SpaceBetween
-        rowParent.ComputeDimensions();
+        rowParent.ComputeDimensions(800, 600); // Pass in some parent dimensions
         rowParent.ComputePositions(0, 0);
 
         // Calculate expected spacing
@@ -219,7 +219,7 @@ public class UIElementTests
         columnParent.Children.Add(child6);
 
         // Test the column layout with SpaceBetween
-        columnParent.ComputeDimensions();
+        columnParent.ComputeDimensions(800, 600); // Pass in some parent dimensions
         columnParent.ComputePositions(0, 0);
 
         // Calculate expected spacing
@@ -230,5 +230,59 @@ public class UIElementTests
         Assert.AreEqual(0, child4.Y); // First child at start
         Assert.AreEqual(child4.ComputedHeight + columnSpacing, child5.Y); // Second child after spacing (30 + 55 = 85)
         Assert.AreEqual(child4.ComputedHeight + child5.ComputedHeight + 2 * columnSpacing, child6.Y); // Third child (30 + 30 + 2*55 = 170)
+    }
+
+    [TestMethod]
+    public void UIElement_FullWidth_InheritsParentWidth()
+    {
+        // Arrange
+        var parent = new UIElement(_textures)
+        {
+            FixedWidth = 200,
+            FixedHeight = 100
+        };
+
+        var child = new UIElement(_textures)
+        {
+            FullWidth = true,
+            FixedHeight = 50
+        };
+
+        parent.Children.Add(child);
+
+        // Act
+        parent.ComputeDimensions(800, 600);
+        parent.ComputePositions(0, 0);
+
+        // Assert
+        Assert.AreEqual(200, parent.ComputedWidth);
+        Assert.AreEqual(200, child.ComputedWidth); // Child should inherit parent's width
+    }
+
+    [TestMethod]
+    public void UIElement_FullHeight_InheritsParentHeight()
+    {
+        // Arrange
+        var parent = new UIElement(_textures)
+        {
+            FixedWidth = 200,
+            FixedHeight = 100
+        };
+
+        var child = new UIElement(_textures)
+        {
+            FixedWidth = 50,
+            FullHeight = true
+        };
+
+        parent.Children.Add(child);
+
+        // Act
+        parent.ComputeDimensions(800, 600);
+        parent.ComputePositions(0, 0);
+
+        // Assert
+        Assert.AreEqual(100, parent.ComputedHeight);
+        Assert.AreEqual(100, child.ComputedHeight); // Child should inherit parent's height
     }
 }

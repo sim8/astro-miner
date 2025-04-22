@@ -59,16 +59,24 @@ public class UIElement(Dictionary<string, Texture2D> textures)
 
     private (int, int) ComputeChildDimensions(int parentWidth, int parentHeight)
     {
+        // First compute our own dimensions to pass to children
+        ComputedWidth = FullWidth ? parentWidth : FixedWidth ?? 0;
+        ComputedHeight = FullHeight ? parentHeight : FixedHeight ?? 0;
+
         if (ChildrenDirection == ChildrenDirection.Column)
         {
             var maxWidth = 0;
             var totalHeight = 0;
             foreach (var child in Children)
             {
-                var (childWidth, childHeight) = child.ComputeDimensions(parentWidth, parentHeight);
+                var (childWidth, childHeight) = child.ComputeDimensions(ComputedWidth, ComputedHeight);
                 maxWidth = Math.Max(maxWidth, childWidth);
                 totalHeight += childHeight;
             }
+
+            // If we didn't have fixed dimensions, use child dimensions
+            if (!FullWidth && !FixedWidth.HasValue) ComputedWidth = maxWidth;
+            if (!FullHeight && !FixedHeight.HasValue) ComputedHeight = totalHeight;
 
             return (maxWidth, totalHeight);
         }
@@ -77,22 +85,23 @@ public class UIElement(Dictionary<string, Texture2D> textures)
         var maxHeight = 0;
         foreach (var child in Children)
         {
-            var (childWidth, childHeight) = child.ComputeDimensions(parentWidth, parentHeight);
+            var (childWidth, childHeight) = child.ComputeDimensions(ComputedWidth, ComputedHeight);
             totalWidth += childWidth;
             maxHeight = Math.Max(maxHeight, childHeight);
         }
+
+        // If we didn't have fixed dimensions, use child dimensions
+        if (!FullWidth && !FixedWidth.HasValue) ComputedWidth = totalWidth;
+        if (!FullHeight && !FixedHeight.HasValue) ComputedHeight = maxHeight;
 
         return (totalWidth, maxHeight);
     }
 
     public (int, int) ComputeDimensions(int parentWidth, int parentHeight)
     {
-        var (width, height) = ComputeChildDimensions(parentWidth, parentHeight);
-        ChildrenWidth = width;
-        ChildrenHeight = height;
-
-        ComputedWidth = FullWidth ? parentWidth : FixedWidth ?? width;
-        ComputedHeight = FullHeight ? parentHeight : FixedHeight ?? height;
+        var (childrenWidth, childrenHeight) = ComputeChildDimensions(parentWidth, parentHeight);
+        ChildrenWidth = childrenWidth;
+        ChildrenHeight = childrenHeight;
 
         return (ComputedWidth, ComputedHeight);
     }
