@@ -43,7 +43,7 @@ public class UIElement(Dictionary<string, Texture2D> textures)
 
     public int X { get; set; }
     public int Y { get; set; }
-    public List<UIElement> Children { get; } = new();
+    public List<UIElement> Children { get; set; } = new();
 
     public void Render(SpriteBatch spriteBatch)
     {

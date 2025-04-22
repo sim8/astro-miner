@@ -8,32 +8,36 @@ public class UIState(BaseGame game)
 
     public UIElement GetTree()
     {
-        var root = new UIElement(game.Textures);
-        root.FixedWidth = game.Graphics.GraphicsDevice.Viewport.Width;
-        root.FixedHeight = game.Graphics.GraphicsDevice.Viewport.Height;
-        root.ChildrenAlign = ChildrenAlign.Center;
-
-        var container = new UIElement(game.Textures)
+        var root = new UIElement(game.Textures)
         {
-            BackgroundColor = Color.Green,
-            ChildrenAlign = ChildrenAlign.Center
+            FixedWidth = game.Graphics.GraphicsDevice.Viewport.Width,
+            FixedHeight = game.Graphics.GraphicsDevice.Viewport.Height,
+            ChildrenAlign = ChildrenAlign.Center,
+            Children =
+            [
+                new UIElement(game.Textures)
+                {
+                    BackgroundColor = Color.Green,
+                    ChildrenAlign = ChildrenAlign.Center,
+                    Children =
+                    [
+                        new UIElement(game.Textures)
+                        {
+                            BackgroundColor = Color.LightGray,
+                            FixedWidth = 200,
+                            FixedHeight = 100
+                        },
+
+                        new UIElement(game.Textures)
+                        {
+                            BackgroundColor = Color.DarkBlue,
+                            FixedWidth = 150,
+                            FixedHeight = 75
+                        }
+                    ]
+                }
+            ]
         };
-
-        container.Children.Add(new UIElement(game.Textures)
-        {
-            BackgroundColor = Color.LightGray,
-            FixedWidth = 200,
-            FixedHeight = 100
-        });
-
-        container.Children.Add(new UIElement(game.Textures)
-        {
-            BackgroundColor = Color.DarkBlue,
-            FixedWidth = 150,
-            FixedHeight = 75
-        });
-
-        root.Children.Add(container);
 
         return root;
     }
