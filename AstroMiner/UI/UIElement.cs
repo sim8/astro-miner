@@ -57,17 +57,80 @@ public class UIElement(Dictionary<string, Texture2D> textures)
         foreach (var child in Children) child.Render(spriteBatch);
     }
 
-    protected virtual (int, int) ComputeChildDimensions(int parentWidth, int parentHeight)
+    /// <summary>
+    /// Computes dimensions for both this element and its children.
+    /// </summary>
+    /// <param name="parentWidth">The width of the parent container</param>
+    /// <param name="parentHeight">The height of the parent container</param>
+    /// <returns>A tuple of (width, height) computed for this element</returns>
+    public (int, int) ComputeDimensions(int parentWidth, int parentHeight)
     {
-        // First compute our own dimensions to pass to children
+        // Step 1: Determine initial dimensions based on fixed values, parent dimensions, or zero if unspecified.
+        ComputedWidth = DetermineInitialWidth(parentWidth);
+        ComputedHeight = DetermineInitialHeight(parentHeight);
 
+        // Step 2: Calculate children dimensions and update our size if needed
+        MeasureChildrenAndAdjustSize(ComputedWidth, ComputedHeight);
+
+        return (ComputedWidth, ComputedHeight);
+    }
+
+    /// <summary>
+    /// Determines the initial width based on fixed values, parent dimensions, or zero if unspecified.
+    /// </summary>
+    private int DetermineInitialWidth(int parentWidth)
+    {
+        if (FullWidth)
+            return parentWidth;
+        if (FixedWidth.HasValue)
+            return FixedWidth.Value;
+        return 0; // Will be adjusted later based on children if needed
+    }
+
+    /// <summary>
+    /// Determines the initial height based on fixed values, parent dimensions, or zero if unspecified.
+    /// </summary>
+    private int DetermineInitialHeight(int parentHeight)
+    {
+        if (FullHeight)
+            return parentHeight;
+        if (FixedHeight.HasValue)
+            return FixedHeight.Value;
+        return 0; // Will be adjusted later based on children if needed
+    }
+
+    /// <summary>
+    /// Measures children and adjusts element size if dimensions weren't explicitly set.
+    /// </summary>
+    private void MeasureChildrenAndAdjustSize(int availableWidth, int availableHeight)
+    {
+        var childrenDimensions = MeasureChildren(availableWidth, availableHeight);
+        ChildrenWidth = childrenDimensions.width;
+        ChildrenHeight = childrenDimensions.height;
+
+        // If width/height weren't explicitly set, use children dimensions
+        var isColumn = ChildrenDirection == ChildrenDirection.Column;
+
+        if (!FullWidth && !FixedWidth.HasValue)
+            ComputedWidth = ChildrenWidth;
+
+        if (!FullHeight && !FixedHeight.HasValue)
+            ComputedHeight = ChildrenHeight;
+    }
+
+    /// <summary>
+    /// Measures children and returns their combined dimensions.
+    /// Can be overridden by subclasses to provide custom measurement logic.
+    /// </summary>
+    protected virtual (int width, int height) MeasureChildren(int availableWidth, int availableHeight)
+    {
         var isColumn = ChildrenDirection == ChildrenDirection.Column;
         var primarySize = 0;
         var secondarySize = 0;
 
         foreach (var child in Children)
         {
-            var (childWidth, childHeight) = child.ComputeDimensions(parentWidth, parentHeight);
+            var (childWidth, childHeight) = child.ComputeDimensions(availableWidth, availableHeight);
 
             if (isColumn)
             {
@@ -83,26 +146,7 @@ public class UIElement(Dictionary<string, Texture2D> textures)
             }
         }
 
-        // If we didn't have fixed dimensions, use child dimensions
-        if (!FullWidth && !FixedWidth.HasValue)
-            ComputedWidth = isColumn ? secondarySize : primarySize;
-
-        if (!FullHeight && !FixedHeight.HasValue)
-            ComputedHeight = isColumn ? primarySize : secondarySize;
-
         return isColumn ? (secondarySize, primarySize) : (primarySize, secondarySize);
-    }
-
-    public (int, int) ComputeDimensions(int parentWidth, int parentHeight)
-    {
-        ComputedWidth = FullWidth ? parentWidth : FixedWidth ?? 0;
-        ComputedHeight = FullHeight ? parentHeight : FixedHeight ?? 0;
-
-        var (childrenWidth, childrenHeight) = ComputeChildDimensions(ComputedWidth, ComputedHeight);
-        ChildrenWidth = childrenWidth;
-        ChildrenHeight = childrenHeight;
-
-        return (ComputedWidth, ComputedHeight);
     }
 
     public void ComputePositions(int originX, int originY)
