@@ -67,7 +67,7 @@ public class UIElement(Dictionary<string, Texture2D> textures)
 
         foreach (var child in Children)
         {
-            var (childWidth, childHeight) = child.ComputeDimensions(ComputedWidth, ComputedHeight);
+            var (childWidth, childHeight) = child.ComputeDimensions(parentWidth, parentHeight);
 
             if (isColumn)
             {
@@ -95,23 +95,12 @@ public class UIElement(Dictionary<string, Texture2D> textures)
 
     public (int, int) ComputeDimensions(int parentWidth, int parentHeight)
     {
-        // var fixedOrParentWidth = FixedWidth ?? (FullWidth ? parentWidth : null);
-        // var fixedOrParentHeight = FixedHeight ?? (FullHeight ? parentHeight : null);
-        //
-        // var (childrenWidth, childrenHeight) = ComputeChildDimensions(fixedOrParentWidth ?? 0, fixedOrParentHeight ?? 0);
-        // ChildrenWidth = childrenWidth;
-        // ChildrenHeight = childrenHeight;
-        // ComputedWidth = fixedOrParentWidth ?? ChildrenWidth;
-        // ComputedHeight = fixedOrParentHeight ?? ChildrenHeight;
-
         ComputedWidth = FullWidth ? parentWidth : FixedWidth ?? 0;
         ComputedHeight = FullHeight ? parentHeight : FixedHeight ?? 0;
 
         var (childrenWidth, childrenHeight) = ComputeChildDimensions(ComputedWidth, ComputedHeight);
         ChildrenWidth = childrenWidth;
         ChildrenHeight = childrenHeight;
-
-        return (ComputedWidth, ComputedHeight);
 
         return (ComputedWidth, ComputedHeight);
     }
