@@ -51,13 +51,13 @@ public class RendererShared(
 
     public void RenderString(SpriteBatch spriteBatch, int startX, int startY, string str, int scale = 3)
     {
-        var linePxCount = 0;
+        var letterXOffset = 0;
         foreach (var (x, y, width, height) in FontHelpers.TransformString(str))
         {
             var sourceRect = new Rectangle(x, y, width, 8);
-            var destRect = new Rectangle(startX + linePxCount * scale, startY + 10, width * scale, height * scale);
+            var destRect = new Rectangle(startX + letterXOffset * scale, startY + 10, width * scale, height * scale);
             spriteBatch.Draw(Textures["dogica-font"], destRect, sourceRect, Color.LimeGreen);
-            linePxCount += width;
+            letterXOffset += width;
         }
     }
 }

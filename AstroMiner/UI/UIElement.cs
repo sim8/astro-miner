@@ -48,7 +48,7 @@ public class UIElement(Dictionary<string, Texture2D> textures)
     public int Y { get; set; }
     public List<UIElement> Children { get; set; } = new();
 
-    public void Render(SpriteBatch spriteBatch)
+    public virtual void Render(SpriteBatch spriteBatch)
     {
         if (BackgroundColor.HasValue)
             spriteBatch.Draw(textures["white"],
@@ -58,7 +58,7 @@ public class UIElement(Dictionary<string, Texture2D> textures)
     }
 
     /// <summary>
-    /// Computes dimensions for both this element and its children.
+    ///     Computes dimensions for both this element and its children.
     /// </summary>
     /// <param name="parentWidth">The width of the parent container</param>
     /// <param name="parentHeight">The height of the parent container</param>
@@ -76,7 +76,7 @@ public class UIElement(Dictionary<string, Texture2D> textures)
     }
 
     /// <summary>
-    /// Determines the initial width based on fixed values, parent dimensions, or zero if unspecified.
+    ///     Determines the initial width based on fixed values, parent dimensions, or zero if unspecified.
     /// </summary>
     private int DetermineInitialWidth(int parentWidth)
     {
@@ -88,7 +88,7 @@ public class UIElement(Dictionary<string, Texture2D> textures)
     }
 
     /// <summary>
-    /// Determines the initial height based on fixed values, parent dimensions, or zero if unspecified.
+    ///     Determines the initial height based on fixed values, parent dimensions, or zero if unspecified.
     /// </summary>
     private int DetermineInitialHeight(int parentHeight)
     {
@@ -100,7 +100,7 @@ public class UIElement(Dictionary<string, Texture2D> textures)
     }
 
     /// <summary>
-    /// Measures children and adjusts element size if dimensions weren't explicitly set.
+    ///     Measures children and adjusts element size if dimensions weren't explicitly set.
     /// </summary>
     private void MeasureChildrenAndAdjustSize(int availableWidth, int availableHeight)
     {
@@ -119,8 +119,8 @@ public class UIElement(Dictionary<string, Texture2D> textures)
     }
 
     /// <summary>
-    /// Measures children and returns their combined dimensions.
-    /// Can be overridden by subclasses to provide custom measurement logic.
+    ///     Measures children and returns their combined dimensions.
+    ///     Can be overridden by subclasses to provide custom measurement logic.
     /// </summary>
     protected virtual (int width, int height) MeasureChildren(int availableWidth, int availableHeight)
     {
