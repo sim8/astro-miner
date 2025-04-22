@@ -36,6 +36,8 @@ public class UIState(BaseGame game)
                         new UITextElement(game.Textures)
                         {
                             Text = "DEBUG",
+                            Scale = 4,
+                            Color = Color.Aqua,
                             BackgroundColor = Color.Red
                         }
                     ]

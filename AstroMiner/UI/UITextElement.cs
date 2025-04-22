@@ -9,28 +9,29 @@ namespace AstroMiner.UI;
 public class UITextElement(Dictionary<string, Texture2D> textures) : UIElement(textures)
 {
     public string Text { get; set; }
+    public int Scale { get; set; } = 1;
     public Color Color { get; set; } = Color.White;
-    private List<(int x, int y, int width, int height)> StringPos { get; set; }
+    private List<(int x, int y, int width, int height)> StringSourceRects { get; set; }
 
     protected override (int width, int height) MeasureChildren(int availableWidth, int availableHeight)
     {
-        StringPos = FontHelpers.TransformString(Text);
-        return (StringPos.Sum(c => c.width), StringPos.First().height);
+        StringSourceRects = FontHelpers.TransformString(Text);
+        return (StringSourceRects.Sum(c => c.width * Scale), StringSourceRects.First().height * Scale);
     }
 
     public override void Render(SpriteBatch spriteBatch)
     {
         base.Render(spriteBatch);
 
-        var startX = X;
-        var letterXOffset = 0;
-        var scale = 1;
-        foreach (var (x, y, width, height) in StringPos)
+        var currentXOffset = 0;
+        foreach (var (charX, charY, charWidth, charHeight) in StringSourceRects) // TODO change this to Rectangle types
         {
-            var sourceRect = new Rectangle(x, y, width, 8);
-            var destRect = new Rectangle(startX + letterXOffset * scale, Y, width * scale, height * scale);
-            spriteBatch.Draw(textures["dogica-font"], destRect, sourceRect, Color.LimeGreen);
-            letterXOffset += width;
+            var sourceRect = new Rectangle(charX, charY, charWidth, charHeight);
+            var scaledCharWidth = charWidth * Scale;
+            var scaledCharHeight = charHeight * Scale;
+            var destRect = new Rectangle(X + currentXOffset, Y, scaledCharWidth, scaledCharHeight);
+            spriteBatch.Draw(textures["dogica-font"], destRect, sourceRect, Color);
+            currentXOffset += scaledCharWidth;
         }
     }
 }
