@@ -5,6 +5,8 @@ namespace AstroMiner.Utilities;
 
 public static class FontHelpers
 {
+    public const int FontHeightPx = 8;
+
     private static readonly Dictionary<char, (int x, int y, int width)> Chars = new()
     {
         { 'A', (0, 0, 7) },
@@ -46,13 +48,13 @@ public static class FontHelpers
         { '9', (63, 18, 7) }
     };
 
-    public static List<(int x, int y, int width)> TransformString(string text)
+    public static List<(int x, int y, int width, int height)> TransformString(string text)
     {
-        var result = new List<(int x, int y, int width)>();
+        var result = new List<(int x, int y, int width, int height)>();
         foreach (var c in text)
         {
             if (!Chars.ContainsKey(c)) throw new ArgumentException($"Character '{c}' is not in the font data.");
-            result.Add(Chars[c]);
+            result.Add((Chars[c].x, Chars[c].y, Chars[c].width, FontHeightPx));
         }
 
         return result;

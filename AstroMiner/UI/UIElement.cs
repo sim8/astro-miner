@@ -57,15 +57,13 @@ public class UIElement(Dictionary<string, Texture2D> textures)
         foreach (var child in Children) child.Render(spriteBatch);
     }
 
-    private (int, int) ComputeChildDimensions(int parentWidth, int parentHeight)
+    protected virtual (int, int) ComputeChildDimensions(int parentWidth, int parentHeight)
     {
         // First compute our own dimensions to pass to children
-        ComputedWidth = FullWidth ? parentWidth : FixedWidth ?? 0;
-        ComputedHeight = FullHeight ? parentHeight : FixedHeight ?? 0;
 
-        bool isColumn = ChildrenDirection == ChildrenDirection.Column;
-        int primarySize = 0;
-        int secondarySize = 0;
+        var isColumn = ChildrenDirection == ChildrenDirection.Column;
+        var primarySize = 0;
+        var secondarySize = 0;
 
         foreach (var child in Children)
         {
@@ -97,9 +95,23 @@ public class UIElement(Dictionary<string, Texture2D> textures)
 
     public (int, int) ComputeDimensions(int parentWidth, int parentHeight)
     {
-        var (childrenWidth, childrenHeight) = ComputeChildDimensions(parentWidth, parentHeight);
+        // var fixedOrParentWidth = FixedWidth ?? (FullWidth ? parentWidth : null);
+        // var fixedOrParentHeight = FixedHeight ?? (FullHeight ? parentHeight : null);
+        //
+        // var (childrenWidth, childrenHeight) = ComputeChildDimensions(fixedOrParentWidth ?? 0, fixedOrParentHeight ?? 0);
+        // ChildrenWidth = childrenWidth;
+        // ChildrenHeight = childrenHeight;
+        // ComputedWidth = fixedOrParentWidth ?? ChildrenWidth;
+        // ComputedHeight = fixedOrParentHeight ?? ChildrenHeight;
+
+        ComputedWidth = FullWidth ? parentWidth : FixedWidth ?? 0;
+        ComputedHeight = FullHeight ? parentHeight : FixedHeight ?? 0;
+
+        var (childrenWidth, childrenHeight) = ComputeChildDimensions(ComputedWidth, ComputedHeight);
         ChildrenWidth = childrenWidth;
         ChildrenHeight = childrenHeight;
+
+        return (ComputedWidth, ComputedHeight);
 
         return (ComputedWidth, ComputedHeight);
     }
@@ -110,30 +122,27 @@ public class UIElement(Dictionary<string, Texture2D> textures)
         X = originX;
         Y = originY;
 
-        bool isColumn = ChildrenDirection == ChildrenDirection.Column;
+        var isColumn = ChildrenDirection == ChildrenDirection.Column;
 
         // Get total size of children along primary axis
-        int totalChildrenSize = 0;
-        foreach (var child in Children)
-        {
-            totalChildrenSize += isColumn ? child.ComputedHeight : child.ComputedWidth;
-        }
+        var totalChildrenSize = 0;
+        foreach (var child in Children) totalChildrenSize += isColumn ? child.ComputedHeight : child.ComputedWidth;
 
         // Calculate spacing for SpaceBetween
         float spacing = 0;
         if (ChildrenJustify == ChildrenJustify.SpaceBetween && Children.Count > 1)
         {
-            int availableSpace = isColumn ? ComputedHeight : ComputedWidth;
+            var availableSpace = isColumn ? ComputedHeight : ComputedWidth;
             spacing = (availableSpace - totalChildrenSize) / (float)(Children.Count - 1);
         }
 
         // Set starting position for primary axis
-        int primaryPos = isColumn ? Y : X;
+        var primaryPos = isColumn ? Y : X;
 
         // Adjust starting position based on justify
         if (ChildrenJustify == ChildrenJustify.End)
         {
-            int availableSpace = isColumn ? ComputedHeight : ComputedWidth;
+            var availableSpace = isColumn ? ComputedHeight : ComputedWidth;
             primaryPos += availableSpace - totalChildrenSize;
         }
         // No adjustment needed for Start
@@ -141,7 +150,7 @@ public class UIElement(Dictionary<string, Texture2D> textures)
         foreach (var child in Children)
         {
             // Calculate secondary axis position (based on alignment)
-            int secondaryPos = CalculateSecondaryPosition(child, isColumn);
+            var secondaryPos = CalculateSecondaryPosition(child, isColumn);
 
             // Set child position
             if (isColumn)
@@ -153,17 +162,13 @@ public class UIElement(Dictionary<string, Texture2D> textures)
             primaryPos += isColumn ? child.ComputedHeight : child.ComputedWidth;
 
             // Add spacing if needed
-            if (ChildrenJustify == ChildrenJustify.SpaceBetween && Children.Count > 1)
-            {
-                primaryPos += (int)spacing;
-            }
+            if (ChildrenJustify == ChildrenJustify.SpaceBetween && Children.Count > 1) primaryPos += (int)spacing;
         }
     }
 
     private int CalculateSecondaryPosition(UIElement child, bool isColumn)
     {
         if (isColumn)
-        {
             // Column layout: Secondary is X position
             return ChildrenAlign switch
             {
@@ -172,17 +177,14 @@ public class UIElement(Dictionary<string, Texture2D> textures)
                 ChildrenAlign.End => X + ComputedWidth - child.ComputedWidth,
                 _ => throw new ArgumentOutOfRangeException()
             };
-        }
-        else
+
+        // Row layout: Secondary is Y position
+        return ChildrenAlign switch
         {
-            // Row layout: Secondary is Y position
-            return ChildrenAlign switch
-            {
-                ChildrenAlign.Start => Y,
-                ChildrenAlign.Center => Y + ComputedHeight / 2 - child.ComputedHeight / 2,
-                ChildrenAlign.End => Y + ComputedHeight - child.ComputedHeight,
-                _ => throw new ArgumentOutOfRangeException()
-            };
-        }
+            ChildrenAlign.Start => Y,
+            ChildrenAlign.Center => Y + ComputedHeight / 2 - child.ComputedHeight / 2,
+            ChildrenAlign.End => Y + ComputedHeight - child.ComputedHeight,
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 }

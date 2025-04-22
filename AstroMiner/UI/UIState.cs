@@ -33,11 +33,10 @@ public class UIState(BaseGame game)
                             FixedHeight = 100
                         },
 
-                        new UIElement(game.Textures)
+                        new UITextElement(game.Textures)
                         {
-                            BackgroundColor = Color.Red,
-                            FixedWidth = 150,
-                            FixedHeight = 75
+                            Text = "DEBUG",
+                            BackgroundColor = Color.Red
                         }
                     ]
                 },
@@ -57,7 +56,8 @@ public class UIState(BaseGame game)
     {
         Root = GetTree();
 
-        Root.ComputeDimensions(game.Graphics.GraphicsDevice.Viewport.Width, game.Graphics.GraphicsDevice.Viewport.Height);
+        Root.ComputeDimensions(game.Graphics.GraphicsDevice.Viewport.Width,
+            game.Graphics.GraphicsDevice.Viewport.Height);
         Root.ComputePositions(0, 0);
     }
 }

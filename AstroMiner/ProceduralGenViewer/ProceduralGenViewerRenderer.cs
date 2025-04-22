@@ -90,10 +90,10 @@ public class ProceduralGenViewerRenderer
     private void RenderString(SpriteBatch spriteBatch, int startX, int startY, string str, int scale = 3)
     {
         var linePxCount = 0;
-        foreach (var (x, y, width) in FontHelpers.TransformString(str))
+        foreach (var (x, y, width, height) in FontHelpers.TransformString(str))
         {
             var sourceRect = new Rectangle(x, y, width, 8);
-            var destRect = new Rectangle(startX + linePxCount * scale, startY + 10, width * scale, 8 * scale);
+            var destRect = new Rectangle(startX + linePxCount * scale, startY + 10, width * scale, height * scale);
             spriteBatch.Draw(_textures["dogica-font"], destRect, sourceRect, Color.LimeGreen);
             linePxCount += width;
         }
