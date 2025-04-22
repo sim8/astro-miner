@@ -93,28 +93,100 @@ public class UIElement(Dictionary<string, Texture2D> textures)
 
     public void ComputePositions(int originX, int originY)
     {
+        // Set element position based on origin and any parent alignment that might be applied
         X = originX;
         Y = originY;
 
+        // Position children within this element
         if (ChildrenDirection == ChildrenDirection.Column)
         {
-            var cursorY = originY;
+            int totalChildrenHeight = 0;
+            foreach (var child in Children)
+            {
+                totalChildrenHeight += child.ComputedHeight;
+            }
+
+            // Calculate spacing for SpaceBetween
+            float spacing = 0;
+            if (ChildrenJustify == ChildrenJustify.SpaceBetween && Children.Count > 1)
+            {
+                spacing = (ComputedHeight - totalChildrenHeight) / (float)(Children.Count - 1);
+            }
+
+            var cursorY = Y;
+
+            // Adjust starting position based on justify
+            if (ChildrenJustify == ChildrenJustify.End)
+            {
+                cursorY = Y + ComputedHeight - totalChildrenHeight;
+            }
+            else if (ChildrenJustify == ChildrenJustify.Start)
+            {
+                // No adjustment needed for Start
+            }
+
             foreach (var child in Children)
             {
                 var childX = ChildrenAlign switch
                 {
-                    ChildrenAlign.Start => originX,
-                    ChildrenAlign.Center => originX + ComputedWidth / 2 - child.ComputedWidth / 2,
-                    ChildrenAlign.End => originX + ComputedWidth - child.ComputedWidth,
+                    ChildrenAlign.Start => X,
+                    ChildrenAlign.Center => X + ComputedWidth / 2 - child.ComputedWidth / 2,
+                    ChildrenAlign.End => X + ComputedWidth - child.ComputedWidth,
                     _ => throw new ArgumentOutOfRangeException()
                 };
                 child.ComputePositions(childX, cursorY);
                 cursorY += child.ComputedHeight;
+
+                if (ChildrenJustify == ChildrenJustify.SpaceBetween && Children.Count > 1)
+                {
+                    cursorY += (int)spacing;
+                }
             }
         }
         else
         {
-            Console.WriteLine("UNHANDLED");
+            int totalChildrenWidth = 0;
+            foreach (var child in Children)
+            {
+                totalChildrenWidth += child.ComputedWidth;
+            }
+
+            // Calculate spacing for SpaceBetween
+            float spacing = 0;
+            if (ChildrenJustify == ChildrenJustify.SpaceBetween && Children.Count > 1)
+            {
+                spacing = (ComputedWidth - totalChildrenWidth) / (float)(Children.Count - 1);
+            }
+
+            var cursorX = X;
+
+            // Adjust starting position based on justify
+            if (ChildrenJustify == ChildrenJustify.End)
+            {
+                cursorX = X + ComputedWidth - totalChildrenWidth;
+            }
+            else if (ChildrenJustify == ChildrenJustify.Start)
+            {
+                // No adjustment needed for Start
+            }
+
+            foreach (var child in Children)
+            {
+                var childY = ChildrenAlign switch
+                {
+                    ChildrenAlign.Start => Y,
+                    ChildrenAlign.Center => Y + ComputedHeight / 2 - child.ComputedHeight / 2,
+                    ChildrenAlign.End => Y + ComputedHeight - child.ComputedHeight,
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+                child.ComputePositions(cursorX, childY);
+                cursorX += child.ComputedWidth;
+
+                if (ChildrenJustify == ChildrenJustify.SpaceBetween && Children.Count > 1)
+                {
+                    cursorX += (int)spacing;
+                }
+            }
         }
     }
 }
