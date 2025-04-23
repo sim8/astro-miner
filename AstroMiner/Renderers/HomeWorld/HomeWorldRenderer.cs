@@ -13,7 +13,8 @@ public class HomeWorldRenderer(RendererShared shared) : BaseWorldRenderer(shared
         var rect = Shared.ViewHelpers.GetVisibleRectForGridCell(0, 0, Coordinates.Grid.OizusWidth,
             Coordinates.Grid.OizusHeight);
         spriteBatch.Draw(Shared.Textures["oizus-bg"], rect, Color.White);
-        // RenderGridDebugOverlay(spriteBatch);
+
+        if (shared.Game.Debug.showGridDebug) RenderGridDebugOverlay(spriteBatch);
     }
 
     private void RenderGridDebugOverlay(SpriteBatch spriteBatch)

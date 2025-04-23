@@ -28,7 +28,7 @@ public class InteriorsWorldRenderer(RendererShared shared) : BaseWorldRenderer(s
             spriteBatch.Draw(Shared.Textures[config.TexureName],
                 Shared.ViewHelpers.GetVisibleRectForGridCell(0, 0, config.GridWidth, config.GridHeight),
                 Color.White);
-        // RenderGridDebugOverlay(spriteBatch);
+        if (shared.Game.Debug.showGridDebug) RenderGridDebugOverlay(spriteBatch);
     }
 
     private void RenderGridDebugOverlay(SpriteBatch spriteBatch)
