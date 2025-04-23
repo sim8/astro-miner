@@ -34,7 +34,7 @@ public sealed class UIDebugMenu : UIElement
     public UIDebugMenu(BaseGame game) : base(game)
     {
         ChildrenDirection = ChildrenDirection.Column;
-        ChildrenAlign = ChildrenAlign.Start;
+        ChildrenAlign = ChildrenAlign.Stretch;
         ChildrenJustify = ChildrenJustify.Start;
         Children =
         [

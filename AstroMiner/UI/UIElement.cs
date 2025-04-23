@@ -22,7 +22,8 @@ public enum ChildrenAlign
 {
     Start,
     Center,
-    End
+    End,
+    Stretch
 }
 
 public class UIElement(BaseGame game)
@@ -232,7 +233,15 @@ public class UIElement(BaseGame game)
     private int CalculateSecondaryPosition(UIElement child, bool isColumn)
     {
         if (isColumn)
+        {
             // Column layout: Secondary is X position
+            // For Stretch, we modify the child's width first
+            if (ChildrenAlign == ChildrenAlign.Stretch)
+            {
+                child.ComputedWidth = ComputedWidth;
+                return X; // Position at start
+            }
+
             return ChildrenAlign switch
             {
                 ChildrenAlign.Start => X,
@@ -240,8 +249,16 @@ public class UIElement(BaseGame game)
                 ChildrenAlign.End => X + ComputedWidth - child.ComputedWidth,
                 _ => throw new ArgumentOutOfRangeException()
             };
+        }
 
         // Row layout: Secondary is Y position
+        // For Stretch, we modify the child's height first
+        if (ChildrenAlign == ChildrenAlign.Stretch)
+        {
+            child.ComputedHeight = ComputedHeight;
+            return Y; // Position at start
+        }
+
         return ChildrenAlign switch
         {
             ChildrenAlign.Start => Y,

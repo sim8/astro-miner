@@ -306,4 +306,172 @@ public class UIElementTests
         Assert.AreEqual(100, parent.ComputedHeight);
         Assert.AreEqual(100, child.ComputedHeight); // Child should inherit parent's height
     }
+
+    [TestMethod]
+    public void UIElement_ChildrenAlign_Stretch_Works_Correctly()
+    {
+        // Arrange - Create a container with stretch alignment
+        var container = new UIElement(_mockGame)
+        {
+            FixedWidth = 200,
+            FixedHeight = 100,
+            ChildrenDirection = ChildrenDirection.Column,
+            ChildrenAlign = ChildrenAlign.Stretch
+        };
+
+        // Create children with different widths
+        var child1 = new UIElement(_mockGame)
+        {
+            BackgroundColor = Color.LightGray,
+            FixedWidth = 50,  // Narrower than container
+            FixedHeight = 30
+        };
+
+        var child2 = new UIElement(_mockGame)
+        {
+            BackgroundColor = Color.DarkBlue,
+            FixedWidth = 80,  // Wider than child1 but narrower than container
+            FixedHeight = 20
+        };
+
+        // Add children to container
+        container.Children.Add(child1);
+        container.Children.Add(child2);
+
+        // Act - Compute dimensions and positions
+        container.ComputeDimensions(800, 600);
+        container.ComputePositions(0, 0);
+
+        // Assert
+        // Container should maintain its fixed dimensions
+        Assert.AreEqual(200, container.ComputedWidth);
+        Assert.AreEqual(100, container.ComputedHeight);
+
+        // Children should be stretched to container width
+        Assert.AreEqual(200, child1.ComputedWidth); // Stretched to container width
+        Assert.AreEqual(30, child1.ComputedHeight);  // Height unchanged
+        Assert.AreEqual(200, child2.ComputedWidth); // Stretched to container width
+        Assert.AreEqual(20, child2.ComputedHeight);  // Height unchanged
+
+        // Children should be positioned at the start (X position)
+        Assert.AreEqual(0, child1.X);
+        Assert.AreEqual(0, child1.Y);
+        Assert.AreEqual(0, child2.X);
+        Assert.AreEqual(30, child2.Y); // After child1
+    }
+
+    [TestMethod]
+    public void UIElement_ChildrenAlign_Stretch_Works_In_Row_Direction()
+    {
+        // Arrange - Create a container with stretch alignment and row direction
+        var container = new UIElement(_mockGame)
+        {
+            FixedWidth = 200,
+            FixedHeight = 100,
+            ChildrenDirection = ChildrenDirection.Row,
+            ChildrenAlign = ChildrenAlign.Stretch
+        };
+
+        // Create children with different heights
+        var child1 = new UIElement(_mockGame)
+        {
+            BackgroundColor = Color.LightGray,
+            FixedWidth = 50,
+            FixedHeight = 30  // Shorter than container
+        };
+
+        var child2 = new UIElement(_mockGame)
+        {
+            BackgroundColor = Color.DarkBlue,
+            FixedWidth = 80,
+            FixedHeight = 60  // Taller than child1 but shorter than container
+        };
+
+        // Add children to container
+        container.Children.Add(child1);
+        container.Children.Add(child2);
+
+        // Act - Compute dimensions and positions
+        container.ComputeDimensions(800, 600);
+        container.ComputePositions(0, 0);
+
+        // Assert
+        // Container should maintain its fixed dimensions
+        Assert.AreEqual(200, container.ComputedWidth);
+        Assert.AreEqual(100, container.ComputedHeight);
+
+        // Children should be stretched to container height
+        Assert.AreEqual(50, child1.ComputedWidth);   // Width unchanged
+        Assert.AreEqual(100, child1.ComputedHeight); // Stretched to container height
+        Assert.AreEqual(80, child2.ComputedWidth);   // Width unchanged
+        Assert.AreEqual(100, child2.ComputedHeight); // Stretched to container height
+
+        // Children should be positioned properly
+        Assert.AreEqual(0, child1.X);
+        Assert.AreEqual(0, child1.Y);
+        Assert.AreEqual(50, child2.X); // After child1
+        Assert.AreEqual(0, child2.Y);
+    }
+
+    [TestMethod]
+    public void UIElement_Stretch_Works_For_Dropdown_Scenario()
+    {
+        // Arrange - Create a dropdown container with stretch alignment
+        var dropdown = new UIElement(_mockGame)
+        {
+            BackgroundColor = Color.Gray,
+            ChildrenDirection = ChildrenDirection.Column,
+            ChildrenAlign = ChildrenAlign.Stretch
+        };
+
+        // Create dropdown items with different intrinsic widths
+        var item1 = new UIElement(_mockGame)
+        {
+            BackgroundColor = Color.LightGray,
+            FixedWidth = 80,  // Medium width
+            FixedHeight = 30
+        };
+
+        var item2 = new UIElement(_mockGame)
+        {
+            BackgroundColor = Color.White,
+            FixedWidth = 120, // Widest item
+            FixedHeight = 30
+        };
+
+        var item3 = new UIElement(_mockGame)
+        {
+            BackgroundColor = Color.LightGray,
+            FixedWidth = 60,  // Narrowest item
+            FixedHeight = 30
+        };
+
+        // Add items to dropdown
+        dropdown.Children.Add(item1);
+        dropdown.Children.Add(item2);
+        dropdown.Children.Add(item3);
+
+        // Act - Compute dimensions and positions
+        dropdown.ComputeDimensions(800, 600);
+        dropdown.ComputePositions(0, 0);
+
+        // Assert
+        // Dropdown container width should be determined by the widest child
+        Assert.AreEqual(120, dropdown.ChildrenWidth); // Width of the widest item
+        Assert.AreEqual(120, dropdown.ComputedWidth); // Container adapts to widest item
+        Assert.AreEqual(90, dropdown.ComputedHeight);  // Sum of item heights
+
+        // All items should be stretched to the width of the container (which is the width of the widest item)
+        Assert.AreEqual(120, item1.ComputedWidth); // Stretched to match widest item
+        Assert.AreEqual(120, item2.ComputedWidth); // Already the widest, unchanged
+        Assert.AreEqual(120, item3.ComputedWidth); // Stretched to match widest item
+
+        // Items should be positioned correctly
+        Assert.AreEqual(0, item1.X);
+        Assert.AreEqual(0, item1.Y);
+        Assert.AreEqual(0, item2.X);
+        Assert.AreEqual(30, item2.Y); // After item1
+        Assert.AreEqual(0, item3.X);
+        Assert.AreEqual(60, item3.Y); // After item1 and item2
+    }
 }
