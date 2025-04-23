@@ -41,6 +41,9 @@ public class UIElement(BaseGame game)
     public int ComputedWidth { get; private set; }
     public int ComputedHeight { get; private set; }
 
+    // Padding property, defaulted to 0
+    public int Padding { get; set; } = 0;
+
     public ChildrenDirection ChildrenDirection { get; set; } = ChildrenDirection.Column;
     public ChildrenJustify ChildrenJustify { get; set; } = ChildrenJustify.Start;
     public ChildrenAlign ChildrenAlign { get; set; } = ChildrenAlign.Start;
@@ -114,7 +117,7 @@ public class UIElement(BaseGame game)
         if (FullWidth)
             return parentWidth;
         if (FixedWidth.HasValue)
-            return FixedWidth.Value;
+            return FixedWidth.Value; // Fixed width is considered to include padding
         return 0; // Will be adjusted later based on children if needed
     }
 
@@ -126,7 +129,7 @@ public class UIElement(BaseGame game)
         if (FullHeight)
             return parentHeight;
         if (FixedHeight.HasValue)
-            return FixedHeight.Value;
+            return FixedHeight.Value; // Fixed height is considered to include padding
         return 0; // Will be adjusted later based on children if needed
     }
 
@@ -135,18 +138,20 @@ public class UIElement(BaseGame game)
     /// </summary>
     private void MeasureChildrenAndAdjustSize(int availableWidth, int availableHeight)
     {
-        var childrenDimensions = MeasureChildren(availableWidth, availableHeight);
+        // Adjust available space for children by removing padding
+        int adjustedAvailableWidth = availableWidth > 0 ? Math.Max(0, availableWidth - 2 * Padding) : 0;
+        int adjustedAvailableHeight = availableHeight > 0 ? Math.Max(0, availableHeight - 2 * Padding) : 0;
+
+        var childrenDimensions = MeasureChildren(adjustedAvailableWidth, adjustedAvailableHeight);
         ChildrenWidth = childrenDimensions.width;
         ChildrenHeight = childrenDimensions.height;
 
-        // If width/height weren't explicitly set, use children dimensions
-        var isColumn = ChildrenDirection == ChildrenDirection.Column;
-
+        // If width/height weren't explicitly set, use children dimensions plus padding
         if (!FullWidth && !FixedWidth.HasValue)
-            ComputedWidth = ChildrenWidth;
+            ComputedWidth = ChildrenWidth + 2 * Padding;
 
         if (!FullHeight && !FixedHeight.HasValue)
-            ComputedHeight = ChildrenHeight;
+            ComputedHeight = ChildrenHeight + 2 * Padding;
     }
 
     /// <summary>
@@ -196,17 +201,17 @@ public class UIElement(BaseGame game)
         float spacing = 0;
         if (ChildrenJustify == ChildrenJustify.SpaceBetween && Children.Count > 1)
         {
-            var availableSpace = isColumn ? ComputedHeight : ComputedWidth;
+            var availableSpace = isColumn ? ComputedHeight - 2 * Padding : ComputedWidth - 2 * Padding;
             spacing = (availableSpace - totalChildrenSize) / (float)(Children.Count - 1);
         }
 
-        // Set starting position for primary axis
-        var primaryPos = isColumn ? Y : X;
+        // Set starting position for primary axis (includes padding)
+        var primaryPos = isColumn ? Y + Padding : X + Padding;
 
         // Adjust starting position based on justify
         if (ChildrenJustify == ChildrenJustify.End)
         {
-            var availableSpace = isColumn ? ComputedHeight : ComputedWidth;
+            var availableSpace = isColumn ? ComputedHeight - 2 * Padding : ComputedWidth - 2 * Padding;
             primaryPos += availableSpace - totalChildrenSize;
         }
         // No adjustment needed for Start
@@ -238,15 +243,16 @@ public class UIElement(BaseGame game)
             // For Stretch, we modify the child's width first
             if (ChildrenAlign == ChildrenAlign.Stretch)
             {
-                child.ComputedWidth = ComputedWidth;
-                return X; // Position at start
+                // Set the stretched width to the container width minus padding on both sides
+                child.ComputedWidth = ComputedWidth - 2 * Padding;
+                return X + Padding; // Position at start + padding
             }
 
             return ChildrenAlign switch
             {
-                ChildrenAlign.Start => X,
-                ChildrenAlign.Center => X + ComputedWidth / 2 - child.ComputedWidth / 2,
-                ChildrenAlign.End => X + ComputedWidth - child.ComputedWidth,
+                ChildrenAlign.Start => X + Padding,
+                ChildrenAlign.Center => X + Padding + (ComputedWidth - 2 * Padding) / 2 - child.ComputedWidth / 2,
+                ChildrenAlign.End => X + ComputedWidth - Padding - child.ComputedWidth,
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
@@ -255,15 +261,16 @@ public class UIElement(BaseGame game)
         // For Stretch, we modify the child's height first
         if (ChildrenAlign == ChildrenAlign.Stretch)
         {
-            child.ComputedHeight = ComputedHeight;
-            return Y; // Position at start
+            // Set the stretched height to the container height minus padding on both sides
+            child.ComputedHeight = ComputedHeight - 2 * Padding;
+            return Y + Padding; // Position at start + padding
         }
 
         return ChildrenAlign switch
         {
-            ChildrenAlign.Start => Y,
-            ChildrenAlign.Center => Y + ComputedHeight / 2 - child.ComputedHeight / 2,
-            ChildrenAlign.End => Y + ComputedHeight - child.ComputedHeight,
+            ChildrenAlign.Start => Y + Padding,
+            ChildrenAlign.Center => Y + Padding + (ComputedHeight - 2 * Padding) / 2 - child.ComputedHeight / 2,
+            ChildrenAlign.End => Y + ComputedHeight - Padding - child.ComputedHeight,
             _ => throw new ArgumentOutOfRangeException()
         };
     }

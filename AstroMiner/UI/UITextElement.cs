@@ -23,13 +23,15 @@ public class UITextElement(BaseGame game) : UIElement(game)
     {
         base.Render(spriteBatch);
 
-        var currentXOffset = 0;
+        var currentXOffset = Padding; // Start with padding offset
+        var yOffset = Padding; // Add padding to Y position as well
+
         foreach (var (charX, charY, charWidth, charHeight) in StringSourceRects) // TODO change this to Rectangle types
         {
             var sourceRect = new Rectangle(charX, charY, charWidth, charHeight);
             var scaledCharWidth = charWidth * Scale;
             var scaledCharHeight = charHeight * Scale;
-            var destRect = new Rectangle(X + currentXOffset, Y, scaledCharWidth, scaledCharHeight);
+            var destRect = new Rectangle(X + currentXOffset, Y + yOffset, scaledCharWidth, scaledCharHeight);
             spriteBatch.Draw(game.Textures["dogica-font"], destRect, sourceRect, Color);
             currentXOffset += scaledCharWidth;
         }

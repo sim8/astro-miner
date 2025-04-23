@@ -45,6 +45,7 @@ public class UI(BaseGame game)
                                 {
                                     Text = "FPS " + game.FrameCounter.AverageFramesPerSecond.ToString("F0"),
                                     Color = Color.Aqua,
+                                    Padding = 10,
                                     Scale = 3
                                 }
                             }

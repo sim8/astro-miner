@@ -7,6 +7,9 @@ public static class FontHelpers
 {
     public const int FontHeightPx = 8;
 
+    // For testing purposes only
+    public static (int x, int y, int width, int height)? MockCharacterSizeForTest { get; set; } = null;
+
     private static readonly Dictionary<char, (int x, int y, int width)> Chars = new()
     {
         { 'A', (0, 0, 7) },
@@ -51,6 +54,18 @@ public static class FontHelpers
     public static List<(int x, int y, int width, int height)> TransformString(string text)
     {
         var result = new List<(int x, int y, int width, int height)>();
+
+        // If we're in test mode, return mock data
+        if (MockCharacterSizeForTest.HasValue && !string.IsNullOrEmpty(text))
+        {
+            var mockChar = MockCharacterSizeForTest.Value;
+            for (int i = 0; i < text.Length; i++)
+            {
+                result.Add(mockChar);
+            }
+            return result;
+        }
+
         foreach (var c in text)
         {
             if (!Chars.ContainsKey(c)) throw new ArgumentException($"Character '{c}' is not in the font data.");

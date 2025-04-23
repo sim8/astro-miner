@@ -20,7 +20,8 @@ public sealed class UIDebugButton : UIElement
             new UITextElement(game)
             {
                 Text = "DEBUG",
-                Scale = 4,
+                Scale = 3,
+                Padding = 10,
                 Color = game.StateManager.Ui.State.IsDebugMenuOpen ? Color.Black : Color.Aqua,
                 BackgroundColor = game.StateManager.Ui.State.IsDebugMenuOpen ? Color.Aqua : Color.Black,
                 OnClick = () => game.StateManager.Ui.State.IsDebugMenuOpen = !game.StateManager.Ui.State.IsDebugMenuOpen
@@ -36,12 +37,15 @@ public sealed class UIDebugMenu : UIElement
         ChildrenDirection = ChildrenDirection.Column;
         ChildrenAlign = ChildrenAlign.Stretch;
         ChildrenJustify = ChildrenJustify.Start;
+        BackgroundColor = Color.Black;
+        Padding = 10;
         Children =
         [
             new UITextElement(game)
             {
                 Text = "SHOW GRID DEBUG",
-                Scale = 3,
+                Padding = 6,
+                Scale = 2,
                 Color = game.Debug.showGridDebug ? Color.Black : Color.Aqua,
                 BackgroundColor = game.Debug.showGridDebug ? Color.Aqua : Color.Black,
                 OnClick = () => game.Debug.showGridDebug = !game.Debug.showGridDebug
@@ -49,7 +53,8 @@ public sealed class UIDebugMenu : UIElement
             new UITextElement(game)
             {
                 Text = "SHOW FPS",
-                Scale = 3,
+                Padding = 6,
+                Scale = 2,
                 Color = game.Debug.showFps ? Color.Black : Color.Aqua,
                 BackgroundColor = game.Debug.showFps ? Color.Aqua : Color.Black,
                 OnClick = () => game.Debug.showFps = !game.Debug.showFps
