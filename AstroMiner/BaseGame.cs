@@ -9,6 +9,7 @@ namespace AstroMiner;
 
 public abstract class BaseGame : Game
 {
+    public readonly DebugOptions Debug = new();
     public readonly FrameCounter FrameCounter = new();
     public readonly GameStateStorage GameStateStorage = new();
     public readonly GraphicsDeviceManager Graphics;

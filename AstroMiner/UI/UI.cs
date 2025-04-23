@@ -2,9 +2,15 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner.UI;
 
+public class UIState
+{
+    public bool IsDebugMenuOpen { get; set; } = false;
+}
+
 public class UI(BaseGame game)
 {
     public UIElement Root { get; private set; }
+    public UIState State { get; init; } = new();
 
     public UIElement GetTree()
     {
@@ -33,7 +39,7 @@ public class UI(BaseGame game)
                             FixedHeight = 100
                         },
 
-                        new UIDebugMenu(game)
+                        new UIDebugButton(game)
                     ]
                 },
                 new UIElement(game)
