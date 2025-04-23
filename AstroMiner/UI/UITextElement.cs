@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace AstroMiner.UI;
 
-public class UITextElement(Dictionary<string, Texture2D> textures) : UIElement(textures)
+public class UITextElement(BaseGame game) : UIElement(game)
 {
     public string Text { get; set; }
     public int Scale { get; set; } = 1;
@@ -30,7 +30,7 @@ public class UITextElement(Dictionary<string, Texture2D> textures) : UIElement(t
             var scaledCharWidth = charWidth * Scale;
             var scaledCharHeight = charHeight * Scale;
             var destRect = new Rectangle(X + currentXOffset, Y, scaledCharWidth, scaledCharHeight);
-            spriteBatch.Draw(textures["dogica-font"], destRect, sourceRect, Color);
+            spriteBatch.Draw(game.Textures["dogica-font"], destRect, sourceRect, Color);
             currentXOffset += scaledCharWidth;
         }
     }

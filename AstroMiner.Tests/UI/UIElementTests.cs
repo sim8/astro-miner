@@ -6,9 +6,21 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace AstroMiner.Tests.UI;
 
+// Mock implementation of BaseGame for testing
+public class MockBaseGame(Dictionary<string, Texture2D> textures) : BaseGame
+{
+    public Dictionary<string, Texture2D> Textures { get; } = textures;
+
+    // required abstract method
+    protected override void InitializeControls()
+    {
+    }
+}
+
 [TestClass]
 public class UIElementTests
 {
+    private MockBaseGame _mockGame;
     private Dictionary<string, Texture2D> _textures;
 
     [TestInitialize]
@@ -19,33 +31,36 @@ public class UIElementTests
         {
             { "white", null } // The actual texture isn't needed for layout tests
         };
+
+        // Create mock game
+        _mockGame = new MockBaseGame(_textures);
     }
 
     [TestMethod]
     public void UIElement_ComputesLayoutCorrectly()
     {
         // Arrange - Create a tree similar to UI.GetTree()
-        var root = new UIElement(_textures)
+        var root = new UIElement(_mockGame)
         {
             FixedWidth = 100,
             FixedHeight = 100,
             ChildrenAlign = ChildrenAlign.Center
         };
 
-        var container = new UIElement(_textures)
+        var container = new UIElement(_mockGame)
         {
             BackgroundColor = Color.Green,
             ChildrenAlign = ChildrenAlign.Center
         };
 
-        var child1 = new UIElement(_textures)
+        var child1 = new UIElement(_mockGame)
         {
             BackgroundColor = Color.LightGray,
             FixedWidth = 50,
             FixedHeight = 30
         };
 
-        var child2 = new UIElement(_textures)
+        var child2 = new UIElement(_mockGame)
         {
             BackgroundColor = Color.DarkBlue,
             FixedWidth = 40,
@@ -91,27 +106,27 @@ public class UIElementTests
     public void UIElement_ComputesRowLayoutCorrectly()
     {
         // Arrange - Create a tree with row direction
-        var root = new UIElement(_textures)
+        var root = new UIElement(_mockGame)
         {
             FixedWidth = 200,
             FixedHeight = 100
         };
 
-        var container = new UIElement(_textures)
+        var container = new UIElement(_mockGame)
         {
             BackgroundColor = Color.Green,
             ChildrenAlign = ChildrenAlign.Center,
             ChildrenDirection = ChildrenDirection.Row
         };
 
-        var child1 = new UIElement(_textures)
+        var child1 = new UIElement(_mockGame)
         {
             BackgroundColor = Color.LightGray,
             FixedWidth = 50,
             FixedHeight = 30
         };
 
-        var child2 = new UIElement(_textures)
+        var child2 = new UIElement(_mockGame)
         {
             BackgroundColor = Color.DarkBlue,
             FixedWidth = 40,
@@ -158,7 +173,7 @@ public class UIElementTests
     public void UIElement_ChildrenJustify_Works_Correctly()
     {
         // Create test elements
-        var rowParent = new UIElement(_textures)
+        var rowParent = new UIElement(_mockGame)
         {
             FixedWidth = 200,
             FixedHeight = 50,
@@ -166,7 +181,7 @@ public class UIElementTests
             ChildrenJustify = ChildrenJustify.SpaceBetween
         };
 
-        var columnParent = new UIElement(_textures)
+        var columnParent = new UIElement(_mockGame)
         {
             FixedWidth = 50,
             FixedHeight = 200,
@@ -174,19 +189,19 @@ public class UIElementTests
             ChildrenJustify = ChildrenJustify.SpaceBetween
         };
 
-        var child1 = new UIElement(_textures)
+        var child1 = new UIElement(_mockGame)
         {
             FixedWidth = 30,
             FixedHeight = 30
         };
 
-        var child2 = new UIElement(_textures)
+        var child2 = new UIElement(_mockGame)
         {
             FixedWidth = 30,
             FixedHeight = 30
         };
 
-        var child3 = new UIElement(_textures)
+        var child3 = new UIElement(_mockGame)
         {
             FixedWidth = 30,
             FixedHeight = 30
@@ -213,9 +228,9 @@ public class UIElementTests
             child3.X); // Third child (30 + 30 + 2*55 = 170)
 
         // Set up the column parent with children
-        var child4 = new UIElement(_textures) { FixedWidth = 30, FixedHeight = 30 };
-        var child5 = new UIElement(_textures) { FixedWidth = 30, FixedHeight = 30 };
-        var child6 = new UIElement(_textures) { FixedWidth = 30, FixedHeight = 30 };
+        var child4 = new UIElement(_mockGame) { FixedWidth = 30, FixedHeight = 30 };
+        var child5 = new UIElement(_mockGame) { FixedWidth = 30, FixedHeight = 30 };
+        var child6 = new UIElement(_mockGame) { FixedWidth = 30, FixedHeight = 30 };
 
         columnParent.Children.Add(child4);
         columnParent.Children.Add(child5);
@@ -242,13 +257,13 @@ public class UIElementTests
     public void UIElement_FullWidth_InheritsParentWidth()
     {
         // Arrange
-        var parent = new UIElement(_textures)
+        var parent = new UIElement(_mockGame)
         {
             FixedWidth = 200,
             FixedHeight = 100
         };
 
-        var child = new UIElement(_textures)
+        var child = new UIElement(_mockGame)
         {
             FullWidth = true,
             FixedHeight = 50
@@ -269,13 +284,13 @@ public class UIElementTests
     public void UIElement_FullHeight_InheritsParentHeight()
     {
         // Arrange
-        var parent = new UIElement(_textures)
+        var parent = new UIElement(_mockGame)
         {
             FixedWidth = 200,
             FixedHeight = 100
         };
 
-        var child = new UIElement(_textures)
+        var child = new UIElement(_mockGame)
         {
             FixedWidth = 50,
             FullHeight = true

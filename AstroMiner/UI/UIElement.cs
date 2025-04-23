@@ -25,7 +25,7 @@ public enum ChildrenAlign
     End
 }
 
-public class UIElement(Dictionary<string, Texture2D> textures)
+public class UIElement(BaseGame game)
 {
     public Color? BackgroundColor { get; set; }
     public int? FixedWidth { get; set; }
@@ -81,7 +81,7 @@ public class UIElement(Dictionary<string, Texture2D> textures)
     public virtual void Render(SpriteBatch spriteBatch)
     {
         if (BackgroundColor.HasValue)
-            spriteBatch.Draw(textures["white"],
+            spriteBatch.Draw(game.Textures["white"],
                 new Rectangle(X, Y, ComputedWidth, ComputedHeight),
                 BackgroundColor.Value);
         foreach (var child in Children) child.Render(spriteBatch);

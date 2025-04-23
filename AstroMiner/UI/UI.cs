@@ -8,7 +8,7 @@ public class UI(BaseGame game)
 
     public UIElement GetTree()
     {
-        var root = new UIElement(game.Textures)
+        var root = new UIElement(game)
         {
             FullWidth = true,
             FullHeight = true,
@@ -17,7 +17,7 @@ public class UI(BaseGame game)
             ChildrenJustify = ChildrenJustify.SpaceBetween,
             Children =
             [
-                new UIElement(game.Textures)
+                new UIElement(game)
                 {
                     BackgroundColor = Color.Green,
                     FullWidth = true,
@@ -26,17 +26,17 @@ public class UI(BaseGame game)
                     ChildrenJustify = ChildrenJustify.SpaceBetween,
                     Children =
                     [
-                        new UIElement(game.Textures)
+                        new UIElement(game)
                         {
                             BackgroundColor = Color.Yellow,
                             FixedWidth = 200,
                             FixedHeight = 100
                         },
 
-                        new UIDebugMenu(game.Textures)
+                        new UIDebugMenu(game)
                     ]
                 },
-                new UIElement(game.Textures)
+                new UIElement(game)
                 {
                     BackgroundColor = Color.Gold,
                     FixedWidth = 200,

@@ -1,24 +1,22 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace AstroMiner.UI;
 
 public sealed class UIDebugMenu : UIElement
 {
-    public UIDebugMenu(Dictionary<string, Texture2D> textures) : base(textures)
+    public UIDebugMenu(BaseGame game) : base(game)
     {
         Children =
         [
-            new UIElement(textures)
+            new UIElement(game)
             {
                 ChildrenDirection = ChildrenDirection.Column,
                 ChildrenAlign = ChildrenAlign.End,
                 ChildrenJustify = ChildrenJustify.Start,
                 Children =
                 [
-                    new UITextElement(textures)
+                    new UITextElement(game)
                     {
                         Text = "DEBUG",
                         Scale = 4,
@@ -26,7 +24,7 @@ public sealed class UIDebugMenu : UIElement
                         BackgroundColor = Color.Red,
                         OnClick = () => Console.WriteLine("Debug")
                     },
-                    new UIElement(textures)
+                    new UIElement(game)
                     {
                         BackgroundColor = Color.Pink,
                         FixedWidth = 200,
