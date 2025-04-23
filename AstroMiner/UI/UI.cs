@@ -25,7 +25,6 @@ public class UI(BaseGame game)
             [
                 new UIElement(game)
                 {
-                    BackgroundColor = Color.Green,
                     FullWidth = true,
                     ChildrenAlign = ChildrenAlign.Start,
                     ChildrenDirection = ChildrenDirection.Row,
@@ -34,19 +33,34 @@ public class UI(BaseGame game)
                     [
                         new UIElement(game)
                         {
-                            BackgroundColor = Color.Yellow,
+                            // TODO put something here
                             FixedWidth = 200,
                             FixedHeight = 100
                         },
 
-                        new UIDebugButton(game)
+                        .. game.Debug.showFps
+                            ? new UIElement[]
+                            {
+                                new UITextElement(game)
+                                {
+                                    Text = "FPS " + game.FrameCounter.AverageFramesPerSecond.ToString("F0"),
+                                    Color = Color.Aqua,
+                                    Scale = 3
+                                }
+                            }
+                            : []
                     ]
                 },
                 new UIElement(game)
                 {
-                    BackgroundColor = Color.Gold,
-                    FixedWidth = 200,
-                    FixedHeight = 100
+                    FullWidth = true,
+                    ChildrenAlign = ChildrenAlign.End,
+                    ChildrenDirection = ChildrenDirection.Row,
+                    ChildrenJustify = ChildrenJustify.End,
+                    Children =
+                    [
+                        new UIDebugButton(game)
+                    ]
                 }
             ]
         };

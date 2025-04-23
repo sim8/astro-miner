@@ -40,7 +40,7 @@ public class Renderer
         _explosionRenderer = new ExplosionRenderer(_shared);
         _scrollingBackgroundRenderer = new ScrollingBackgroundRenderer(_shared);
         _launchParallaxRenderer = new LaunchParallaxRenderer(_shared);
-        _userInterfaceRenderer = new UserInterfaceRenderer(_shared, game.FrameCounter);
+        _userInterfaceRenderer = new UserInterfaceRenderer(_shared);
         _asteroidWorldRenderer = new AsteroidWorldRenderer(_shared);
         _homeWorldRenderer = new HomeWorldRenderer(_shared);
         _interiorsWorldRenderer = new InteriorsWorldRenderer(_shared);

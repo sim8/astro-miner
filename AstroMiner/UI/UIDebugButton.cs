@@ -11,20 +11,20 @@ public sealed class UIDebugButton : UIElement
         ChildrenJustify = ChildrenJustify.Start;
         Children =
         [
-            new UITextElement(game)
-            {
-                Text = "DEBUG",
-                Scale = 4,
-                Color = Color.Aqua,
-                BackgroundColor = Color.Black,
-                OnClick = () => game.StateManager.Ui.State.IsDebugMenuOpen = !game.StateManager.Ui.State.IsDebugMenuOpen
-            },
             .. game.StateManager.Ui.State.IsDebugMenuOpen
                 ? new UIElement[]
                 {
                     new UIDebugMenu(game)
                 }
-                : []
+                : [],
+            new UITextElement(game)
+            {
+                Text = "DEBUG",
+                Scale = 4,
+                Color = game.StateManager.Ui.State.IsDebugMenuOpen ? Color.Black : Color.Aqua,
+                BackgroundColor = game.StateManager.Ui.State.IsDebugMenuOpen ? Color.Aqua : Color.Black,
+                OnClick = () => game.StateManager.Ui.State.IsDebugMenuOpen = !game.StateManager.Ui.State.IsDebugMenuOpen
+            }
         ];
     }
 }
