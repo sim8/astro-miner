@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using System;
 
 namespace AstroMiner.UI;
 
@@ -34,14 +33,7 @@ public class UI(BaseGame game)
                             FixedHeight = 100
                         },
 
-                        new UITextElement(game.Textures)
-                        {
-                            Text = "DEBUG",
-                            Scale = 4,
-                            Color = Color.Aqua,
-                            BackgroundColor = Color.Red,
-                            OnClick = () => Console.WriteLine("Debug")
-                        }
+                        new UIDebugMenu(game.Textures)
                     ]
                 },
                 new UIElement(game.Textures)
@@ -66,15 +58,12 @@ public class UI(BaseGame game)
     }
 
     /// <summary>
-    /// Handles mouse clicks and routes them to the appropriate UI element
+    ///     Handles mouse clicks and routes them to the appropriate UI element
     /// </summary>
     /// <param name="x">The x-coordinate of the mouse click</param>
     /// <param name="y">The y-coordinate of the mouse click</param>
     public void OnMouseClick(int x, int y)
     {
-        if (Root != null)
-        {
-            Root.HandleClick(x, y);
-        }
+        if (Root != null) Root.HandleClick(x, y);
     }
 }

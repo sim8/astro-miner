@@ -62,13 +62,10 @@ public class UIElement(Dictionary<string, Texture2D> textures)
     {
         // First, check children (in reverse order for proper DOM-like precedence)
         // Later elements in the tree take precedence
-        for (int i = Children.Count - 1; i >= 0; i--)
+        for (var i = Children.Count - 1; i >= 0; i--)
         {
             var child = Children[i];
-            if (child.Contains(x, y) && child.HandleClick(x, y))
-            {
-                return true; // Click was handled by a child
-            }
+            if (child.Contains(x, y) && child.HandleClick(x, y)) return true; // Click was handled by a child
         }
 
         // If no child handled the click, check if this element has a handler
