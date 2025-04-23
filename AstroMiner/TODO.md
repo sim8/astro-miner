@@ -68,6 +68,11 @@
     - Unique dialogue
     - End up in hospital too!
 
+## UI
+
+- LetterPos - create Rectangle instead of tuple. Better naming too
+- Click handling very rushed in AstroMinerGame
+
 ## Quality
 
 - Better handling of in/out of miner + positioning
