@@ -48,6 +48,39 @@ public class UIElement(Dictionary<string, Texture2D> textures)
     public int Y { get; set; }
     public List<UIElement> Children { get; set; } = new();
 
+    // Add an Action property for click handling
+    public Action OnClick { get; set; }
+
+    // Method to check if a point is inside this element
+    public bool Contains(int x, int y)
+    {
+        return x >= X && x < X + ComputedWidth && y >= Y && y < Y + ComputedHeight;
+    }
+
+    // Method to handle clicks, returns true if click was handled
+    public bool HandleClick(int x, int y)
+    {
+        // First, check children (in reverse order for proper DOM-like precedence)
+        // Later elements in the tree take precedence
+        for (int i = Children.Count - 1; i >= 0; i--)
+        {
+            var child = Children[i];
+            if (child.Contains(x, y) && child.HandleClick(x, y))
+            {
+                return true; // Click was handled by a child
+            }
+        }
+
+        // If no child handled the click, check if this element has a handler
+        if (Contains(x, y) && OnClick != null)
+        {
+            OnClick.Invoke();
+            return true; // Click was handled by this element
+        }
+
+        return false; // Click was not handled
+    }
+
     public virtual void Render(SpriteBatch spriteBatch)
     {
         if (BackgroundColor.HasValue)

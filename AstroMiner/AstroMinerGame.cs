@@ -10,6 +10,7 @@ public class AstroMinerGame : BaseGame
     private readonly ControlMapper<MiningControls> _miningControlMapper = new();
 
     private Renderer _renderer;
+    private MouseState _prevMouseState;
 
     protected override void Initialize()
     {
@@ -76,6 +77,14 @@ public class AstroMinerGame : BaseGame
         var activeMiningControls = _miningControlMapper.GetActiveControls(keyboardState, gamePadState);
 
         StateManager.Update(activeMiningControls, gameTime);
+
+        var mouseState = Mouse.GetState();
+        if (mouseState.LeftButton == ButtonState.Pressed && _prevMouseState.LeftButton == ButtonState.Released)
+        {
+            StateManager.UIState.OnMouseClick(mouseState.X, mouseState.Y);
+        }
+
+        _prevMouseState = mouseState;
 
         base.Update(gameTime);
     }
