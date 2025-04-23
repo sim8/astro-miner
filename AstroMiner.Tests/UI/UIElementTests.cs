@@ -17,14 +17,14 @@ public class UIElementTests
         // Mock textures dictionary - we don't need actual textures for layout tests
         _textures = new Dictionary<string, Texture2D>
         {
-            { "white", null }  // The actual texture isn't needed for layout tests
+            { "white", null } // The actual texture isn't needed for layout tests
         };
     }
 
     [TestMethod]
     public void UIElement_ComputesLayoutCorrectly()
     {
-        // Arrange - Create a tree similar to UIState.GetTree()
+        // Arrange - Create a tree similar to UI.GetTree()
         var root = new UIElement(_textures)
         {
             FixedWidth = 100,
@@ -69,22 +69,22 @@ public class UIElementTests
         Assert.AreEqual(100, root.ComputedHeight);
 
         // Container should be centered in root and sized to fit children
-        Assert.AreEqual(50, child1.ComputedWidth);  // Fixed width
+        Assert.AreEqual(50, child1.ComputedWidth); // Fixed width
         Assert.AreEqual(30, child1.ComputedHeight); // Fixed height
-        Assert.AreEqual(50, container.ChildrenWidth);  // Takes largest child width
+        Assert.AreEqual(50, container.ChildrenWidth); // Takes largest child width
         Assert.AreEqual(50, container.ComputedHeight); // Sum of children heights
 
         // Container should be centered horizontally in root
         Assert.AreEqual(25, container.X); // (100 - 50) / 2
-        Assert.AreEqual(0, container.Y);  // Top aligned
+        Assert.AreEqual(0, container.Y); // Top aligned
 
         // Child1 should be centered in container
-        Assert.AreEqual(25, child1.X);    // Container X + (Container Width - Child Width) / 2
-        Assert.AreEqual(0, child1.Y);     // First child starts at top
+        Assert.AreEqual(25, child1.X); // Container X + (Container Width - Child Width) / 2
+        Assert.AreEqual(0, child1.Y); // First child starts at top
 
         // Child2 should be centered in container and below child1
-        Assert.AreEqual(30, child2.X);    // Container X + (Container Width - Child Width) / 2
-        Assert.AreEqual(30, child2.Y);    // Starts after child1
+        Assert.AreEqual(30, child2.X); // Container X + (Container Width - Child Width) / 2
+        Assert.AreEqual(30, child2.Y); // Starts after child1
     }
 
     [TestMethod]
@@ -135,10 +135,10 @@ public class UIElementTests
         Assert.AreEqual(100, root.ComputedHeight);
 
         // Container should be sized to fit children
-        Assert.AreEqual(90, container.ChildrenWidth);   // Sum of children widths (50 + 40)
-        Assert.AreEqual(30, container.ChildrenHeight);  // Takes largest child height
-        Assert.AreEqual(90, container.ComputedWidth);   // No fixed width
-        Assert.AreEqual(30, container.ComputedHeight);  // No fixed height
+        Assert.AreEqual(90, container.ChildrenWidth); // Sum of children widths (50 + 40)
+        Assert.AreEqual(30, container.ChildrenHeight); // Takes largest child height
+        Assert.AreEqual(90, container.ComputedWidth); // No fixed width
+        Assert.AreEqual(30, container.ComputedHeight); // No fixed height
 
         // Container position
         Assert.AreEqual(0, container.X);
@@ -149,8 +149,9 @@ public class UIElementTests
         Assert.AreEqual(0, child1.Y);
 
         // Child2 should be next to child1 and vertically centered according to container's alignment
-        Assert.AreEqual(50, child2.X);               // child1.X + child1.ComputedWidth
-        Assert.AreEqual(5, child2.Y);                // Center aligned: container.Y + (container.ComputedHeight - child2.ComputedHeight) / 2
+        Assert.AreEqual(50, child2.X); // child1.X + child1.ComputedWidth
+        Assert.AreEqual(5,
+            child2.Y); // Center aligned: container.Y + (container.ComputedHeight - child2.ComputedHeight) / 2
     }
 
     [TestMethod]
@@ -201,13 +202,15 @@ public class UIElementTests
         rowParent.ComputePositions(0, 0);
 
         // Calculate expected spacing
-        int totalRowWidth = child1.ComputedWidth + child2.ComputedWidth + child3.ComputedWidth; // 90
-        int rowSpacing = (rowParent.ComputedWidth - totalRowWidth) / (rowParent.Children.Count - 1); // (200 - 90) / 2 = 55
+        var totalRowWidth = child1.ComputedWidth + child2.ComputedWidth + child3.ComputedWidth; // 90
+        var rowSpacing =
+            (rowParent.ComputedWidth - totalRowWidth) / (rowParent.Children.Count - 1); // (200 - 90) / 2 = 55
 
         // Check positions in row layout
         Assert.AreEqual(0, child1.X); // First child at start
         Assert.AreEqual(child1.ComputedWidth + rowSpacing, child2.X); // Second child after spacing (30 + 55 = 85)
-        Assert.AreEqual(child1.ComputedWidth + child2.ComputedWidth + 2 * rowSpacing, child3.X); // Third child (30 + 30 + 2*55 = 170)
+        Assert.AreEqual(child1.ComputedWidth + child2.ComputedWidth + 2 * rowSpacing,
+            child3.X); // Third child (30 + 30 + 2*55 = 170)
 
         // Set up the column parent with children
         var child4 = new UIElement(_textures) { FixedWidth = 30, FixedHeight = 30 };
@@ -223,13 +226,16 @@ public class UIElementTests
         columnParent.ComputePositions(0, 0);
 
         // Calculate expected spacing
-        int totalColumnHeight = child4.ComputedHeight + child5.ComputedHeight + child6.ComputedHeight; // 90
-        int columnSpacing = (columnParent.ComputedHeight - totalColumnHeight) / (columnParent.Children.Count - 1); // (200 - 90) / 2 = 55
+        var totalColumnHeight = child4.ComputedHeight + child5.ComputedHeight + child6.ComputedHeight; // 90
+        var columnSpacing =
+            (columnParent.ComputedHeight - totalColumnHeight) /
+            (columnParent.Children.Count - 1); // (200 - 90) / 2 = 55
 
         // Check positions in column layout
         Assert.AreEqual(0, child4.Y); // First child at start
         Assert.AreEqual(child4.ComputedHeight + columnSpacing, child5.Y); // Second child after spacing (30 + 55 = 85)
-        Assert.AreEqual(child4.ComputedHeight + child5.ComputedHeight + 2 * columnSpacing, child6.Y); // Third child (30 + 30 + 2*55 = 170)
+        Assert.AreEqual(child4.ComputedHeight + child5.ComputedHeight + 2 * columnSpacing,
+            child6.Y); // Third child (30 + 30 + 2*55 = 170)
     }
 
     [TestMethod]

@@ -3,7 +3,7 @@ using System;
 
 namespace AstroMiner.UI;
 
-public class UIState(BaseGame game)
+public class UI(BaseGame game)
 {
     public UIElement Root { get; private set; }
 

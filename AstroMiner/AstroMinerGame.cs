@@ -8,9 +8,9 @@ namespace AstroMiner;
 public class AstroMinerGame : BaseGame
 {
     private readonly ControlMapper<MiningControls> _miningControlMapper = new();
+    private MouseState _prevMouseState;
 
     private Renderer _renderer;
-    private MouseState _prevMouseState;
 
     protected override void Initialize()
     {
@@ -80,9 +80,7 @@ public class AstroMinerGame : BaseGame
 
         var mouseState = Mouse.GetState();
         if (mouseState.LeftButton == ButtonState.Pressed && _prevMouseState.LeftButton == ButtonState.Released)
-        {
-            StateManager.UIState.OnMouseClick(mouseState.X, mouseState.Y);
-        }
+            StateManager.Ui.OnMouseClick(mouseState.X, mouseState.Y);
 
         _prevMouseState = mouseState;
 

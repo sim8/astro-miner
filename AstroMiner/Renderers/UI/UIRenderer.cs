@@ -6,6 +6,6 @@ public class UIRenderer(BaseGame game)
 {
     public void Render(SpriteBatch spriteBatch)
     {
-        game.StateManager.UIState.Root.Render(spriteBatch);
+        game.StateManager.Ui.Root.Render(spriteBatch);
     }
 }

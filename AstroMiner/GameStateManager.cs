@@ -5,7 +5,6 @@ using AstroMiner.Definitions;
 using AstroMiner.ECS;
 using AstroMiner.HomeWorld;
 using AstroMiner.InteriorsWorld;
-using AstroMiner.UI;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
@@ -48,7 +47,7 @@ public class GameStateManager(BaseGame game)
     public HomeWorldState HomeWorld;
     public InteriorsWorldState InteriorsWorld;
     public Inventory Inventory;
-    public UIState UIState;
+    public UI.UI Ui;
 
     public bool FreezeControls { get; set; }
 
@@ -96,7 +95,7 @@ public class GameStateManager(BaseGame game)
         InteriorsWorld = new InteriorsWorldState(game);
         CloudManager = new CloudManager(game);
         Ecs = new Ecs(game);
-        UIState = new UIState(game);
+        Ui = new UI.UI(game);
 
         if (!game.StateManager.Ecs.PlayerEntityId.HasValue) SetUpNewGame();
 
@@ -118,7 +117,7 @@ public class GameStateManager(BaseGame game)
         Camera.Update(gameTime, controlsToUse);
         CloudManager.Update(gameTime);
         Ecs.Update(gameTime, controlsToUse);
-        UIState.Update(gameTime);
+        Ui.Update(gameTime);
 
         if (activeMiningControls.Contains(MiningControls.SaveGame)) SaveGameTEMP();
     }
