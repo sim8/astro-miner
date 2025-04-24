@@ -62,7 +62,8 @@ public class UI(BaseGame game)
                     [
                         new UIDebugButton(game)
                     ]
-                }
+                },
+                new UIInventoryFooter(game)
             ]
         };
 
