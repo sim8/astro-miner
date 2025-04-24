@@ -3,22 +3,23 @@ using AstroMiner.Definitions;
 
 namespace AstroMiner;
 
+public class InventoryItem
+{
+    public ResourceType Type { get; set; }
+    public int Count { get; set; }
+}
+
 public class Inventory
 {
-    public readonly List<(ResourceType Type, int Count)> resources = new();
+    public readonly List<InventoryItem?> resources = new();
     public int numDynamite { get; set; } = 3; // TODO make these a resource?
 
     public void AddResource(ResourceType type, int count = 1)
     {
-        var existing = resources.FindIndex(r => r.Type == type);
-        if (existing >= 0)
-        {
-            var current = resources[existing];
-            resources[existing] = (current.Type, current.Count + count);
-        }
+        var existing = resources.Find(r => r != null && r.Type == type);
+        if (existing != null)
+            existing.Count += count;
         else
-        {
-            resources.Add((type, count));
-        }
+            resources.Add(new InventoryItem { Type = type, Count = count });
     }
 }
