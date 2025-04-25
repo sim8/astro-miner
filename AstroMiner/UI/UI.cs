@@ -53,14 +53,7 @@ public class UI(BaseGame game)
                             : []
                     ]
                 },
-                new UIElement(game)
-                {
-                    FullWidth = true,
-                    FullHeight = true,
-                    Position = PositionMode.Absolute,
-                    BackgroundColor = Color.Black * 0.5f,
-
-                },
+                new UIInventory(game),
                 new UIElement(game)
                 {
                     FullWidth = true,

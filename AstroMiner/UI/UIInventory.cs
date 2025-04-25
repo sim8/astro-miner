@@ -4,34 +4,19 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner.UI;
 
-public sealed class UIInventory : UIElement
+public sealed class UIInventory : UIScreen
 {
     public UIInventory(BaseGame game) : base(game)
     {
-        ChildrenDirection = ChildrenDirection.Row;
+        ChildrenDirection = ChildrenDirection.Column;
         ChildrenAlign = ChildrenAlign.Center;
         ChildrenJustify = ChildrenJustify.Start;
-        Children = CreateInventoryItems(game);
-    }
-
-    private List<UIElement> CreateInventoryItems(BaseGame game)
-    {
-        var items = new List<UIElement>();
-        var inventory = game.StateManager.Inventory.resources;
-
-        for (var i = 0; i < 10; i++)
-            if (i < inventory.Count && inventory[i] != null)
-            {
-                var resource = inventory[i];
-                var resourceConfig = ResourceTypes.GetConfig(resource.Type);
-                items.Add(new UIInventoryItem(game, resourceConfig.Name.ToUpper(), resource.Count));
-            }
-            else
-            {
-                items.Add(new UIInventoryItem(game, "", 0));
-            }
-
-        return items;
+        Children =
+        [
+            new UIInventoryRow(game, 0, 10),
+            new UIInventoryRow(game, 10, 20),
+            new UIInventoryRow(game, 20, 30)
+        ];
     }
 }
 
@@ -39,13 +24,24 @@ public sealed class UIInventoryFooter : UIElement
 {
     public UIInventoryFooter(BaseGame game) : base(game)
     {
+        Children =
+        [
+            new UIInventoryRow(game, 0, 10)
+        ];
+    }
+}
+
+public sealed class UIInventoryRow : UIElement
+{
+    public UIInventoryRow(BaseGame game, int inventoryStartIndex, int inventoryEndIndex) : base(game)
+    {
         ChildrenDirection = ChildrenDirection.Row;
         ChildrenAlign = ChildrenAlign.Center;
         ChildrenJustify = ChildrenJustify.Start;
-        Children = CreateInventoryItems(game);
+        Children = CreateInventoryItems(game, inventoryStartIndex, inventoryEndIndex);
     }
 
-    private List<UIElement> CreateInventoryItems(BaseGame game)
+    private List<UIElement> CreateInventoryItems(BaseGame game, int startIndex, int endIndex)
     {
         var items = new List<UIElement>();
         var inventory = game.StateManager.Inventory.resources;

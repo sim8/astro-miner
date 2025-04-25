@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner.UI;
 
-public sealed class UIScreen : UIElement
+public class UIScreen : UIElement
 {
     public UIScreen(BaseGame game) : base(game)
     {
