@@ -26,6 +26,7 @@ public enum MiningControls
     // Miner-only
     UseGrapple,
 
+    ToggleInventory,
     NewGameOrReturnToBase, // TODO factor out
     SaveGame // TEMP
 }
@@ -120,5 +121,7 @@ public class GameStateManager(BaseGame game)
         Ui.Update(gameTime);
 
         if (activeMiningControls.Contains(MiningControls.SaveGame)) SaveGameTEMP();
+        if (activeMiningControls.Contains(MiningControls.ToggleInventory))
+            Ui.State.IsInventoryOpen = !Ui.State.IsInventoryOpen;
     }
 }

@@ -53,7 +53,12 @@ public class UI(BaseGame game)
                             : []
                     ]
                 },
-                new UIInventory(game),
+                .. game.StateManager.Ui.State.IsInventoryOpen
+                    ? new UIElement[]
+                    {
+                        new UIInventory(game)
+                    }
+                    : [],
                 new UIElement(game)
                 {
                     FullWidth = true,
@@ -65,7 +70,12 @@ public class UI(BaseGame game)
                         new UIDebugButton(game)
                     ]
                 },
-                new UIInventoryFooter(game)
+                .. !game.StateManager.Ui.State.IsInventoryOpen
+                    ? new UIElement[]
+                    {
+                        new UIInventoryFooter(game)
+                    }
+                    : []
             ]
         };
 
