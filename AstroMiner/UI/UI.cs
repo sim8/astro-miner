@@ -5,6 +5,7 @@ namespace AstroMiner.UI;
 public class UIState
 {
     public bool IsDebugMenuOpen { get; set; } = false;
+    public bool IsInventoryOpen { get; set; } = false;
 }
 
 public class UI(BaseGame game)
@@ -51,6 +52,14 @@ public class UI(BaseGame game)
                             }
                             : []
                     ]
+                },
+                new UIElement(game)
+                {
+                    FullWidth = true,
+                    FullHeight = true,
+                    Position = PositionMode.Absolute,
+                    BackgroundColor = Color.Black * 0.5f,
+
                 },
                 new UIElement(game)
                 {

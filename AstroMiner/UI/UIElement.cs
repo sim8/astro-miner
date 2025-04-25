@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -26,6 +27,12 @@ public enum ChildrenAlign
     Stretch
 }
 
+public enum PositionMode
+{
+    Flow,    // Element follows normal flow layout
+    Absolute // Element is positioned absolutely relative to parent
+}
+
 public class UIElement(BaseGame game)
 {
     public Color? BackgroundColor { get; set; }
@@ -43,6 +50,10 @@ public class UIElement(BaseGame game)
 
     // Padding property, defaulted to 0
     public int Padding { get; set; } = 0;
+
+    // Positioning
+    public PositionMode Position { get; set; } = PositionMode.Flow;
+    public int ZIndex { get; set; } = 0;
 
     public ChildrenDirection ChildrenDirection { get; set; } = ChildrenDirection.Column;
     public ChildrenJustify ChildrenJustify { get; set; } = ChildrenJustify.Start;
@@ -88,7 +99,10 @@ public class UIElement(BaseGame game)
             spriteBatch.Draw(game.Textures["white"],
                 new Rectangle(X, Y, ComputedWidth, ComputedHeight),
                 BackgroundColor.Value);
-        foreach (var child in Children) child.Render(spriteBatch);
+
+        // Render children in z-index order
+        foreach (var child in Children.OrderBy(c => c.ZIndex))
+            child.Render(spriteBatch);
     }
 
     /// <summary>
@@ -142,6 +156,13 @@ public class UIElement(BaseGame game)
         int adjustedAvailableWidth = availableWidth > 0 ? Math.Max(0, availableWidth - 2 * Padding) : 0;
         int adjustedAvailableHeight = availableHeight > 0 ? Math.Max(0, availableHeight - 2 * Padding) : 0;
 
+        // Compute dimensions for all children first, regardless of position mode
+        foreach (var child in Children)
+        {
+            child.ComputeDimensions(adjustedAvailableWidth, adjustedAvailableHeight);
+        }
+
+        // Then only include flow children in parent size calculations
         var childrenDimensions = MeasureChildren(adjustedAvailableWidth, adjustedAvailableHeight);
         ChildrenWidth = childrenDimensions.width;
         ChildrenHeight = childrenDimensions.height;
@@ -166,6 +187,10 @@ public class UIElement(BaseGame game)
 
         foreach (var child in Children)
         {
+            // Skip absolute positioned elements in flow layout calculations
+            if (child.Position == PositionMode.Absolute)
+                continue;
+
             var (childWidth, childHeight) = child.ComputeDimensions(availableWidth, availableHeight);
 
             if (isColumn)
@@ -191,32 +216,43 @@ public class UIElement(BaseGame game)
         X = originX;
         Y = originY;
 
+        // Position flow children according to layout rules
+        PositionFlowChildren();
+
+        // Position absolute children relative to this element
+        PositionAbsoluteChildren();
+    }
+
+    private void PositionFlowChildren()
+    {
         var isColumn = ChildrenDirection == ChildrenDirection.Column;
 
-        // Get total size of children along primary axis
+        // Get flow children and total size along primary axis
+        var flowChildren = Children.Where(c => c.Position == PositionMode.Flow).ToList();
         var totalChildrenSize = 0;
-        foreach (var child in Children) totalChildrenSize += isColumn ? child.ComputedHeight : child.ComputedWidth;
+        foreach (var child in flowChildren)
+            totalChildrenSize += isColumn ? child.ComputedHeight : child.ComputedWidth;
 
         // Calculate spacing for SpaceBetween
         float spacing = 0;
-        if (ChildrenJustify == ChildrenJustify.SpaceBetween && Children.Count > 1)
+        if (ChildrenJustify == ChildrenJustify.SpaceBetween && flowChildren.Count > 1)
         {
             var availableSpace = isColumn ? ComputedHeight - 2 * Padding : ComputedWidth - 2 * Padding;
-            spacing = (availableSpace - totalChildrenSize) / (float)(Children.Count - 1);
+            spacing = (availableSpace - totalChildrenSize) / (float)(flowChildren.Count - 1);
         }
 
         // Set starting position for primary axis (includes padding)
         var primaryPos = isColumn ? Y + Padding : X + Padding;
 
         // Adjust starting position based on justify
-        if (ChildrenJustify == ChildrenJustify.End)
+        if (ChildrenJustify == ChildrenJustify.End && flowChildren.Count > 0)
         {
             var availableSpace = isColumn ? ComputedHeight - 2 * Padding : ComputedWidth - 2 * Padding;
             primaryPos += availableSpace - totalChildrenSize;
         }
         // No adjustment needed for Start
 
-        foreach (var child in Children)
+        foreach (var child in flowChildren)
         {
             // Calculate secondary axis position (based on alignment)
             var secondaryPos = CalculateSecondaryPosition(child, isColumn);
@@ -231,7 +267,17 @@ public class UIElement(BaseGame game)
             primaryPos += isColumn ? child.ComputedHeight : child.ComputedWidth;
 
             // Add spacing if needed
-            if (ChildrenJustify == ChildrenJustify.SpaceBetween && Children.Count > 1) primaryPos += (int)spacing;
+            if (ChildrenJustify == ChildrenJustify.SpaceBetween && flowChildren.Count > 1) primaryPos += (int)spacing;
+        }
+    }
+
+    private void PositionAbsoluteChildren()
+    {
+        // Position absolute children relative to this element's origin
+        foreach (var child in Children.Where(c => c.Position == PositionMode.Absolute))
+        {
+            // For now, just position at 0,0 relative to parent
+            child.ComputePositions(X, Y);
         }
     }
 

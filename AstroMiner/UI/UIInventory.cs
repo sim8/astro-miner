@@ -4,6 +4,37 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner.UI;
 
+public sealed class UIInventory : UIElement
+{
+    public UIInventory(BaseGame game) : base(game)
+    {
+        ChildrenDirection = ChildrenDirection.Row;
+        ChildrenAlign = ChildrenAlign.Center;
+        ChildrenJustify = ChildrenJustify.Start;
+        Children = CreateInventoryItems(game);
+    }
+
+    private List<UIElement> CreateInventoryItems(BaseGame game)
+    {
+        var items = new List<UIElement>();
+        var inventory = game.StateManager.Inventory.resources;
+
+        for (var i = 0; i < 10; i++)
+            if (i < inventory.Count && inventory[i] != null)
+            {
+                var resource = inventory[i];
+                var resourceConfig = ResourceTypes.GetConfig(resource.Type);
+                items.Add(new UIInventoryItem(game, resourceConfig.Name.ToUpper(), resource.Count));
+            }
+            else
+            {
+                items.Add(new UIInventoryItem(game, "", 0));
+            }
+
+        return items;
+    }
+}
+
 public sealed class UIInventoryFooter : UIElement
 {
     public UIInventoryFooter(BaseGame game) : base(game)
@@ -24,20 +55,20 @@ public sealed class UIInventoryFooter : UIElement
             {
                 var resource = inventory[i];
                 var resourceConfig = ResourceTypes.GetConfig(resource.Type);
-                items.Add(new UIInventoryFooterItem(game, resourceConfig.Name.ToUpper(), resource.Count));
+                items.Add(new UIInventoryItem(game, resourceConfig.Name.ToUpper(), resource.Count));
             }
             else
             {
-                items.Add(new UIInventoryFooterItem(game, "", 0));
+                items.Add(new UIInventoryItem(game, "", 0));
             }
 
         return items;
     }
 }
 
-public sealed class UIInventoryFooterItem : UIElement
+public sealed class UIInventoryItem : UIElement
 {
-    public UIInventoryFooterItem(BaseGame game, string resourceName, int count) : base(game)
+    public UIInventoryItem(BaseGame game, string resourceName, int count) : base(game)
     {
         FixedWidth = 32;
         FixedHeight = 32;
@@ -60,8 +91,7 @@ public sealed class UIInventoryFooterItem : UIElement
                         Padding = 2
                     }
                 }
-                : [],
-            
+                : []
         ];
     }
 }
