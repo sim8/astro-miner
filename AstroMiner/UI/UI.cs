@@ -59,9 +59,17 @@ public class UI(BaseGame game)
                         new UIInventory(game)
                     }
                     : [],
+                .. !game.StateManager.Ui.State.IsInventoryOpen
+                    ? new UIElement[]
+                    {
+                        new UIInventoryFooter(game)
+                    }
+                    : [],
                 new UIElement(game)
                 {
                     FullWidth = true,
+                    FullHeight = true,
+                    Position = PositionMode.Absolute,
                     ChildrenAlign = ChildrenAlign.End,
                     ChildrenDirection = ChildrenDirection.Row,
                     ChildrenJustify = ChildrenJustify.End,
@@ -69,13 +77,7 @@ public class UI(BaseGame game)
                     [
                         new UIDebugButton(game)
                     ]
-                },
-                .. !game.StateManager.Ui.State.IsInventoryOpen
-                    ? new UIElement[]
-                    {
-                        new UIInventoryFooter(game)
-                    }
-                    : []
+                }
             ]
         };
 
