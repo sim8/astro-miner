@@ -16,7 +16,8 @@ public enum ChildrenJustify
 {
     Start,
     End,
-    SpaceBetween
+    SpaceBetween,
+    Center
 }
 
 public enum ChildrenAlign
@@ -249,6 +250,11 @@ public class UIElement(BaseGame game)
         {
             var availableSpace = isColumn ? ComputedHeight - 2 * Padding : ComputedWidth - 2 * Padding;
             primaryPos += availableSpace - totalChildrenSize;
+        }
+        else if (ChildrenJustify == ChildrenJustify.Center && flowChildren.Count > 0)
+        {
+            var availableSpace = isColumn ? ComputedHeight - 2 * Padding : ComputedWidth - 2 * Padding;
+            primaryPos += (availableSpace - totalChildrenSize) / 2;
         }
         // No adjustment needed for Start
 

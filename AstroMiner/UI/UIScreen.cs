@@ -9,7 +9,7 @@ public class UIScreen : UIElement
         FullWidth = true;
         FullHeight = true;
         ChildrenAlign = ChildrenAlign.Center;
-        ChildrenJustify = ChildrenJustify.Start;
+        ChildrenJustify = ChildrenJustify.Center;
         Position = PositionMode.Absolute;
         BackgroundColor = Color.Black * 0.5f;
     }

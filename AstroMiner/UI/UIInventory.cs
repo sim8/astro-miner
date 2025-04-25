@@ -8,9 +8,6 @@ public sealed class UIInventory : UIScreen
 {
     public UIInventory(BaseGame game) : base(game)
     {
-        ChildrenDirection = ChildrenDirection.Column;
-        ChildrenAlign = ChildrenAlign.Center;
-        ChildrenJustify = ChildrenJustify.Start;
         Children =
         [
             new UIInventoryRow(game, 0, 10),

@@ -757,4 +757,72 @@ public class UIElementTests
         Assert.AreEqual(10 + 5, child2.X); // container.X + parent padding
         Assert.AreEqual(10 + 5 + 20, child2.Y); // container.Y + parent padding + child1.Height
     }
+
+    [TestMethod]
+    public void UIElement_ChildrenJustify_Center_Works_Correctly()
+    {
+        // Create test elements
+        var rowParent = new UIElement(_mockGame)
+        {
+            FixedWidth = 200,
+            FixedHeight = 50,
+            ChildrenDirection = ChildrenDirection.Row,
+            ChildrenJustify = ChildrenJustify.Center
+        };
+
+        var columnParent = new UIElement(_mockGame)
+        {
+            FixedWidth = 50,
+            FixedHeight = 200,
+            ChildrenDirection = ChildrenDirection.Column,
+            ChildrenJustify = ChildrenJustify.Center
+        };
+
+        var child1 = new UIElement(_mockGame)
+        {
+            FixedWidth = 30,
+            FixedHeight = 30
+        };
+
+        var child2 = new UIElement(_mockGame)
+        {
+            FixedWidth = 30,
+            FixedHeight = 30
+        };
+
+        // Set up the row parent with children
+        rowParent.Children.Add(child1);
+        rowParent.Children.Add(child2);
+
+        // Test the row layout with Center
+        rowParent.ComputeDimensions(800, 600);
+        rowParent.ComputePositions(0, 0);
+
+        // Calculate expected positions
+        var totalRowWidth = child1.ComputedWidth + child2.ComputedWidth; // 60
+        var rowCenterOffset = (rowParent.ComputedWidth - totalRowWidth) / 2; // (200 - 60) / 2 = 70
+
+        // Check positions in row layout
+        Assert.AreEqual(rowCenterOffset, child1.X); // First child starts at center offset
+        Assert.AreEqual(rowCenterOffset + child1.ComputedWidth, child2.X); // Second child follows first
+
+        // Set up the column parent with children
+        var child3 = new UIElement(_mockGame) { FixedWidth = 30, FixedHeight = 30 };
+        var child4 = new UIElement(_mockGame) { FixedWidth = 30, FixedHeight = 30 };
+
+        columnParent.Children.Add(child3);
+        columnParent.Children.Add(child4);
+
+        // Test the column layout with Center
+        columnParent.ComputeDimensions(800, 600);
+        columnParent.ComputePositions(0, 0);
+
+        // Calculate expected positions
+        var totalColumnHeight = child3.ComputedHeight + child4.ComputedHeight; // 60
+        var columnCenterOffset = (columnParent.ComputedHeight - totalColumnHeight) / 2; // (200 - 60) / 2 = 70
+
+        // Check positions in column layout
+        Assert.AreEqual(columnCenterOffset, child3.Y); // First child starts at center offset
+        Assert.AreEqual(columnCenterOffset + child3.ComputedHeight, child4.Y); // Second child follows first
+    }
 }
