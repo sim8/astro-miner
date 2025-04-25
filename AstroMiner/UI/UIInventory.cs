@@ -43,42 +43,53 @@ public sealed class UIInventoryRow : UIElement
         var items = new List<UIElement>();
         var inventory = game.StateManager.Inventory.resources;
 
-        for (var i = 0; i < 10; i++)
+        for (var i = startIndex; i < endIndex; i++)
             if (i < inventory.Count && inventory[i] != null)
             {
                 var resource = inventory[i];
                 var resourceConfig = ResourceTypes.GetConfig(resource.Type);
-                items.Add(new UIInventoryItem(game, resourceConfig.Name.ToUpper(), resource.Count));
+                items.Add(new UIInventoryItem(game, resourceConfig.GetSourceRect(), resource.Count));
             }
             else
             {
-                items.Add(new UIInventoryItem(game, "", 0));
+                items.Add(new UIInventoryItemEmpty(game));
             }
 
         return items;
     }
 }
 
+public sealed class UIInventoryItemEmpty : UIElement
+{
+    public UIInventoryItemEmpty(BaseGame game) : base(game)
+    {
+        FixedWidth = 32;
+        FixedHeight = 32;
+        BackgroundColor = Color.DarkGray;
+    }
+}
+
 public sealed class UIInventoryItem : UIElement
 {
-    public UIInventoryItem(BaseGame game, string resourceName, int count) : base(game)
+    public UIInventoryItem(BaseGame game, Rectangle sourceRect, int count) : base(game)
     {
         FixedWidth = 32;
         FixedHeight = 32;
         BackgroundColor = Color.DarkGray;
         Children =
         [
-            new UITextElement(game)
+            new UIImageElement(game, "icons", sourceRect)
             {
-                Text = resourceName != "" ? resourceName : "EMPTY",
-                Scale = 1,
-                Padding = 2
+                Padding = 2,
+                FixedWidth = 32,
+                FixedHeight = 32
             },
             .. count > 0
                 ? new UIElement[]
                 {
                     new UITextElement(game)
                     {
+                        Position = PositionMode.Absolute,
                         Text = count.ToString(),
                         Scale = 1,
                         Padding = 2
