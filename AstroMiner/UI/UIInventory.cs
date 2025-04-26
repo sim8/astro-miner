@@ -48,7 +48,7 @@ public sealed class UIInventoryRow : UIElement
             {
                 var resource = inventory[i];
                 var resourceConfig = ResourceTypes.GetConfig(resource.Type);
-                items.Add(new UIInventoryItem(game, resourceConfig.GetSourceRect(), resource.Count));
+                items.Add(new UIInventoryItem(game, resourceConfig.GetSourceRect(), resource.Count, i));
             }
             else
             {
@@ -71,13 +71,26 @@ public sealed class UIInventoryItemEmpty : UIElement
 
 public sealed class UIInventoryItem : UIElement
 {
-    public UIInventoryItem(BaseGame game, Rectangle sourceRect, int count) : base(game)
+    public UIInventoryItem(BaseGame game, Rectangle sourceRect, int count, int inventoryIndex) : base(game)
     {
         FixedWidth = 32;
         FixedHeight = 32;
         BackgroundColor = Color.DarkGray;
+        OnClick = () => game.StateManager.Inventory.selectedIndex = inventoryIndex;
         Children =
         [
+            .. inventoryIndex == game.StateManager.Inventory.selectedIndex
+                ? new UIElement[]
+                {
+                    new UIElement(game)
+                    {
+                        Position = PositionMode.Absolute,
+                        FullHeight = true,
+                        FullWidth = true,
+                        BackgroundColor = Color.Red
+                    }
+                }
+                : [],
             new UIImageElement(game, "icons", sourceRect)
             {
                 Padding = 2,

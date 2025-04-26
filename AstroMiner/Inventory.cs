@@ -12,6 +12,7 @@ public class InventoryItem
 public class Inventory
 {
     public readonly List<InventoryItem?> resources = new();
+    public int selectedIndex { get; set; } = 0;
 
     public Inventory()
     {
