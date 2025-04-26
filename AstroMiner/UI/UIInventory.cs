@@ -41,14 +41,14 @@ public sealed class UIInventoryRow : UIElement
     private List<UIElement> CreateInventoryItems(BaseGame game, int startIndex, int endIndex)
     {
         var items = new List<UIElement>();
-        var inventory = game.StateManager.Inventory.resources;
+        var inventory = game.StateManager.Inventory.items;
 
         for (var i = startIndex; i < endIndex; i++)
             if (i < inventory.Count && inventory[i] != null)
             {
-                var resource = inventory[i];
-                var resourceConfig = ItemTypes.GetConfig(resource.Type);
-                items.Add(new UIInventoryItem(game, resourceConfig.GetSourceRect(), resource.Count, i));
+                var item = inventory[i];
+                var itemConfig = ItemTypes.GetConfig(item.Type);
+                items.Add(new UIInventoryItem(game, itemConfig.GetSourceRect(), item.Count, i));
             }
             else
             {

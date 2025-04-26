@@ -57,7 +57,7 @@ public class UserInterfaceRenderer(
         shared.RenderString(spriteBatch, xOffset, yoffset,
             "DYNAMITE " + shared.GameStateManager.Inventory.numDynamite);
 
-        foreach (var (inventoryResource, index) in shared.GameStateManager.Inventory.resources.Select((r, i) => (r, i)))
+        foreach (var (inventoryResource, index) in shared.GameStateManager.Inventory.items.Select((r, i) => (r, i)))
         {
             var lineYOffset = yoffset + resourceLineHeight * (index + 1);
             var resourceConfig = ItemTypes.GetConfig(inventoryResource.Type);

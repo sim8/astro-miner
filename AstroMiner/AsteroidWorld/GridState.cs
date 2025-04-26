@@ -127,7 +127,7 @@ public class GridState(BaseGame game, CellState[,] grid)
 
         ClearWall(x, y);
 
-        if (wallConfig.Drop.HasValue && addToInventory) game.StateManager.Inventory.AddResource(wallConfig.Drop.Value);
+        if (wallConfig.Drop.HasValue && addToInventory) game.StateManager.Inventory.AddItem(wallConfig.Drop.Value);
     }
 
     public void ClearWall(int x, int y)
