@@ -13,13 +13,10 @@ public class DynamiteSystem : System
 
     public void PlaceDynamite()
     {
-        if (game.StateManager.Inventory.numDynamite <= 0) return;
-        if (Ecs.PlayerEntityId == null) return;
-
         var playerPositionComponent = Ecs.GetComponent<PositionComponent>(Ecs.PlayerEntityId.Value);
         if (playerPositionComponent == null) return;
 
-        game.StateManager.Inventory.numDynamite--;
+        game.StateManager.Inventory.ConsumeSelectedItem();
         var dynamiteEntity = Ecs.Factories.CreateDynamiteEntity(playerPositionComponent.CenterPosition);
         var dynamitePositionComponent = Ecs.GetComponent<PositionComponent>(dynamiteEntity);
         Ecs.MovementSystem.SetPositionRelativeToDirectionalEntity(dynamitePositionComponent, Ecs.PlayerEntityId.Value,
@@ -31,7 +28,8 @@ public class DynamiteSystem : System
     {
         if (game.Model.ActiveWorld != World.Asteroid) return;
 
-        if (activeControls.Contains(MiningControls.PlaceDynamite) && !game.StateManager.AsteroidWorld.IsInMiner)
+        if (!game.StateManager.AsteroidWorld.IsInMiner && activeControls.Contains(MiningControls.UseItem) &&
+            game.StateManager.Inventory.SelectedItemType == ItemType.Dynamite)
             PlaceDynamite();
         foreach (var fuseComponent in Ecs.GetAllComponents<FuseComponent>())
         {

@@ -21,7 +21,6 @@ public enum MiningControls
     EnterOrExit,
 
     // Player-only
-    PlaceDynamite,
     UseItem,
 
     // Miner-only
