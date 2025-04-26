@@ -32,11 +32,11 @@ public enum AsteroidLayer
     Core
 }
 
-public class WallTypeConfig(bool isMineable, ResourceType? drop = null, int drillTimeMs = 300) // TODO make const
+public class WallTypeConfig(bool isMineable, ItemType? drop = null, int drillTimeMs = 300) // TODO make const
 {
     public bool IsMineable { get; } = isMineable;
     public int DrillTimeMs { get; } = drillTimeMs;
-    public ResourceType? Drop { get; } = drop;
+    public ItemType? Drop { get; } = drop;
 }
 
 public static class WallTypes
@@ -47,10 +47,10 @@ public static class WallTypes
             { WallType.SolidRock, new WallTypeConfig(false) },
             { WallType.LooseRock, new WallTypeConfig(true, null, 1) },
             { WallType.Rock, new WallTypeConfig(true) },
-            { WallType.Diamond, new WallTypeConfig(true, ResourceType.Diamond, 1200) },
-            { WallType.Ruby, new WallTypeConfig(true, ResourceType.Ruby, 800) },
-            { WallType.Gold, new WallTypeConfig(true, ResourceType.Gold, 800) },
-            { WallType.Nickel, new WallTypeConfig(true, ResourceType.Nickel) },
+            { WallType.Diamond, new WallTypeConfig(true, ItemType.Diamond, 1200) },
+            { WallType.Ruby, new WallTypeConfig(true, ItemType.Ruby, 800) },
+            { WallType.Gold, new WallTypeConfig(true, ItemType.Gold, 800) },
+            { WallType.Nickel, new WallTypeConfig(true, ItemType.Nickel) },
             { WallType.ExplosiveRock, new WallTypeConfig(true) }
         };
 

@@ -1,24 +1,36 @@
-using System.Collections.Generic;
+using System;
 using AstroMiner.Definitions;
+using AstroMiner.Model;
 
 namespace AstroMiner;
 
-public class Inventory
+public class Inventory(BaseGame game)
 {
-    public readonly List<(ResourceType Type, int Count)> resources = new();
-    public int numDynamite { get; set; } = 3; // TODO make these a resource?
+    public ItemType? SelectedItemType => game.Model.Inventory.SelectedIndex < game.Model.Inventory.Items.Count
+            ? game.Model.Inventory.Items[game.Model.Inventory.SelectedIndex]?.Type
+            : null;
 
-    public void AddResource(ResourceType type, int count = 1)
+    public void AddItem(ItemType type, int count = 1)
     {
-        var existing = resources.FindIndex(r => r.Type == type);
-        if (existing >= 0)
+        var existing = game.Model.Inventory.Items.Find(r => r != null && r.Type == type);
+        if (existing != null)
+            existing.Count += count;
+        else
+            game.Model.Inventory.Items.Add(new InventoryItem { Type = type, Count = count });
+    }
+
+    public void ConsumeSelectedItem()
+    {
+        var item = game.Model.Inventory.Items[game.Model.Inventory.SelectedIndex];
+        if (item != null)
         {
-            var current = resources[existing];
-            resources[existing] = (current.Type, current.Count + count);
+            item.Count--;
+            if (item.Count == 0)
+                game.Model.Inventory.Items.Remove(item);
         }
         else
         {
-            resources.Add((type, count));
+            throw new Exception("No item selected");
         }
     }
 }

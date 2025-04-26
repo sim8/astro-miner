@@ -50,6 +50,10 @@ public sealed class UIDebugMenu : UIElement
                 BackgroundColor = game.Debug.showGridDebug ? Color.Aqua : Color.Black,
                 OnClick = () => game.Debug.showGridDebug = !game.Debug.showGridDebug
             },
+            new UIElement(game)
+            {
+                FixedHeight = 10
+            },
             new UITextElement(game)
             {
                 Text = "SHOW FPS",

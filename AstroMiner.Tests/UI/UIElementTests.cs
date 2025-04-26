@@ -620,4 +620,208 @@ public class UIElementTests
         Assert.AreEqual(0, textElement.X);
         Assert.AreEqual(0, textElement.Y);
     }
+
+    [TestMethod]
+    public void UIElement_AbsolutePosition_Works_Correctly()
+    {
+        // Arrange - Create a container with standard flow children and an absolute child
+        var container = new UIElement(_mockGame)
+        {
+            FixedWidth = 200,
+            FixedHeight = 150,
+            BackgroundColor = Color.Gray,
+            Padding = 10
+        };
+
+        // Create flow children
+        var flowChild1 = new UIElement(_mockGame)
+        {
+            BackgroundColor = Color.Blue,
+            FixedWidth = 80,
+            FixedHeight = 30
+        };
+
+        var flowChild2 = new UIElement(_mockGame)
+        {
+            BackgroundColor = Color.Green,
+            FixedWidth = 80,
+            FixedHeight = 30
+        };
+
+        // Create absolute positioned child
+        var absoluteChild = new UIElement(_mockGame)
+        {
+            BackgroundColor = Color.Red,
+            FixedWidth = 50,
+            FixedHeight = 50,
+            Position = PositionMode.Absolute
+        };
+
+        // Add children to container
+        container.Children.Add(flowChild1);
+        container.Children.Add(absoluteChild); // Add absolute child between flow children in the hierarchy
+        container.Children.Add(flowChild2);
+
+        // Act - Compute dimensions and positions
+        container.ComputeDimensions(800, 600);
+        container.ComputePositions(20, 30); // Position container at (20, 30)
+
+        // Assert
+        // Container should maintain its fixed dimensions and position
+        Assert.AreEqual(20, container.X);
+        Assert.AreEqual(30, container.Y);
+        Assert.AreEqual(200, container.ComputedWidth);
+        Assert.AreEqual(150, container.ComputedHeight);
+
+        // Flow children should be positioned according to normal flow rules with padding
+        Assert.AreEqual(20 + 10, flowChild1.X); // container.X + padding
+        Assert.AreEqual(30 + 10, flowChild1.Y); // container.Y + padding
+        Assert.AreEqual(20 + 10, flowChild2.X); // container.X + padding
+        Assert.AreEqual(30 + 10 + 30, flowChild2.Y); // container.Y + padding + flowChild1.Height
+
+        // Absolute child should be positioned relative to container origin, ignoring padding and flow
+        Assert.AreEqual(20, absoluteChild.X); // container.X (no padding applied)
+        Assert.AreEqual(30, absoluteChild.Y); // container.Y (no padding applied)
+
+        // Absolute child should still have its dimensions computed correctly
+        Assert.AreEqual(50, absoluteChild.ComputedWidth);
+        Assert.AreEqual(50, absoluteChild.ComputedHeight);
+
+        // The absolute child should not affect the layout of flow children
+        Assert.AreEqual(80, container.ChildrenWidth); // Only flow children widths count
+        Assert.AreEqual(60, container.ChildrenHeight); // Only flow children heights count (30 + 30)
+    }
+
+    [TestMethod]
+    public void UIElement_AbsoluteElement_Children_Layout_Works()
+    {
+        // Arrange - Create an absolute positioned parent with child elements
+        var container = new UIElement(_mockGame)
+        {
+            FixedWidth = 300,
+            FixedHeight = 200,
+            BackgroundColor = Color.Gray
+        };
+
+        // Create an absolute positioned element with its own children
+        var absoluteParent = new UIElement(_mockGame)
+        {
+            BackgroundColor = Color.Red,
+            Position = PositionMode.Absolute,
+            ChildrenDirection = ChildrenDirection.Column,
+            Padding = 5
+        };
+
+        // Add flow children to the absolute element
+        var child1 = new UIElement(_mockGame)
+        {
+            BackgroundColor = Color.Blue,
+            FixedWidth = 50,
+            FixedHeight = 20
+        };
+
+        var child2 = new UIElement(_mockGame)
+        {
+            BackgroundColor = Color.Green,
+            FixedWidth = 70,
+            FixedHeight = 30
+        };
+
+        // Build the hierarchy
+        absoluteParent.Children.Add(child1);
+        absoluteParent.Children.Add(child2);
+        container.Children.Add(absoluteParent);
+
+        // Act - Compute dimensions and positions
+        container.ComputeDimensions(800, 600);
+        container.ComputePositions(10, 10);
+
+        // Assert
+        // Container dimensions should be as specified
+        Assert.AreEqual(300, container.ComputedWidth);
+        Assert.AreEqual(200, container.ComputedHeight);
+
+        // Absolute parent should size according to its children plus padding
+        Assert.AreEqual(70 + 2 * 5, absoluteParent.ComputedWidth); // Width of widest child + padding
+        Assert.AreEqual(50 + 2 * 5, absoluteParent.ComputedHeight); // Sum of children heights + padding
+
+        // Absolute parent should be positioned at container's origin
+        Assert.AreEqual(10, absoluteParent.X);
+        Assert.AreEqual(10, absoluteParent.Y);
+
+        // Children of absolute element should be positioned correctly within it
+        Assert.AreEqual(10 + 5, child1.X); // container.X + parent padding
+        Assert.AreEqual(10 + 5, child1.Y); // container.Y + parent padding
+
+        Assert.AreEqual(10 + 5, child2.X); // container.X + parent padding
+        Assert.AreEqual(10 + 5 + 20, child2.Y); // container.Y + parent padding + child1.Height
+    }
+
+    [TestMethod]
+    public void UIElement_ChildrenJustify_Center_Works_Correctly()
+    {
+        // Create test elements
+        var rowParent = new UIElement(_mockGame)
+        {
+            FixedWidth = 200,
+            FixedHeight = 50,
+            ChildrenDirection = ChildrenDirection.Row,
+            ChildrenJustify = ChildrenJustify.Center
+        };
+
+        var columnParent = new UIElement(_mockGame)
+        {
+            FixedWidth = 50,
+            FixedHeight = 200,
+            ChildrenDirection = ChildrenDirection.Column,
+            ChildrenJustify = ChildrenJustify.Center
+        };
+
+        var child1 = new UIElement(_mockGame)
+        {
+            FixedWidth = 30,
+            FixedHeight = 30
+        };
+
+        var child2 = new UIElement(_mockGame)
+        {
+            FixedWidth = 30,
+            FixedHeight = 30
+        };
+
+        // Set up the row parent with children
+        rowParent.Children.Add(child1);
+        rowParent.Children.Add(child2);
+
+        // Test the row layout with Center
+        rowParent.ComputeDimensions(800, 600);
+        rowParent.ComputePositions(0, 0);
+
+        // Calculate expected positions
+        var totalRowWidth = child1.ComputedWidth + child2.ComputedWidth; // 60
+        var rowCenterOffset = (rowParent.ComputedWidth - totalRowWidth) / 2; // (200 - 60) / 2 = 70
+
+        // Check positions in row layout
+        Assert.AreEqual(rowCenterOffset, child1.X); // First child starts at center offset
+        Assert.AreEqual(rowCenterOffset + child1.ComputedWidth, child2.X); // Second child follows first
+
+        // Set up the column parent with children
+        var child3 = new UIElement(_mockGame) { FixedWidth = 30, FixedHeight = 30 };
+        var child4 = new UIElement(_mockGame) { FixedWidth = 30, FixedHeight = 30 };
+
+        columnParent.Children.Add(child3);
+        columnParent.Children.Add(child4);
+
+        // Test the column layout with Center
+        columnParent.ComputeDimensions(800, 600);
+        columnParent.ComputePositions(0, 0);
+
+        // Calculate expected positions
+        var totalColumnHeight = child3.ComputedHeight + child4.ComputedHeight; // 60
+        var columnCenterOffset = (columnParent.ComputedHeight - totalColumnHeight) / 2; // (200 - 60) / 2 = 70
+
+        // Check positions in column layout
+        Assert.AreEqual(columnCenterOffset, child3.Y); // First child starts at center offset
+        Assert.AreEqual(columnCenterOffset + child3.ComputedHeight, child4.Y); // Second child follows first
+    }
 }

@@ -13,9 +13,9 @@ public class LaunchSystem(Ecs ecs, BaseGame game) : System(ecs, game)
     private const int LauncherHeightPx = 120;
 
     private const float LauncherGridHeight = LauncherHeightPx / (float)GameConfig.CellTextureSizePx;
-
-    private readonly Launch _launch = game.Model.Launch;
     private readonly List<int> _launchLightEntities = new();
+
+    private readonly LaunchModel _launch = game.Model.Launch;
 
     private readonly Vector2 _launchPadFrontStartPos =
         ViewHelpers.AbsoluteXyPxToGridPos(Coordinates.Px.LaunchPadsX, Coordinates.Px.LaunchPadFrontStartY);

@@ -11,7 +11,8 @@ public class GameModel
     public World ActiveWorld { get; set; }
     public long TotalPlaytimeMs { get; set; }
     public EcsModel Ecs { get; set; }
-    public Launch Launch { get; set; }
+    public LaunchModel Launch { get; set; }
+    public InventoryModel Inventory { get; set; }
 }
 
 [Serializable]
@@ -48,7 +49,21 @@ public class ComponentsByEntityId
 }
 
 [Serializable]
-public class Launch
+public class InventoryItem
+{
+    public ItemType Type { get; set; }
+    public int Count { get; set; }
+}
+
+[Serializable]
+public class InventoryModel
+{
+    public List<InventoryItem?> Items { get; set; }
+    public int SelectedIndex { get; set; }
+}
+
+[Serializable]
+public class LaunchModel
 {
     public bool IsLaunching { get; set; }
     public int LaunchPadFrontEntityId { get; set; }
@@ -91,12 +106,28 @@ public static class GameModelHelpers
                     ExplosionTag = new Dictionary<int, ExplosionTag>()
                 }
             },
-            Launch = new Launch
+            Launch = new LaunchModel
             {
                 LaunchPadFrontEntityId = -1,
                 LaunchPadRearEntityId = -1,
                 IsLaunching = false,
                 MinerLaunchSpeed = 0f
+            },
+            Inventory = new InventoryModel
+            {
+                Items =
+                [
+                    new InventoryItem
+                    {
+                        Count = 1,
+                        Type = ItemType.Drill
+                    },
+                    new InventoryItem
+                    {
+                        Count = 3,
+                        Type = ItemType.Dynamite
+                    }
+                ]
             }
         };
     }

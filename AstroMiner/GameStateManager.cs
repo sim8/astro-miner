@@ -21,11 +21,12 @@ public enum MiningControls
     EnterOrExit,
 
     // Player-only
-    PlaceDynamite,
+    UseItem,
 
     // Miner-only
     UseGrapple,
 
+    ToggleInventory,
     NewGameOrReturnToBase, // TODO factor out
     SaveGame // TEMP
 }
@@ -87,7 +88,7 @@ public class GameStateManager(BaseGame game)
     {
         // game.Model = GameModelHelpers.CreateNewGameModel();
         game.Model = game.GameStateStorage.LoadState();
-        Inventory = new Inventory();
+        Inventory = new Inventory(game);
         Camera = new CameraState(game);
         MsSinceStart = 0;
         AsteroidWorld = new AsteroidWorldState(game);
@@ -120,5 +121,7 @@ public class GameStateManager(BaseGame game)
         Ui.Update(gameTime);
 
         if (activeMiningControls.Contains(MiningControls.SaveGame)) SaveGameTEMP();
+        if (activeMiningControls.Contains(MiningControls.ToggleInventory))
+            Ui.State.IsInventoryOpen = !Ui.State.IsInventoryOpen;
     }
 }

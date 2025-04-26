@@ -29,11 +29,12 @@ public class AstroMinerGame : BaseGame
         _miningControlMapper.AddMapping(MiningControls.MoveDown, Keys.S, Buttons.LeftThumbstickDown, true);
         _miningControlMapper.AddMapping(MiningControls.MoveLeft, Keys.A, Buttons.LeftThumbstickLeft, true);
         _miningControlMapper.AddMapping(MiningControls.Drill, Keys.Space, Buttons.RightTrigger, true);
+        _miningControlMapper.AddMapping(MiningControls.UseItem, Keys.Space, Buttons.RightTrigger, true);
         _miningControlMapper.AddMapping(MiningControls.EnterOrExit, Keys.E, Buttons.Y, false);
-        _miningControlMapper.AddMapping(MiningControls.PlaceDynamite, Keys.R, Buttons.RightShoulder, false);
         _miningControlMapper.AddMapping(MiningControls.UseGrapple, Keys.G, Buttons.LeftTrigger, true);
         _miningControlMapper.AddMapping(MiningControls.NewGameOrReturnToBase, Keys.N, Buttons.Start, false);
         _miningControlMapper.AddMapping(MiningControls.SaveGame, Keys.B, Buttons.Back, false); // TEMP
+        _miningControlMapper.AddMapping(MiningControls.ToggleInventory, Keys.Tab, Buttons.Back, false);
     }
 
     protected override void LoadContent()
@@ -67,6 +68,7 @@ public class AstroMinerGame : BaseGame
         LoadTexture("mountains-nice-tiled");
         LoadTexture("oizus-rocks-under");
         LoadTexture("rig-room");
+        LoadTexture("icons");
     }
 
     protected override void Update(GameTime gameTime)

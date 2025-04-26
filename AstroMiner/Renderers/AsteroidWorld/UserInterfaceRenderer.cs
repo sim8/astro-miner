@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using AstroMiner.Utilities;
@@ -27,8 +26,6 @@ public class UserInterfaceRenderer(
         var seconds = timeLeft % 60000 / 1000;
         shared.RenderString(spriteBatch, 0, 0, minutes.ToString("D2") + " " + seconds.ToString("D2"), 6);
 
-        RenderInventory(spriteBatch, 5, 225);
-
 
         RenderMinimap(spriteBatch);
 
@@ -48,22 +45,6 @@ public class UserInterfaceRenderer(
     {
         if (shared.Game.Model.ActiveWorld == World.Asteroid)
             shared.RenderString(spriteBatch, 1000, 40, "SEED " + shared.GameStateManager.AsteroidWorld.Seed);
-    }
-
-    private void RenderInventory(SpriteBatch spriteBatch, int xOffset, int yoffset)
-    {
-        var resourceLineHeight = 40;
-
-        shared.RenderString(spriteBatch, xOffset, yoffset,
-            "DYNAMITE " + shared.GameStateManager.Inventory.numDynamite);
-
-        foreach (var (inventoryResource, index) in shared.GameStateManager.Inventory.resources.Select((r, i) => (r, i)))
-        {
-            var lineYOffset = yoffset + resourceLineHeight * (index + 1);
-            var resourceConfig = ResourceTypes.GetConfig(inventoryResource.Type);
-            shared.RenderString(spriteBatch, xOffset, lineYOffset,
-                resourceConfig.Name.ToUpper() + " " + inventoryResource.Count);
-        }
     }
 
     private void RenderHealthBar(SpriteBatch spriteBatch, int entityId, int xOffset, int yOffset)
@@ -179,9 +160,6 @@ public class UserInterfaceRenderer(
         {
             shared.RenderString(spriteBatch, 300, 400, "OFF THE ASTEROID", 5);
             shared.RenderString(spriteBatch, 300, 500, "PRESS N TO RETURN TO BASE");
-
-
-            RenderInventory(spriteBatch, 300, 600);
         }
     }
 }
