@@ -54,7 +54,6 @@ public class UIElement(BaseGame game)
 
     // Positioning
     public PositionMode Position { get; set; } = PositionMode.Flow;
-    public int ZIndex { get; set; } = 0;
 
     public ChildrenDirection ChildrenDirection { get; set; } = ChildrenDirection.Column;
     public ChildrenJustify ChildrenJustify { get; set; } = ChildrenJustify.Start;
@@ -102,7 +101,7 @@ public class UIElement(BaseGame game)
                 BackgroundColor.Value);
 
         // Render children in z-index order
-        foreach (var child in Children.OrderBy(c => c.ZIndex))
+        foreach (var child in Children)
             child.Render(spriteBatch);
     }
 

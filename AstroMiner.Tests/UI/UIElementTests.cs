@@ -654,8 +654,7 @@ public class UIElementTests
             BackgroundColor = Color.Red,
             FixedWidth = 50,
             FixedHeight = 50,
-            Position = PositionMode.Absolute,
-            ZIndex = 10 // Higher z-index to render on top
+            Position = PositionMode.Absolute
         };
 
         // Add children to container
