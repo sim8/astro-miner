@@ -47,7 +47,7 @@ public sealed class UIInventoryRow : UIElement
             if (i < inventory.Count && inventory[i] != null)
             {
                 var resource = inventory[i];
-                var resourceConfig = ResourceTypes.GetConfig(resource.Type);
+                var resourceConfig = ItemTypes.GetConfig(resource.Type);
                 items.Add(new UIInventoryItem(game, resourceConfig.GetSourceRect(), resource.Count, i));
             }
             else
@@ -80,7 +80,7 @@ public sealed class UIInventoryItem : UIElement
         Children =
         [
             .. inventoryIndex == game.StateManager.Inventory.selectedIndex
-                ? new UIElement[]
+                ? new[]
                 {
                     new UIElement(game)
                     {

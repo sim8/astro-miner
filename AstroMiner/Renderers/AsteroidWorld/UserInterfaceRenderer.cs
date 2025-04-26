@@ -60,7 +60,7 @@ public class UserInterfaceRenderer(
         foreach (var (inventoryResource, index) in shared.GameStateManager.Inventory.resources.Select((r, i) => (r, i)))
         {
             var lineYOffset = yoffset + resourceLineHeight * (index + 1);
-            var resourceConfig = ResourceTypes.GetConfig(inventoryResource.Type);
+            var resourceConfig = ItemTypes.GetConfig(inventoryResource.Type);
             shared.RenderString(spriteBatch, xOffset, lineYOffset,
                 resourceConfig.Name.ToUpper() + " " + inventoryResource.Count);
         }
