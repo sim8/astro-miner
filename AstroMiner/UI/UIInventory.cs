@@ -41,7 +41,7 @@ public sealed class UIInventoryRow : UIElement
     private List<UIElement> CreateInventoryItems(BaseGame game, int startIndex, int endIndex)
     {
         var items = new List<UIElement>();
-        var inventory = game.StateManager.Inventory.items;
+        var inventory = game.Model.Inventory.Items;
 
         for (var i = startIndex; i < endIndex; i++)
             if (i < inventory.Count && inventory[i] != null)
@@ -76,10 +76,10 @@ public sealed class UIInventoryItem : UIElement
         FixedWidth = 32;
         FixedHeight = 32;
         BackgroundColor = Color.DarkGray;
-        OnClick = () => game.StateManager.Inventory.selectedIndex = inventoryIndex;
+        OnClick = () => game.Model.Inventory.SelectedIndex = inventoryIndex;
         Children =
         [
-            .. inventoryIndex == game.StateManager.Inventory.selectedIndex
+            .. inventoryIndex == game.Model.Inventory.SelectedIndex
                 ? new[]
                 {
                     new UIElement(game)

@@ -1,35 +1,22 @@
-using System.Collections.Generic;
 using AstroMiner.Definitions;
+using AstroMiner.Model;
 
 namespace AstroMiner;
 
-public class InventoryItem
+public class Inventory(BaseGame game)
 {
-    public ItemType Type { get; set; }
-    public int Count { get; set; }
-}
-
-public class Inventory
-{
-    public readonly List<InventoryItem?> items = new();
-
-    public Inventory()
-    {
-        AddItem(ItemType.Diamond, 2);
-        AddItem(ItemType.Ruby);
-        AddItem(ItemType.Nickel, 4);
-    }
-
-    public int selectedIndex { get; set; } = 0;
+    public ItemType? SelectedItemType => game.Model.Inventory.Items.Count > 0
+        ? game.Model.Inventory.Items[game.Model.Inventory.SelectedIndex]?.Type
+        : null;
 
     public int numDynamite { get; set; } = 3; // TODO make these an item?
 
     public void AddItem(ItemType type, int count = 1)
     {
-        var existing = items.Find(r => r != null && r.Type == type);
+        var existing = game.Model.Inventory.Items.Find(r => r != null && r.Type == type);
         if (existing != null)
             existing.Count += count;
         else
-            items.Add(new InventoryItem { Type = type, Count = count });
+            game.Model.Inventory.Items.Add(new InventoryItem { Type = type, Count = count });
     }
 }

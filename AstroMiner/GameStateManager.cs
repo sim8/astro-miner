@@ -88,7 +88,7 @@ public class GameStateManager(BaseGame game)
     {
         // game.Model = GameModelHelpers.CreateNewGameModel();
         game.Model = game.GameStateStorage.LoadState();
-        Inventory = new Inventory();
+        Inventory = new Inventory(game);
         Camera = new CameraState(game);
         MsSinceStart = 0;
         AsteroidWorld = new AsteroidWorldState(game);

@@ -9,7 +9,9 @@ public enum ItemType
     Ruby,
     Diamond,
     Gold,
-    Nickel
+    Nickel,
+    Dynamite,
+    Drill
 }
 
 public class ItemTypeConfig(string name, int colIndex, int rowIndex)
@@ -32,7 +34,9 @@ public static class ItemTypes
             { ItemType.Ruby, new ItemTypeConfig("Ruby", 0, 0) },
             { ItemType.Diamond, new ItemTypeConfig("Diamond", 1, 0) },
             { ItemType.Gold, new ItemTypeConfig("Gold", 2, 0) },
-            { ItemType.Nickel, new ItemTypeConfig("Nickel", 3, 0) }
+            { ItemType.Nickel, new ItemTypeConfig("Nickel", 3, 0) },
+            { ItemType.Dynamite, new ItemTypeConfig("Dynamite", 4, 0) },
+            { ItemType.Drill, new ItemTypeConfig("Drill", 5, 0) }
         };
 
     public static ItemTypeConfig GetConfig(ItemType itemType)

@@ -13,9 +13,9 @@ public class LaunchSystem(Ecs ecs, BaseGame game) : System(ecs, game)
     private const int LauncherHeightPx = 120;
 
     private const float LauncherGridHeight = LauncherHeightPx / (float)GameConfig.CellTextureSizePx;
-
-    private readonly Launch _launch = game.Model.Launch;
     private readonly List<int> _launchLightEntities = new();
+
+    private readonly LaunchModel _launchModel = game.Model.Launch;
 
     private readonly Vector2 _launchPadFrontStartPos =
         ViewHelpers.AbsoluteXyPxToGridPos(Coordinates.Px.LaunchPadsX, Coordinates.Px.LaunchPadFrontStartY);
@@ -36,33 +36,33 @@ public class LaunchSystem(Ecs ecs, BaseGame game) : System(ecs, game)
 
     public void Reset()
     {
-        _launch.IsLaunching = false;
+        _launchModel.IsLaunching = false;
         _startedAt = -1;
-        _launch.MinerLaunchSpeed = 0f;
+        _launchModel.MinerLaunchSpeed = 0f;
         ClearLightEntities();
 
-        if (_launch.LaunchPadFrontEntityId == -1)
-            _launch.LaunchPadFrontEntityId =
+        if (_launchModel.LaunchPadFrontEntityId == -1)
+            _launchModel.LaunchPadFrontEntityId =
                 game.StateManager.Ecs.Factories.CreateLaunchPadFrontEntity(_launchPadFrontStartPos);
         else
-            game.StateManager.Ecs.GetComponent<PositionComponent>(_launch.LaunchPadFrontEntityId).Position =
+            game.StateManager.Ecs.GetComponent<PositionComponent>(_launchModel.LaunchPadFrontEntityId).Position =
                 _launchPadFrontStartPos;
-        if (_launch.LaunchPadRearEntityId == -1)
-            _launch.LaunchPadRearEntityId =
+        if (_launchModel.LaunchPadRearEntityId == -1)
+            _launchModel.LaunchPadRearEntityId =
                 game.StateManager.Ecs.Factories.CreateLaunchPadRearEntity(_launchPadRearStartPos);
         else
-            game.StateManager.Ecs.GetComponent<PositionComponent>(_launch.LaunchPadRearEntityId).Position =
+            game.StateManager.Ecs.GetComponent<PositionComponent>(_launchModel.LaunchPadRearEntityId).Position =
                 _launchPadRearStartPos;
     }
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
         // TODO ideally these'd be in an init()
-        if (_launch.LaunchPadFrontEntityId == -1)
-            _launch.LaunchPadFrontEntityId =
+        if (_launchModel.LaunchPadFrontEntityId == -1)
+            _launchModel.LaunchPadFrontEntityId =
                 game.StateManager.Ecs.Factories.CreateLaunchPadFrontEntity(_launchPadFrontStartPos);
-        if (_launch.LaunchPadRearEntityId == -1)
-            _launch.LaunchPadRearEntityId =
+        if (_launchModel.LaunchPadRearEntityId == -1)
+            _launchModel.LaunchPadRearEntityId =
                 game.StateManager.Ecs.Factories.CreateLaunchPadRearEntity(_launchPadRearStartPos);
 
 
@@ -102,11 +102,11 @@ public class LaunchSystem(Ecs ecs, BaseGame game) : System(ecs, game)
 
             if (HasJustPassedSeconds(gameTime, 4))
             {
-                _launch.IsLaunching = true;
+                _launchModel.IsLaunching = true;
                 ClearLightEntities();
             }
 
-            if (_launch.IsLaunching)
+            if (_launchModel.IsLaunching)
             {
                 UpdateMinerLaunchSpeed(gameTime);
                 UpdateMinerAndLaunchPadPosition(gameTime);
@@ -143,7 +143,7 @@ public class LaunchSystem(Ecs ecs, BaseGame game) : System(ecs, game)
         if (distanceRemaining <= 0)
         {
             // We're at the edge of the launcher, set to max speed
-            _launch.MinerLaunchSpeed = GameConfig.Launch.AsteroidSpeed;
+            _launchModel.MinerLaunchSpeed = GameConfig.Launch.AsteroidSpeed;
             return;
         }
 
@@ -155,14 +155,14 @@ public class LaunchSystem(Ecs ecs, BaseGame game) : System(ecs, game)
         // Rearranging to find acceleration: a = (v² - u²) / (2s)
         var requiredAcceleration =
             (GameConfig.Launch.AsteroidSpeed * GameConfig.Launch.AsteroidSpeed -
-             _launch.MinerLaunchSpeed * _launch.MinerLaunchSpeed) / (2 * distanceRemaining);
+             _launchModel.MinerLaunchSpeed * _launchModel.MinerLaunchSpeed) / (2 * distanceRemaining);
 
         // Apply the calculated acceleration for this frame
         var deltaTime = gameTime.ElapsedGameTime.Milliseconds / 1000f;
-        _launch.MinerLaunchSpeed += requiredAcceleration * deltaTime;
+        _launchModel.MinerLaunchSpeed += requiredAcceleration * deltaTime;
 
         // Cap the speed at MaxLaunchSpeed just to be safe
-        _launch.MinerLaunchSpeed = Math.Min(_launch.MinerLaunchSpeed, GameConfig.Launch.AsteroidSpeed);
+        _launchModel.MinerLaunchSpeed = Math.Min(_launchModel.MinerLaunchSpeed, GameConfig.Launch.AsteroidSpeed);
     }
 
     private void UpdateMinerAndLaunchPadPosition(GameTime gameTime)
@@ -170,21 +170,21 @@ public class LaunchSystem(Ecs ecs, BaseGame game) : System(ecs, game)
         var minerEntityId = game.StateManager.Ecs.MinerEntityId;
         if (minerEntityId == null) return;
 
-        var distance = _launch.MinerLaunchSpeed * (gameTime.ElapsedGameTime.Milliseconds / 1000f);
+        var distance = _launchModel.MinerLaunchSpeed * (gameTime.ElapsedGameTime.Milliseconds / 1000f);
         var movement = DirectionHelpers.GetDirectionalVector(distance, Direction.Top);
         var minerPosition = game.StateManager.Ecs.GetComponent<PositionComponent>(minerEntityId.Value);
         minerPosition.Position += movement;
 
         if (minerPosition.Position.Y < GameConfig.Launch.HomeToAsteroidPointY)
         {
-            _launch.MinerLaunchSpeed = 0f; /// TODO set relative to new speed
+            _launchModel.MinerLaunchSpeed = 0f; /// TODO set relative to new speed
             game.StateManager.SetActiveWorldAndInitialize(World.Asteroid);
         }
 
         var launchPadFrontPosition =
-            game.StateManager.Ecs.GetComponent<PositionComponent>(_launch.LaunchPadFrontEntityId);
+            game.StateManager.Ecs.GetComponent<PositionComponent>(_launchModel.LaunchPadFrontEntityId);
         var launchPadRearPosition =
-            game.StateManager.Ecs.GetComponent<PositionComponent>(_launch.LaunchPadRearEntityId);
+            game.StateManager.Ecs.GetComponent<PositionComponent>(_launchModel.LaunchPadRearEntityId);
 
         launchPadFrontPosition.Position = Vector2.Max(launchPadFrontPosition.Position + movement,
             _launchPadFrontStartPos - new Vector2(0, LauncherGridHeight));
