@@ -22,6 +22,7 @@ public enum MiningControls
 
     // Player-only
     PlaceDynamite,
+    UseItem,
 
     // Miner-only
     UseGrapple,

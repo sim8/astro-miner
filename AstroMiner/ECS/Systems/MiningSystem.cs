@@ -25,7 +25,9 @@ public class MiningSystem : System
 
         if (miningComponent == null) return;
 
-        if (activeMiningControls.Contains(MiningControls.Drill))
+        if ((game.StateManager.AsteroidWorld.IsInMiner && activeMiningControls.Contains(MiningControls.Drill)) ||
+            (!game.StateManager.AsteroidWorld.IsInMiner && activeMiningControls.Contains(MiningControls.UseItem) &&
+             game.StateManager.Inventory.SelectedItemType == ItemType.Drill))
             UseDrill(gameTime, miningComponent);
         else
             ResetDrill(miningComponent);

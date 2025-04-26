@@ -75,6 +75,7 @@
 
 ## Quality
 
+- Controls - capture isPressing/hasPressed at top level. Split out menu controls / mining controls
 - Better handling of in/out of miner + positioning
 - Better handling of world checks - very scattered atm
 - Player placement when exiting
