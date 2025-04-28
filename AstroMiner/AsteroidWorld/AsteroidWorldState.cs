@@ -21,7 +21,8 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
                                  .ActiveControllableEntityId
                                  .Value);
 
-    public long MsTilExplosion => game.Model.AsteroidModel.WillExplodeAt - game.StateManager.GetTotalPlayTime();
+    public long MsTilExplosion =>
+        Math.Max(game.Model.AsteroidModel.WillExplodeAt - game.StateManager.GetTotalPlayTime(), 0);
 
     private void InitSeed()
     {
