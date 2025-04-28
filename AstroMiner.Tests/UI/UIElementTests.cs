@@ -1,21 +1,11 @@
 using System.Collections.Generic;
 using AstroMiner.UI;
+using AstroMiner.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace AstroMiner.Tests.UI;
-
-// Mock implementation of BaseGame for testing
-public class MockBaseGame(Dictionary<string, Texture2D> textures) : BaseGame
-{
-    public Dictionary<string, Texture2D> Textures { get; } = textures;
-
-    // required abstract method
-    protected override void InitializeControls()
-    {
-    }
-}
 
 [TestClass]
 public class UIElementTests
@@ -324,14 +314,14 @@ public class UIElementTests
         var child1 = new UIElement(_mockGame)
         {
             BackgroundColor = Color.LightGray,
-            FixedWidth = 50,  // Narrower than container
+            FixedWidth = 50, // Narrower than container
             FixedHeight = 30
         };
 
         var child2 = new UIElement(_mockGame)
         {
             BackgroundColor = Color.DarkBlue,
-            FixedWidth = 80,  // Wider than child1 but narrower than container
+            FixedWidth = 80, // Wider than child1 but narrower than container
             FixedHeight = 20
         };
 
@@ -350,9 +340,9 @@ public class UIElementTests
 
         // Children should be stretched to container width minus padding
         Assert.AreEqual(200 - 2 * 10, child1.ComputedWidth); // Stretched to container width minus padding
-        Assert.AreEqual(30, child1.ComputedHeight);  // Height unchanged
+        Assert.AreEqual(30, child1.ComputedHeight); // Height unchanged
         Assert.AreEqual(200 - 2 * 10, child2.ComputedWidth); // Stretched to container width minus padding
-        Assert.AreEqual(20, child2.ComputedHeight);  // Height unchanged
+        Assert.AreEqual(20, child2.ComputedHeight); // Height unchanged
 
         // Children should be positioned with padding offset
         Assert.AreEqual(10, child1.X); // X position includes left padding
@@ -379,14 +369,14 @@ public class UIElementTests
         {
             BackgroundColor = Color.LightGray,
             FixedWidth = 50,
-            FixedHeight = 30  // Shorter than container
+            FixedHeight = 30 // Shorter than container
         };
 
         var child2 = new UIElement(_mockGame)
         {
             BackgroundColor = Color.DarkBlue,
             FixedWidth = 80,
-            FixedHeight = 60  // Taller than child1 but shorter than container
+            FixedHeight = 60 // Taller than child1 but shorter than container
         };
 
         // Add children to container
@@ -403,9 +393,9 @@ public class UIElementTests
         Assert.AreEqual(100, container.ComputedHeight);
 
         // Children should be stretched to container height minus padding
-        Assert.AreEqual(50, child1.ComputedWidth);   // Width unchanged
+        Assert.AreEqual(50, child1.ComputedWidth); // Width unchanged
         Assert.AreEqual(100 - 2 * 5, child1.ComputedHeight); // Stretched to container height minus padding
-        Assert.AreEqual(80, child2.ComputedWidth);   // Width unchanged
+        Assert.AreEqual(80, child2.ComputedWidth); // Width unchanged
         Assert.AreEqual(100 - 2 * 5, child2.ComputedHeight); // Stretched to container height minus padding
 
         // Children should be positioned properly with padding included
@@ -430,7 +420,7 @@ public class UIElementTests
         var item1 = new UIElement(_mockGame)
         {
             BackgroundColor = Color.LightGray,
-            FixedWidth = 80,  // Medium width
+            FixedWidth = 80, // Medium width
             FixedHeight = 30
         };
 
@@ -444,7 +434,7 @@ public class UIElementTests
         var item3 = new UIElement(_mockGame)
         {
             BackgroundColor = Color.LightGray,
-            FixedWidth = 60,  // Narrowest item
+            FixedWidth = 60, // Narrowest item
             FixedHeight = 30
         };
 
@@ -461,7 +451,7 @@ public class UIElementTests
         // Dropdown container width should be determined by the widest child
         Assert.AreEqual(120, dropdown.ChildrenWidth); // Width of the widest item
         Assert.AreEqual(120, dropdown.ComputedWidth); // Container adapts to widest item
-        Assert.AreEqual(90, dropdown.ComputedHeight);  // Sum of item heights
+        Assert.AreEqual(90, dropdown.ComputedHeight); // Sum of item heights
 
         // All items should be stretched to the width of the container (which is the width of the widest item)
         Assert.AreEqual(120, item1.ComputedWidth); // Stretched to match widest item
@@ -512,8 +502,8 @@ public class UIElementTests
         Assert.AreEqual(10, child.Y); // Y position should include top padding
 
         // Verify content area dimensions
-        int contentWidth = container.ComputedWidth - 2 * container.Padding; // 200 - 20 = 180
-        int contentHeight = container.ComputedHeight - 2 * container.Padding; // 150 - 20 = 130
+        var contentWidth = container.ComputedWidth - 2 * container.Padding; // 200 - 20 = 180
+        var contentHeight = container.ComputedHeight - 2 * container.Padding; // 150 - 20 = 130
         Assert.AreEqual(180, contentWidth);
         Assert.AreEqual(130, contentHeight);
 
@@ -539,8 +529,8 @@ public class UIElementTests
 
         // Assert
         // Container should size itself based on child plus padding
-        Assert.AreEqual(100 + 2 * 15, autoContainer.ComputedWidth);  // Child width + padding on both sides
-        Assert.AreEqual(50 + 2 * 15, autoContainer.ComputedHeight);  // Child height + padding on both sides
+        Assert.AreEqual(100 + 2 * 15, autoContainer.ComputedWidth); // Child width + padding on both sides
+        Assert.AreEqual(50 + 2 * 15, autoContainer.ComputedHeight); // Child height + padding on both sides
 
         // Child should be positioned with padding offset
         Assert.AreEqual(15, autoChild.X);
@@ -577,7 +567,7 @@ public class UIElementTests
 
         // Assert
         // Container size includes padding on both sides
-        Assert.AreEqual(80 + 2 * 20, multiContainer.ComputedWidth);  // Widest child + padding
+        Assert.AreEqual(80 + 2 * 20, multiContainer.ComputedWidth); // Widest child + padding
         Assert.AreEqual(70 + 2 * 20, multiContainer.ComputedHeight); // Sum of children heights + padding
 
         // First child is positioned with padding offset
@@ -594,7 +584,7 @@ public class UIElementTests
     {
         // Mock the FontHelpers.TransformString method with test data
         var testChar = (x: 0, y: 0, width: 8, height: 10);
-        AstroMiner.Utilities.FontHelpers.MockCharacterSizeForTest = testChar;
+        FontHelpers.MockCharacterSizeForTest = testChar;
 
         // Create a text element with padding
         var textElement = new UITextElement(_mockGame)

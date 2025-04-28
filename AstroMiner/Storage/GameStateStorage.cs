@@ -11,14 +11,17 @@ namespace AstroMiner.Storage;
 
 public class GameStateStorage
 {
+    private readonly BaseGame _game;
+
+    private readonly JsonSerializerOptions _serializerOptions;
+
     private readonly string SaveFilePath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
         "game_save_2.json");
 
-    private readonly JsonSerializerOptions _serializerOptions;
-
-    public GameStateStorage()
+    public GameStateStorage(BaseGame game)
     {
+        _game = game;
         _serializerOptions = new JsonSerializerOptions
         {
             WriteIndented = true,
@@ -32,12 +35,16 @@ public class GameStateStorage
     }
 
     // Method to expose serializer options for testing
-    public JsonSerializerOptions GetSerializerOptions() => _serializerOptions;
+    public JsonSerializerOptions GetSerializerOptions()
+    {
+        return _serializerOptions;
+    }
 
     public void SaveState(GameModel model)
     {
         try
         {
+            model.SavedTotalPlaytimeMs = _game.StateManager.GetTotalPlayTime();
             var jsonString = JsonSerializer.Serialize(model, _serializerOptions);
             File.WriteAllText(SaveFilePath, jsonString);
         }
@@ -79,7 +86,6 @@ public class Vector2Converter : JsonConverter<Vector2>
         float x = 0, y = 0;
 
         while (reader.Read() && reader.TokenType != JsonTokenType.EndObject)
-        {
             if (reader.TokenType == JsonTokenType.PropertyName)
             {
                 var propertyName = reader.GetString();
@@ -95,7 +101,6 @@ public class Vector2Converter : JsonConverter<Vector2>
                         break;
                 }
             }
-        }
 
         return new Vector2(x, y);
     }
@@ -119,7 +124,6 @@ public class ColorConverter : JsonConverter<Color>
         byte r = 0, g = 0, b = 0, a = 255;
 
         while (reader.Read() && reader.TokenType != JsonTokenType.EndObject)
-        {
             if (reader.TokenType == JsonTokenType.PropertyName)
             {
                 var propertyName = reader.GetString();
@@ -141,7 +145,6 @@ public class ColorConverter : JsonConverter<Color>
                         break;
                 }
             }
-        }
 
         return new Color(r, g, b, a);
     }
@@ -167,7 +170,6 @@ public class RectangleFConverter : JsonConverter<RectangleF>
         float x = 0, y = 0, width = 0, height = 0;
 
         while (reader.Read() && reader.TokenType != JsonTokenType.EndObject)
-        {
             if (reader.TokenType == JsonTokenType.PropertyName)
             {
                 var propertyName = reader.GetString();
@@ -189,7 +191,6 @@ public class RectangleFConverter : JsonConverter<RectangleF>
                         break;
                 }
             }
-        }
 
         return new RectangleF(x, y, width, height);
     }

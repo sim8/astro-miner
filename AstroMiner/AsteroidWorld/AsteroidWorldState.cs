@@ -51,8 +51,9 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
 
         EdgeCells = UserInterfaceHelpers.GetAsteroidEdgeCells(Grid);
         CollapsingFloorTriggerer = new CollapsingFloorTriggerer(game);
-        MsSinceStart = 0;
         FogAnimationManager = new FogAnimationManager(game);
+        game.Model.AsteroidModel.WillExplodeAt =
+            game.StateManager.GetTotalPlayTime() + GameConfig.AsteroidExplodeTimeMs;
     }
 
     private void InitializeMiner(Vector2 minerPos)

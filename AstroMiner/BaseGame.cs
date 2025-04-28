@@ -11,7 +11,7 @@ public abstract class BaseGame : Game
 {
     public readonly DebugOptions Debug = new();
     public readonly FrameCounter FrameCounter = new();
-    public readonly GameStateStorage GameStateStorage = new();
+    public readonly GameStateStorage GameStateStorage;
     public readonly GraphicsDeviceManager Graphics;
     public readonly Dictionary<string, Texture2D> Textures = new();
     protected SpriteBatch SpriteBatch;
@@ -25,6 +25,7 @@ public abstract class BaseGame : Game
         Window.AllowUserResizing = true;
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
+        GameStateStorage = new GameStateStorage(this);
     }
 
     public GameModel Model { get; set; }

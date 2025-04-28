@@ -109,6 +109,11 @@ public class GameStateManager(BaseGame game)
         Console.WriteLine("saved!");
     }
 
+    public long GetTotalPlayTime()
+    {
+        return game.Model.SavedTotalPlaytimeMs + (long)GameTime.TotalGameTime.TotalMilliseconds;
+    }
+
     public void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
     {
         var controlsToUse = FreezeControls ? EmptyControls : activeMiningControls;

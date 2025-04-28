@@ -4,6 +4,7 @@ using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using AstroMiner.Model;
 using AstroMiner.Storage;
+using AstroMiner.Tests.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Xna.Framework;
 
@@ -13,11 +14,13 @@ namespace AstroMiner.Tests.Storage;
 public class GameModelSerializationTests
 {
     private GameStateStorage _gameStateStorage;
+    private MockBaseGame _mockBaseGame;
 
     [TestInitialize]
     public void Setup()
     {
-        _gameStateStorage = new GameStateStorage();
+        _mockBaseGame = new MockBaseGame(null);
+        _gameStateStorage = new GameStateStorage(_mockBaseGame);
     }
 
     [TestMethod]
@@ -69,10 +72,12 @@ public class GameModelSerializationTests
         model.Ecs.ActiveControllableEntityId = entityId;
 
         // Act - Serialize and then deserialize
-        string jsonString = JsonSerializer.Serialize(model, _gameStateStorage.GetSerializerOptions());
-        Console.WriteLine($"Serialized JSON (excerpt): {jsonString.Substring(0, Math.Min(1000, jsonString.Length))}...");
+        var jsonString = JsonSerializer.Serialize(model, _gameStateStorage.GetSerializerOptions());
+        Console.WriteLine(
+            $"Serialized JSON (excerpt): {jsonString.Substring(0, Math.Min(1000, jsonString.Length))}...");
 
-        var deserializedModel = JsonSerializer.Deserialize<GameModel>(jsonString, _gameStateStorage.GetSerializerOptions());
+        var deserializedModel =
+            JsonSerializer.Deserialize<GameModel>(jsonString, _gameStateStorage.GetSerializerOptions());
 
         // Print deserialized values for debugging
         var deserializedPos = deserializedModel.Ecs.ComponentsByEntityId.Position[entityId].Position;
@@ -82,7 +87,7 @@ public class GameModelSerializationTests
         // Assert - Verify the model properties are preserved
         Assert.IsNotNull(deserializedModel);
         Assert.AreEqual(model.ActiveWorld, deserializedModel.ActiveWorld);
-        Assert.AreEqual(model.TotalPlaytimeMs, deserializedModel.TotalPlaytimeMs);
+        Assert.AreEqual(model.SavedTotalPlaytimeMs, deserializedModel.SavedTotalPlaytimeMs);
 
         // Verify entity references
         Assert.AreEqual(model.Ecs.PlayerEntityId, deserializedModel.Ecs.PlayerEntityId);

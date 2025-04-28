@@ -10,7 +10,7 @@ namespace AstroMiner.Model;
 public class GameModel
 {
     public World ActiveWorld { get; set; }
-    public long TotalPlaytimeMs { get; set; }
+    public long SavedTotalPlaytimeMs { get; set; }
     public EcsModel Ecs { get; set; }
     public LaunchModel Launch { get; set; }
     public InventoryModel Inventory { get; set; }
@@ -110,7 +110,7 @@ public static class GameModelHelpers
         return new GameModel
         {
             ActiveWorld = World.Home,
-            TotalPlaytimeMs = 0,
+            SavedTotalPlaytimeMs = 0,
             Ecs = new EcsModel
             {
                 ActiveControllableEntityId = null,
