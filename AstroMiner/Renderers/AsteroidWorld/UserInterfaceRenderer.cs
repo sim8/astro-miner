@@ -44,7 +44,7 @@ public class UserInterfaceRenderer(
     private void RenderDebug(SpriteBatch spriteBatch)
     {
         if (shared.Game.Model.ActiveWorld == World.Asteroid)
-            shared.RenderString(spriteBatch, 1000, 40, "SEED " + shared.GameStateManager.AsteroidWorld.Seed);
+            shared.RenderString(spriteBatch, 1000, 40, "SEED " + shared.Game.Model.AsteroidModel.Seed);
     }
 
     private void RenderHealthBar(SpriteBatch spriteBatch, int entityId, int xOffset, int yOffset)

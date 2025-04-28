@@ -16,8 +16,6 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
     public FogAnimationManager FogAnimationManager;
     public GridState Grid;
 
-    public int Seed { get; private set; }
-
     public long MsSinceStart { get; private set; }
 
     public bool IsInMiner => game.Model.Ecs.ActiveControllableEntityId != null &&
@@ -28,7 +26,7 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
     private void InitSeed()
     {
         var rnd = new Random();
-        Seed = rnd.Next(1, 999);
+        game.Model.AsteroidModel.Seed = rnd.Next(1, 999);
     }
 
     public override (int, int) GetGridSize()
@@ -40,8 +38,10 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
     {
         base.Initialize();
         InitSeed();
-        var (grid, minerPos) = AsteroidGen.InitializeGridAndStartingPos(GameConfig.GridSize, Seed);
-        Grid = new GridState(game, grid);
+        var (grid, minerPos) =
+            AsteroidGen.InitializeGridAndStartingPos(GameConfig.GridSize, game.Model.AsteroidModel.Seed);
+        game.Model.AsteroidModel.Grid = grid;
+        Grid = new GridState(game);
 
         var (minerPosX, minerPosY) = ViewHelpers.ToGridPosition(minerPos);
         Grid.MarkAllDistancesFromExploredFloor(minerPosX, minerPosY, true);

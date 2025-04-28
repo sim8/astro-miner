@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace AstroMiner.ProceduralGenViewer;
 
-public class ProceduralGenViewerRenderer
+public class ProceduralGenViewerRenderer(BaseGame game, ProceduralGenViewerState proceduralGenViewerState)
 {
     private const int CellSizePx = 5;
     private const int CellBorderPx = 1;
@@ -25,12 +25,6 @@ public class ProceduralGenViewerRenderer
         { FloorType.LavaCracks, Color.Salmon }
     };
 
-    private readonly GameStateManager _gameStateManager;
-    private readonly ProceduralGenViewerState _proceduralGenViewerState;
-
-
-    private readonly Dictionary<string, Texture2D> _textures;
-
     private readonly Dictionary<WallType, Color> _wallColors = new()
     {
         { WallType.Diamond, new Color(144, 248, 255) },
@@ -43,20 +37,11 @@ public class ProceduralGenViewerRenderer
         { WallType.ExplosiveRock, Color.Purple }
     };
 
-    public ProceduralGenViewerRenderer(
-        Dictionary<string, Texture2D> textures,
-        GameStateManager gameStateManager, ProceduralGenViewerState proceduralGenViewerState)
-    {
-        _gameStateManager = gameStateManager;
-        _textures = textures;
-        _proceduralGenViewerState = proceduralGenViewerState;
-    }
-
     public void Render(SpriteBatch spriteBatch)
     {
         spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
         RenderScene(spriteBatch);
-        RenderString(spriteBatch, 30, 30, "SEED " + _gameStateManager.AsteroidWorld.Seed);
+        RenderString(spriteBatch, 30, 30, "SEED " + game.Model.AsteroidModel.Seed);
         spriteBatch.End();
     }
 
@@ -71,18 +56,18 @@ public class ProceduralGenViewerRenderer
         for (var row = 0; row < GameConfig.GridSize; row++)
         for (var col = 0; col < GameConfig.GridSize; col++)
         {
-            var cellState = _gameStateManager.AsteroidWorld.Grid.GetCellState(col, row);
+            var cellState = game.StateManager.AsteroidWorld.Grid.GetCellState(col, row);
 
             if (cellState.FloorType != FloorType.Empty)
-                spriteBatch.Draw(_textures["white"], GetGridCellRect(col, row),
+                spriteBatch.Draw(game.Textures["white"], GetGridCellRect(col, row),
                     _floorColors[cellState.FloorType]);
 
-            if (_proceduralGenViewerState.showWalls && cellState.WallType != WallType.Empty)
-                spriteBatch.Draw(_textures["white"], GetGridCellRect(col, row),
+            if (proceduralGenViewerState.showWalls && cellState.WallType != WallType.Empty)
+                spriteBatch.Draw(game.Textures["white"], GetGridCellRect(col, row),
                     _wallColors[cellState.WallType]);
 
-            if (_proceduralGenViewerState.showLayers && cellState.Layer != AsteroidLayer.None)
-                spriteBatch.Draw(_textures["white"], GetGridCellRect(col, row),
+            if (proceduralGenViewerState.showLayers && cellState.Layer != AsteroidLayer.None)
+                spriteBatch.Draw(game.Textures["white"], GetGridCellRect(col, row),
                     _asteroidLayerColors[cellState.Layer] * 0.6f);
         }
     }
@@ -94,7 +79,7 @@ public class ProceduralGenViewerRenderer
         {
             var sourceRect = new Rectangle(x, y, width, 8);
             var destRect = new Rectangle(startX + linePxCount * scale, startY + 10, width * scale, height * scale);
-            spriteBatch.Draw(_textures["dogica-font"], destRect, sourceRect, Color.LimeGreen);
+            spriteBatch.Draw(game.Textures["dogica-font"], destRect, sourceRect, Color.LimeGreen);
             linePxCount += width;
         }
     }

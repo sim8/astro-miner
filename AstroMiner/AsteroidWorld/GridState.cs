@@ -2,39 +2,24 @@
 using System;
 using System.Collections.Generic;
 using AstroMiner.Definitions;
+using AstroMiner.Model;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner.AsteroidWorld;
 
-public class CellState(WallType wallType, FloorType floorType, AsteroidLayer layer)
-{
-    public const int UninitializedOrAboveMax = -1;
-
-    public readonly AsteroidLayer Layer = layer;
-
-    /**
-     * -1: uninitialized or above max distance
-     * 0+ distance to floor with unbroken connection to edge
-     */
-    public int DistanceToExploredFloor = UninitializedOrAboveMax;
-
-    public FloorType FloorType = floorType;
-
-    public float FogOpacity = 1f; // Assume fog
-
-    public WallType WallType = wallType;
-
-    public bool isEmpty => WallType == WallType.Empty && FloorType == FloorType.Empty;
-}
-
 /// <summary>
 ///     Grid state is primarily 2d array of cell types.
 ///     Cells can be "activated" to be called in Update loop
 /// </summary>
-public class GridState(BaseGame game, CellState[,] grid)
+public class GridState(BaseGame game)
 {
-    private static readonly CellState _outOfBoundsCell = new(WallType.Empty, FloorType.Empty, AsteroidLayer.None);
+    private static readonly CellState OutOfBoundsCell = new()
+    {
+        WallType = WallType.Empty,
+        FloorType = FloorType.Empty,
+        Layer = AsteroidLayer.None
+    };
 
     private static readonly (int[], int[]) Neighbour8Offsets = (
         new[] { -1, 0, 1, 1, 1, 0, -1, -1 },
@@ -50,8 +35,9 @@ public class GridState(BaseGame game, CellState[,] grid)
     // Would be nice if cell classes had a nice deactive method
     public readonly Dictionary<(int x, int y), ActiveCollapsingFloorCell> _activeCollapsingFloorCells = new();
     public readonly Dictionary<(int x, int y), ActiveExplosiveRockCell> _activeExplosiveRockCells = new();
-    public int Columns => grid.GetLength(0);
-    public int Rows => grid.GetLength(1);
+    private readonly CellState[,] _grid = game.Model.AsteroidModel.Grid;
+    public int Columns => _grid.GetLength(0);
+    public int Rows => _grid.GetLength(1);
 
     public void ActivateExplosiveRockCell(int x, int y, int timeToExplodeMs = 1100)
     {
@@ -99,8 +85,8 @@ public class GridState(BaseGame game, CellState[,] grid)
     public CellState GetCellState(int x, int y)
     {
         if (!ViewHelpers.IsValidGridPosition(x, y))
-            return _outOfBoundsCell;
-        return grid[y, x];
+            return OutOfBoundsCell;
+        return _grid[y, x];
     }
 
     public WallType GetWallType(int x, int y)
@@ -132,7 +118,7 @@ public class GridState(BaseGame game, CellState[,] grid)
 
     public void ClearWall(int x, int y)
     {
-        grid[y, x].WallType = WallType.Empty;
+        _grid[y, x].WallType = WallType.Empty;
         DeactivateExplosiveRockCell(x, y);
         MarkAllDistancesFromExploredFloor(x, y);
     }
@@ -142,7 +128,7 @@ public class GridState(BaseGame game, CellState[,] grid)
         var neighborPassesCheck = false;
         Map4Neighbors(x, y, (nx, ny) =>
         {
-            if (cb(grid[ny, nx])) neighborPassesCheck = true;
+            if (cb(_grid[ny, nx])) neighborPassesCheck = true;
         });
         return neighborPassesCheck;
     }

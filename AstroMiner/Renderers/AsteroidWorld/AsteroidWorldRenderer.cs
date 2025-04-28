@@ -1,6 +1,6 @@
 using System;
-using AstroMiner.AsteroidWorld;
 using AstroMiner.Definitions;
+using AstroMiner.Model;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -47,10 +47,8 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
                             Tilesets.GetWallQuadrantSourceRect(Shared.Game, col, row, corner);
 
                         var tintColor = _gameStateManager.AsteroidWorld.Grid.ExplosiveRockCellIsActive(col, row)
-                            ?
-                            Color.Red
-                            :
-                            cellState.WallType == WallType.LooseRock
+                            ? Color.Red
+                            : cellState.WallType == WallType.LooseRock
                                 ? Color.LightGreen
                                 : Color.White;
 

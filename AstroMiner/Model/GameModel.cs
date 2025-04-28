@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 
@@ -13,6 +14,7 @@ public class GameModel
     public EcsModel Ecs { get; set; }
     public LaunchModel Launch { get; set; }
     public InventoryModel Inventory { get; set; }
+    public AsteroidModel AsteroidModel { get; set; }
 }
 
 [Serializable]
@@ -69,6 +71,36 @@ public class LaunchModel
     public int LaunchPadFrontEntityId { get; set; }
     public int LaunchPadRearEntityId { get; set; }
     public float MinerLaunchSpeed { get; set; }
+}
+
+[Serializable]
+public class CellState
+{
+    public const int UninitializedOrAboveMax = -1;
+
+    public AsteroidLayer Layer { get; init; }
+
+    /**
+     * -1: uninitialized or above max distance
+     * 0+ distance to floor with unbroken connection to edge
+     */
+    public int DistanceToExploredFloor { get; set; } = UninitializedOrAboveMax;
+
+    public FloorType FloorType { get; set; }
+
+    public float FogOpacity { get; set; } = 1f; // Assume fog
+
+    public WallType WallType { get; set; }
+
+    [JsonIgnore] public bool isEmpty => WallType == WallType.Empty && FloorType == FloorType.Empty;
+}
+
+[Serializable]
+public class AsteroidModel
+{
+    public int Seed { get; set; }
+    public long WillExplodeAt { get; set; }
+    public CellState[,] Grid { get; set; }
 }
 
 public static class GameModelHelpers
@@ -128,7 +160,8 @@ public static class GameModelHelpers
                         Type = ItemType.Dynamite
                     }
                 ]
-            }
+            },
+            AsteroidModel = new AsteroidModel()
         };
     }
 }
