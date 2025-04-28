@@ -55,8 +55,6 @@ public class GameStateManager(BaseGame game)
     public Ecs Ecs { get; private set; }
     public GameTime GameTime { get; private set; }
 
-    public long MsSinceStart { get; private set; }
-
 
     public BaseWorldState ActiveWorldState =>
         game.Model.ActiveWorld switch
@@ -90,7 +88,6 @@ public class GameStateManager(BaseGame game)
         game.Model = game.GameStateStorage.LoadState();
         Inventory = new Inventory(game);
         Camera = new CameraState(game);
-        MsSinceStart = 0;
         AsteroidWorld = new AsteroidWorldState(game);
         HomeWorld = new HomeWorldState(game);
         InteriorsWorld = new InteriorsWorldState(game);

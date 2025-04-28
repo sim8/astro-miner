@@ -16,12 +16,12 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
     public FogAnimationManager FogAnimationManager;
     public GridState Grid;
 
-    public long MsSinceStart { get; private set; }
-
     public bool IsInMiner => game.Model.Ecs.ActiveControllableEntityId != null &&
                              game.StateManager.Ecs.HasComponent<MinerTag>(game.Model.Ecs
                                  .ActiveControllableEntityId
                                  .Value);
+
+    public long MsTilExplosion => game.Model.AsteroidModel.WillExplodeAt - game.StateManager.GetTotalPlayTime();
 
     private void InitSeed()
     {
@@ -119,6 +119,7 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
         directionalLightSourceComponent.LeftOffset = new Vector2(0.26f, -0.28f);
     }
 
+
     public override void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
     {
         if (game.StateManager.Ecs.ActiveControllableEntityIsDead ||
@@ -129,9 +130,7 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
                 game.StateManager.HomeWorld.InitializeOrResetEntities();
             }
 
-        MsSinceStart += gameTime.ElapsedGameTime.Milliseconds;
-
-        if (MsSinceStart > GameConfig.AsteroidExplodeTimeMs)
+        if (MsTilExplosion <= 0)
         {
             game.StateManager.Ecs.HealthSystem.KillAllEntitiesInWorld();
             return;
