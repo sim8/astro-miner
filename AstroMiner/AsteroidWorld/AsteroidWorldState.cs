@@ -22,12 +22,12 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
                                  .Value);
 
     public long MsTilExplosion =>
-        Math.Max(game.Model.AsteroidModel.WillExplodeAt - game.StateManager.GetTotalPlayTime(), 0);
+        Math.Max(game.Model.Asteroid.WillExplodeAt - game.StateManager.GetTotalPlayTime(), 0);
 
     private void InitSeed()
     {
         var rnd = new Random();
-        game.Model.AsteroidModel.Seed = rnd.Next(1, 999);
+        game.Model.Asteroid.Seed = rnd.Next(1, 999);
     }
 
     public override (int, int) GetGridSize()
@@ -40,8 +40,8 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
         base.Initialize();
         InitSeed();
         var (grid, minerPos) =
-            AsteroidGen.InitializeGridAndStartingPos(GameConfig.GridSize, game.Model.AsteroidModel.Seed);
-        game.Model.AsteroidModel.Grid = grid;
+            AsteroidGen.InitializeGridAndStartingPos(GameConfig.GridSize, game.Model.Asteroid.Seed);
+        game.Model.Asteroid.Grid = grid;
         Grid = new GridState(game);
 
         var (minerPosX, minerPosY) = ViewHelpers.ToGridPosition(minerPos);
@@ -53,7 +53,7 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
         EdgeCells = UserInterfaceHelpers.GetAsteroidEdgeCells(Grid);
         CollapsingFloorTriggerer = new CollapsingFloorTriggerer(game);
         FogAnimationManager = new FogAnimationManager(game);
-        game.Model.AsteroidModel.WillExplodeAt =
+        game.Model.Asteroid.WillExplodeAt =
             game.StateManager.GetTotalPlayTime() + GameConfig.AsteroidExplodeTimeMs;
     }
 

@@ -1,8 +1,10 @@
+using System;
 using AstroMiner.Definitions;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner.AsteroidWorld;
 
+[Serializable]
 public class ActiveCollapsingFloorCell(BaseGame game, (int x, int y) gridPos)
 {
     public int TimeToCollapse = GameConfig.CollapsingFloorSpreadTime;

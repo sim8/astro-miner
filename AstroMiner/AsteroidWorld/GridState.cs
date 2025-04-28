@@ -33,9 +33,13 @@ public class GridState(BaseGame game)
 
     // TODO nice way to combine these + other effects?
     // Would be nice if cell classes had a nice deactive method
-    public readonly Dictionary<(int x, int y), ActiveCollapsingFloorCell> _activeCollapsingFloorCells = new();
-    public readonly Dictionary<(int x, int y), ActiveExplosiveRockCell> _activeExplosiveRockCells = new();
-    private readonly CellState[,] _grid = game.Model.AsteroidModel.Grid;
+    public readonly Dictionary<(int x, int y), ActiveCollapsingFloorCell> _activeCollapsingFloorCells =
+        game.Model.Asteroid.ActiveCollapsingFloorCells;
+
+    public readonly Dictionary<(int x, int y), ActiveExplosiveRockCell> _activeExplosiveRockCells =
+        game.Model.Asteroid.ActiveExplosiveRockCells;
+
+    private readonly CellState[,] _grid = game.Model.Asteroid.Grid;
     public int Columns => _grid.GetLength(0);
     public int Rows => _grid.GetLength(1);
 

@@ -41,7 +41,7 @@ public class ProceduralGenViewerRenderer(BaseGame game, ProceduralGenViewerState
     {
         spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
         RenderScene(spriteBatch);
-        RenderString(spriteBatch, 30, 30, "SEED " + game.Model.AsteroidModel.Seed);
+        RenderString(spriteBatch, 30, 30, "SEED " + game.Model.Asteroid.Seed);
         spriteBatch.End();
     }
 

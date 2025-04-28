@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using AstroMiner.AsteroidWorld;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 
@@ -14,7 +15,7 @@ public class GameModel
     public EcsModel Ecs { get; set; }
     public LaunchModel Launch { get; set; }
     public InventoryModel Inventory { get; set; }
-    public AsteroidModel AsteroidModel { get; set; }
+    public AsteroidModel Asteroid { get; set; }
 }
 
 [Serializable]
@@ -101,6 +102,11 @@ public class AsteroidModel
     public int Seed { get; set; }
     public long WillExplodeAt { get; set; }
     public CellState[,] Grid { get; set; }
+
+    // TODO nice way to combine these + other effects?
+    // Would be nice if cell classes had a nice deactive method
+    public Dictionary<(int x, int y), ActiveCollapsingFloorCell> ActiveCollapsingFloorCells { get; init; }
+    public Dictionary<(int x, int y), ActiveExplosiveRockCell> ActiveExplosiveRockCells { get; init; }
 }
 
 public static class GameModelHelpers
@@ -161,7 +167,11 @@ public static class GameModelHelpers
                     }
                 ]
             },
-            AsteroidModel = new AsteroidModel()
+            Asteroid = new AsteroidModel
+            {
+                ActiveExplosiveRockCells = new Dictionary<(int x, int y), ActiveExplosiveRockCell>(),
+                ActiveCollapsingFloorCells = new Dictionary<(int x, int y), ActiveCollapsingFloorCell>()
+            }
         };
     }
 }
