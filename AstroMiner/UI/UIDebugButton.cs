@@ -9,14 +9,10 @@ public sealed class UIDebugButton : UIElement
         ChildrenDirection = ChildrenDirection.Column;
         ChildrenAlign = ChildrenAlign.End;
         ChildrenJustify = ChildrenJustify.Start;
-        Children =
-        [
-            .. game.StateManager.Ui.State.IsDebugMenuOpen
-                ? new UIElement[]
-                {
-                    new UIDebugMenu(game)
-                }
-                : [],
+        Children = UIHelpers.FilterNull([
+            game.StateManager.Ui.State.IsDebugMenuOpen
+                ? new UIDebugMenu(game)
+                : null,
             new UITextElement(game)
             {
                 Text = "DEBUG",
@@ -26,7 +22,7 @@ public sealed class UIDebugButton : UIElement
                 BackgroundColor = game.StateManager.Ui.State.IsDebugMenuOpen ? Color.Aqua : Color.Black,
                 OnClick = () => game.StateManager.Ui.State.IsDebugMenuOpen = !game.StateManager.Ui.State.IsDebugMenuOpen
             }
-        ];
+        ]);
     }
 }
 

@@ -78,37 +78,31 @@ public sealed class UIInventoryItem : UIElement
         BackgroundColor = Color.DarkGray;
         OnClick = () => game.Model.Inventory.SelectedIndex = inventoryIndex;
         Children =
-        [
-            .. inventoryIndex == game.Model.Inventory.SelectedIndex
-                ? new[]
-                {
-                    new UIElement(game)
+            UIHelpers.FilterNull([
+                inventoryIndex == game.Model.Inventory.SelectedIndex
+                    ? new UIElement(game)
                     {
                         Position = PositionMode.Absolute,
                         FullHeight = true,
                         FullWidth = true,
                         BackgroundColor = Color.Red
                     }
-                }
-                : [],
-            new UIImageElement(game, "icons", sourceRect)
-            {
-                Padding = 2,
-                FixedWidth = 32,
-                FixedHeight = 32
-            },
-            .. count > 0
-                ? new UIElement[]
+                    : null,
+                new UIImageElement(game, "icons", sourceRect)
                 {
-                    new UITextElement(game)
+                    Padding = 2,
+                    FixedWidth = 32,
+                    FixedHeight = 32
+                },
+                count > 0
+                    ? new UITextElement(game)
                     {
                         Position = PositionMode.Absolute,
                         Text = count.ToString(),
                         Scale = 1,
                         Padding = 2
                     }
-                }
-                : []
-        ];
+                    : null
+            ]);
     }
 }
