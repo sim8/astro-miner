@@ -40,7 +40,7 @@ public static class WorldGrid
                                       X,X,X,X,X,X,X,-,X,X,X,X,X,-,X,X,X,X,-,-,X,X,X,X,X,X,X,X
                                       X,-,-,X,X,X,X,-,X,X,X,X,X,-,X,X,X,X,-,-,X,X,X,X,X,X,X,X
                                       X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,X,X,X,X,X,X,X,X
-                                      X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,X,X,X,X,X,X,X,X
+                                      X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,X,@,X,X,X,X,X,X
                                       X,-,-,X,X,X,X,X,X,X,X,X,X,X,-,-,X,X,-,-,-,-,-,-,-,-,-,X
                                       X,X,X,X,X,X,X,X,X,X,X,X,@,X,-,-,X,X,-,-,-,-,-,-,-,-,-,X
                                       X,X,X,X,X,X,X,X,X,X,X,X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X
@@ -66,6 +66,18 @@ public static class WorldGrid
                                         X,X,X,X,X,X,X,X
                                         """;
 
+    private const string MinExWorld = """
+                                        X,X,X,X,X,X,X,X
+                                        X,X,X,X,X,X,X,X
+                                        X,X,X,X,X,X,X,X
+                                        X,-,-,-,-,-,-,X
+                                        X,-,-,-,-,-,-,X
+                                        X,-,-,-,-,-,-,X
+                                        X,-,-,-,-,-,-,X
+                                        X,X,X,@,X,X,X,X
+                                        X,X,X,X,X,X,X,X
+                                        """;
+
     private static readonly IReadOnlyDictionary<(World world, (int x, int y)), PortalConfig> PortalsConfig =
         new Dictionary<(World world, (int x, int y)), PortalConfig>
         {
@@ -76,6 +88,14 @@ public static class WorldGrid
             {
                 (World.RigRoom, Coordinates.Grid.RigToomToHomePortal),
                 new PortalConfig(World.Home, Coordinates.Grid.HomeToRigRoomPortal, Direction.Bottom)
+            },
+            {
+                (World.Home, Coordinates.Grid.HomeToMinExPortal),
+                new PortalConfig(World.MinEx, Coordinates.Grid.MinExToHomePortal, Direction.Top)
+            },
+            {
+                (World.MinEx, Coordinates.Grid.MinExToHomePortal),
+                new PortalConfig(World.Home, Coordinates.Grid.HomeToMinExPortal, Direction.Bottom)
             }
         };
 
@@ -105,14 +125,15 @@ public static class WorldGrid
         return grid;
     }
 
-    public static WorldCellType[,] GetOizusGrid()
+    public static WorldCellType[,] GetWorldGrid(World world)
     {
-        return ParseWorld(OizusWorld);
-    }
-
-    public static WorldCellType[,] GetRigRoomGrid()
-    {
-        return ParseWorld(RigRoomWorld);
+        return world switch
+        {
+            World.Home => ParseWorld(OizusWorld),
+            World.RigRoom => ParseWorld(RigRoomWorld),
+            World.MinEx => ParseWorld(MinExWorld),
+            _ => throw new ArgumentOutOfRangeException(nameof(world), world, null)
+        };
     }
 
     public static PortalConfig GetPortalConfig(World world, (int, int) coordinates)

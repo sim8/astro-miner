@@ -12,7 +12,7 @@ public class HomeWorldState(BaseGame game) : BaseWorldState(game)
     public override void Initialize()
     {
         base.Initialize();
-        Grid = WorldGrid.GetOizusGrid();
+        Grid = WorldGrid.GetWorldGrid(World.Home);
     }
 
     public void InitializeOrResetEntities()

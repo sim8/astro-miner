@@ -4,5 +4,6 @@ public enum World
 {
     Asteroid,
     Home,
-    RigRoom
+    RigRoom,
+    MinEx,
 }

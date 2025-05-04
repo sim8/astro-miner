@@ -17,7 +17,8 @@ public class InteriorsWorldRenderer(RendererShared shared) : BaseWorldRenderer(s
     private static readonly IReadOnlyDictionary<World, InteriorsRenderConfig> InteriorsRenderConfigs =
         new Dictionary<World, InteriorsRenderConfig>
         {
-            { World.RigRoom, new InteriorsRenderConfig("rig-room", 8, 9) }
+            { World.RigRoom, new InteriorsRenderConfig("rig-room", 8, 9) },
+            { World.MinEx, new InteriorsRenderConfig("min-ex", 8, 9) }
         };
 
     private readonly GameStateManager _gameStateManager = shared.GameStateManager;
@@ -34,16 +35,16 @@ public class InteriorsWorldRenderer(RendererShared shared) : BaseWorldRenderer(s
     private void RenderGridDebugOverlay(SpriteBatch spriteBatch)
     {
         for (var row = 0; row < _gameStateManager.InteriorsWorld.Grid.GetLength(0); row++)
-        for (var col = 0; col < _gameStateManager.InteriorsWorld.Grid.GetLength(1); col++)
-        {
-            var cellRect = Shared.ViewHelpers.GetVisibleRectForGridCell(col, row);
-            if (_gameStateManager.InteriorsWorld.Grid[row, col] == WorldCellType.Filled)
-                spriteBatch.Draw(Shared.Textures["white"], cellRect, Color.Red * 0.5f);
-            if (_gameStateManager.InteriorsWorld.Grid[row, col] == WorldCellType.Portal)
-                spriteBatch.Draw(Shared.Textures["white"], cellRect, Color.Green * 0.5f);
+            for (var col = 0; col < _gameStateManager.InteriorsWorld.Grid.GetLength(1); col++)
+            {
+                var cellRect = Shared.ViewHelpers.GetVisibleRectForGridCell(col, row);
+                if (_gameStateManager.InteriorsWorld.Grid[row, col] == WorldCellType.Filled)
+                    spriteBatch.Draw(Shared.Textures["white"], cellRect, Color.Red * 0.5f);
+                if (_gameStateManager.InteriorsWorld.Grid[row, col] == WorldCellType.Portal)
+                    spriteBatch.Draw(Shared.Textures["white"], cellRect, Color.Green * 0.5f);
 
-            var coordinatesStr = col + " " + row;
-            shared.RenderString(spriteBatch, cellRect.X, cellRect.Y, coordinatesStr, 2);
-        }
+                var coordinatesStr = col + " " + row;
+                shared.RenderString(spriteBatch, cellRect.X, cellRect.Y, coordinatesStr, 2);
+            }
     }
 }

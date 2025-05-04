@@ -62,6 +62,7 @@ public class GameStateManager(BaseGame game)
             World.Asteroid => AsteroidWorld,
             World.Home => HomeWorld,
             World.RigRoom => InteriorsWorld,
+            World.MinEx => InteriorsWorld,
             _ => throw new Exception("Invalid world")
         };
 

@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using AstroMiner.Definitions;
+using Microsoft.Xna.Framework;
 
 namespace AstroMiner.InteriorsWorld;
 
@@ -9,9 +11,7 @@ public class InteriorsWorldState(BaseGame game) : BaseWorldState(game)
     public override void Initialize()
     {
         base.Initialize();
-
-        // TODO make this generic
-        Grid = WorldGrid.GetRigRoomGrid();
+        Grid = WorldGrid.GetWorldGrid(game.Model.ActiveWorld);
     }
 
     public override bool CellIsCollideable(int x, int y)
