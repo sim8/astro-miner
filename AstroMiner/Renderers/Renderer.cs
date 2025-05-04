@@ -85,24 +85,27 @@ public class Renderer
 
     public void Render(SpriteBatch spriteBatch)
     {
-        // Draw RenderTargets first to avoid wiping BackBuffer
-        RenderLightingToRenderTarget(spriteBatch);
+        if (!_game.StateManager.Ui.State.IsInMainMenu)
+        {
+            // Draw RenderTargets first to avoid wiping BackBuffer
+            RenderLightingToRenderTarget(spriteBatch);
 
-        spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
-        RenderScene(spriteBatch);
+            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
+            RenderScene(spriteBatch);
 
-        spriteBatch.End();
+            spriteBatch.End();
 
-        // Multiply lights/shadow with scene
-        spriteBatch.Begin(SpriteSortMode.Deferred, _multiplyBlendState, SamplerState.PointClamp);
-        var (viewportWidth, viewportHeight) = _shared.ViewHelpers.GetViewportSize();
-        spriteBatch.Draw(_lightingRenderTarget, new Rectangle(0, 0, viewportWidth, viewportHeight), Color.White);
-        spriteBatch.End();
+            // Multiply lights/shadow with scene
+            spriteBatch.Begin(SpriteSortMode.Deferred, _multiplyBlendState, SamplerState.PointClamp);
+            var (viewportWidth, viewportHeight) = _shared.ViewHelpers.GetViewportSize();
+            spriteBatch.Draw(_lightingRenderTarget, new Rectangle(0, 0, viewportWidth, viewportHeight), Color.White);
+            spriteBatch.End();
 
-        // Additive lighting pass for glare (explosions, very brights lights)
-        spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp);
-        RenderAdditiveLighting(spriteBatch);
-        spriteBatch.End();
+            // Additive lighting pass for glare (explosions, very brights lights)
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp);
+            RenderAdditiveLighting(spriteBatch);
+            spriteBatch.End();
+        }
 
         // Lastly, draw UI
         spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
@@ -132,8 +135,10 @@ public class Renderer
             if (_game.StateManager.Ecs.HasComponent<ExplosionTag>(entityId))
                 _explosionRenderer.RenderExplosion(spriteBatch, entityId);
 
-            // Render player
-            if (_game.StateManager.Ecs.HasComponent<PlayerTag>(entityId) && !_game.StateManager.AsteroidWorld.IsInMiner)
+            // Render player or NPCs
+            if ((_game.StateManager.Ecs.HasComponent<PlayerTag>(entityId) &&
+                 !_game.StateManager.AsteroidWorld.IsInMiner) ||
+                _game.StateManager.Ecs.HasComponent<NpcComponent>(entityId))
                 _playerRenderer.RenderPlayer(spriteBatch, entityId);
 
             if (_game.StateManager.Ecs.HasComponent<TextureComponent>(entityId))

@@ -21,6 +21,8 @@ public static class Coordinates
 
         public static readonly (int x, int y) HomeToMinExPortal = (21, 18);
         public static readonly (int x, int y) MinExToHomePortal = (3, 7);
+
+
     }
 
     public static class Px

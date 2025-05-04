@@ -148,3 +148,8 @@ public class RenderLayerComponent : Component
 {
     public EntityRenderLayer EntityRenderLayer { get; set; }
 }
+
+public class NpcComponent : Component
+{
+    public Npc Npc { get; set; }
+}

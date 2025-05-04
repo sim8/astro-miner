@@ -109,6 +109,7 @@ public class GameStateManager(BaseGame game)
 
     public long GetTotalPlayTime()
     {
+        // TODO doesn't take menu time into account. Revert to manually counting?
         return game.Model.SavedTotalPlaytimeMs + (long)GameTime.TotalGameTime.TotalMilliseconds;
     }
 
@@ -116,15 +117,21 @@ public class GameStateManager(BaseGame game)
     {
         var controlsToUse = FreezeControls ? EmptyControls : activeMiningControls;
         GameTime = gameTime;
-        ActiveWorldState.Update(controlsToUse, gameTime);
 
-        Camera.Update(gameTime, controlsToUse);
-        CloudManager.Update(gameTime);
-        Ecs.Update(gameTime, controlsToUse);
+        if (!Ui.State.IsInMainMenu)
+        {
+            ActiveWorldState.Update(controlsToUse, gameTime);
+            Camera.Update(gameTime, controlsToUse);
+            CloudManager.Update(gameTime);
+            Ecs.Update(gameTime, controlsToUse);
+
+            if (activeMiningControls.Contains(MiningControls.ToggleInventory))
+                Ui.State.IsInventoryOpen = !Ui.State.IsInventoryOpen;
+        }
+
+
         Ui.Update(gameTime);
 
-        if (activeMiningControls.Contains(MiningControls.SaveGame)) SaveGameTEMP();
-        if (activeMiningControls.Contains(MiningControls.ToggleInventory))
-            Ui.State.IsInventoryOpen = !Ui.State.IsInventoryOpen;
+        // if (activeMiningControls.Contains(MiningControls.SaveGame)) SaveGameTEMP();
     }
 }
