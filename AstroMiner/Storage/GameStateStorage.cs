@@ -56,22 +56,18 @@ public class GameStateStorage
 
     public GameModel LoadState()
     {
-        try
+        if (File.Exists(SaveFilePath))
         {
-            if (File.Exists(SaveFilePath))
+            var jsonString = File.ReadAllText(SaveFilePath);
+            var gameState = JsonSerializer.Deserialize<GameModel>(jsonString, _serializerOptions);
+            if (gameState == null)
             {
-                var jsonString = File.ReadAllText(SaveFilePath);
-                var gameState = JsonSerializer.Deserialize<GameModel>(jsonString, _serializerOptions);
-                return gameState ?? GameModelHelpers.CreateNewGameModel();
+                throw new Exception("Failed to deserialize game state");
             }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error loading game state: {ex.Message}");
+            return gameState;
         }
 
-        // Return a new game state if loading fails or file doesn't exist
-        return GameModelHelpers.CreateNewGameModel();
+        throw new Exception("Save file not found");
     }
 }
 

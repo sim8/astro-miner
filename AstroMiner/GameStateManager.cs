@@ -42,6 +42,8 @@ public enum Direction
 public class GameStateManager(BaseGame game)
 {
     private static readonly HashSet<MiningControls> EmptyControls = new();
+
+    private NewGameManager _newGameManager;
     public AsteroidWorldState AsteroidWorld;
     public CameraState Camera;
     public CloudManager CloudManager;
@@ -77,16 +79,8 @@ public class GameStateManager(BaseGame game)
             InteriorsWorld.Initialize();
     }
 
-    // TODO probably lots?
-    private void SetUpNewGame()
-    {
-        HomeWorld.InitializeOrResetEntities();
-    }
-
     public void Initialize()
     {
-        // game.Model = GameModelHelpers.CreateNewGameModel();
-        game.Model = game.GameStateStorage.LoadState();
         Inventory = new Inventory(game);
         Camera = new CameraState(game);
         AsteroidWorld = new AsteroidWorldState(game);
@@ -95,10 +89,25 @@ public class GameStateManager(BaseGame game)
         CloudManager = new CloudManager(game);
         Ecs = new Ecs(game);
         Ui = new UI.UI(game);
+        _newGameManager = new NewGameManager(game);
+    }
 
-        if (!game.StateManager.Ecs.PlayerEntityId.HasValue) SetUpNewGame();
+    public void LoadGame()
+    {
+        game.Model = game.GameStateStorage.LoadState();
+        InitializeInGame();
+    }
 
+    public void NewGame()
+    {
+        _newGameManager.SetUpNewGame();
+        InitializeInGame();
+    }
+
+    private void InitializeInGame()
+    {
         SetActiveWorldAndInitialize(game.Model.ActiveWorld);
+        game.StateManager.Ui.State.IsInMainMenu = false;
     }
 
     private void SaveGameTEMP()
@@ -109,6 +118,7 @@ public class GameStateManager(BaseGame game)
 
     public long GetTotalPlayTime()
     {
+        // TODO doesn't take menu time into account. Revert to manually counting?
         return game.Model.SavedTotalPlaytimeMs + (long)GameTime.TotalGameTime.TotalMilliseconds;
     }
 
@@ -116,15 +126,21 @@ public class GameStateManager(BaseGame game)
     {
         var controlsToUse = FreezeControls ? EmptyControls : activeMiningControls;
         GameTime = gameTime;
-        ActiveWorldState.Update(controlsToUse, gameTime);
 
-        Camera.Update(gameTime, controlsToUse);
-        CloudManager.Update(gameTime);
-        Ecs.Update(gameTime, controlsToUse);
+        if (!Ui.State.IsInMainMenu)
+        {
+            ActiveWorldState.Update(controlsToUse, gameTime);
+            Camera.Update(gameTime, controlsToUse);
+            CloudManager.Update(gameTime);
+            Ecs.Update(gameTime, controlsToUse);
+
+            if (activeMiningControls.Contains(MiningControls.ToggleInventory))
+                Ui.State.IsInventoryOpen = !Ui.State.IsInventoryOpen;
+        }
+
+
         Ui.Update(gameTime);
 
         if (activeMiningControls.Contains(MiningControls.SaveGame)) SaveGameTEMP();
-        if (activeMiningControls.Contains(MiningControls.ToggleInventory))
-            Ui.State.IsInventoryOpen = !Ui.State.IsInventoryOpen;
     }
 }
