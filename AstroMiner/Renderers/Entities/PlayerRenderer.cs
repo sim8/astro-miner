@@ -15,10 +15,9 @@ public class PlayerRenderer(
     public void RenderPlayer(SpriteBatch spriteBatch, int entityId)
     {
         var positionComponent = shared.GameStateManager.Ecs.GetComponent<PositionComponent>(entityId);
-        var movementComponent = shared.GameStateManager.Ecs.GetComponent<MovementComponent>(entityId);
         var directionComponent = shared.GameStateManager.Ecs.GetComponent<DirectionComponent>(entityId);
 
-        if (positionComponent == null || movementComponent == null)
+        if (positionComponent == null)
             return;
 
         var textureFrameOffsetX = directionComponent.Direction switch

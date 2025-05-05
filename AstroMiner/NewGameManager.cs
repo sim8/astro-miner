@@ -17,7 +17,13 @@ public class NewGameManager(BaseGame game)
         game.StateManager.Ecs.Factories.CreateMinerEntity(new Vector2());
         game.StateManager.Ecs.Factories.CreatePlayerEntity(new Vector2());
 
-        // TODO get rid
+        SetUpNpcs();
+
         game.StateManager.HomeWorld.ResetEntities();
+    }
+
+    private void SetUpNpcs()
+    {
+        game.StateManager.Ecs.Factories.CreateMinExMerchantEntity();
     }
 }
