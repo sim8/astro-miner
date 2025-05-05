@@ -28,7 +28,7 @@ public abstract class BaseGame : Game
         GameStateStorage = new GameStateStorage(this);
     }
 
-    public GameModel Model { get; set; }
+    public GameModel? Model { get; set; } = null;
 
     public GameStateManager StateManager { get; protected set; }
 

@@ -109,8 +109,13 @@ public class Renderer
 
         // Lastly, draw UI
         spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
-        _userInterfaceRenderer.RenderUserInterface(spriteBatch);
+
+        if (!_game.StateManager.Ui.State.IsInMainMenu)
+        {
+            _userInterfaceRenderer.RenderUserInterface(spriteBatch);
+        }
         _uiRenderer.Render(spriteBatch);
+
         spriteBatch.End();
     }
 

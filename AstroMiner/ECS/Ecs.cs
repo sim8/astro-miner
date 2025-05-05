@@ -39,7 +39,7 @@ public class Ecs
     public int? ActiveControllableEntityId => _game.Model.Ecs.ActiveControllableEntityId;
 
     public EntityFactories Factories { get; }
-    public IEnumerable<int> EntityIdsInActiveWorldSortedByDistance { get; private set; }
+    public IEnumerable<int> EntityIdsInActiveWorldSortedByDistance { get; private set; } = [];
 
     // Systems
     public DynamiteSystem DynamiteSystem { get; }

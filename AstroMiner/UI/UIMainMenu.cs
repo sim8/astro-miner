@@ -29,7 +29,11 @@ public class UIMainMenu : UIScreen
                 Color = Color.White,
                 BackgroundColor = Color.Navy,
                 Padding = 6,
-                Scale = 3
+                Scale = 3,
+                OnClick = () =>
+                {
+                    game.StateManager.NewGame();
+                }
             },
             new UIElement(game)
             {
@@ -41,7 +45,11 @@ public class UIMainMenu : UIScreen
                 Color = Color.White,
                 BackgroundColor = Color.Navy,
                 Padding = 6,
-                Scale = 3
+                Scale = 3,
+                OnClick = () =>
+                {
+                    game.StateManager.LoadGame();
+                }
             }
         ];
     }
