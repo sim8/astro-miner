@@ -195,6 +195,12 @@ public class ViewHelpers(BaseGame game, GraphicsDeviceManager graphics)
     public static Color GetEntityTintColor(Ecs ecs, int entityId)
     {
         var baseColor = GetEntityBaseTintColor(ecs, entityId);
+
+        if (ecs.InteractionSystem.InteractableEntityId == entityId)
+        {
+            baseColor = Color.Yellow;
+        }
+
         return baseColor * GetEntityOpacityForPortal(ecs, entityId);
     }
 

@@ -22,6 +22,7 @@ public enum MiningControls
 
     // Player-only
     UseItem,
+    Interact,
 
     // Miner-only
     UseGrapple,

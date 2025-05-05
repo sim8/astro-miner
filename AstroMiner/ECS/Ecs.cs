@@ -34,6 +34,7 @@ public class Ecs
         MiningSystem = new MiningSystem(this, game);
         GrappleSystem = new GrappleSystem(this, game);
         LaunchSystem = new LaunchSystem(this, game);
+        InteractionSystem = new InteractionSystem(this, game);
     }
 
     public int? ActiveControllableEntityId => _game.Model.Ecs.ActiveControllableEntityId;
@@ -52,6 +53,7 @@ public class Ecs
     public MiningSystem MiningSystem { get; }
     public GrappleSystem GrappleSystem { get; }
     public LaunchSystem LaunchSystem { get; }
+    public InteractionSystem InteractionSystem { get; }
 
     public Vector2 ActiveControllableEntityCenterPosition => ActiveControllableEntityId == null
         ? Vector2.Zero
@@ -92,6 +94,7 @@ public class Ecs
         MiningSystem.Update(gameTime, activeMiningControls);
         GrappleSystem.Update(gameTime, activeMiningControls);
         LaunchSystem.Update(gameTime, activeMiningControls);
+        InteractionSystem.Update(gameTime, activeMiningControls);
         CalculateEntityIdsInActiveWorldSortedByDistance();
     }
 
