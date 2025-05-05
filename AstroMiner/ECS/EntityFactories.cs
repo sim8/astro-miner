@@ -89,6 +89,9 @@ public class EntityFactories
         _ecs.AddComponent<NpcComponent>(entityId);
         _ecs.GetComponent<NpcComponent>(entityId).Npc = Npc.MinExMerchant;
 
+        // Add interactive component
+        _ecs.AddComponent<InteractiveComponent>(entityId);
+
         return entityId;
     }
 

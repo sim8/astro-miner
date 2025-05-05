@@ -154,6 +154,7 @@ public class Ecs
         _game.Model.Ecs.ComponentsByEntityId.MinerTag.Remove(entityId);
         _game.Model.Ecs.ComponentsByEntityId.ExplosionTag.Remove(entityId);
         _game.Model.Ecs.ComponentsByEntityId.Npc.Remove(entityId);
+        _game.Model.Ecs.ComponentsByEntityId.Interactive.Remove(entityId);
 
         // Clear entity references if they're being destroyed
         if (ActiveControllableEntityId == entityId)
@@ -256,6 +257,8 @@ public class Ecs
             return componentsByEntityId.ExplosionTag as Dictionary<int, T>;
         if (typeof(T) == typeof(NpcComponent))
             return componentsByEntityId.Npc as Dictionary<int, T>;
+        if (typeof(T) == typeof(InteractiveComponent))
+            return componentsByEntityId.Interactive as Dictionary<int, T>;
 
         throw new ArgumentException($"No handler for type {typeof(T)} in GetComponentsOfType");
     }

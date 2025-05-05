@@ -153,3 +153,7 @@ public class NpcComponent : Component
 {
     public Npc Npc { get; set; }
 }
+
+public class InteractiveComponent : Component
+{
+}
