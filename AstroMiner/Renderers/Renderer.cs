@@ -2,6 +2,7 @@ using System;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using AstroMiner.Renderers.AsteroidWorld;
+using AstroMiner.Renderers.Entities;
 using AstroMiner.Renderers.HomeWorld;
 using AstroMiner.Renderers.InteriorsWorld;
 using AstroMiner.Renderers.UI;
@@ -110,10 +111,7 @@ public class Renderer
         // Lastly, draw UI
         spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
 
-        if (!_game.StateManager.Ui.State.IsInMainMenu)
-        {
-            _userInterfaceRenderer.RenderUserInterface(spriteBatch);
-        }
+        if (!_game.StateManager.Ui.State.IsInMainMenu) _userInterfaceRenderer.RenderUserInterface(spriteBatch);
         _uiRenderer.Render(spriteBatch);
 
         spriteBatch.End();
