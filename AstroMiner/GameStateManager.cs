@@ -18,7 +18,7 @@ public enum MiningControls
     MoveLeft,
 
     Drill,
-    EnterOrExit,
+    ExitVehicle,
 
     // Player-only
     UseItem,

@@ -66,6 +66,10 @@ public class EntityFactories
         // Store the miner entity ID
         _ecs.SetMinerEntityId(entityId);
 
+        // Add interactive component
+        var interactiveComponent = _ecs.AddComponent<InteractiveComponent>(entityId);
+        interactiveComponent.InteractableDistance = 1.5f;
+
         return entityId;
     }
 

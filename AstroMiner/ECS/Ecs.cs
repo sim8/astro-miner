@@ -29,7 +29,7 @@ public class Ecs
         MovementSystem = new MovementSystem(this, game);
         PortalSystem = new PortalSystem(this, game);
         HealthSystem = new HealthSystem(this, game);
-        VehicleEnterExitSystem = new VehicleEnterExitSystem(this, game);
+        VehicleExitSystem = new VehicleExitSystem(this, game);
         FallOrLavaDamageSystem = new FallOrLavaDamageSystem(this, game);
         MiningSystem = new MiningSystem(this, game);
         GrappleSystem = new GrappleSystem(this, game);
@@ -48,7 +48,7 @@ public class Ecs
     public MovementSystem MovementSystem { get; }
     public PortalSystem PortalSystem { get; }
     public HealthSystem HealthSystem { get; }
-    public VehicleEnterExitSystem VehicleEnterExitSystem { get; }
+    public VehicleExitSystem VehicleExitSystem { get; }
     public FallOrLavaDamageSystem FallOrLavaDamageSystem { get; }
     public MiningSystem MiningSystem { get; }
     public GrappleSystem GrappleSystem { get; }
@@ -89,7 +89,7 @@ public class Ecs
         MovementSystem.Update(gameTime, activeMiningControls);
         PortalSystem.Update(gameTime, activeMiningControls);
         HealthSystem.Update(gameTime, activeMiningControls);
-        VehicleEnterExitSystem.Update(gameTime, activeMiningControls);
+        VehicleExitSystem.Update(gameTime, activeMiningControls);
         FallOrLavaDamageSystem.Update(gameTime, activeMiningControls);
         MiningSystem.Update(gameTime, activeMiningControls);
         GrappleSystem.Update(gameTime, activeMiningControls);

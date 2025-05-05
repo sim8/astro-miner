@@ -16,6 +16,13 @@ public class InteractionSystem : System
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
         CalculateInteractableEntityId();
+        if (activeControls.Contains(MiningControls.Interact) && InteractableEntityId != -1)
+        {
+            if (InteractableEntityId == Ecs.MinerEntityId)
+            {
+                Ecs.SetActiveControllableEntity(Ecs.MinerEntityId.Value);
+            }
+        }
     }
 
     private void CalculateInteractableEntityId()
@@ -24,6 +31,8 @@ public class InteractionSystem : System
         var shortestDistance = float.MaxValue;
         foreach (var interactiveComponent in Ecs.GetAllComponentsInActiveWorld<InteractiveComponent>())
         {
+            if (interactiveComponent.EntityId == Ecs.ActiveControllableEntityId) continue;
+
             var positionComponent = Ecs.GetComponent<PositionComponent>(interactiveComponent.EntityId);
 
             var distance = EntityHelpers.GetDistanceBetween(Ecs, Ecs.PlayerEntityId.Value,
