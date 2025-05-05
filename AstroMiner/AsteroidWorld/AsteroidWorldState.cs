@@ -128,7 +128,7 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
             if (activeMiningControls.Contains(MiningControls.NewGameOrReturnToBase))
             {
                 game.StateManager.SetActiveWorldAndInitialize(World.Home);
-                game.StateManager.HomeWorld.InitializeOrResetEntities();
+                game.StateManager.HomeWorld.ResetEntities();
             }
 
         if (MsTilExplosion <= 0)

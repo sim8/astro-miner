@@ -15,21 +15,20 @@ public class HomeWorldState(BaseGame game) : BaseWorldState(game)
         Grid = WorldGrid.GetWorldGrid(World.Home);
     }
 
-    public void InitializeOrResetEntities()
+    public void ResetEntities()
     {
-        InitializeMiner();
-        InitializePlayer();
+        ResetMiner();
+        ResetPlayer();
         game.StateManager.Ecs.LaunchSystem.Reset();
     }
 
-    private void InitializeMiner()
+    private void ResetMiner()
     {
         var posX = Coordinates.Grid.MinerHomeStartPosCenter.x - GameConfig.MinerSize / 2;
         var posY = Coordinates.Grid.MinerHomeStartPosCenter.y - GameConfig.MinerSize / 2;
         var minerPos = new Vector2(posX, posY);
 
-        var minerEntityId = game.StateManager.Ecs.MinerEntityId ??
-                            game.StateManager.Ecs.Factories.CreateMinerEntity(minerPos);
+        var minerEntityId = game.StateManager.Ecs.MinerEntityId.Value;
 
         var minerPosition = game.StateManager.Ecs.GetComponent<PositionComponent>(minerEntityId);
         minerPosition.Position = minerPos;
@@ -46,14 +45,13 @@ public class HomeWorldState(BaseGame game) : BaseWorldState(game)
         game.StateManager.Ecs.RemoveComponent<DirectionalLightSourceComponent>(minerEntityId);
     }
 
-    private void InitializePlayer()
+    private void ResetPlayer()
     {
         var playerCellOffset = GameConfig.PlayerSize / 2;
         var playerPos = new Vector2(Coordinates.Grid.PlayerHomeStartPos.x + playerCellOffset,
             Coordinates.Grid.PlayerHomeStartPos.y + playerCellOffset);
 
-        var playerEntityId = game.StateManager.Ecs.PlayerEntityId ??
-                             game.StateManager.Ecs.Factories.CreatePlayerEntity(playerPos);
+        var playerEntityId = game.StateManager.Ecs.PlayerEntityId.Value;
 
         var playerPosition = game.StateManager.Ecs.GetComponent<PositionComponent>(playerEntityId);
         playerPosition.Position = playerPos;

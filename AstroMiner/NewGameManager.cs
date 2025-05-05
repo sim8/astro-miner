@@ -1,4 +1,5 @@
 using AstroMiner.Model;
+using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
 
@@ -8,6 +9,15 @@ public class NewGameManager(BaseGame game)
     {
         game.Model = GameModelHelpers.CreateNewGameModel();
 
-        game.StateManager.HomeWorld.InitializeOrResetEntities();
+        game.Model.Launch.LaunchPadFrontEntityId =
+            game.StateManager.Ecs.Factories.CreateLaunchPadFrontEntity(new Vector2());
+        game.Model.Launch.LaunchPadRearEntityId =
+            game.StateManager.Ecs.Factories.CreateLaunchPadRearEntity(new Vector2());
+
+        game.StateManager.Ecs.Factories.CreateMinerEntity(new Vector2());
+        game.StateManager.Ecs.Factories.CreatePlayerEntity(new Vector2());
+
+        // TODO get rid
+        game.StateManager.HomeWorld.ResetEntities();
     }
 }

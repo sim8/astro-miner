@@ -41,30 +41,14 @@ public class LaunchSystem(Ecs ecs, BaseGame game) : System(ecs, game)
         Launch.MinerLaunchSpeed = 0f;
         ClearLightEntities();
 
-        if (Launch.LaunchPadFrontEntityId == -1)
-            Launch.LaunchPadFrontEntityId =
-                game.StateManager.Ecs.Factories.CreateLaunchPadFrontEntity(_launchPadFrontStartPos);
-        else
-            game.StateManager.Ecs.GetComponent<PositionComponent>(Launch.LaunchPadFrontEntityId).Position =
-                _launchPadFrontStartPos;
-        if (Launch.LaunchPadRearEntityId == -1)
-            Launch.LaunchPadRearEntityId =
-                game.StateManager.Ecs.Factories.CreateLaunchPadRearEntity(_launchPadRearStartPos);
-        else
-            game.StateManager.Ecs.GetComponent<PositionComponent>(Launch.LaunchPadRearEntityId).Position =
-                _launchPadRearStartPos;
+        game.StateManager.Ecs.GetComponent<PositionComponent>(Launch.LaunchPadFrontEntityId).Position =
+            _launchPadFrontStartPos;
+        game.StateManager.Ecs.GetComponent<PositionComponent>(Launch.LaunchPadRearEntityId).Position =
+            _launchPadRearStartPos;
     }
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
-        // TODO ideally these'd be in an init()
-        if (Launch.LaunchPadFrontEntityId == -1)
-            Launch.LaunchPadFrontEntityId =
-                game.StateManager.Ecs.Factories.CreateLaunchPadFrontEntity(_launchPadFrontStartPos);
-        if (Launch.LaunchPadRearEntityId == -1)
-            Launch.LaunchPadRearEntityId =
-                game.StateManager.Ecs.Factories.CreateLaunchPadRearEntity(_launchPadRearStartPos);
-
 
         if (game.StateManager.AsteroidWorld.IsInMiner)
         {
