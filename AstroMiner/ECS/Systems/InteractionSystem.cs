@@ -11,7 +11,7 @@ public class InteractionSystem : System
     {
     }
 
-    public int InteractableEntityId { get; set; } = -1;
+    public int InteractableEntityId { get; private set; } = -1;
 
     public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
     {
