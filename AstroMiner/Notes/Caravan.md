@@ -46,11 +46,20 @@
     - Quest NPCs
     - Ship upgrades
   - Ship
-    - Launch asteroid missions - before or after land stop?
-      - Before?
-      - After?
-      - Both?
-        - Opportunity for day/night cycles
+    - Launch asteroid missions - during or between stops?
+      - during
+        - Easier story to tell - relies on gravity
+        - Can have different backgrounds
+        - How would this work gameplay wise?
+          - Sleep - In orbit "x" planet
+          - Have the option to launch mission or "touch down"
+          - THEN go to market
+          - THEN return to ship "leave x?"
+      - between
+        - A litle better for the game flow - mining happens between stops
+        - Why is there a time limit?
+          - Not retrievable by vehicle?
+          - Could orbit uninhabited planets / random black holes?
     - Cutscenes - move story forward
     - Chat to crew
       - Card games?
@@ -72,7 +81,7 @@
       - PS - I pray you've forgiven me for spilling milkshake on your suit. We have a very powerful washer onboard if you need it.
     - On the docks
       - Hello {name}! Good to see you again!
-      - It's my pleasure to welcome you aboard The Archibald. I hope it serves as a satisfactory home while we're between trading stops.
+      - It's my pleasure to welcome you aboard The Archibald. I hope it serves as a satisfactory home in between trading stops.
       - Before you meet the crew, I wanted to ask if there's anything you didn't get to ask last time we met?
         - What are my responsibilities?
           - As Head Miner, you'll lead the asteroid mining missions - which involves driving the MV, mining gems, and trying not to die! Heh!
