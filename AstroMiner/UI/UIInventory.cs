@@ -63,8 +63,8 @@ public sealed class UIInventoryItemEmpty : UIElement
 {
     public UIInventoryItemEmpty(BaseGame game) : base(game)
     {
-        FixedWidth = 32;
-        FixedHeight = 32;
+        FixedWidth = 32 * game.StateManager.Ui.UIScale;
+        FixedHeight = 32 * game.StateManager.Ui.UIScale;
         BackgroundColor = Color.DarkGray;
     }
 }
@@ -73,8 +73,8 @@ public sealed class UIInventoryItem : UIElement
 {
     public UIInventoryItem(BaseGame game, Rectangle sourceRect, int count, int inventoryIndex) : base(game)
     {
-        FixedWidth = 32;
-        FixedHeight = 32;
+        FixedWidth = 32 * game.StateManager.Ui.UIScale;
+        FixedHeight = 32 * game.StateManager.Ui.UIScale;
         BackgroundColor = Color.DarkGray;
         OnClick = () => game.Model.Inventory.SelectedIndex = inventoryIndex;
         Children =
@@ -90,17 +90,17 @@ public sealed class UIInventoryItem : UIElement
                     : null,
                 new UIImageElement(game, "icons", sourceRect)
                 {
-                    Padding = 2,
-                    FixedWidth = 32,
-                    FixedHeight = 32
+                    Padding = 2 * game.StateManager.Ui.UIScale,
+                    FixedWidth = 32 * game.StateManager.Ui.UIScale,
+                    FixedHeight = 32 * game.StateManager.Ui.UIScale
                 },
                 count > 0
                     ? new UITextElement(game)
                     {
                         Position = PositionMode.Absolute,
                         Text = count.ToString(),
-                        Scale = 1,
-                        Padding = 2
+                        Scale = 1 * game.StateManager.Ui.UIScale,
+                        Padding = 2 * game.StateManager.Ui.UIScale
                     }
                     : null
             ]);
