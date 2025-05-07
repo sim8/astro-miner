@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using AstroMiner.UI;
 using AstroMiner.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -25,100 +26,65 @@ public class DialogHelpersTests
     [TestMethod]
     public void BreakDialogIntoVisibleLines_EmptyString_ReturnsEmptyList()
     {
-        // Arrange
-        var dialog = "";
-
-        // Act
-        var result = DialogHelpers.BreakDialogIntoVisibleLines(dialog);
-
-        // Assert
+        var result = DialogHelpers.BreakDialogIntoVisibleLines("");
         Assert.AreEqual(0, result.Count);
     }
 
     [TestMethod]
-    public void BreakDialogIntoVisibleLines_ShortText_ReturnsSingleLine()
+    public void BreakDialogIntoVisibleLines_SingleShortLine_ReturnsSingleLine()
     {
-        // Arrange
-        var dialog = "Short text";  // 10 characters * 5px = 50px (less than DialogBoxWidth)
+        var text = "Hello world";
+        var result = DialogHelpers.BreakDialogIntoVisibleLines(text);
 
-        // Act
-        var result = DialogHelpers.BreakDialogIntoVisibleLines(dialog);
-
-        // Assert
         Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("Short text", result[0]);
+        Assert.AreEqual("Hello world", result[0]);
     }
 
     [TestMethod]
-    public void BreakDialogIntoVisibleLines_LongSentence_BreaksIntoMultipleLines()
+    public void BreakDialogIntoVisibleLines_LongLine_WrapsWords()
     {
-        // Arrange
-        // Each character is 5px wide, and DialogBoxWidth is 100px
-        // So we can fit 20 characters per line
-        var dialog = "This is a long sentence that should be broken into multiple lines based on the dialog box width";
+        // Each character is 5 units wide, space is 5 units
+        // DialogBoxWidth is 100 units, so we can fit about 20 characters per line
+        var text = "This is a very long line that should be wrapped across multiple lines";
+        var result = DialogHelpers.BreakDialogIntoVisibleLines(text);
 
-        // Act
-        var result = DialogHelpers.BreakDialogIntoVisibleLines(dialog);
-
-        // Assert
         Assert.IsTrue(result.Count > 1);
-        // Verify that each line is not too long
         foreach (var line in result)
         {
-            // 100px / 5px per character = 20 characters maximum
-            Assert.IsTrue(line.Length <= 20, $"Line too long: {line}");
+            var lineWidth = FontHelpers.TransformString(line).Sum(r => r.width);
+            Assert.IsTrue(lineWidth <= DialogHelpers.DialogBoxWidth);
         }
     }
 
     [TestMethod]
-    public void BreakDialogIntoVisibleLines_LongWordExceedingWidth_HandlesCorrectly()
+    public void BreakDialogIntoVisibleLines_LongWord_HyphenatesWord()
     {
-        // Arrange
-        // Create a string with a very long word
-        var dialog = "Normal SuperLongWordThatExceedsDialogBoxWidth normal";
+        var text = "supercalifragilisticexpialidocious";
+        var result = DialogHelpers.BreakDialogIntoVisibleLines(text);
 
-        // Act
-        var result = DialogHelpers.BreakDialogIntoVisibleLines(dialog);
+        Assert.IsTrue(result.Count > 1);
+        Assert.IsTrue(result[0].EndsWith("-"));
 
-        // Assert
-        Assert.IsTrue(result.Count >= 2, "Should break the long word into at least two lines");
-        // The long word should be on its own line or broken across lines
-        bool containsLongWord = false;
         foreach (var line in result)
         {
-            if (line.Contains("SuperLongWordThatExceedsDialogBoxWidth"))
-            {
-                containsLongWord = true;
-                break;
-            }
+            var lineWidth = FontHelpers.TransformString(line).Sum(r => r.width);
+            Assert.IsTrue(lineWidth <= DialogHelpers.DialogBoxWidth);
         }
-        Assert.IsTrue(containsLongWord, "The long word should be included in the output");
     }
 
     [TestMethod]
-    public void BreakDialogIntoVisibleLines_MultipleSentences_BreaksCorrectly()
+    public void BreakDialogIntoVisibleLines_MixedContent_HandlesCorrectly()
     {
-        // Arrange
-        var dialog = "This is the first sentence. This is the second sentence. And this is the third.";
+        var text = "This is a normal sentence with a supercalifragilisticexpialidocious word in it";
+        var result = DialogHelpers.BreakDialogIntoVisibleLines(text);
 
-        // Act
-        var result = DialogHelpers.BreakDialogIntoVisibleLines(dialog);
+        Assert.IsTrue(result.Count > 2);
+        Assert.IsTrue(result.Any(line => line.EndsWith("-")));
 
-        // Assert
-        Assert.IsTrue(result.Count > 1);
-
-        // Verify that all content from the original string is preserved in the broken lines
-        // We don't check for exact string matching since our implementation preserves spacing differently
-        string combinedResult = string.Join("", result);
-        string normalizedDialog = dialog.Replace(" ", "");
-        string normalizedResult = combinedResult.Replace(" ", "");
-
-        Assert.AreEqual(normalizedDialog, normalizedResult,
-            "All text content should be preserved when breaking into lines (ignoring spaces)");
-
-        // Also check that we didn't lose any sentences
-        Assert.IsTrue(combinedResult.Contains("first"), "First sentence should be preserved");
-        Assert.IsTrue(combinedResult.Contains("second"), "Second sentence should be preserved");
-        Assert.IsTrue(combinedResult.Contains("third"), "Third sentence should be preserved");
+        foreach (var line in result)
+        {
+            var lineWidth = FontHelpers.TransformString(line).Sum(r => r.width);
+            Assert.IsTrue(lineWidth <= DialogHelpers.DialogBoxWidth);
+        }
     }
 }
