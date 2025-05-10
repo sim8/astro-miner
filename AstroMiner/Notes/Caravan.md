@@ -134,6 +134,7 @@
       - Mystic
     - Buying habits:
       - Very random. Occasional big purchases?
+  - Oizus?
 
 ## Characters
 
@@ -144,3 +145,74 @@
   - Pilot
   - Very dry
   - Cool
+
+
+heart of the rock
+Pulsing rock
+Appraisals
+Famous merchants
+Glowing man / crazy characters
+Caravans
+Flotilla
+
+
+
+
+Verrrry different idea
+
+no permanent home
+Part of a trading caravan
+Choose where to go
+Optionally sleep between trips
+Become captain
+Hire people
+Story
+Stranded? Rescued?
+Orphan?
+Hired?
+Play cards against crew?
+Setting up shop
+Set prices? Or
+List of offers - decline accept
+Dynamic prices - based on how recently you were there / regional demand?
+Walk around other shops
+Food
+Tools
+Explosives
+Planets
+Mining colony - industrial
+Fancy - fashion
+Things to think about
+Rare gems
+Bonus boxes? Heart of the rock?
+Worth lots?
+Collectibles
+Move the story forward
+Can be used somehow? In the ship?
+Characters
+Rekus- captain, warm, a bit crazy looking. Big glasses, big guy?
+Repairs things but often not very well
+Swapped out Griegs software
+No one knows if he did a good job
+Sillus
+From Assina
+Dry humour
+Adept pilot
+Amika
+Hot headed
+Handles medical - is very much “you’ll be reet”
+Gets up in arms - wants to attack ships that fly too close etc
+Grieg
+Terminator style robot
+Combat spec
+Has had software change but no one knows if it fully worked
+Npc activity
+Cleaning?
+Sitting down
+In their room?
+Interacting with something on the wall?
+Misc
+
+special contracts, characters from planets
+Emails on a shared computer?
+Mission Control and miner bay - one room
