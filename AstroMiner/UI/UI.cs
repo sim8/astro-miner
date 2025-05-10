@@ -7,12 +7,18 @@ public class UIState
     public bool IsInMainMenu { get; set; } = true;
     public bool IsDebugMenuOpen { get; set; } = false;
     public bool IsInventoryOpen { get; set; } = false;
+
+    // TODO all very temporary. Need a proper way of tracking dialog
+    public bool IsInDialog { get; set; } = false;
+    public int DialogIndex { get; set; } = 0;
 }
 
 public class UI(BaseGame game)
 {
     public UIElement Root { get; private set; }
     public UIState State { get; init; } = new();
+
+    public int UIScale { get; set; } = 2;
 
     public UIElement GetTree()
     {
@@ -38,8 +44,8 @@ public class UI(BaseGame game)
                         new UIElement(game)
                         {
                             // TODO put something here
-                            FixedWidth = 200,
-                            FixedHeight = 100
+                            FixedWidth = 200 * UIScale,
+                            FixedHeight = 100 * UIScale
                         },
 
                         .. game.Debug.showFps
@@ -56,13 +62,20 @@ public class UI(BaseGame game)
                             : []
                     ]
                 },
-                .. game.StateManager.Ui.State.IsInventoryOpen
+
+                .. game.StateManager.Ui.State.IsInDialog
+                    ? new UIElement[]
+                    {
+                        new UIDialog(game)
+                    }
+                    : [],
+                .. !game.StateManager.Ui.State.IsInDialog && game.StateManager.Ui.State.IsInventoryOpen
                     ? new UIElement[]
                     {
                         new UIInventory(game)
                     }
                     : [],
-                .. !game.StateManager.Ui.State.IsInventoryOpen
+                .. !game.StateManager.Ui.State.IsInDialog && !game.StateManager.Ui.State.IsInventoryOpen
                     ? new UIElement[]
                     {
                         new UIInventoryFooter(game)

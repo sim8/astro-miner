@@ -19,16 +19,21 @@ public class InteractionSystem : System
         if (activeControls.Contains(MiningControls.Interact))
         {
             if (InteractableEntityId != -1)
-            {
-                if (InteractableEntityId == Ecs.MinerEntityId) Ecs.SetActiveControllableEntity(Ecs.MinerEntityId.Value);
-            }
+                HandleInteraction();
             else if (game.StateManager.AsteroidWorld.IsInMiner)
-            {
                 // Kind of unrelated to interactions but handled here for simplicity
                 // (uses same control and shouldn't fire if just boarded)
                 ExitVehicle();
-            }
         }
+    }
+
+    private void HandleInteraction()
+    {
+        if (InteractableEntityId == Ecs.MinerEntityId) Ecs.SetActiveControllableEntity(Ecs.MinerEntityId.Value);
+
+        var npc = Ecs.GetComponent<NpcComponent>(InteractableEntityId);
+
+        if (npc is { Npc: Npc.MinExMerchant }) game.StateManager.Ui.State.IsInDialog = true;
     }
 
     private void CalculateInteractableEntityId()

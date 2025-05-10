@@ -11,5 +11,3 @@ Oizus is a moon of the *main faction* homeworld of *unnamed*. Once an exciting h
 marvel at the rocks flying past, the asteroids are now coming too close to Oizus, and it's now far too dangerous a place
 to visit. The few who remain are those who've always lived here love it too much to leave, and the miners, attracted to
 the thrill and riches of asteroid-mining.
-
-
