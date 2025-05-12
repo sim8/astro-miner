@@ -54,6 +54,28 @@ The caravan moves continually round the traderoute of the 4 planets. Each planet
   - Recent visits
 - Regional demand variations
 
+## Merchant system
+
+- What is the gem sale system?
+  - Regular buy/sell e.g. most games
+    - Pros
+      - Simplest. No learning curve
+    - Cons
+      - Would mean combining ship/personal inventory
+        - Is this really a bad thing? Going to have combined money anyway? 
+        - Don't necessarily need to combine, could show up as separate section?
+  - Accept/reject individual offers
+    - Kinda gross
+  - Set prices ahead of time in a table view (?). Price could go up/down depending on quantity
+    - Pros
+      - Easy to show supply/demand
+      - Opportunities to incorporate luck. E.g. proceeds are estimates until you "fast forward" day of sales
+    - Cons
+      - Separate UI to learn
+      - Is it actually fun?
+- Should gems for sale be part of your regular inventory?
+- Maybe should continue with regular buy/sell, with separate mechanics for contracts?
+
 ## Worlds
 - Krevik
   - Industrial focus
