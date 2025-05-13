@@ -63,11 +63,8 @@ public class GameStateManager(BaseGame game)
         game.Model.ActiveWorld switch
         {
             World.Asteroid => AsteroidWorld,
-            World.Home => HomeWorld,
-            World.RigRoom => StaticWorld,
-            World.Krevik => StaticWorld,
-            World.MinEx => StaticWorld,
-            _ => throw new Exception("Invalid world")
+            World.Home => HomeWorld, // TODO deprecate
+            _ => StaticWorld
         };
 
     public void SetActiveWorldAndInitialize(World world)

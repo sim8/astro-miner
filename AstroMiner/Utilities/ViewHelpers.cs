@@ -196,10 +196,7 @@ public class ViewHelpers(BaseGame game, GraphicsDeviceManager graphics)
     {
         var baseColor = GetEntityBaseTintColor(ecs, entityId);
 
-        if (ecs.InteractionSystem.InteractableEntityId == entityId)
-        {
-            baseColor = Color.Yellow;
-        }
+        if (ecs.InteractionSystem.InteractableEntityId == entityId) baseColor = Color.Yellow;
 
         return baseColor * GetEntityOpacityForPortal(ecs, entityId);
     }
@@ -213,7 +210,7 @@ public class ViewHelpers(BaseGame game, GraphicsDeviceManager graphics)
 
 
         var (gridX, gridY) = ToGridPosition(position.CenterPosition);
-        var config = WorldGrid.GetPortalConfig(position.World, (gridX, gridY));
+        var config = StaticWorlds.GetPortalConfig(position.World, (gridX, gridY));
 
         if (config == null) return 1f;
 

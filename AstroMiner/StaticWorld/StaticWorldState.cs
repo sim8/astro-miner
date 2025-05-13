@@ -9,7 +9,7 @@ public class StaticWorldState(BaseGame game) : BaseWorldState(game)
     public override void Initialize()
     {
         base.Initialize();
-        Grid = WorldGrid.GetWorldGrid(game.Model.ActiveWorld);
+        Grid = StaticWorlds.StaticWorldConfigs[game.Model.ActiveWorld].World;
     }
 
     public override bool CellIsCollideable(int x, int y)

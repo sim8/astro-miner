@@ -144,7 +144,7 @@ public class PortalSystem : System
             if (!game.StateManager.ActiveWorldState.CellIsPortal(gridX, gridY))
                 continue;
 
-            var config = WorldGrid.GetPortalConfig(position.World, (gridX, gridY));
+            var config = StaticWorlds.GetPortalConfig(position.World, (gridX, gridY));
 
             if (movement.PortalStatus == PortalStatus.Departing)
                 MoveToDeparturePoint(movement, position, dirComp, config, gameTime);

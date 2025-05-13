@@ -12,7 +12,7 @@ public class HomeWorldState(BaseGame game) : BaseWorldState(game)
     public override void Initialize()
     {
         base.Initialize();
-        Grid = WorldGrid.GetWorldGrid(World.Home);
+        Grid = StaticWorlds.StaticWorldConfigs[World.Home].World;
     }
 
     public void ResetEntities()

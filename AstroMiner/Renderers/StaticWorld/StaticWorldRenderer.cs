@@ -1,32 +1,16 @@
-using System.Collections.Generic;
 using AstroMiner.Definitions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace AstroMiner.Renderers.StaticWorld;
 
-public class StaticRenderConfig(string texureName, int gridWidth, int gridHeight)
-{
-    public string TexureName { get; } = texureName;
-    public int GridWidth { get; } = gridWidth;
-    public int GridHeight { get; } = gridHeight;
-}
-
 public class StaticWorldRenderer(RendererShared shared) : BaseWorldRenderer(shared)
 {
-    private static readonly IReadOnlyDictionary<World, StaticRenderConfig> StaticRenderConfigs =
-        new Dictionary<World, StaticRenderConfig>
-        {
-            { World.RigRoom, new StaticRenderConfig("rig-room", 8, 9) },
-            { World.Krevik, new StaticRenderConfig("rig-room", 8, 7) },
-            { World.MinEx, new StaticRenderConfig("min-ex", 8, 9) }
-        };
-
     private readonly GameStateManager _gameStateManager = shared.GameStateManager;
 
     public override void RenderWorld(SpriteBatch spriteBatch)
     {
-        if (StaticRenderConfigs.TryGetValue(shared.Game.Model.ActiveWorld, out var config))
+        if (StaticWorlds.StaticWorldConfigs.TryGetValue(shared.Game.Model.ActiveWorld, out var config))
             spriteBatch.Draw(Shared.Textures[config.TexureName],
                 Shared.ViewHelpers.GetVisibleRectForGridCell(0, 0, config.GridWidth, config.GridHeight),
                 Color.White);
