@@ -210,7 +210,7 @@ public class ViewHelpers(BaseGame game, GraphicsDeviceManager graphics)
 
 
         var (gridX, gridY) = ToGridPosition(position.CenterPosition);
-        var config = StaticWorlds.GetPortalConfig(position.World, (gridX, gridY));
+        var config = StaticWorlds.GetPortalConfig(position.World, (gridX, gridY), true);
 
         if (config == null) return 1f;
 

@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 
@@ -45,17 +46,17 @@ public static class StaticWorlds
                                                                        """)
             },
             {
-                // ---------------------------------------------------0,1,2,3,4,5,6,7
+                // ---------------------------------------------------0,1,2,3,4,5,6,7,8,9,0,1,2,3
                 World.Krevik, new StaticWorldConfig("white", 8, 7, """
-                                                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                                                                      X,-,-,X,X,X,X,X,X,X,X,X,X,X
-                                                                      X,-,-,X,X,X,X,X,X,X,X,X,X,X
-                                                                      X,-,-,-,-,-,-,-,-,-,-,-,-,X
-                                                                      X,-,-,-,-,-,-,-,-,-,-,-,-,X
-                                                                      X,-,-,-,-,-,-,-,-,-,-,-,-,X
-                                                                      X,X,X,X,X,X,X,X,X,X,X,-,X,X
-                                                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                                                                      """)
+                                                                   X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                                                   X,-,-,X,X,X,X,X,X,X,X,X,X,X
+                                                                   X,-,-,X,X,X,X,X,X,X,X,X,X,X
+                                                                   X,-,-,-,-,-,-,-,-,-,-,-,-,X
+                                                                   X,-,-,-,-,-,-,-,-,-,-,-,-,X
+                                                                   X,-,-,-,-,-,-,-,-,-,-,-,-,X
+                                                                   X,X,X,X,X,X,X,X,X,X,X,@,X,X
+                                                                   X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                                                   """)
             },
             {
                 // ------------------------------------------------0,1,2,3,4,5,6,7
@@ -112,25 +113,25 @@ public static class StaticWorlds
                 // -----------------------------------------------0-------------------1-------------------2------
                 // -----------------------------------------------0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3
                 World.Ship, new StaticWorldConfig("white", 8, 9, """
-                                                                  X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                                                                  X,-,-,-,-,X,-,-,-,-,X,-,-,-,-,X,X,@,X,X,X,X,X,X
-                                                                  X,-,-,-,-,X,-,-,-,-,X,-,-,-,-,X,-,-,-,X,X,X,X,X
-                                                                  X,X,X,X,-,X,X,X,X,-,X,X,X,X,-,X,-,-,-,X,X,X,X,X
-                                                                  X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X,X,X
-                                                                  X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X,X,X
-                                                                  X,-,-,-,-,-,X,X,X,X,X,X,X,X,X,X,-,-,-,X,-,-,-,X
-                                                                  X,-,-,-,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,-,X
-                                                                  X,-,-,-,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,-,X
-                                                                  X,-,-,-,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,-,X
-                                                                  X,-,-,-,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,-,X
-                                                                  X,-,-,-,-,-,X,X,X,X,X,X,X,X,X,X,-,-,-,X,-,-,-,X
-                                                                  X,-,-,-,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,X,X,X,X
-                                                                  X,X,X,X,X,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,X,X,X,X
-                                                                  X,-,-,-,-,-,X,-,-,-,X,-,-,-,-,-,-,-,-,X,X,X,X,X
-                                                                  X,-,-,-,-,-,X,-,-,-,X,-,-,-,-,-,-,-,-,X,X,X,X,X
-                                                                  X,-,-,-,-,-,X,-,-,-,X,-,-,-,-,-,-,-,-,X,X,X,X,X
-                                                                  X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                                                                  """)
+                                                                 X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                                                 X,-,-,-,-,X,-,-,-,-,X,-,-,-,-,X,X,@,X,X,X,X,X,X
+                                                                 X,-,-,-,-,X,-,-,-,-,X,-,-,-,-,X,-,-,-,X,X,X,X,X
+                                                                 X,X,X,X,-,X,X,X,X,-,X,X,X,X,-,X,-,-,-,X,X,X,X,X
+                                                                 X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X,X,X
+                                                                 X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X,X,X
+                                                                 X,-,-,-,-,-,X,X,X,X,X,X,X,X,X,X,-,-,-,X,-,-,-,X
+                                                                 X,-,-,-,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,-,X
+                                                                 X,-,-,-,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,-,X
+                                                                 X,-,-,-,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,-,X
+                                                                 X,-,-,-,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,-,X
+                                                                 X,-,-,-,-,-,X,X,X,X,X,X,X,X,X,X,-,-,-,X,-,-,-,X
+                                                                 X,-,-,-,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,X,X,X,X
+                                                                 X,X,X,X,X,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,X,X,X,X
+                                                                 X,-,-,-,-,-,X,-,-,-,X,-,-,-,-,-,-,-,-,X,X,X,X,X
+                                                                 X,-,-,-,-,-,X,-,-,-,X,-,-,-,-,-,-,-,-,X,X,X,X,X
+                                                                 X,-,-,-,-,-,X,-,-,-,X,-,-,-,-,-,-,-,-,X,X,X,X,X
+                                                                 X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                                                 """)
             }
         };
 
@@ -152,6 +153,14 @@ public static class StaticWorlds
             {
                 (World.MinEx, Coordinates.Grid.MinExToHomePortal),
                 new PortalConfig(World.Home, Coordinates.Grid.HomeToMinExPortal, Direction.Bottom)
+            },
+            {
+                (World.Krevik, Coordinates.Grid.KrevikToShipPortal),
+                new PortalConfig(World.Ship, Coordinates.Grid.ShipToKrevikPortal, Direction.Bottom)
+            },
+            {
+                (World.Ship, Coordinates.Grid.ShipToKrevikPortal),
+                new PortalConfig(World.Krevik, Coordinates.Grid.KrevikToShipPortal, Direction.Top)
             }
         };
 
@@ -181,8 +190,11 @@ public static class StaticWorlds
         return grid;
     }
 
-    public static PortalConfig GetPortalConfig(World world, (int, int) coordinates)
+    public static PortalConfig? GetPortalConfig(World world, (int, int) coordinates, bool allowNull = false)
     {
-        return PortalsConfig.GetValueOrDefault((world, coordinates));
+        if (!PortalsConfig.TryGetValue((world, coordinates), out var config) && !allowNull)
+            throw new ArgumentException("No portal config found for world " + world + " at coordinates " + coordinates);
+
+        return config;
     }
 }
