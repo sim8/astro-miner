@@ -7,4 +7,5 @@ public enum World
     RigRoom,
     MinEx,
     Krevik,
+    Ship,
 }

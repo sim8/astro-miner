@@ -46,14 +46,15 @@ public static class StaticWorlds
             },
             {
                 // ---------------------------------------------------0,1,2,3,4,5,6,7
-                World.Krevik, new StaticWorldConfig("rig-room", 8, 7, """
-                                                                      X,X,X,X,X,X,X,X
-                                                                      X,-,-,-,-,-,-,X
-                                                                      X,-,-,-,-,-,-,X
-                                                                      X,-,-,-,-,-,-,X
-                                                                      X,-,-,-,-,-,-,X
-                                                                      X,-,-,-,-,-,-,X
-                                                                      X,X,X,X,X,X,X,X
+                World.Krevik, new StaticWorldConfig("white", 8, 7, """
+                                                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                                                      X,-,-,X,X,X,X,X,X,X,X,X,X,X
+                                                                      X,-,-,X,X,X,X,X,X,X,X,X,X,X
+                                                                      X,-,-,-,-,-,-,-,-,-,-,-,-,X
+                                                                      X,-,-,-,-,-,-,-,-,-,-,-,-,X
+                                                                      X,-,-,-,-,-,-,-,-,-,-,-,-,X
+                                                                      X,X,X,X,X,X,X,X,X,X,X,-,X,X
+                                                                      X,X,X,X,X,X,X,X,X,X,X,X,X,X
                                                                       """)
             },
             {
@@ -70,6 +71,7 @@ public static class StaticWorlds
                                                                    X,X,X,X,X,X,X,X
                                                                    """)
             },
+
             {
                 // -0-------------------1-------------------2--------------
                 // -0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7
@@ -88,7 +90,7 @@ public static class StaticWorlds
                     X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
                     X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
                     X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                    X,X,X,X,-,-,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                    X,X,X,X,-,-,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X 
                     X,X,X,X,-,-,-,-,X,X,X,X,-,-,X,X,X,X,X,X,X,X,X,X,X,X,X,X
                     X,X,X,X,X,X,X,-,X,X,X,X,X,-,X,X,X,X,-,-,X,X,X,X,X,X,X,X
                     X,-,-,X,X,X,X,-,X,X,X,X,X,-,X,X,X,X,-,-,X,X,X,X,X,X,X,X
@@ -105,6 +107,30 @@ public static class StaticWorlds
                     X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,-,-,-,-,-,-,-,-,-,X
                     X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
                     """)
+            },
+            {
+                // -----------------------------------------------0-------------------1-------------------2------
+                // -----------------------------------------------0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3
+                World.Ship, new StaticWorldConfig("white", 8, 9, """
+                                                                  X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                                                  X,-,-,-,-,X,-,-,-,-,X,-,-,-,-,X,X,@,X,X,X,X,X,X
+                                                                  X,-,-,-,-,X,-,-,-,-,X,-,-,-,-,X,-,-,-,X,X,X,X,X
+                                                                  X,X,X,X,-,X,X,X,X,-,X,X,X,X,-,X,-,-,-,X,X,X,X,X
+                                                                  X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X,X,X
+                                                                  X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X,X,X
+                                                                  X,-,-,-,-,-,X,X,X,X,X,X,X,X,X,X,-,-,-,X,-,-,-,X
+                                                                  X,-,-,-,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,-,X
+                                                                  X,-,-,-,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,-,X
+                                                                  X,-,-,-,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,-,X
+                                                                  X,-,-,-,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,-,X
+                                                                  X,-,-,-,-,-,X,X,X,X,X,X,X,X,X,X,-,-,-,X,-,-,-,X
+                                                                  X,-,-,-,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,X,X,X,X
+                                                                  X,X,X,X,X,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,X,X,X,X
+                                                                  X,-,-,-,-,-,X,-,-,-,X,-,-,-,-,-,-,-,-,X,X,X,X,X
+                                                                  X,-,-,-,-,-,X,-,-,-,X,-,-,-,-,-,-,-,-,X,X,X,X,X
+                                                                  X,-,-,-,-,-,X,-,-,-,X,-,-,-,-,-,-,-,-,X,X,X,X,X
+                                                                  X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                                                  """)
             }
         };
 

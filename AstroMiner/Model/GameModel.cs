@@ -117,7 +117,7 @@ public static class GameModelHelpers
     {
         return new GameModel
         {
-            ActiveWorld = World.Home,
+            ActiveWorld = World.Krevik,
             SavedTotalPlaytimeMs = 0,
             Ecs = new EcsModel
             {

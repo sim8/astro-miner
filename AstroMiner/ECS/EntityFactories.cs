@@ -15,13 +15,13 @@ public class EntityFactories
         _ecs = ecs;
     }
 
-    public int CreatePlayerEntity(Vector2 position)
+    public int CreatePlayerEntity(Vector2 centerPosition)
     {
         var entityId = _ecs.CreateEntity();
 
         // Add position component
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
-        positionComponent.Position = position;
+        positionComponent.SetCenterPosition(centerPosition);
         positionComponent.World = _game.Model.ActiveWorld;
         positionComponent.WidthPx = GameConfig.PlayerBoxSizePx;
         positionComponent.HeightPx = GameConfig.PlayerBoxSizePx;
@@ -51,7 +51,7 @@ public class EntityFactories
 
         // Add position component
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
-        positionComponent.World = _game.Model.ActiveWorld;
+        positionComponent.World = World.Ship;
         positionComponent.Position = position;
         positionComponent.WidthPx = GameConfig.MinerBoxSizePx;
         positionComponent.HeightPx = GameConfig.MinerBoxSizePx;
@@ -159,71 +159,6 @@ public class EntityFactories
 
         _ecs.AddComponent<ExplosionComponent>(entityId);
         _ecs.AddComponent<ExplosionTag>(entityId);
-
-        return entityId;
-    }
-
-    public int CreateLaunchLightEntity(Vector2 position)
-    {
-        var entityId = _ecs.CreateEntity();
-
-        var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
-        positionComponent.World = _game.Model.ActiveWorld;
-        positionComponent.Position = position;
-        positionComponent.WidthPx = 5;
-        positionComponent.HeightPx = 5;
-        positionComponent.IsCollideable = false;
-
-        var textureComponent = _ecs.AddComponent<TextureComponent>(entityId);
-        textureComponent.TextureName = "launch-light";
-
-        var radialLightSourceComponent = _ecs.AddComponent<RadialLightSourceComponent>(entityId);
-        radialLightSourceComponent.Tint = new Color(226, 86, 86);
-        radialLightSourceComponent.SizePx = 128;
-        radialLightSourceComponent.Opacity = 0.3f;
-
-        var renderLayerComponent = _ecs.AddComponent<RenderLayerComponent>(entityId);
-        renderLayerComponent.EntityRenderLayer = EntityRenderLayer.BehindEntities;
-
-        return entityId;
-    }
-
-    public int CreateLaunchPadFrontEntity(Vector2 position)
-    {
-        var entityId = _ecs.CreateEntity();
-
-        var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
-        positionComponent.World = _game.Model.ActiveWorld;
-        positionComponent.Position = position;
-        positionComponent.WidthPx = 76;
-        positionComponent.HeightPx = 63;
-        positionComponent.IsCollideable = false;
-
-        var textureComponent = _ecs.AddComponent<TextureComponent>(entityId);
-        textureComponent.TextureName = "launch-pad-front";
-
-        var renderLayerComponent = _ecs.AddComponent<RenderLayerComponent>(entityId);
-        renderLayerComponent.EntityRenderLayer = EntityRenderLayer.BehindEntities;
-
-        return entityId;
-    }
-
-    public int CreateLaunchPadRearEntity(Vector2 position)
-    {
-        var entityId = _ecs.CreateEntity();
-
-        var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
-        positionComponent.World = _game.Model.ActiveWorld;
-        positionComponent.Position = position;
-        positionComponent.WidthPx = 76;
-        positionComponent.HeightPx = 31;
-        positionComponent.IsCollideable = false;
-
-        var textureComponent = _ecs.AddComponent<TextureComponent>(entityId);
-        textureComponent.TextureName = "launch-pad-rear";
-
-        var renderLayerComponent = _ecs.AddComponent<RenderLayerComponent>(entityId);
-        renderLayerComponent.EntityRenderLayer = EntityRenderLayer.BehindWorld;
 
         return entityId;
     }

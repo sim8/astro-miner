@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
@@ -19,7 +20,6 @@ public class HomeWorldState(BaseGame game) : BaseWorldState(game)
     {
         ResetMiner();
         ResetPlayer();
-        game.StateManager.Ecs.LaunchSystem.Reset();
     }
 
     private void ResetMiner()
