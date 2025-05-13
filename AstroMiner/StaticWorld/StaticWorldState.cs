@@ -1,10 +1,8 @@
-using System.Collections.Generic;
 using AstroMiner.Definitions;
-using Microsoft.Xna.Framework;
 
-namespace AstroMiner.InteriorsWorld;
+namespace AstroMiner.StaticWorld;
 
-public class InteriorsWorldState(BaseGame game) : BaseWorldState(game)
+public class StaticWorldState(BaseGame game) : BaseWorldState(game)
 {
     public WorldCellType[,] Grid;
 

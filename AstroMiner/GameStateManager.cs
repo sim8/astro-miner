@@ -4,7 +4,7 @@ using AstroMiner.AsteroidWorld;
 using AstroMiner.Definitions;
 using AstroMiner.ECS;
 using AstroMiner.HomeWorld;
-using AstroMiner.InteriorsWorld;
+using AstroMiner.StaticWorld;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
@@ -49,8 +49,8 @@ public class GameStateManager(BaseGame game)
     public CameraState Camera;
     public CloudManager CloudManager;
     public HomeWorldState HomeWorld;
-    public InteriorsWorldState InteriorsWorld;
     public Inventory Inventory;
+    public StaticWorldState StaticWorld;
     public UI.UI Ui;
 
     public bool FreezeControls { get; set; }
@@ -64,9 +64,9 @@ public class GameStateManager(BaseGame game)
         {
             World.Asteroid => AsteroidWorld,
             World.Home => HomeWorld,
-            World.RigRoom => InteriorsWorld,
-            World.Krevik => InteriorsWorld,
-            World.MinEx => InteriorsWorld,
+            World.RigRoom => StaticWorld,
+            World.Krevik => StaticWorld,
+            World.MinEx => StaticWorld,
             _ => throw new Exception("Invalid world")
         };
 
@@ -78,7 +78,7 @@ public class GameStateManager(BaseGame game)
         else if (world == World.Home)
             HomeWorld.Initialize();
         else
-            InteriorsWorld.Initialize();
+            StaticWorld.Initialize();
     }
 
     public void Initialize()
@@ -87,7 +87,7 @@ public class GameStateManager(BaseGame game)
         Camera = new CameraState(game);
         AsteroidWorld = new AsteroidWorldState(game);
         HomeWorld = new HomeWorldState(game);
-        InteriorsWorld = new InteriorsWorldState(game);
+        StaticWorld = new StaticWorldState(game);
         CloudManager = new CloudManager(game);
         Ecs = new Ecs(game);
         Ui = new UI.UI(game);

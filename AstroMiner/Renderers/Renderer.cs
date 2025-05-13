@@ -4,7 +4,7 @@ using AstroMiner.ECS.Components;
 using AstroMiner.Renderers.AsteroidWorld;
 using AstroMiner.Renderers.Entities;
 using AstroMiner.Renderers.HomeWorld;
-using AstroMiner.Renderers.InteriorsWorld;
+using AstroMiner.Renderers.StaticWorld;
 using AstroMiner.Renderers.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -18,13 +18,13 @@ public class Renderer
     private readonly ExplosionRenderer _explosionRenderer;
     private readonly BaseGame _game;
     private readonly BaseWorldRenderer _homeWorldRenderer;
-    private readonly BaseWorldRenderer _interiorsWorldRenderer;
     private readonly LaunchParallaxRenderer _launchParallaxRenderer;
     private readonly MinerRenderer _minerRenderer;
     private readonly BlendState _multiplyBlendState;
     private readonly PlayerRenderer _playerRenderer;
     private readonly ScrollingBackgroundRenderer _scrollingBackgroundRenderer;
     private readonly RendererShared _shared;
+    private readonly BaseWorldRenderer _staticWorldRenderer;
     private readonly UIRenderer _uiRenderer;
     private readonly UserInterfaceRenderer _userInterfaceRenderer;
     private RenderTarget2D _lightingRenderTarget;
@@ -43,8 +43,8 @@ public class Renderer
         _launchParallaxRenderer = new LaunchParallaxRenderer(_shared);
         _userInterfaceRenderer = new UserInterfaceRenderer(_shared);
         _asteroidWorldRenderer = new AsteroidWorldRenderer(_shared);
-        _homeWorldRenderer = new HomeWorldRenderer(_shared);
-        _interiorsWorldRenderer = new InteriorsWorldRenderer(_shared);
+        _homeWorldRenderer = new HomeWorldRenderer(_shared); // TODO deprecate
+        _staticWorldRenderer = new StaticWorldRenderer(_shared);
         _multiplyBlendState = new BlendState();
         _multiplyBlendState.ColorBlendFunction = BlendFunction.Add;
         _multiplyBlendState.ColorSourceBlend = Blend.DestinationColor;
@@ -57,11 +57,8 @@ public class Renderer
         _game.Model.ActiveWorld switch
         {
             World.Asteroid => _asteroidWorldRenderer,
-            World.Home => _homeWorldRenderer,
-            World.RigRoom => _interiorsWorldRenderer,
-            World.Krevik => _interiorsWorldRenderer,
-            World.MinEx => _interiorsWorldRenderer,
-            _ => throw new Exception("Invalid world")
+            World.Home => _homeWorldRenderer, // TODO deprecate
+            _ => _staticWorldRenderer
         };
 
     public void HandleWindowResize(object sender, EventArgs e)
