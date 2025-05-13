@@ -59,6 +59,7 @@ public class Renderer
             World.Asteroid => _asteroidWorldRenderer,
             World.Home => _homeWorldRenderer,
             World.RigRoom => _interiorsWorldRenderer,
+            World.Krevik => _interiorsWorldRenderer,
             World.MinEx => _interiorsWorldRenderer,
             _ => throw new Exception("Invalid world")
         };

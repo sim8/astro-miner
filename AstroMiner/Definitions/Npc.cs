@@ -1,4 +1,5 @@
 public enum Npc
 {
-    MinExMerchant
+    MinExMerchant,
+    Rikus
 }

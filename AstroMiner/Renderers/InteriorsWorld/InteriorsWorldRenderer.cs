@@ -18,6 +18,7 @@ public class InteriorsWorldRenderer(RendererShared shared) : BaseWorldRenderer(s
         new Dictionary<World, InteriorsRenderConfig>
         {
             { World.RigRoom, new InteriorsRenderConfig("rig-room", 8, 9) },
+            { World.Krevik, new InteriorsRenderConfig("rig-room", 8, 7) },
             { World.MinEx, new InteriorsRenderConfig("min-ex", 8, 9) }
         };
 

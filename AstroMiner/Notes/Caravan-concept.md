@@ -31,6 +31,10 @@ The caravan moves continually round the traderoute of the 4 planets. Each planet
 2. Asteroid mining missions
    - After player has slept, will be in orbit of planet, and can launch mining mission from vehicle bay
    - Potentially pick a member of the team to join on missions?
+   - Asteroid belts available - planet dependent
+     - Fire
+     - Ice
+     - Dark/dangerous
 3. Planet Stops
    - Selling gems
      - Slider for sell quantity with dynamic pricing?
@@ -79,15 +83,18 @@ The caravan moves continually round the traderoute of the 4 planets. Each planet
 ## Worlds
 - Krevik
   - Industrial focus
+  - Has spent a long time living in the shadow of Assina but is growing to become almost as reach. The emperor fears their growing power
   - Specializes in tools and explosives
   - Prefers industrial gems
 
 - Assina
   - Capital world
+  - Is accustomed to luxury. People are too comfortable
   - Wealthy and ornate
   - Green aesthetic
   - Fashion-focused
   - Prefers precious gems
+  - Monkeys steal your gems. Minigame?
 
 - Uruhin
   - Remote/sparse
@@ -131,17 +138,7 @@ The caravan moves continually round the traderoute of the 4 planets. Each planet
     - Often makes jokes about killing people - people aren't sure if Rikus did a good job
 
 ## Game Opening Options
-1. Letter Introduction
-   - Invitation to join as Head Miner
-   - Meeting at Krevik docks
-   - Ship introduction
-   - Crew meetup
 
-2. Alternative Start ideas
-   - Job interview
-   - Accidental stowaway
-   - Rescue scenario
-   - Orphan backstory
 
 ## Gameplay Features
 - Mining Operations
@@ -170,3 +167,29 @@ The caravan moves continually round the traderoute of the 4 planets. Each planet
 - Mysterious characters
 - Caravans and flotillas
 - Special gem discoveries
+
+## Game Opening
+- Character creation
+  - Name
+  - Looks
+  - Background?
+- Opening cutscene
+  - Read a letter?
+    - {name},
+    - It was great meeting you last week! I chatted to the crew and if you're willing, we'd love for you to join us as Head Miner. We'll be on Krevik next week and can pick you up from the docks. What do you say?
+    - Rikus
+    - PS - I pray you've forgiven me for spilling milkshake on your suit. We have a very powerful washer onboard if you need it.
+  - On the docks
+    - Hello {name}! Good to see you again!
+    - It's my pleasure to welcome you aboard The Archibald. I hope it serves as a satisfactory home in between trading stops.
+    - Before you meet the crew, I wanted to ask if there's anything you didn't get to ask last time we met?
+      - What are my responsibilities?
+        - As Head Miner, you'll lead the asteroid mining missions - which involves driving the MV, mining gems, and trying not to die! Heh!
+        - You'll also help run the shop when we're on the ground.
+      - Where are we headed?
+        - I believe our next stop is Astris. Our pilot, Sillus, can talk you through the trade route.
+      - I don't have any more questions.
+  - Introduce yourself to everyone
+  - When finished, go to room. Wake up in orbit of next planet
+  - Have breakfast in mess hall?
+  - Go on first mission

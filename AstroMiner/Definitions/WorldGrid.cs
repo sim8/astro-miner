@@ -78,6 +78,16 @@ public static class WorldGrid
                                         X,X,X,X,X,X,X,X
                                         """;
 
+    private const string KrevikWorld = """
+                                        X,X,X,X,X,X,X,X
+                                        X,-,-,-,-,-,-,X
+                                        X,-,-,-,-,-,-,X
+                                        X,-,-,-,-,-,-,X
+                                        X,-,-,-,-,-,-,X
+                                        X,-,-,-,-,-,-,X
+                                        X,X,X,X,X,X,X,X
+                                        """;
+
     private static readonly IReadOnlyDictionary<(World world, (int x, int y)), PortalConfig> PortalsConfig =
         new Dictionary<(World world, (int x, int y)), PortalConfig>
         {
@@ -132,6 +142,7 @@ public static class WorldGrid
             World.Home => ParseWorld(OizusWorld),
             World.RigRoom => ParseWorld(RigRoomWorld),
             World.MinEx => ParseWorld(MinExWorld),
+            World.Krevik => ParseWorld(KrevikWorld),
             _ => throw new ArgumentOutOfRangeException(nameof(world), world, null)
         };
     }

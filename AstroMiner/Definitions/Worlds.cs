@@ -6,4 +6,5 @@ public enum World
     Home,
     RigRoom,
     MinEx,
+    Krevik,
 }

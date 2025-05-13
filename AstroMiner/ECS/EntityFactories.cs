@@ -99,6 +99,32 @@ public class EntityFactories
         return entityId;
     }
 
+    public int CreateRikusEntity()
+    {
+        var entityId = _ecs.CreateEntity();
+
+        // Add position component
+        var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
+        positionComponent.World = World.Krevik;
+        positionComponent.SetCenterPosition(new Vector2(4.5f, 3.5f));
+        positionComponent.WidthPx = GameConfig.PlayerBoxSizePx;
+        positionComponent.HeightPx = GameConfig.PlayerBoxSizePx;
+        positionComponent.IsCollideable = true;
+
+        // Add direction component
+        var directionComponent = _ecs.AddComponent<DirectionComponent>(entityId);
+        directionComponent.Direction = Direction.Bottom;
+
+        // Add tag component for identification
+        _ecs.AddComponent<NpcComponent>(entityId);
+        _ecs.GetComponent<NpcComponent>(entityId).Npc = Npc.Rikus;
+
+        // Add interactive component
+        _ecs.AddComponent<InteractiveComponent>(entityId);
+
+        return entityId;
+    }
+
     public int CreateDynamiteEntity(Vector2 position)
     {
         var entityId = _ecs.CreateEntity();
