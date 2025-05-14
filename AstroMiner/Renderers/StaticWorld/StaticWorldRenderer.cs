@@ -20,16 +20,25 @@ public class StaticWorldRenderer(RendererShared shared) : BaseWorldRenderer(shar
     private void RenderGridDebugOverlay(SpriteBatch spriteBatch)
     {
         for (var row = 0; row < _gameStateManager.StaticWorld.Grid.GetLength(0); row++)
-        for (var col = 0; col < _gameStateManager.StaticWorld.Grid.GetLength(1); col++)
-        {
-            var cellRect = Shared.ViewHelpers.GetVisibleRectForGridCell(col, row);
-            if (_gameStateManager.StaticWorld.Grid[row, col] == WorldCellType.Filled)
-                spriteBatch.Draw(Shared.Textures["white"], cellRect, Color.Red * 0.5f);
-            if (_gameStateManager.StaticWorld.Grid[row, col] == WorldCellType.Portal)
-                spriteBatch.Draw(Shared.Textures["white"], cellRect, Color.Green * 0.5f);
+            for (var col = 0; col < _gameStateManager.StaticWorld.Grid.GetLength(1); col++)
+            {
+                var cellRect = Shared.ViewHelpers.GetVisibleRectForGridCell(col, row);
+                if (_gameStateManager.StaticWorld.Grid[row, col] == WorldCellType.Filled)
+                    spriteBatch.Draw(Shared.Textures["white"], cellRect, Color.Red * 0.5f);
+                if (_gameStateManager.StaticWorld.Grid[row, col] == WorldCellType.Portal)
+                    spriteBatch.Draw(Shared.Textures["white"], cellRect, Color.Green * 0.5f);
 
-            var coordinatesStr = col + " " + row;
-            shared.RenderString(spriteBatch, cellRect.X, cellRect.Y, coordinatesStr, 2);
-        }
+                var leftBorderRect = cellRect;
+                leftBorderRect.Width = 1;
+                spriteBatch.Draw(Shared.Textures["white"], leftBorderRect, Color.Black);
+
+                var topBorderRect = cellRect;
+                topBorderRect.Height = 1;
+                spriteBatch.Draw(Shared.Textures["white"], topBorderRect, Color.Black);
+
+
+                var coordinatesStr = col + " " + row;
+                shared.RenderString(spriteBatch, cellRect.X, cellRect.Y, coordinatesStr, 2);
+            }
     }
 }
