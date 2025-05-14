@@ -46,19 +46,6 @@ public static class GameConfig
     public const float MinerSize = (float)MinerBoxSizePx / CellTextureSizePx;
     public const float PlayerSize = (float)PlayerBoxSizePx / CellTextureSizePx;
 
-    public static class Launch
-    {
-        // When crossing this Y threshold, switch to asteroid
-        // public const int HomeToAsteroidPointY = -110;
-        public const int HomeToAsteroidPointY = -300;
-        // Miner starts slightly off the asteroid
-
-
-        public const int AsteroidStartYOffset = 0;
-
-        public const float AsteroidSpeed = 60f;
-    }
-
     /**
      * TODO measure if this actually works at BaseSpeed + multiples of
      */

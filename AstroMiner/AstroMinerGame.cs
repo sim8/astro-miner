@@ -71,6 +71,8 @@ public class AstroMinerGame : BaseGame
         LoadTexture("rig-room");
         LoadTexture("min-ex");
         LoadTexture("icons");
+        LoadTexture("krevik-docks");
+        LoadTexture("ship");
     }
 
     protected override void Update(GameTime gameTime)
