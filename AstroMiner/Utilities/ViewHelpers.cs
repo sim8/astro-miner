@@ -49,15 +49,15 @@ public class ViewHelpers(BaseGame game, GraphicsDeviceManager graphics)
 
         // Remove clamping for Oizus left (pier) and top (launch sequence)
         var leftThreshold = game.Model.ActiveWorld == World.Home ? 0 : widthThreshold;
-        var topThreshold = game.Model.ActiveWorld == World.Home ? -1000 : widthThreshold;
+        var topThreshold = game.Model.ActiveWorld == World.Home ? -1000 : heightThreshold;
 
 
-        if (cols <= widthThreshold * 2)
+        if (cols <= viewportGridWidth)
             cameraX = cols / 2f;
         else
             cameraX = Math.Clamp(cameraPos.X, leftThreshold, cols - widthThreshold);
 
-        if (rows <= heightThreshold * 2)
+        if (rows <= viewportGridHeight)
             cameraY = rows / 2f;
         else
             cameraY = Math.Clamp(cameraPos.Y, topThreshold, rows - heightThreshold);
