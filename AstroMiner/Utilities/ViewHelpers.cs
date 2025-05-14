@@ -98,9 +98,6 @@ public class ViewHelpers(BaseGame game, GraphicsDeviceManager graphics)
     {
         var (viewportWidthPx, viewportHeightPx) = GetViewportSize();
 
-        // 2560 (80)
-        // 1440 (45)
-
         var viewportGridWidth = ConvertVisiblePxToGridUnits(viewportWidthPx);
         var viewportGridHeight = ConvertVisiblePxToGridUnits(viewportHeightPx);
         return (viewportGridWidth, viewportGridHeight);

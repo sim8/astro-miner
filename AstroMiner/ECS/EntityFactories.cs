@@ -51,7 +51,7 @@ public class EntityFactories
 
         // Add position component
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
-        positionComponent.World = World.Ship;
+        positionComponent.World = World.ShipDownstairs;
         positionComponent.Position = position;
         positionComponent.WidthPx = GameConfig.MinerBoxSizePx;
         positionComponent.HeightPx = GameConfig.MinerBoxSizePx;

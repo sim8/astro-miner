@@ -18,11 +18,17 @@ public class PortalConfig(World targetWorld, (int, int) coordinates, Direction d
     public Direction Direction { get; } = direction;
 }
 
-public class StaticWorldConfig(string texureName, int gridWidth, int gridHeight, string worldStr)
+public class StaticWorldConfig(
+    string texureName,
+    int gridWidth,
+    int gridHeight,
+    string worldStr,
+    int textureGridYOffset = 0)
 {
     public string TexureName { get; } = texureName;
     public int GridWidth { get; } = gridWidth;
     public int GridHeight { get; } = gridHeight;
+    public int TextureGridYOffset { get; } = textureGridYOffset;
     public WorldCellType[,] World { get; } = StaticWorlds.ParseWorld(worldStr);
 }
 
@@ -72,7 +78,6 @@ public static class StaticWorlds
                                                                    X,X,X,X,X,X,X,X
                                                                    """)
             },
-
             {
                 // -0-------------------1-------------------2--------------
                 // -0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7
@@ -91,7 +96,7 @@ public static class StaticWorlds
                     X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
                     X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
                     X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                    X,X,X,X,-,-,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X 
+                    X,X,X,X,-,-,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
                     X,X,X,X,-,-,-,-,X,X,X,X,-,-,X,X,X,X,X,X,X,X,X,X,X,X,X,X
                     X,X,X,X,X,X,X,-,X,X,X,X,X,-,X,X,X,X,-,-,X,X,X,X,X,X,X,X
                     X,-,-,X,X,X,X,-,X,X,X,X,X,-,X,X,X,X,-,-,X,X,X,X,X,X,X,X
@@ -110,28 +115,38 @@ public static class StaticWorlds
                     """)
             },
             {
-                // -----------------------------------------------0-------------------1-------------------2------
-                // -----------------------------------------------0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3
-                World.Ship, new StaticWorldConfig("ship", 24, 18, """
-                                                                  X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                                                                  X,-,-,-,-,X,-,-,-,-,X,-,-,-,-,X,X,@,X,X,X,X,X,X
-                                                                  X,-,-,-,-,X,-,-,-,-,X,-,-,-,-,X,-,-,-,X,X,X,X,X
-                                                                  X,X,X,X,-,X,X,X,X,-,X,X,X,X,-,X,-,-,-,X,X,X,X,X
-                                                                  X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X,X,X
-                                                                  X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X,X,X
-                                                                  X,-,-,-,-,-,X,X,X,X,X,X,X,X,X,X,-,-,-,X,-,-,-,X
-                                                                  X,-,-,-,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,-,X
-                                                                  X,-,-,-,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,-,X
-                                                                  X,-,-,-,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,-,X
-                                                                  X,-,-,-,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,-,X
-                                                                  X,-,-,-,-,-,X,X,X,X,X,X,X,X,X,X,-,-,-,X,-,-,-,X
-                                                                  X,-,-,-,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,X,X,X,X
-                                                                  X,X,X,X,X,-,X,-,-,-,-,-,-,-,-,-,-,-,-,X,X,X,X,X
-                                                                  X,-,-,-,-,-,X,-,-,-,X,-,-,-,-,-,-,-,-,X,X,X,X,X
-                                                                  X,-,-,-,-,-,X,-,-,-,X,-,-,-,-,-,-,-,-,X,X,X,X,X
-                                                                  X,-,-,-,-,-,X,-,-,-,X,-,-,-,-,-,-,-,-,X,X,X,X,X
-                                                                  X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                                                                  """)
+                // -------------------------------------------------------0-------------------1-------------------2--------------
+                // -------------------------------------------------------0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7
+                World.ShipUpstairs, new StaticWorldConfig("ship", 28, 11, """
+                                                                          X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                                                          X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                                                          X,X,X,-,-,-,X,-,-,-,-,-,X,X,X,X,X,-,-,-,X,X,X,X,-,-,X,X
+                                                                          X,X,-,-,-,-,X,-,-,-,-,-,X,X,-,-,-,-,-,-,X,X,X,X,-,-,-,X
+                                                                          X,-,-,-,-,-,X,-,-,-,-,-,X,X,-,-,-,-,-,-,X,@,X,X,-,-,-,X
+                                                                          X,-,-,-,-,-,X,-,-,-,-,-,X,X,-,-,X,X,-,-,-,-,-,-,-,-,-,X
+                                                                          X,X,X,X,-,X,X,X,X,-,-,X,X,-,-,-,X,X,-,-,-,-,-,-,-,-,-,X
+                                                                          X,X,X,X,-,X,X,X,X,-,-,X,X,-,-,-,X,X,-,-,-,-,-,X,-,-,-,X
+                                                                          X,X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,-,X
+                                                                          X,X,X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,X,X
+                                                                          X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                                                          """)
+            },
+            {
+                // ---------------------------------------------------------0-------------------1-------------------2-------------------3--------------
+                // ---------------------------------------------------------0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7
+                World.ShipDownstairs, new StaticWorldConfig("ship", 38, 11, """
+                                                                            X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                                                            X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                                                            X,-,-,-,-,-,-,-,-,-,-,X,-,-,-,-,-,-,-,X,X,X,X,X,X,X,X,-,-,-,-,-,-,-,-,-,-,X
+                                                                            X,-,X,X,X,X,X,-,X,-,-,X,-,-,-,-,-,-,-,X,X,X,X,X,X,@,X,-,-,-,-,-,-,-,-,-,-,X
+                                                                            X,-,X,X,X,X,X,-,X,-,-,X,-,-,-,-,-,-,-,X,X,@,X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X
+                                                                            X,-,-,-,X,-,-,-,X,-,-,X,-,-,-,-,-,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X
+                                                                            X,-,-,-,X,-,-,-,X,-,-,X,X,X,X,X,X,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X
+                                                                            X,-,-,-,X,-,-,-,X,-,-,X,X,X,X,X,X,-,-,X,-,-,X,X,X,-,X,X,-,-,-,-,-,-,-,-,-,X
+                                                                            X,-,-,-,X,-,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,-,X,X,X,-,X,X,-,-,-,-,-,-,-,-,-,X
+                                                                            X,-,-,-,X,-,-,-,X,-,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,-,-,X,-,-,-,-,-,-,-,-,-,X
+                                                                            X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
+                                                                            """, 12)
             }
         };
 
@@ -155,12 +170,21 @@ public static class StaticWorlds
                 new PortalConfig(World.Home, Coordinates.Grid.HomeToMinExPortal, Direction.Bottom)
             },
             {
-                (World.Krevik, Coordinates.Grid.KrevikToShipPortal),
-                new PortalConfig(World.Ship, Coordinates.Grid.ShipToKrevikPortal, Direction.Bottom)
+                (World.Krevik, Coordinates.Grid.KrevikToShipDownstairsPortal),
+                new PortalConfig(World.ShipDownstairs, Coordinates.Grid.ShipDownstairsToKrevikPortal, Direction.Bottom)
             },
             {
-                (World.Ship, Coordinates.Grid.ShipToKrevikPortal),
-                new PortalConfig(World.Krevik, Coordinates.Grid.KrevikToShipPortal, Direction.Top)
+                (World.ShipDownstairs, Coordinates.Grid.ShipDownstairsToKrevikPortal),
+                new PortalConfig(World.Krevik, Coordinates.Grid.KrevikToShipDownstairsPortal, Direction.Top)
+            },
+            {
+                (World.ShipDownstairs, Coordinates.Grid.ShipDownstairsToShipUpstairsPortal),
+                new PortalConfig(World.ShipUpstairs, Coordinates.Grid.ShipUpstairsToShipDownstairsPortal, Direction.Top)
+            },
+            {
+                (World.ShipUpstairs, Coordinates.Grid.ShipUpstairsToShipDownstairsPortal),
+                new PortalConfig(World.ShipDownstairs, Coordinates.Grid.ShipDownstairsToShipUpstairsPortal,
+                    Direction.Top)
             }
         };
 

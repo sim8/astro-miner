@@ -8,4 +8,6 @@ public enum World
     MinEx,
     Krevik,
     Ship,
+    ShipUpstairs,
+    ShipDownstairs,
 }

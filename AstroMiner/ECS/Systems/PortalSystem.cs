@@ -13,21 +13,25 @@ public class PortalSystem : System
     {
     }
 
-    private void MoveToTargetWorld(PortalConfig config, PositionComponent position, MovementComponent movement)
+    private void MoveToTargetWorld(PortalConfig config, PositionComponent position, MovementComponent movement, DirectionComponent dirComp)
     {
         position.World = config.TargetWorld;
         movement.PortalStatus = PortalStatus.Arriving;
 
         var (targetX, targetY) = config.Coordinates;
 
-        var centerPosition = config.Direction switch
+        var targetConfig = StaticWorlds.GetPortalConfig(config.TargetWorld, (targetX, targetY));
+
+        var centerPosition = targetConfig.Direction switch
         {
-            Direction.Top => new Vector2(targetX + 0.5f, targetY + 0.99f), // Bottom center of target cell
-            Direction.Bottom => new Vector2(targetX + 0.5f, targetY + 0.01f), // Top center of target cell
-            Direction.Left => new Vector2(targetX + 0.99f, targetY + 0.5f), // Right center of target cell
-            Direction.Right => new Vector2(targetX + 0.01f, targetY + 0.5f), // Left center of target cell
+            Direction.Bottom => new Vector2(targetX + 0.5f, targetY + 0.99f), // Bottom center of target cell
+            Direction.Top => new Vector2(targetX + 0.5f, targetY + 0.01f), // Top center of target cell
+            Direction.Right => new Vector2(targetX + 0.99f, targetY + 0.5f), // Right center of target cell
+            Direction.Left => new Vector2(targetX + 0.01f, targetY + 0.5f), // Left center of target cell
             _ => new Vector2(targetX + 0.5f, targetY + 0.5f)
         };
+
+        dirComp.Direction = DirectionHelpers.GetOppositeDirection(targetConfig.Direction);
 
         position.SetCenterPosition(centerPosition);
 
@@ -77,7 +81,7 @@ public class PortalSystem : System
                 dirComp.Direction = config.Direction;
                 position.Position += DirectionHelpers.GetDirectionalVector(travel, config.Direction);
                 // If reached the edge, trigger portal teleport.
-                if (Math.Abs(remaining - travel) < 0.001f) MoveToTargetWorld(config, position, movement);
+                if (Math.Abs(remaining - travel) < 0.001f) MoveToTargetWorld(config, position, movement, dirComp);
             }
         }
         // For horizontal portals, align on Y then move on X.
@@ -103,7 +107,7 @@ public class PortalSystem : System
                 var travel = Math.Min(deltaDistance, remaining);
                 dirComp.Direction = config.Direction;
                 position.Position += DirectionHelpers.GetDirectionalVector(travel, config.Direction);
-                if (Math.Abs(remaining - travel) < 0.001f) MoveToTargetWorld(config, position, movement);
+                if (Math.Abs(remaining - travel) < 0.001f) MoveToTargetWorld(config, position, movement, dirComp);
             }
         }
     }
