@@ -136,6 +136,8 @@ The caravan moves continually round the traderoute of the 4 planets. Each planet
   - Rikus changed software to not be combat focused anymore
     - Now has sense of humour
     - Often makes jokes about killing people - people aren't sure if Rikus did a good job
+    - Has to be programmed to not shoot to kill strangers
+    - Quest point - shoots person who comes onboard
 
 ## Game Opening Options
 
