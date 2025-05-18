@@ -37,6 +37,7 @@ public class ViewHelpers(BaseGame game, GraphicsDeviceManager graphics)
      */
     private Vector2 ClampCameraPosForGridBounds(Vector2 cameraPos)
     {
+        return cameraPos;
         var (viewportGridWidth, viewportGridHeight) = GetViewportGridSize();
 
         var widthThreshold = viewportGridWidth / 2;

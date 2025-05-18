@@ -158,10 +158,9 @@ public class Renderer
 
     private void RenderScene(SpriteBatch spriteBatch)
     {
-        if (_game.Model.ActiveWorld == World.Asteroid || _game.Model.ActiveWorld == World.Home)
+        if (_game.Model.ActiveWorld == World.Asteroid || _game.Model.ActiveWorld == World.ShipUpstairs || _game.Model.ActiveWorld == World.ShipDownstairs)
         {
             _scrollingBackgroundRenderer.RenderBackground(spriteBatch);
-            _launchParallaxRenderer.Render(spriteBatch);
         }
 
         RenderEntities(spriteBatch, EntityRenderLayer.BehindWorld);

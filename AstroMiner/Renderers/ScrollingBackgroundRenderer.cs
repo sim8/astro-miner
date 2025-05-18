@@ -22,20 +22,20 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
         var percentComplete = shared.GameStateManager.GameTime.TotalGameTime.TotalMilliseconds % AnimationTime /
                               (float)AnimationTime;
 
-        var currentOffset = (int)(RenderedHeight * (1f - percentComplete));
+        var currentOffset = (int)(RenderedWidth * percentComplete);
 
         var numCols = (int)Math.Ceiling(viewportWidth / (double)RenderedWidth) + 1;
         var numRows = (int)Math.Ceiling(viewportHeight / (double)RenderedHeight) + 1;
 
-        var startY = -currentOffset;
+        var startX = -currentOffset;
 
         for (var row = 0; row < numRows; row++)
         {
-            var yPos = startY + row * RenderedHeight;
+            var yPos = row * RenderedHeight;
 
             for (var col = 0; col < numCols; col++)
             {
-                var xPos = col * RenderedWidth;
+                var xPos = startX + col * RenderedWidth;
                 spriteBatch.Draw(
                     shared.Textures["mountains-nice-tiled"],
                     new Rectangle(xPos, yPos, RenderedWidth, RenderedHeight),
