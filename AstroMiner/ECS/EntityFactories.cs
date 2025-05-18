@@ -45,20 +45,21 @@ public class EntityFactories
         return entityId;
     }
 
-    public int CreateMinerEntity(Vector2 position)
+    public int CreateMinerEntity()
     {
         var entityId = _ecs.CreateEntity();
 
         // Add position component
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
         positionComponent.World = World.ShipDownstairs;
-        positionComponent.Position = position;
         positionComponent.WidthPx = GameConfig.MinerBoxSizePx;
         positionComponent.HeightPx = GameConfig.MinerBoxSizePx;
+        positionComponent.SetCenterPosition(new Vector2(33f, 6f));
         positionComponent.IsCollideable = true;
 
         // Add direction component
-        _ecs.AddComponent<DirectionComponent>(entityId);
+        var directionComponent = _ecs.AddComponent<DirectionComponent>(entityId);
+        directionComponent.Direction = Direction.Right;
 
         // Add tag component for identification
         _ecs.AddComponent<MinerTag>(entityId);
@@ -163,7 +164,7 @@ public class EntityFactories
         return entityId;
     }
 
-    public int createRadialLightSourceEntity(World world, Vector2 position)
+    public int CreateWindowLightSourceEntity(World world, Vector2 position)
     {
         var entityId = _ecs.CreateEntity();
 
@@ -178,6 +179,25 @@ public class EntityFactories
         radialLightSource.Tint = Color.White;
         radialLightSource.SizePx = 350;
         radialLightSource.Opacity = 0.7f;
+
+        return entityId;
+    }
+
+    public int CreateCeilingLightSourceEntity(World world, Vector2 position)
+    {
+        var entityId = _ecs.CreateEntity();
+
+        var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
+        positionComponent.World = world;
+        positionComponent.Position = position;
+        positionComponent.WidthPx = 1;
+        positionComponent.HeightPx = 1;
+        positionComponent.IsCollideable = false;
+
+        var radialLightSource = _ecs.AddComponent<RadialLightSourceComponent>(entityId);
+        radialLightSource.Tint = new Color(255, 251, 220);
+        radialLightSource.SizePx = 512;
+        radialLightSource.Opacity = 1f;
 
         return entityId;
     }
