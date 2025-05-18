@@ -18,11 +18,26 @@ public class NewGameManager(BaseGame game)
         game.StateManager.Ecs.SetActiveControllableEntity(playerEntityId);
 
         SetUpNpcs();
+        SetUpStaticEntitiesTEMP();
     }
 
     private void SetUpNpcs()
     {
         game.StateManager.Ecs.Factories.CreateMinExMerchantEntity();
         game.StateManager.Ecs.Factories.CreateRikusEntity();
+    }
+
+    // TODO feels a weird pattern. Do they need to be in the model?
+    private void SetUpStaticEntitiesTEMP()
+    {
+        // Bedroom
+        game.StateManager.Ecs.Factories.createRadialLightSourceEntity(World.ShipDownstairs, new Vector2(13.5f, 1f));
+        game.StateManager.Ecs.Factories.createRadialLightSourceEntity(World.ShipDownstairs, new Vector2(15.95f, 1f));
+        game.StateManager.Ecs.Factories.createRadialLightSourceEntity(World.ShipDownstairs, new Vector2(17.95f, 1f));
+
+        // Corridor
+        game.StateManager.Ecs.Factories.createRadialLightSourceEntity(World.ShipDownstairs, new Vector2(21f, 10f));
+        game.StateManager.Ecs.Factories.createRadialLightSourceEntity(World.ShipDownstairs, new Vector2(15f, 10f));
+        game.StateManager.Ecs.Factories.createRadialLightSourceEntity(World.ShipDownstairs, new Vector2(9f, 10f));
     }
 }

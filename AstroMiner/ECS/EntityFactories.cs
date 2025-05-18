@@ -162,4 +162,23 @@ public class EntityFactories
 
         return entityId;
     }
+
+    public int createRadialLightSourceEntity(World world, Vector2 position)
+    {
+        var entityId = _ecs.CreateEntity();
+
+        var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
+        positionComponent.World = world;
+        positionComponent.Position = position;
+        positionComponent.WidthPx = 1;
+        positionComponent.HeightPx = 1;
+        positionComponent.IsCollideable = false;
+
+        var radialLightSource = _ecs.AddComponent<RadialLightSourceComponent>(entityId);
+        radialLightSource.Tint = Color.White;
+        radialLightSource.SizePx = 350;
+        radialLightSource.Opacity = 0.7f;
+
+        return entityId;
+    }
 }

@@ -73,6 +73,7 @@ public class AstroMinerGame : BaseGame
         LoadTexture("icons");
         LoadTexture("krevik-docks");
         LoadTexture("ship");
+        LoadTexture("ship-shadow-map");
     }
 
     protected override void Update(GameTime gameTime)
