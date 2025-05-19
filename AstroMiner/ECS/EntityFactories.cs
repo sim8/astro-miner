@@ -54,7 +54,7 @@ public class EntityFactories
         positionComponent.World = World.ShipDownstairs;
         positionComponent.WidthPx = GameConfig.MinerBoxSizePx;
         positionComponent.HeightPx = GameConfig.MinerBoxSizePx;
-        positionComponent.SetCenterPosition(new Vector2(33f, 6f));
+        positionComponent.SetCenterPosition(new Vector2(34f, 6f));
         positionComponent.IsCollideable = true;
 
         // Add direction component
@@ -196,7 +196,7 @@ public class EntityFactories
 
         var radialLightSource = _ecs.AddComponent<RadialLightSourceComponent>(entityId);
         radialLightSource.Tint = new Color(255, 251, 220);
-        radialLightSource.SizePx = 512;
+        radialLightSource.SizePx = 256;
         radialLightSource.Opacity = 1f;
 
         return entityId;
