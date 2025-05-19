@@ -6,6 +6,7 @@ using AstroMiner.Renderers.Entities;
 using AstroMiner.Renderers.HomeWorld;
 using AstroMiner.Renderers.StaticWorld;
 using AstroMiner.Renderers.UI;
+using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -147,9 +148,16 @@ public class Renderer
                 var textureComponent = _game.StateManager.Ecs.GetComponent<TextureComponent>(entityId);
                 var positionComponent = _game.StateManager.Ecs.GetComponent<PositionComponent>(entityId);
 
-                var sourceRectangle = new Rectangle(0, 0, positionComponent.WidthPx, positionComponent.HeightPx);
-                var destinationRectangle = _shared.ViewHelpers.GetVisibleRectForObject(positionComponent.Position,
-                    positionComponent.WidthPx, positionComponent.HeightPx);
+                var textureWidth = positionComponent.WidthPx + textureComponent.LeftPaddingPx +
+                                   textureComponent.RightPaddingPx;
+                var textureHeight = positionComponent.HeightPx + textureComponent.TopPaddingPx +
+                                    textureComponent.BottomPaddingPx;
+                var texturePos = positionComponent.Position -
+                                 new Vector2(ViewHelpers.ConvertTexturePxToGridUnits(textureComponent.LeftPaddingPx),
+                                     ViewHelpers.ConvertTexturePxToGridUnits(textureComponent.TopPaddingPx));
+                var destinationRectangle = _shared.ViewHelpers.GetVisibleRectForObject(texturePos,
+                    textureWidth, textureHeight);
+                var sourceRectangle = new Rectangle(0, 0, textureWidth, textureHeight);
                 spriteBatch.Draw(_shared.Textures[textureComponent.TextureName], destinationRectangle, sourceRectangle,
                     Color.White);
             }
@@ -158,10 +166,8 @@ public class Renderer
 
     private void RenderScene(SpriteBatch spriteBatch)
     {
-        if (_game.Model.ActiveWorld == World.Asteroid || _game.Model.ActiveWorld == World.ShipUpstairs || _game.Model.ActiveWorld == World.ShipDownstairs)
-        {
-            _scrollingBackgroundRenderer.RenderBackground(spriteBatch);
-        }
+        if (_game.Model.ActiveWorld == World.Asteroid || _game.Model.ActiveWorld == World.ShipUpstairs ||
+            _game.Model.ActiveWorld == World.ShipDownstairs) _scrollingBackgroundRenderer.RenderBackground(spriteBatch);
 
         RenderEntities(spriteBatch, EntityRenderLayer.BehindWorld);
 

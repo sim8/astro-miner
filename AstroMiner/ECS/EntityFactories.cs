@@ -201,4 +201,31 @@ public class EntityFactories
 
         return entityId;
     }
+
+    public int CreateLaunchConsoleEntity()
+    {
+        var entityId = _ecs.CreateEntity();
+
+        var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
+        positionComponent.World = World.ShipDownstairs;
+        positionComponent.Position = new Vector2(29, 5);
+        positionComponent.WidthPx = 64;
+        positionComponent.HeightPx = 64;
+        positionComponent.IsCollideable = true;
+
+        var radialLightSource = _ecs.AddComponent<RadialLightSourceComponent>(entityId);
+        radialLightSource.Tint = new Color(192, 210, 216);
+        radialLightSource.SizePx = 128;
+        radialLightSource.Opacity = 1f;
+
+        var interactiveComponent = _ecs.AddComponent<InteractiveComponent>(entityId);
+        interactiveComponent.InteractableDistance = 1.5f;
+
+        var textureComponent = _ecs.AddComponent<TextureComponent>(entityId);
+        textureComponent.TextureName = "launch-console";
+        textureComponent.TopPaddingPx = 10;
+        return entityId;
+    }
+
+
 }

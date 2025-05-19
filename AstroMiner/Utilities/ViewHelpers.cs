@@ -3,6 +3,7 @@ using AstroMiner.Definitions;
 using AstroMiner.ECS;
 using AstroMiner.ECS.Components;
 using Microsoft.Xna.Framework;
+using static AstroMiner.Definitions.GameConfig;
 
 namespace AstroMiner.Utilities;
 
@@ -134,17 +135,22 @@ public class ViewHelpers(BaseGame game, GraphicsDeviceManager graphics)
 
     private float ConvertGridUnitsToVisiblePx(float gridUnits, float parallaxLayer = 1f)
     {
-        return gridUnits * GameConfig.CellTextureSizePx * game.StateManager.Camera.ScaleMultiplier;
+        return gridUnits * CellTextureSizePx * game.StateManager.Camera.ScaleMultiplier;
     }
 
     private float ConvertVisiblePxToGridUnits(float visiblePx)
     {
-        return visiblePx / (GameConfig.CellTextureSizePx * game.StateManager.Camera.ScaleMultiplier);
+        return visiblePx / (CellTextureSizePx * game.StateManager.Camera.ScaleMultiplier);
     }
 
     private float ConvertTexturePxToVisiblePx(int numToScale)
     {
         return numToScale * game.StateManager.Camera.ScaleMultiplier;
+    }
+
+    public static float ConvertTexturePxToGridUnits(int texturePx)
+    {
+        return (float)texturePx / CellTextureSizePx;
     }
 
     public Rectangle GetVisibleRectForObject(Vector2 objectPos, int textureWidth, int textureHeight,
@@ -172,7 +178,7 @@ public class ViewHelpers(BaseGame game, GraphicsDeviceManager graphics)
 
     public static (int, int) GridPosToTexturePx(Vector2 gridPos)
     {
-        return ((int)(gridPos.X * GameConfig.CellTextureSizePx), (int)(gridPos.Y * GameConfig.CellTextureSizePx));
+        return ((int)(gridPos.X * CellTextureSizePx), (int)(gridPos.Y * CellTextureSizePx));
     }
 
     public static int ToXorYCoordinate(float fl)
@@ -187,7 +193,7 @@ public class ViewHelpers(BaseGame game, GraphicsDeviceManager graphics)
 
     public static bool IsValidGridPosition(int x, int y)
     {
-        return x >= 0 && x < GameConfig.GridSize && y >= 0 && y < GameConfig.GridSize;
+        return x >= 0 && x < GridSize && y >= 0 && y < GridSize;
     }
 
     public static Color GetEntityTintColor(Ecs ecs, int entityId)
@@ -245,7 +251,7 @@ public class ViewHelpers(BaseGame game, GraphicsDeviceManager graphics)
         }
 
         var flashFrame =
-            (int)(healthComponent.TotalDamageAnimationTimeMs / (GameConfig.DamageAnimationTimeMs / 8.0f));
+            (int)(healthComponent.TotalDamageAnimationTimeMs / (DamageAnimationTimeMs / 8.0f));
         return flashFrame % 2 == 0 ? Color.Red : Color.White;
     }
 
@@ -263,13 +269,13 @@ public class ViewHelpers(BaseGame game, GraphicsDeviceManager graphics)
         return (
             Math.Max(0, startCol),
             Math.Max(0, startRow),
-            Math.Min(GameConfig.GridSize, endCol),
-            Math.Min(GameConfig.GridSize, endRow)
+            Math.Min(GridSize, endCol),
+            Math.Min(GridSize, endRow)
         );
     }
 
     public static Vector2 AbsoluteXyPxToGridPos(int xPx, int yPx)
     {
-        return new Vector2(xPx / (float)GameConfig.CellTextureSizePx, yPx / (float)GameConfig.CellTextureSizePx);
+        return new Vector2(xPx / (float)CellTextureSizePx, yPx / (float)CellTextureSizePx);
     }
 }
