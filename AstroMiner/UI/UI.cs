@@ -7,6 +7,7 @@ public class UIState
     public bool IsInMainMenu { get; set; } = true;
     public bool IsDebugMenuOpen { get; set; } = false;
     public bool IsInventoryOpen { get; set; } = false;
+    public bool IsLaunchConsoleOpen { get; set; } = false;
 
     // TODO all very temporary. Need a proper way of tracking dialog
     public bool IsInDialog { get; set; } = false;
@@ -69,16 +70,16 @@ public class UI(BaseGame game)
                         new UIDialog(game)
                     }
                     : [],
-                .. !game.StateManager.Ui.State.IsInDialog && game.StateManager.Ui.State.IsInventoryOpen
+                .. game.StateManager.Ui.State.IsInventoryOpen
                     ? new UIElement[]
                     {
                         new UIInventory(game)
                     }
                     : [],
-                .. !game.StateManager.Ui.State.IsInDialog && !game.StateManager.Ui.State.IsInventoryOpen
+                .. game.StateManager.Ui.State.IsLaunchConsoleOpen
                     ? new UIElement[]
                     {
-                        new UIInventoryFooter(game)
+                        new UILaunchConsole(game)
                     }
                     : [],
                 new UIElement(game)

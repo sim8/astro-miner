@@ -224,6 +224,8 @@ public class EntityFactories
         var textureComponent = _ecs.AddComponent<TextureComponent>(entityId);
         textureComponent.TextureName = "launch-console";
         textureComponent.TopPaddingPx = 10;
+
+        _ecs.AddComponent<LaunchConsoleTag>(entityId);
         return entityId;
     }
 

@@ -29,7 +29,17 @@ public class InteractionSystem : System
 
     private void HandleInteraction()
     {
-        if (InteractableEntityId == Ecs.MinerEntityId) Ecs.SetActiveControllableEntity(Ecs.MinerEntityId.Value);
+        if (InteractableEntityId == Ecs.MinerEntityId)
+        {
+            Ecs.SetActiveControllableEntity(Ecs.MinerEntityId.Value);
+            return;
+        }
+
+        if (Ecs.HasComponent<LaunchConsoleTag>(InteractableEntityId))
+        {
+            game.StateManager.Ui.State.IsLaunchConsoleOpen = true;
+            return;
+        }
 
         var npc = Ecs.GetComponent<NpcComponent>(InteractableEntityId);
 

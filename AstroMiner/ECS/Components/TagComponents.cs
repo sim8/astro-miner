@@ -8,4 +8,5 @@ namespace AstroMiner.ECS.Components;
 public class DynamiteTag : Component { }
 public class PlayerTag : Component { }
 public class MinerTag : Component { }
-public class ExplosionTag : Component { } 
+public class ExplosionTag : Component { }
+public class LaunchConsoleTag : Component { }

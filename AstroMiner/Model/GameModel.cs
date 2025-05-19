@@ -49,6 +49,7 @@ public class ComponentsByEntityId
     public Dictionary<int, PlayerTag> PlayerTag { get; set; }
     public Dictionary<int, MinerTag> MinerTag { get; set; }
     public Dictionary<int, ExplosionTag> ExplosionTag { get; set; }
+    public Dictionary<int, LaunchConsoleTag> LaunchConsoleTag { get; set; }
     public Dictionary<int, NpcComponent> Npc { get; set; }
     public Dictionary<int, InteractiveComponent> Interactive { get; set; }
 }
@@ -144,6 +145,7 @@ public static class GameModelHelpers
                     PlayerTag = new Dictionary<int, PlayerTag>(),
                     MinerTag = new Dictionary<int, MinerTag>(),
                     ExplosionTag = new Dictionary<int, ExplosionTag>(),
+                    LaunchConsoleTag = new Dictionary<int, LaunchConsoleTag>(),
                     Npc = new Dictionary<int, NpcComponent>(),
                     Interactive = new Dictionary<int, InteractiveComponent>()
                 }
