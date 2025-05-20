@@ -109,7 +109,8 @@ public class GameStateManager(BaseGame game)
             CloudManager.Update(gameTime);
             Ecs.Update(gameTime, activeControls);
 
-            if (activeControls.Mining.Contains(MiningControls.OpenInventory))
+            // TODO move into UIState Updater?
+            if (activeControls.Global.Contains(GlobalControls.ToggleMenu))
                 Ui.State.IsInventoryOpen = !Ui.State.IsInventoryOpen;
         }
 

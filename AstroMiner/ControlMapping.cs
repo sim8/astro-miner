@@ -22,36 +22,49 @@ public enum MiningControls
     // Miner-only
     UseGrapple,
 
-    OpenInventory,
     NewGameOrReturnToBase, // TODO factor out
     SaveGame // TEMP
 }
 
+public enum GlobalControls
+{
+    ToggleMenu
+}
+
 /// <summary>
-/// Contains all active control sets that can be passed to game systems
+///     Contains all active control sets that can be passed to game systems
 /// </summary>
 public class ActiveControls
 {
     public HashSet<MiningControls> Mining { get; set; } = new();
-    // Add more control sets as needed (e.g. MenuControls, InventoryControls, etc.)
+    public HashSet<GlobalControls> Global { get; set; } = new();
 }
 
 /// <summary>
-/// Central manager for all game controls
+///     Central manager for all game controls
 /// </summary>
 public class ControlManager
 {
-    private readonly ControlMapper<MiningControls> _miningControlMapper = new();
     private readonly ActiveControls _activeControls = new();
-    private bool _miningControlsEnabled = true;
+    private readonly BaseGame _baseGame;
+    private readonly ControlMapper<GlobalControls> _globalControlMapper = new();
+    private readonly ControlMapper<MiningControls> _miningControlMapper = new();
 
-    public ControlManager()
+    public ControlManager(BaseGame game)
     {
+        _baseGame = game;
         InitializeControls();
     }
 
+    // TODO abstract these to e.g. State.InGameScreen
+    private bool MiningControlsEnabled => !_baseGame.StateManager.Ui.State.IsInventoryOpen &&
+                                          !_baseGame.StateManager.Ui.State.IsLaunchConsoleOpen;
+
     private void InitializeControls()
     {
+        // Global controls
+        _globalControlMapper.AddMapping(GlobalControls.ToggleMenu, Keys.Tab, Buttons.Back, false);
+
         // Mining controls
         _miningControlMapper.AddMapping(MiningControls.MoveUp, Keys.W, Buttons.LeftThumbstickUp, true);
         _miningControlMapper.AddMapping(MiningControls.MoveRight, Keys.D, Buttons.LeftThumbstickRight, true);
@@ -64,34 +77,18 @@ public class ControlManager
         _miningControlMapper.AddMapping(MiningControls.UseGrapple, Keys.G, Buttons.LeftTrigger, true);
         _miningControlMapper.AddMapping(MiningControls.NewGameOrReturnToBase, Keys.N, Buttons.Start, false);
         _miningControlMapper.AddMapping(MiningControls.SaveGame, Keys.B, Buttons.Back, false);
-        _miningControlMapper.AddMapping(MiningControls.OpenInventory, Keys.Tab, Buttons.Back, false);
-
-        // You can add additional control sets here as needed
     }
 
     /// <summary>
-    /// Enables or disables mining controls
-    /// </summary>
-    public void EnableMiningControls(bool enabled)
-    {
-        _miningControlsEnabled = enabled;
-    }
-
-    /// <summary>
-    /// Updates all control states based on current input and returns active controls
+    ///     Updates all control states based on current input and returns active controls
     /// </summary>
     public ActiveControls Update(KeyboardState keyboardState, GamePadState gamePadState)
     {
-        if (_miningControlsEnabled)
-        {
-            _activeControls.Mining = _miningControlMapper.GetActiveControls(keyboardState, gamePadState);
-        }
-        else
-        {
-            _activeControls.Mining = new HashSet<MiningControls>();
-        }
+        _activeControls.Global = _globalControlMapper.GetActiveControls(keyboardState, gamePadState);
 
-        // Update other control sets here as they are added
+        _activeControls.Mining = MiningControlsEnabled
+            ? _miningControlMapper.GetActiveControls(keyboardState, gamePadState)
+            : new HashSet<MiningControls>();
 
         return _activeControls;
     }

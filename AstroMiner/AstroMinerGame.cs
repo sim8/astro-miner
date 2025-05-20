@@ -7,13 +7,14 @@ namespace AstroMiner;
 
 public class AstroMinerGame : BaseGame
 {
-    private readonly ControlManager _controlManager = new();
+    private ControlManager _controlManager;
     private MouseState _prevMouseState;
 
     private Renderer _renderer;
 
     protected override void Initialize()
     {
+        _controlManager = new ControlManager(this);
         StateManager = new GameStateManager(this);
         StateManager.Initialize();
         _renderer = new Renderer(this);
@@ -69,16 +70,6 @@ public class AstroMinerGame : BaseGame
     {
         var keyboardState = Keyboard.GetState();
         var gamePadState = GamePad.GetState(PlayerIndex.One);
-
-        // Update control state based on UI state
-        if (StateManager.Ui.State.IsInMainMenu)
-        {
-            _controlManager.EnableMiningControls(false);
-        }
-        else
-        {
-            _controlManager.EnableMiningControls(true);
-        }
 
         var activeControls = _controlManager.Update(keyboardState, gamePadState);
 
