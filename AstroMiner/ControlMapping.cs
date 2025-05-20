@@ -4,6 +4,29 @@ using Microsoft.Xna.Framework.Input;
 
 namespace AstroMiner;
 
+public enum MiningControls
+{
+    // Movement
+    MoveUp,
+    MoveRight,
+    MoveDown,
+    MoveLeft,
+
+    Drill,
+    ExitVehicle,
+
+    // Player-only
+    UseItem,
+    Interact,
+
+    // Miner-only
+    UseGrapple,
+
+    OpenInventory,
+    NewGameOrReturnToBase, // TODO factor out
+    SaveGame // TEMP
+}
+
 /// <summary>
 /// Contains all active control sets that can be passed to game systems
 /// </summary>
@@ -41,7 +64,7 @@ public class ControlManager
         _miningControlMapper.AddMapping(MiningControls.UseGrapple, Keys.G, Buttons.LeftTrigger, true);
         _miningControlMapper.AddMapping(MiningControls.NewGameOrReturnToBase, Keys.N, Buttons.Start, false);
         _miningControlMapper.AddMapping(MiningControls.SaveGame, Keys.B, Buttons.Back, false);
-        _miningControlMapper.AddMapping(MiningControls.ToggleInventory, Keys.Tab, Buttons.Back, false);
+        _miningControlMapper.AddMapping(MiningControls.OpenInventory, Keys.Tab, Buttons.Back, false);
 
         // You can add additional control sets here as needed
     }

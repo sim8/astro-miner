@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using Microsoft.Xna.Framework;
@@ -23,12 +22,12 @@ public class DynamiteSystem : System
             Direction.Top);
     }
 
-    public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
+    public override void Update(GameTime gameTime, ActiveControls activeControls)
 
     {
         if (game.Model.ActiveWorld != World.Asteroid) return;
 
-        if (!game.StateManager.AsteroidWorld.IsInMiner && activeControls.Contains(MiningControls.UseItem) &&
+        if (!game.StateManager.AsteroidWorld.IsInMiner && activeControls.Mining.Contains(MiningControls.UseItem) &&
             game.StateManager.Inventory.SelectedItemType == ItemType.Dynamite)
             PlaceDynamite();
         foreach (var fuseComponent in Ecs.GetAllComponents<FuseComponent>())

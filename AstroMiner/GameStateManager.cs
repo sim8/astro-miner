@@ -9,29 +9,6 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
 
-public enum MiningControls
-{
-    // Movement
-    MoveUp,
-    MoveRight,
-    MoveDown,
-    MoveLeft,
-
-    Drill,
-    ExitVehicle,
-
-    // Player-only
-    UseItem,
-    Interact,
-
-    // Miner-only
-    UseGrapple,
-
-    ToggleInventory,
-    NewGameOrReturnToBase, // TODO factor out
-    SaveGame // TEMP
-}
-
 public enum Direction
 {
     Top,
@@ -121,25 +98,24 @@ public class GameStateManager(BaseGame game)
         return game.Model.SavedTotalPlaytimeMs + (long)GameTime.TotalGameTime.TotalMilliseconds;
     }
 
-    public void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
+    public void Update(ActiveControls activeControls, GameTime gameTime)
     {
-        var controlsToUse = FreezeControls ? EmptyControls : activeMiningControls;
         GameTime = gameTime;
 
         if (!Ui.State.IsInMainMenu)
         {
-            ActiveWorldState.Update(controlsToUse, gameTime);
-            Camera.Update(gameTime, controlsToUse);
+            ActiveWorldState.Update(activeControls, gameTime);
+            Camera.Update(gameTime, activeControls);
             CloudManager.Update(gameTime);
-            Ecs.Update(gameTime, controlsToUse);
+            Ecs.Update(gameTime, activeControls);
 
-            if (activeMiningControls.Contains(MiningControls.ToggleInventory))
+            if (activeControls.Mining.Contains(MiningControls.OpenInventory))
                 Ui.State.IsInventoryOpen = !Ui.State.IsInventoryOpen;
         }
 
 
         Ui.Update(gameTime);
 
-        if (activeMiningControls.Contains(MiningControls.SaveGame)) SaveGameTEMP();
+        if (activeControls.Mining.Contains(MiningControls.SaveGame)) SaveGameTEMP();
     }
 }

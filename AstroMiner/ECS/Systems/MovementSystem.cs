@@ -95,9 +95,9 @@ public class MovementSystem : System
         var bottomRightCell = ViewHelpers.ToGridPosition(position + new Vector2(gridWidth, gridHeight));
 
         for (var x = topLeftCell.x; x <= bottomRightCell.x; x++)
-        for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
-            if (game.StateManager.ActiveWorldState.CellIsCollideable(x, y))
-                return true;
+            for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
+                if (game.StateManager.ActiveWorldState.CellIsCollideable(x, y))
+                    return true;
         return false;
     }
 
@@ -135,9 +135,9 @@ public class MovementSystem : System
         return true;
     }
 
-    public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
+    public override void Update(GameTime gameTime, ActiveControls activeControls)
     {
-        var pressedDirection = GetDirectionFromActiveControls(activeControls);
+        var pressedDirection = GetDirectionFromActiveControls(activeControls.Mining);
 
         foreach (var movementComponent in Ecs.GetAllComponents<MovementComponent>())
         {

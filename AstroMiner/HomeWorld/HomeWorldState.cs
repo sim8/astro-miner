@@ -64,12 +64,12 @@ public class HomeWorldState(BaseGame game) : BaseWorldState(game)
         game.StateManager.Ecs.RemoveComponent<DirectionalLightSourceComponent>(playerEntityId);
     }
 
-    public override void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
+    public override void Update(ActiveControls activeControls, GameTime gameTime)
     {
-        if (activeMiningControls.Contains(MiningControls.NewGameOrReturnToBase))
+        if (activeControls.Mining.Contains(MiningControls.NewGameOrReturnToBase))
             game.StateManager.SetActiveWorldAndInitialize(World.Asteroid);
 
-        base.Update(activeMiningControls, gameTime);
+        base.Update(activeControls, gameTime);
     }
 
     public override bool CellIsCollideable(int x, int y)

@@ -9,7 +9,7 @@ public abstract class BaseWorldState(BaseGame g)
     {
     }
 
-    public virtual void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
+    public virtual void Update(ActiveControls activeControls, GameTime gameTime)
     {
     }
 

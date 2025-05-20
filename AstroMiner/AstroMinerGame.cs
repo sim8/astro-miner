@@ -82,7 +82,7 @@ public class AstroMinerGame : BaseGame
 
         var activeControls = _controlManager.Update(keyboardState, gamePadState);
 
-        StateManager.Update(activeControls.Mining, gameTime);
+        StateManager.Update(activeControls, gameTime);
 
         var mouseState = Mouse.GetState();
         if (mouseState.LeftButton == ButtonState.Pressed && _prevMouseState.LeftButton == ButtonState.Released)

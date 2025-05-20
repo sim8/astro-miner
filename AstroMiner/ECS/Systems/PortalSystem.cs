@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using AstroMiner.Utilities;
@@ -13,7 +12,8 @@ public class PortalSystem : System
     {
     }
 
-    private void MoveToTargetWorld(PortalConfig config, PositionComponent position, MovementComponent movement, DirectionComponent dirComp)
+    private void MoveToTargetWorld(PortalConfig config, PositionComponent position, MovementComponent movement,
+        DirectionComponent dirComp)
     {
         position.World = config.TargetWorld;
         movement.PortalStatus = PortalStatus.Arriving;
@@ -130,7 +130,7 @@ public class PortalSystem : System
         }
     }
 
-    public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
+    public override void Update(GameTime gameTime, ActiveControls activeControls)
     {
         foreach (var movement in Ecs.GetAllComponents<MovementComponent>())
         {

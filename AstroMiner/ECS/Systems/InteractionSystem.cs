@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using AstroMiner.ECS.Components;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
@@ -13,10 +12,10 @@ public class InteractionSystem : System
 
     public int InteractableEntityId { get; private set; } = -1;
 
-    public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
+    public override void Update(GameTime gameTime, ActiveControls activeControls)
     {
         CalculateInteractableEntityId();
-        if (activeControls.Contains(MiningControls.Interact))
+        if (activeControls.Mining.Contains(MiningControls.Interact))
         {
             if (InteractableEntityId != -1)
                 HandleInteraction();

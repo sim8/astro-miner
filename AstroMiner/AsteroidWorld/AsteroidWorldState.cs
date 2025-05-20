@@ -121,11 +121,11 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
     }
 
 
-    public override void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
+    public override void Update(ActiveControls activeControls, GameTime gameTime)
     {
         if (game.StateManager.Ecs.ActiveControllableEntityIsDead ||
             game.StateManager.Ecs.ActiveControllableEntityIsOffAsteroid)
-            if (activeMiningControls.Contains(MiningControls.NewGameOrReturnToBase))
+            if (activeControls.Mining.Contains(MiningControls.NewGameOrReturnToBase))
             {
                 game.StateManager.SetActiveWorldAndInitialize(World.Home);
                 game.StateManager.HomeWorld.ResetEntities();
@@ -137,7 +137,7 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
             return;
         }
 
-        base.Update(activeMiningControls, gameTime);
+        base.Update(activeControls, gameTime);
 
         foreach (var cell in Grid._activeExplosiveRockCells) cell.Value.Update(gameTime);
         foreach (var cell in Grid._activeCollapsingFloorCells.Values.ToList()) cell.Update(gameTime);

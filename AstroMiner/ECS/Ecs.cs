@@ -78,17 +78,17 @@ public class Ecs
     public int? PlayerEntityId => _game.Model.Ecs.PlayerEntityId;
     public int? MinerEntityId => _game.Model.Ecs.MinerEntityId;
 
-    public void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
+    public void Update(GameTime gameTime, ActiveControls activeControls)
     {
-        DynamiteSystem.Update(gameTime, activeMiningControls);
-        ExplosionSystem.Update(gameTime, activeMiningControls);
-        MovementSystem.Update(gameTime, activeMiningControls);
-        PortalSystem.Update(gameTime, activeMiningControls);
-        HealthSystem.Update(gameTime, activeMiningControls);
-        FallOrLavaDamageSystem.Update(gameTime, activeMiningControls);
-        MiningSystem.Update(gameTime, activeMiningControls);
-        GrappleSystem.Update(gameTime, activeMiningControls);
-        InteractionSystem.Update(gameTime, activeMiningControls);
+        DynamiteSystem.Update(gameTime, activeControls);
+        ExplosionSystem.Update(gameTime, activeControls);
+        MovementSystem.Update(gameTime, activeControls);
+        PortalSystem.Update(gameTime, activeControls);
+        HealthSystem.Update(gameTime, activeControls);
+        FallOrLavaDamageSystem.Update(gameTime, activeControls);
+        MiningSystem.Update(gameTime, activeControls);
+        GrappleSystem.Update(gameTime, activeControls);
+        InteractionSystem.Update(gameTime, activeControls);
         CalculateEntityIdsInActiveWorldSortedByDistance();
     }
 

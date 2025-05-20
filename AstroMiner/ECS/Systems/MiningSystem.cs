@@ -19,14 +19,14 @@ public class MiningSystem : System
     //     _drillingMs = 0;
     // }
 
-    public override void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
+    public override void Update(GameTime gameTime, ActiveControls activeControls)
     {
         var miningComponent = Ecs.GetComponent<MiningComponent>(Ecs.ActiveControllableEntityId.Value);
 
         if (miningComponent == null) return;
 
-        if ((game.StateManager.AsteroidWorld.IsInMiner && activeMiningControls.Contains(MiningControls.Drill)) ||
-            (!game.StateManager.AsteroidWorld.IsInMiner && activeMiningControls.Contains(MiningControls.UseItem) &&
+        if ((game.StateManager.AsteroidWorld.IsInMiner && activeControls.Mining.Contains(MiningControls.Drill)) ||
+            (!game.StateManager.AsteroidWorld.IsInMiner && activeControls.Mining.Contains(MiningControls.UseItem) &&
              game.StateManager.Inventory.SelectedItemType == ItemType.Drill))
             UseDrill(gameTime, miningComponent);
         else

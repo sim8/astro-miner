@@ -49,7 +49,7 @@ public class CameraState
         return zoom;
     }
 
-    public void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
+    public void Update(GameTime gameTime, ActiveControls activeControls)
     {
         // Check if target scale changed (e.g., player switched from miner to player or vice versa)
         var currentTarget = BaseScaleMultiplier;

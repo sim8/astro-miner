@@ -87,7 +87,7 @@ public class ExplosionSystem : System
         return cells;
     }
 
-    public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
+    public override void Update(GameTime gameTime, ActiveControls activeControls)
     {
         if (game.Model.ActiveWorld != World.Asteroid) return;
 
