@@ -1,5 +1,3 @@
-using Microsoft.Xna.Framework;
-
 namespace AstroMiner.UI;
 
 public class UIScreen : UIElement
