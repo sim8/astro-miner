@@ -1,3 +1,4 @@
+using AstroMiner.Definitions;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner.UI;
@@ -37,7 +38,7 @@ public class UILaunchConsole : UIScreen
                                 Scale = 3,
                                 OnClick = () =>
                                 {
-                                    // game.StateManager.NewGame();
+                                    game.StateManager.SetActiveWorldAndInitialize(World.Asteroid);
                                 }
                             },
                             new UIElement(game)
