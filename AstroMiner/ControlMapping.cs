@@ -58,7 +58,8 @@ public class ControlManager
 
     // TODO abstract these to e.g. State.InGameScreen
     private bool MiningControlsEnabled => !_baseGame.StateManager.Ui.State.IsInventoryOpen &&
-                                          !_baseGame.StateManager.Ui.State.IsLaunchConsoleOpen;
+                                          !_baseGame.StateManager.Ui.State.IsLaunchConsoleOpen &&
+                                          !_baseGame.StateManager.TransitionManager.IsTransitioning;
 
     private void InitializeControls()
     {

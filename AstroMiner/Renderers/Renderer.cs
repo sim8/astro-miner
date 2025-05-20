@@ -107,8 +107,15 @@ public class Renderer
             spriteBatch.End();
         }
 
-        // Lastly, draw UI
+        // Lastly, draw UI / overlays
         spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
+
+        if (_game.StateManager.TransitionManager.Opacity > 0)
+        {
+            var (viewportWidth, viewportHeight) = _shared.ViewHelpers.GetViewportSize();
+            spriteBatch.Draw(_shared.Textures["white"], new Rectangle(0, 0, viewportWidth, viewportHeight),
+                Colors.DarkBlue * _game.StateManager.TransitionManager.Opacity);
+        }
 
         if (!_game.StateManager.Ui.State.IsInMainMenu) _userInterfaceRenderer.RenderUserInterface(spriteBatch);
         _uiRenderer.Render(spriteBatch);

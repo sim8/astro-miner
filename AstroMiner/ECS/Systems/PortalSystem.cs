@@ -37,7 +37,10 @@ public class PortalSystem : System
 
         // Only change active world if this entity is the player.
         if (position.EntityId == game.Model.Ecs.ActiveControllableEntityId)
+        {
             game.StateManager.SetActiveWorldAndInitialize(config.TargetWorld);
+            game.StateManager.TransitionManager.FadeIn();
+        }
     }
 
     private void MoveToDeparturePoint(MovementComponent movement, PositionComponent position,
@@ -158,6 +161,7 @@ public class PortalSystem : System
             {
                 movement.PortalStatus = PortalStatus.Departing;
                 movement.CurrentSpeed = GameConfig.Speeds.Walking;
+                game.StateManager.TransitionManager.FadeOut();
             }
         }
     }

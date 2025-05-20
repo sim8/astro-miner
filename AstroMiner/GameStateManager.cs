@@ -28,9 +28,8 @@ public class GameStateManager(BaseGame game)
     public HomeWorldState HomeWorld;
     public Inventory Inventory;
     public StaticWorldState StaticWorld;
+    public TransitionManager TransitionManager;
     public UI.UI Ui;
-
-    public bool FreezeControls { get; set; }
 
     public Ecs Ecs { get; private set; }
     public GameTime GameTime { get; private set; }
@@ -63,6 +62,7 @@ public class GameStateManager(BaseGame game)
         HomeWorld = new HomeWorldState(game);
         StaticWorld = new StaticWorldState(game);
         CloudManager = new CloudManager(game);
+        TransitionManager = new TransitionManager(game);
         Ecs = new Ecs(game);
         Ui = new UI.UI(game);
         _newGameManager = new NewGameManager(game);
@@ -107,6 +107,7 @@ public class GameStateManager(BaseGame game)
             ActiveWorldState.Update(activeControls, gameTime);
             Camera.Update(gameTime, activeControls);
             CloudManager.Update(gameTime);
+            TransitionManager.Update(gameTime);
             Ecs.Update(gameTime, activeControls);
 
             // TODO move into UIState Updater?
