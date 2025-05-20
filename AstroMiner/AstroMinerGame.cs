@@ -7,7 +7,7 @@ namespace AstroMiner;
 
 public class AstroMinerGame : BaseGame
 {
-    private readonly ControlMapper<MiningControls> _miningControlMapper = new();
+    private readonly ControlManager _controlManager = new();
     private MouseState _prevMouseState;
 
     private Renderer _renderer;
@@ -18,24 +18,12 @@ public class AstroMinerGame : BaseGame
         StateManager.Initialize();
         _renderer = new Renderer(this);
         Window.ClientSizeChanged += _renderer.HandleWindowResize;
-        InitializeControls();
         base.Initialize();
     }
 
     protected override void InitializeControls()
     {
-        _miningControlMapper.AddMapping(MiningControls.MoveUp, Keys.W, Buttons.LeftThumbstickUp, true);
-        _miningControlMapper.AddMapping(MiningControls.MoveRight, Keys.D, Buttons.LeftThumbstickRight, true);
-        _miningControlMapper.AddMapping(MiningControls.MoveDown, Keys.S, Buttons.LeftThumbstickDown, true);
-        _miningControlMapper.AddMapping(MiningControls.MoveLeft, Keys.A, Buttons.LeftThumbstickLeft, true);
-        _miningControlMapper.AddMapping(MiningControls.Drill, Keys.Space, Buttons.RightTrigger, true);
-        _miningControlMapper.AddMapping(MiningControls.UseItem, Keys.Space, Buttons.RightTrigger, true);
-        _miningControlMapper.AddMapping(MiningControls.Interact, Keys.E, Buttons.Y, false);
-        _miningControlMapper.AddMapping(MiningControls.ExitVehicle, Keys.E, Buttons.Y, false);
-        _miningControlMapper.AddMapping(MiningControls.UseGrapple, Keys.G, Buttons.LeftTrigger, true);
-        _miningControlMapper.AddMapping(MiningControls.NewGameOrReturnToBase, Keys.N, Buttons.Start, false);
-        _miningControlMapper.AddMapping(MiningControls.SaveGame, Keys.B, Buttons.Back, false); // TEMP
-        _miningControlMapper.AddMapping(MiningControls.ToggleInventory, Keys.Tab, Buttons.Back, false);
+        // Control initialization moved to ControlManager
     }
 
     protected override void LoadContent()
@@ -82,9 +70,19 @@ public class AstroMinerGame : BaseGame
         var keyboardState = Keyboard.GetState();
         var gamePadState = GamePad.GetState(PlayerIndex.One);
 
-        var activeMiningControls = _miningControlMapper.GetActiveControls(keyboardState, gamePadState);
+        // Update control state based on UI state
+        if (StateManager.Ui.State.IsInMainMenu)
+        {
+            _controlManager.EnableMiningControls(false);
+        }
+        else
+        {
+            _controlManager.EnableMiningControls(true);
+        }
 
-        StateManager.Update(activeMiningControls, gameTime);
+        var activeControls = _controlManager.Update(keyboardState, gamePadState);
+
+        StateManager.Update(activeControls.Mining, gameTime);
 
         var mouseState = Mouse.GetState();
         if (mouseState.LeftButton == ButtonState.Pressed && _prevMouseState.LeftButton == ButtonState.Released)

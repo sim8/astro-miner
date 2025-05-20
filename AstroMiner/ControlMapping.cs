@@ -4,6 +4,76 @@ using Microsoft.Xna.Framework.Input;
 
 namespace AstroMiner;
 
+/// <summary>
+/// Contains all active control sets that can be passed to game systems
+/// </summary>
+public class ActiveControls
+{
+    public HashSet<MiningControls> Mining { get; set; } = new();
+    // Add more control sets as needed (e.g. MenuControls, InventoryControls, etc.)
+}
+
+/// <summary>
+/// Central manager for all game controls
+/// </summary>
+public class ControlManager
+{
+    private readonly ControlMapper<MiningControls> _miningControlMapper = new();
+    private readonly ActiveControls _activeControls = new();
+    private bool _miningControlsEnabled = true;
+
+    public ControlManager()
+    {
+        InitializeControls();
+    }
+
+    private void InitializeControls()
+    {
+        // Mining controls
+        _miningControlMapper.AddMapping(MiningControls.MoveUp, Keys.W, Buttons.LeftThumbstickUp, true);
+        _miningControlMapper.AddMapping(MiningControls.MoveRight, Keys.D, Buttons.LeftThumbstickRight, true);
+        _miningControlMapper.AddMapping(MiningControls.MoveDown, Keys.S, Buttons.LeftThumbstickDown, true);
+        _miningControlMapper.AddMapping(MiningControls.MoveLeft, Keys.A, Buttons.LeftThumbstickLeft, true);
+        _miningControlMapper.AddMapping(MiningControls.Drill, Keys.Space, Buttons.RightTrigger, true);
+        _miningControlMapper.AddMapping(MiningControls.UseItem, Keys.Space, Buttons.RightTrigger, true);
+        _miningControlMapper.AddMapping(MiningControls.Interact, Keys.E, Buttons.Y, false);
+        _miningControlMapper.AddMapping(MiningControls.ExitVehicle, Keys.E, Buttons.Y, false);
+        _miningControlMapper.AddMapping(MiningControls.UseGrapple, Keys.G, Buttons.LeftTrigger, true);
+        _miningControlMapper.AddMapping(MiningControls.NewGameOrReturnToBase, Keys.N, Buttons.Start, false);
+        _miningControlMapper.AddMapping(MiningControls.SaveGame, Keys.B, Buttons.Back, false);
+        _miningControlMapper.AddMapping(MiningControls.ToggleInventory, Keys.Tab, Buttons.Back, false);
+
+        // You can add additional control sets here as needed
+    }
+
+    /// <summary>
+    /// Enables or disables mining controls
+    /// </summary>
+    public void EnableMiningControls(bool enabled)
+    {
+        _miningControlsEnabled = enabled;
+    }
+
+    /// <summary>
+    /// Updates all control states based on current input and returns active controls
+    /// </summary>
+    public ActiveControls Update(KeyboardState keyboardState, GamePadState gamePadState)
+    {
+        if (_miningControlsEnabled)
+        {
+            _activeControls.Mining = _miningControlMapper.GetActiveControls(keyboardState, gamePadState);
+        }
+        else
+        {
+            _activeControls.Mining = new HashSet<MiningControls>();
+        }
+
+        // Update other control sets here as they are added
+
+        return _activeControls;
+    }
+}
+
 public class ControlMapper<TEnum> where TEnum : Enum
 {
     private readonly HashSet<TEnum> _activeControls = new();
