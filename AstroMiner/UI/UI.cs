@@ -33,69 +33,55 @@ public class UI(BaseGame game)
             ChildrenAlign = ChildrenAlign.Center,
             ChildrenJustify = ChildrenJustify.SpaceBetween,
             Children =
-            [
-                new UIElement(game)
-                {
-                    FullWidth = true,
-                    ChildrenAlign = ChildrenAlign.Start,
-                    ChildrenDirection = ChildrenDirection.Row,
-                    ChildrenJustify = ChildrenJustify.SpaceBetween,
-                    Children =
-                    [
-                        new UIElement(game)
-                        {
-                            // TODO put something here
-                            FixedWidth = 200 * UIScale,
-                            FixedHeight = 100 * UIScale
-                        },
-
-                        .. game.Debug.showFps
-                            ? new UIElement[]
+                UIHelpers.FilterNull([
+                    new UIElement(game)
+                    {
+                        FullWidth = true,
+                        ChildrenAlign = ChildrenAlign.Start,
+                        ChildrenDirection = ChildrenDirection.Row,
+                        ChildrenJustify = ChildrenJustify.SpaceBetween,
+                        Children =
+                        [
+                            new UIElement(game)
                             {
-                                new UITextElement(game)
-                                {
-                                    Text = "FPS " + game.FrameCounter.AverageFramesPerSecond.ToString("F0"),
-                                    Color = Color.Aqua,
-                                    Padding = 10,
-                                    Scale = 3
-                                }
-                            }
-                            : []
-                    ]
-                },
+                                // TODO put something here
+                                FixedWidth = 200 * UIScale,
+                                FixedHeight = 100 * UIScale
+                            },
 
-                .. game.StateManager.Ui.State.IsInDialog
-                    ? new UIElement[]
+                            .. game.Debug.showFps
+                                ? new UIElement[]
+                                {
+                                    new UITextElement(game)
+                                    {
+                                        Text = "FPS " + game.FrameCounter.AverageFramesPerSecond.ToString("F0"),
+                                        Color = Color.Aqua,
+                                        Padding = 10,
+                                        Scale = 3
+                                    }
+                                }
+                                : []
+                        ]
+                    },
+
+                    game.StateManager.Ui.State.IsInDialog ? new UIDialog(game) : null,
+                    game.StateManager.Ui.State.IsInventoryOpen ? new UIInventory(game) : null,
+                    !game.StateManager.Ui.State.IsInventoryOpen ? new UIInventoryFooter(game) : null,
+                    game.StateManager.Ui.State.IsLaunchConsoleOpen ? new UILaunchConsole(game) : null,
+                    new UIElement(game)
                     {
-                        new UIDialog(game)
+                        FullWidth = true,
+                        FullHeight = true,
+                        Position = PositionMode.Absolute,
+                        ChildrenAlign = ChildrenAlign.End,
+                        ChildrenDirection = ChildrenDirection.Row,
+                        ChildrenJustify = ChildrenJustify.End,
+                        Children =
+                        [
+                            new UIDebugButton(game)
+                        ]
                     }
-                    : [],
-                .. game.StateManager.Ui.State.IsInventoryOpen
-                    ? new UIElement[]
-                    {
-                        new UIInventory(game)
-                    }
-                    : [],
-                .. game.StateManager.Ui.State.IsLaunchConsoleOpen
-                    ? new UIElement[]
-                    {
-                        new UILaunchConsole(game)
-                    }
-                    : [],
-                new UIElement(game)
-                {
-                    FullWidth = true,
-                    FullHeight = true,
-                    Position = PositionMode.Absolute,
-                    ChildrenAlign = ChildrenAlign.End,
-                    ChildrenDirection = ChildrenDirection.Row,
-                    ChildrenJustify = ChildrenJustify.End,
-                    Children =
-                    [
-                        new UIDebugButton(game)
-                    ]
-                }
-            ]
+                ])
         };
 
         return root;
