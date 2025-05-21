@@ -38,7 +38,12 @@ public class UILaunchConsole : UIScreen
                                 Scale = 3,
                                 OnClick = () =>
                                 {
+                                    game.StateManager.Ui.State.IsLaunchConsoleOpen = false;
+                                    game.StateManager.TransitionManager.FadeOut(1, () => {
+
                                     game.StateManager.SetActiveWorldAndInitialize(World.Asteroid);
+                                    game.StateManager.TransitionManager.FadeIn();
+                                    });
                                 }
                             },
                             new UIElement(game)
