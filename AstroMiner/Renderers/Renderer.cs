@@ -90,14 +90,16 @@ public class Renderer
             // Draw RenderTargets first to avoid wiping BackBuffer
             RenderLightingToRenderTarget(spriteBatch);
 
+            var (viewportWidth, viewportHeight) = _shared.ViewHelpers.GetViewportSize();
             spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
+            // Draw base color (even though we set in GraphicsDevice.Clear, wiped by BackBuffer)
+            spriteBatch.Draw(_shared.Textures["white"], new Rectangle(0, 0, viewportWidth, viewportHeight), Colors.VeryDarkBlue);
             RenderScene(spriteBatch);
 
             spriteBatch.End();
 
             // Multiply lights/shadow with scene
             spriteBatch.Begin(SpriteSortMode.Deferred, _multiplyBlendState, SamplerState.PointClamp);
-            var (viewportWidth, viewportHeight) = _shared.ViewHelpers.GetViewportSize();
             spriteBatch.Draw(_lightingRenderTarget, new Rectangle(0, 0, viewportWidth, viewportHeight), Color.White);
             spriteBatch.End();
 
