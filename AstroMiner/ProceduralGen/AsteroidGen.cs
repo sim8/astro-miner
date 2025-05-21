@@ -7,15 +7,15 @@ namespace AstroMiner.ProceduralGen;
 
 public static class AsteroidGen
 {
-    public static (CellState[,], Vector2) InitializeGridAndStartingPos(int gridSize, int seed)
+    public static (CellState[,], Vector2) InitializeGridAndStartingCenterPos(int gridSize, int seed)
     {
         var perlinNoise1 = new PerlinNoiseGenerator(seed);
         var perlinNoise2 = new PerlinNoiseGenerator(seed + 42);
         var grid = InitializeGrid(gridSize, perlinNoise1, perlinNoise2, seed);
-        return (grid, ClearAndGetStartingPos(grid));
+        return (grid, ClearAndGetStartingCenterPos(grid));
     }
 
-    private static Vector2 ClearAndGetStartingPos(CellState[,] grid)
+    private static Vector2 ClearAndGetStartingCenterPos(CellState[,] grid)
     {
         for (var row = grid.GetLength(0) - 1; row >= 0; row--)
         {
@@ -28,8 +28,7 @@ public static class AsteroidGen
                 // Find first row which has >= 4 contiguous solid blocks as starting pos
                 else if (flooredCellsInARow >= 4)
                 {
-                    var minerCellOffset = 1f - GameConfig.MinerSize / 2;
-                    var minerColIndex = col - flooredCellsInARow / 2 - 1; // -1 to account for miner being 2x cell size
+                    var minerColIndex = col - flooredCellsInARow / 2;
 
                     // Clear 2x4 landing area
                     for (var r = row - 1; r <= row; r++) // Rows: one above and the current row
@@ -39,9 +38,7 @@ public static class AsteroidGen
                             grid[r, c].WallType = WallType.Empty;
                         }
 
-
-                    return new Vector2(minerColIndex + minerCellOffset,
-                        row - 1 + minerCellOffset);
+                    return new Vector2(minerColIndex, row);
                 }
         }
 

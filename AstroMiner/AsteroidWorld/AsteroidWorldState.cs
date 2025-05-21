@@ -39,16 +39,16 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
     {
         base.Initialize();
         InitSeed();
-        var (grid, minerPos) =
-            AsteroidGen.InitializeGridAndStartingPos(GameConfig.GridSize, game.Model.Asteroid.Seed);
+        var (grid, minerCenterPos) =
+            AsteroidGen.InitializeGridAndStartingCenterPos(GameConfig.GridSize, game.Model.Asteroid.Seed);
         game.Model.Asteroid.Grid = grid;
         Grid = new GridState(game);
 
-        var (minerPosX, minerPosY) = ViewHelpers.ToGridPosition(minerPos);
+        var (minerPosX, minerPosY) = ViewHelpers.ToGridPosition(minerCenterPos);
         Grid.MarkAllDistancesFromExploredFloor(minerPosX, minerPosY, true);
 
-        InitializeMiner(minerPos);
-        InitializePlayer(minerPos);
+        InitializeMiner(minerCenterPos);
+        InitializePlayer(minerCenterPos);
 
         EdgeCells = UserInterfaceHelpers.GetAsteroidEdgeCells(Grid);
         CollapsingFloorTriggerer = new CollapsingFloorTriggerer(game);
@@ -57,12 +57,12 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
             game.StateManager.GetTotalPlayTime() + GameConfig.AsteroidExplodeTimeMs;
     }
 
-    private void InitializeMiner(Vector2 minerPos)
+    private void InitializeMiner(Vector2 minerCenterPos)
     {
         var entityId = game.Model.Ecs.MinerEntityId.Value;
 
         var minerPosition = game.StateManager.Ecs.GetComponent<PositionComponent>(entityId);
-        minerPosition.Position = minerPos;
+        minerPosition.SetCenterPosition(minerCenterPos);
         minerPosition.World = World.Asteroid;
 
         // Add movement component with miner-specific values
@@ -95,12 +95,12 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
         game.StateManager.Ecs.SetActiveControllableEntity(game.Model.Ecs.MinerEntityId.Value);
     }
 
-    private void InitializePlayer(Vector2 playerPos)
+    private void InitializePlayer(Vector2 playerCenterPos)
     {
         var entityId = game.Model.Ecs.PlayerEntityId.Value;
 
         var playerPosition = game.StateManager.Ecs.GetComponent<PositionComponent>(entityId);
-        playerPosition.Position = playerPos;
+        playerPosition.SetCenterPosition(playerCenterPos);
         playerPosition.World = World.Asteroid;
 
         // Add health component

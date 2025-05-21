@@ -10,7 +10,6 @@ public class NewGameManager(BaseGame game)
     {
         game.Model = GameModelHelpers.CreateNewGameModel();
 
-
         game.StateManager.Ecs.Factories.CreateMinerEntity();
         var KrevikStartingPos = new Vector2(1.5f, 1.5f);
         var playerEntityId = game.StateManager.Ecs.Factories.CreatePlayerEntity(KrevikStartingPos);

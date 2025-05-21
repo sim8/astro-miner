@@ -32,18 +32,20 @@ public class GameStateManager(BaseGame game)
     public UI.UI Ui;
 
     public Ecs Ecs { get; private set; }
-    public GameTime GameTime { get; private set; }
+    public GameTime GameTime { get; private set; } = new();
 
 
     public BaseWorldState ActiveWorldState => GetWorldState(game.Model.ActiveWorld);
 
-    public BaseWorldState GetWorldState(World world) =>
-        world switch
+    public BaseWorldState GetWorldState(World world)
+    {
+        return world switch
         {
             World.Asteroid => AsteroidWorld,
             World.Home => HomeWorld, // TODO deprecate
             _ => StaticWorld
         };
+    }
 
     public void SetActiveWorldAndInitialize(World world)
     {
