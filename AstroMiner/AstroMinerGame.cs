@@ -90,7 +90,7 @@ public class AstroMinerGame : BaseGame
         FrameCounter.Update(deltaTime);
 
 
-        GraphicsDevice.Clear(Color.Black);
+        GraphicsDevice.Clear(Colors.VeryDarkBlue);
 
         _renderer.Render(SpriteBatch);
 

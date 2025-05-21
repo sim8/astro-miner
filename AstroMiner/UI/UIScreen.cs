@@ -9,6 +9,6 @@ public class UIScreen : UIElement
         ChildrenAlign = ChildrenAlign.Center;
         ChildrenJustify = ChildrenJustify.Center;
         Position = PositionMode.Absolute;
-        BackgroundColor = Colors.DarkBlue * 0.5f;
+        BackgroundColor = Colors.VeryDarkBlue * 0.5f;
     }
 }

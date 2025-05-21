@@ -114,7 +114,7 @@ public class Renderer
         {
             var (viewportWidth, viewportHeight) = _shared.ViewHelpers.GetViewportSize();
             spriteBatch.Draw(_shared.Textures["white"], new Rectangle(0, 0, viewportWidth, viewportHeight),
-                Colors.DarkBlue * _game.StateManager.TransitionManager.Opacity);
+                Colors.VeryDarkBlue * _game.StateManager.TransitionManager.Opacity);
         }
 
         if (!_game.StateManager.Ui.State.IsInMainMenu) _userInterfaceRenderer.RenderUserInterface(spriteBatch);

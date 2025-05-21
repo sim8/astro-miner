@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner.ECS.Systems;
 
+// TODO introduce a WalkTo mechanism to abstract away a lot of this?
 public class PortalSystem : System
 {
     public PortalSystem(Ecs ecs, BaseGame game) : base(ecs, game)
@@ -13,8 +14,15 @@ public class PortalSystem : System
     }
 
     private void MoveToTargetWorld(PortalConfig config, PositionComponent position, MovementComponent movement,
-        DirectionComponent dirComp)
+        DirectionComponent dirComp, bool isTransitioning)
     {
+        // This is awful
+        if (position.EntityId == game.Model.Ecs.ActiveControllableEntityId && isTransitioning)
+        {
+            return;
+        }
+
+
         position.World = config.TargetWorld;
         movement.PortalStatus = PortalStatus.Arriving;
 
@@ -84,7 +92,7 @@ public class PortalSystem : System
                 dirComp.Direction = config.Direction;
                 position.Position += DirectionHelpers.GetDirectionalVector(travel, config.Direction);
                 // If reached the edge, trigger portal teleport.
-                if (Math.Abs(remaining - travel) < 0.001f) MoveToTargetWorld(config, position, movement, dirComp);
+                if (Math.Abs(remaining - travel) < 0.001f) MoveToTargetWorld(config, position, movement, dirComp, game.StateManager.TransitionManager.IsTransitioning);
             }
         }
         // For horizontal portals, align on Y then move on X.
@@ -110,7 +118,7 @@ public class PortalSystem : System
                 var travel = Math.Min(deltaDistance, remaining);
                 dirComp.Direction = config.Direction;
                 position.Position += DirectionHelpers.GetDirectionalVector(travel, config.Direction);
-                if (Math.Abs(remaining - travel) < 0.001f) MoveToTargetWorld(config, position, movement, dirComp);
+                if (Math.Abs(remaining - travel) < 0.001f) MoveToTargetWorld(config, position, movement, dirComp, game.StateManager.TransitionManager.IsTransitioning);
             }
         }
     }
@@ -161,7 +169,10 @@ public class PortalSystem : System
             {
                 movement.PortalStatus = PortalStatus.Departing;
                 movement.CurrentSpeed = GameConfig.Speeds.Walking;
-                game.StateManager.TransitionManager.FadeOut();
+                if (position.EntityId == game.Model.Ecs.ActiveControllableEntityId)
+                {
+                    game.StateManager.TransitionManager.FadeOut();
+                }
             }
         }
     }
