@@ -4,13 +4,7 @@ namespace AstroMiner.StaticWorld;
 
 public class StaticWorldState(BaseGame game) : BaseWorldState(game)
 {
-    public WorldCellType[,] Grid;
-
-    public override void Initialize()
-    {
-        base.Initialize();
-        Grid = StaticWorlds.StaticWorldConfigs[game.Model.ActiveWorld].World;
-    }
+    public WorldCellType[,] Grid => StaticWorlds.StaticWorldConfigs[game.Model.ActiveWorld].World;
 
     public override bool CellIsCollideable(int x, int y)
     {

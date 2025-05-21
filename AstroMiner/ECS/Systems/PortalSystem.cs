@@ -121,8 +121,8 @@ public class PortalSystem : System
         var (topLeftGridX, topLeftGridY) = ViewHelpers.ToGridPosition(position.Position);
         var (bottomRightGridX, bottomRightGridY) =
             ViewHelpers.ToGridPosition(position.Position + new Vector2(position.GridWidth, position.GridHeight));
-        if (!game.StateManager.ActiveWorldState.CellIsPortal(topLeftGridX, topLeftGridY) &&
-            !game.StateManager.ActiveWorldState.CellIsPortal(bottomRightGridX, bottomRightGridY))
+        if (!game.StateManager.GetWorldState(position.World).CellIsPortal(topLeftGridX, topLeftGridY) &&
+            !game.StateManager.GetWorldState(position.World).CellIsPortal(bottomRightGridX, bottomRightGridY))
         {
             movement.PortalStatus = PortalStatus.None;
         }
@@ -148,7 +148,7 @@ public class PortalSystem : System
             if (movement.PortalStatus == PortalStatus.Arriving)
                 MoveToArrivalPoint(position, movement, dirComp, gameTime);
 
-            if (!game.StateManager.ActiveWorldState.CellIsPortal(gridX, gridY))
+            if (!game.StateManager.GetWorldState(position.World).CellIsPortal(gridX, gridY))
                 continue;
 
             var config = StaticWorlds.GetPortalConfig(position.World, (gridX, gridY));

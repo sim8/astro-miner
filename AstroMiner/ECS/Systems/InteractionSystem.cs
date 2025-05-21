@@ -45,6 +45,7 @@ public class InteractionSystem : System
         if (npc is { Npc: Npc.MinExMerchant }) game.StateManager.Ui.State.IsInDialog = true;
     }
 
+    // TODO activeWorld hardcoded - change if NPCs use this
     private void CalculateInteractableEntityId()
     {
         InteractableEntityId = -1;

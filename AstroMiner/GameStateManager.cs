@@ -35,8 +35,10 @@ public class GameStateManager(BaseGame game)
     public GameTime GameTime { get; private set; }
 
 
-    public BaseWorldState ActiveWorldState =>
-        game.Model.ActiveWorld switch
+    public BaseWorldState ActiveWorldState => GetWorldState(game.Model.ActiveWorld);
+
+    public BaseWorldState GetWorldState(World world) =>
+        world switch
         {
             World.Asteroid => AsteroidWorld,
             World.Home => HomeWorld, // TODO deprecate
@@ -104,7 +106,8 @@ public class GameStateManager(BaseGame game)
 
         if (!Ui.State.IsInMainMenu)
         {
-            ActiveWorldState.Update(activeControls, gameTime);
+            ActiveWorldState.Update(activeControls, gameTime); // TODO only utilized by AsteroidWorld
+
             Camera.Update(gameTime, activeControls);
             CloudManager.Update(gameTime);
             TransitionManager.Update(gameTime);
