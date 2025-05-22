@@ -15,34 +15,41 @@ public static class AsteroidGen
         return (grid, ClearAndGetStartingCenterPos(grid));
     }
 
+    /// <summary>
+    /// Looks from the left side of the asteroid for the first column to contain 4 contiguous floored cells.
+    /// Clears a 2x4 landing area (current column and one to the right) and returns the centerPos of the 4 cells.
+    /// </summary>
+    /// <param name="grid">2d array representing the roughly circular asteroid. FloorType.Empty means empty space around the asteroid.</param>
+    /// <returns>The starting centerPos for the miner</returns>
+    /// <exception cref="Exception"></exception>
     private static Vector2 ClearAndGetStartingCenterPos(CellState[,] grid)
     {
-        for (var row = grid.GetLength(0) - 1; row >= 0; row--)
+        for (var col = 0; col < grid.GetLength(1); col++)
         {
             var flooredCellsInARow = 0;
-            for (var col = 0; col < grid.GetLength(1); col++)
+            for (var row = 0; row < grid.GetLength(0); row++)
                 if (grid[row, col].FloorType != FloorType.Empty)
                 {
                     flooredCellsInARow++;
                 }
-                // Find first row which has >= 4 contiguous solid blocks as starting pos
+                // Find first column which has >= 4 contiguous solid blocks as starting pos
                 else if (flooredCellsInARow >= 4)
                 {
-                    var minerColIndex = col - flooredCellsInARow / 2;
+                    var minerRowIndex = row - flooredCellsInARow / 2;
 
                     // Clear 2x4 landing area
-                    for (var r = row - 1; r <= row; r++) // Rows: one above and the current row
-                        for (var c = minerColIndex - 1; c <= minerColIndex + 2; c++) // Columns: -1 to +2 from minerColIndex
+                    for (var c = col; c <= col + 1; c++) // Columns: current column and one to the right
+                        for (var r = minerRowIndex - 1; r <= minerRowIndex + 2; r++) // Rows: -1 to +2 from minerRowIndex
                         {
                             grid[r, c].FloorType = FloorType.Floor;
                             grid[r, c].WallType = WallType.Empty;
                         }
 
-                    return new Vector2(minerColIndex, row);
+                    return new Vector2(col + 1, minerRowIndex);
                 }
         }
 
-        throw new Exception("No 3x1 solid blocks in grid");
+        throw new Exception("No 4x1 solid blocks in grid");
     }
 
     private static CellState[,] InitializeGrid(int gridSize, PerlinNoiseGenerator perlinNoise1,
