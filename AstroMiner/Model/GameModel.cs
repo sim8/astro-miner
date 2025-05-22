@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using AstroMiner.AsteroidWorld;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
+using Microsoft.Xna.Framework;
 
 namespace AstroMiner.Model;
 
@@ -104,6 +105,8 @@ public class AsteroidModel
 {
     public int Seed { get; set; }
     public long WillExplodeAt { get; set; }
+
+    public Vector2 MinerStartingPos { get; set; }
     public CellState[,] Grid { get; set; }
 
     // TODO nice way to combine these + other effects?

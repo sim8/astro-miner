@@ -39,10 +39,11 @@ public class UILaunchConsole : UIScreen
                                 OnClick = () =>
                                 {
                                     game.StateManager.Ui.State.IsLaunchConsoleOpen = false;
-                                    game.StateManager.TransitionManager.FadeOut(1, () => {
-
-                                    game.StateManager.SetActiveWorldAndInitialize(World.Asteroid);
-                                    game.StateManager.TransitionManager.FadeIn();
+                                    game.StateManager.TransitionManager.FadeOut(1, () =>
+                                    {
+                                        game.StateManager.SetActiveWorldAndInitialize(World.Asteroid);
+                                        game.StateManager.Ecs.EntityTransformSystem.MoveMinerAndPlayerToAsteroid();
+                                        game.StateManager.TransitionManager.FadeIn();
                                     });
                                 }
                             },
