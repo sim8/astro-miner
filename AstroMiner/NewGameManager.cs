@@ -43,5 +43,8 @@ public class NewGameManager(BaseGame game)
         game.StateManager.Ecs.Factories.CreateCeilingLightSourceEntity(World.ShipDownstairs, new Vector2(34f, 6f));
 
         game.StateManager.Ecs.Factories.CreateLaunchConsoleEntity();
+
+        // Krevik
+        game.StateManager.Ecs.Factories.CreateShopEntity();
     }
 }

@@ -219,15 +219,31 @@ public class EntityFactories
         radialLightSource.Opacity = 1f;
 
         var interactiveComponent = _ecs.AddComponent<InteractiveComponent>(entityId);
+        interactiveComponent.InteractiveType = InteractiveType.LaunchConsole;
         interactiveComponent.InteractableDistance = 1.5f;
 
         var textureComponent = _ecs.AddComponent<TextureComponent>(entityId);
         textureComponent.TextureName = "launch-console";
         textureComponent.TopPaddingPx = 10;
 
-        _ecs.AddComponent<LaunchConsoleTag>(entityId);
         return entityId;
     }
 
+    public int CreateShopEntity()
+    {
+        var entityId = _ecs.CreateEntity();
 
+        var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
+        positionComponent.World = World.Krevik;
+        positionComponent.Position = new Vector2(10.5f, 4);
+        positionComponent.WidthPx = 64;
+        positionComponent.HeightPx = 16;
+        positionComponent.IsCollideable = true;
+
+        var interactiveComponent = _ecs.AddComponent<InteractiveComponent>(entityId);
+        interactiveComponent.InteractiveType = InteractiveType.Shop;
+        interactiveComponent.InteractableDistance = 1.5f;
+
+        return entityId;
+    }
 }

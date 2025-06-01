@@ -153,7 +153,6 @@ public class Ecs
         _game.Model.Ecs.ComponentsByEntityId.PlayerTag.Remove(entityId);
         _game.Model.Ecs.ComponentsByEntityId.MinerTag.Remove(entityId);
         _game.Model.Ecs.ComponentsByEntityId.ExplosionTag.Remove(entityId);
-        _game.Model.Ecs.ComponentsByEntityId.LaunchConsoleTag.Remove(entityId);
         _game.Model.Ecs.ComponentsByEntityId.Npc.Remove(entityId);
         _game.Model.Ecs.ComponentsByEntityId.Interactive.Remove(entityId);
 
@@ -256,8 +255,6 @@ public class Ecs
             return componentsByEntityId.MinerTag as Dictionary<int, T>;
         if (typeof(T) == typeof(ExplosionTag))
             return componentsByEntityId.ExplosionTag as Dictionary<int, T>;
-        if (typeof(T) == typeof(LaunchConsoleTag))
-            return componentsByEntityId.LaunchConsoleTag as Dictionary<int, T>;
         if (typeof(T) == typeof(NpcComponent))
             return componentsByEntityId.Npc as Dictionary<int, T>;
         if (typeof(T) == typeof(InteractiveComponent))

@@ -8,6 +8,8 @@ public class UIState
     public bool IsDebugMenuOpen { get; set; } = false;
     public bool IsInventoryOpen { get; set; } = false;
     public bool IsLaunchConsoleOpen { get; set; } = false;
+    public bool IsInShopMenu { get; set; } = false;
+    public int sellConfirmationItemIndex { get; set; } = -1;
 
     // TODO all very temporary. Need a proper way of tracking dialog
     public bool IsInDialog { get; set; } = false;
@@ -68,6 +70,7 @@ public class UI(BaseGame game)
                     game.StateManager.Ui.State.IsInventoryOpen ? new UIInventory(game) : null,
                     !game.StateManager.Ui.State.IsInventoryOpen ? new UIInventoryFooter(game) : null,
                     game.StateManager.Ui.State.IsLaunchConsoleOpen ? new UILaunchConsole(game) : null,
+                    game.StateManager.Ui.State.IsInShopMenu ? new UIShop(game) : null,
                     new UIElement(game)
                     {
                         FullWidth = true,

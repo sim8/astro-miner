@@ -161,4 +161,5 @@ public class NpcComponent : Component
 public class InteractiveComponent : Component
 {
     public float InteractableDistance { get; set; } = 1f;
+    public InteractiveType InteractiveType { get; set; }
 }

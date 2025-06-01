@@ -1,3 +1,4 @@
+using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
@@ -34,9 +35,17 @@ public class InteractionSystem : System
             return;
         }
 
-        if (Ecs.HasComponent<LaunchConsoleTag>(InteractableEntityId))
+        var interactiveType = Ecs.GetComponent<InteractiveComponent>(InteractableEntityId).InteractiveType;
+
+        if (interactiveType == InteractiveType.LaunchConsole)
         {
             game.StateManager.Ui.State.IsLaunchConsoleOpen = true;
+            return;
+        }
+
+        if (interactiveType == InteractiveType.Shop)
+        {
+            game.StateManager.Ui.State.IsInShopMenu = true;
             return;
         }
 
