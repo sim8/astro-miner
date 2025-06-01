@@ -44,11 +44,12 @@ public class UI(BaseGame game)
                         ChildrenJustify = ChildrenJustify.SpaceBetween,
                         Children =
                         [
-                            new UIElement(game)
+                            new UITextElement(game)
                             {
-                                // TODO put something here
-                                FixedWidth = 200 * UIScale,
-                                FixedHeight = 100 * UIScale
+                                Text = "CREDITS " + game.Model.Inventory.Credits,
+                                Scale = 3,
+                                Color = Colors.LightBlue,
+                                Padding = 10
                             },
 
                             .. game.Debug.showFps
@@ -57,7 +58,7 @@ public class UI(BaseGame game)
                                     new UITextElement(game)
                                     {
                                         Text = "FPS " + game.FrameCounter.AverageFramesPerSecond.ToString("F0"),
-                                        Color = Color.Aqua,
+                                        Color = Colors.LightBlue,
                                         Padding = 10,
                                         Scale = 3
                                     }

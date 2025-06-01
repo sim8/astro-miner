@@ -66,6 +66,7 @@ public class InventoryModel
 {
     public List<InventoryItem?> Items { get; set; }
     public int SelectedIndex { get; set; }
+    public int Credits { get; set; }
 }
 
 [Serializable]
@@ -160,6 +161,7 @@ public static class GameModelHelpers
             },
             Inventory = new InventoryModel
             {
+                Credits = 0,
                 Items =
                 [
                     new InventoryItem

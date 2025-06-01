@@ -19,6 +19,18 @@ public class Inventory(BaseGame game)
             game.Model.Inventory.Items.Add(new InventoryItem { Type = type, Count = count });
     }
 
+    public InventoryItem GetItemAtIndex(int index)
+    {
+        return game.Model.Inventory.Items[index];
+    }
+
+    public void SellItem(int index)
+    {
+        var inventoryItem = game.Model.Inventory.Items[index];
+        game.Model.Inventory.Credits += ItemTypes.GetConfig(inventoryItem.Type).Price * inventoryItem.Count;
+        game.Model.Inventory.Items.Remove(inventoryItem);
+    }
+
     public void ConsumeSelectedItem()
     {
         var item = game.Model.Inventory.Items[game.Model.Inventory.SelectedIndex];

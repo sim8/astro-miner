@@ -14,12 +14,12 @@ public enum ItemType
     Drill
 }
 
-public class ItemTypeConfig(string name, int colIndex, int rowIndex)
+public class ItemTypeConfig(string name, int colIndex, int rowIndex, int price)
 {
     private readonly int colIndex = colIndex;
     private readonly int rowIndex = rowIndex;
     public string Name { get; } = name;
-
+    public int Price { get; } = price;
     public Rectangle GetSourceRect()
     {
         return new Rectangle(colIndex * 16, rowIndex * 16, 16, 16);
@@ -31,12 +31,12 @@ public static class ItemTypes
     private static readonly IReadOnlyDictionary<ItemType, ItemTypeConfig> AllItemTypeConfig =
         new Dictionary<ItemType, ItemTypeConfig>
         {
-            { ItemType.Ruby, new ItemTypeConfig("Ruby", 0, 0) },
-            { ItemType.Diamond, new ItemTypeConfig("Diamond", 1, 0) },
-            { ItemType.Gold, new ItemTypeConfig("Gold", 2, 0) },
-            { ItemType.Nickel, new ItemTypeConfig("Nickel", 3, 0) },
-            { ItemType.Dynamite, new ItemTypeConfig("Dynamite", 4, 0) },
-            { ItemType.Drill, new ItemTypeConfig("Drill", 5, 0) }
+            { ItemType.Ruby, new ItemTypeConfig("Ruby", 0, 0, 4) },
+            { ItemType.Diamond, new ItemTypeConfig("Diamond", 1, 0, 16) },
+            { ItemType.Gold, new ItemTypeConfig("Gold", 2, 0, 6) },
+            { ItemType.Nickel, new ItemTypeConfig("Nickel", 3, 0, 4) },
+            { ItemType.Dynamite, new ItemTypeConfig("Dynamite", 4, 0, -1) },
+            { ItemType.Drill, new ItemTypeConfig("Drill", 5, 0, -1) }
         };
 
     public static ItemTypeConfig GetConfig(ItemType itemType)

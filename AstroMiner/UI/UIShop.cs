@@ -1,3 +1,5 @@
+using AstroMiner.Definitions;
+using AstroMiner.Model;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner.UI;
@@ -21,6 +23,10 @@ public sealed class UIShop : UIElement
 
 public class UISaleConfirm : UIScreen
 {
+    private InventoryItem GetSellConfirmationItem(BaseGame game)
+    {
+        return game.StateManager.Inventory.GetItemAtIndex(game.StateManager.Ui.State.sellConfirmationItemIndex);
+    }
     public UISaleConfirm(BaseGame game) : base(game)
     {
         Children =
@@ -33,7 +39,7 @@ public class UISaleConfirm : UIScreen
                 [
                     new UITextElement(game)
                     {
-                        Text = "SELL ITEM",
+                        Text = "SELL " + GetSellConfirmationItem(game).Count + " " + GetSellConfirmationItem(game).Type.ToString().ToUpper() + " FOR " + ItemTypes.GetConfig(GetSellConfirmationItem(game).Type).Price * GetSellConfirmationItem(game).Count + " CREDITS",
                         Scale = 4
                     },
                     new UIElement(game)
@@ -52,7 +58,10 @@ public class UISaleConfirm : UIScreen
                                 BackgroundColor = Color.Navy,
                                 Padding = 6,
                                 Scale = 3,
-                                OnClick = () => { }
+                                OnClick = () => {
+                                    game.StateManager.Inventory.SellItem(game.StateManager.Ui.State.sellConfirmationItemIndex);
+                                    game.StateManager.Ui.State.sellConfirmationItemIndex = -1;
+                                }
                             },
                             new UIElement(game)
                             {
