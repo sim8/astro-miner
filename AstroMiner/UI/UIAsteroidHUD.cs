@@ -1,5 +1,5 @@
+using System;
 using AstroMiner.Definitions;
-using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -11,17 +11,18 @@ public class UIAsteroidHUD : UIElement
     {
         Padding = 10;
         ChildrenDirection = ChildrenDirection.Column;
+        ChildrenAlign = ChildrenAlign.Center;
         Children =
         [
             new UIMinimap(game),
             new UIElement(game)
             {
-                FixedHeight = 40
+                FixedHeight = 10
             },
             new UITextElement(game)
             {
                 Text = GetTimeRemaining(game),
-                Color = Color.White,
+                Color = Color.LimeGreen,
                 Padding = 6,
                 Scale = 4
             }
@@ -39,10 +40,10 @@ public class UIAsteroidHUD : UIElement
 
 public class UIMinimap : UIElement
 {
-    private const int GRID_DISTANCE_TO_EDGE_OF_MINIMAP = 30;
+    private const int GRID_DISTANCE_TO_EDGE_OF_MINIMAP = 25;
 
     private const int
-        MINIMAP_GRID_SIZE = GRID_DISTANCE_TO_EDGE_OF_MINIMAP * 2 + 1; // both sides + cell containing player
+        MINIMAP_GRID_SIZE = GRID_DISTANCE_TO_EDGE_OF_MINIMAP * 2;
 
     private readonly BaseGame _game;
 
@@ -56,34 +57,54 @@ public class UIMinimap : UIElement
     private Color GetCellColorForMinimap(int x, int y)
     {
         var cell = _game.StateManager.AsteroidWorld.Grid.GetCellState(x, y);
-        if (cell.WallType != WallType.Empty) return Colors.DarkBlue;
-        if (cell.FloorType != FloorType.Empty)
-            return cell.DistanceToExploredFloor == 0 ? Colors.LightBlue : Colors.DarkBlue;
+        if (cell.isEmpty) return Colors.VeryDarkBlue;
 
-        return Colors.VeryDarkBlue;
+        if (cell.WallType == WallType.Empty && cell.DistanceToExploredFloor == 0)
+            return cell.FloorType == FloorType.Lava ? Color.Orange : Colors.LightBlue;
+
+        return Colors.DarkBlue;
     }
 
     public override void Render(SpriteBatch spriteBatch)
     {
-        var (playerX, playerY) =
-            ViewHelpers.ToGridPosition(_game.StateManager.Ecs.ActiveControllableEntityCenterPosition);
+        var playerPos = _game.StateManager.Ecs.ActiveControllableEntityCenterPosition;
+        var playerXFloat = playerPos.X;
+        var playerYFloat = playerPos.Y;
         var minimapGridSizePx = ComputedWidth / MINIMAP_GRID_SIZE;
-        for (var minimapX = 0; minimapX < MINIMAP_GRID_SIZE; minimapX++)
-        for (var minimapY = 0; minimapY < MINIMAP_GRID_SIZE; minimapY++)
+
+        // Calculate the floating-point offset for smooth movement
+        var playerGridOffsetX = playerXFloat - (float)Math.Floor(playerXFloat);
+        var playerGridOffsetY = playerYFloat - (float)Math.Floor(playerYFloat);
+
+        // We need to render one extra cell in each direction to handle cropping
+        var extendedGridSize = MINIMAP_GRID_SIZE + 1;
+
+        for (var minimapX = 0; minimapX < extendedGridSize; minimapX++)
+        for (var minimapY = 0; minimapY < extendedGridSize; minimapY++)
         {
-            var destX = X + minimapX * minimapGridSizePx;
-            var destY = Y + minimapY * minimapGridSizePx;
-            var destRect = new Rectangle(destX, destY, minimapGridSizePx, minimapGridSizePx);
+            // Calculate position with floating-point offset
+            var cellPosX = (minimapX - playerGridOffsetX) * minimapGridSizePx;
+            var cellPosY = (minimapY - playerGridOffsetY) * minimapGridSizePx;
 
-            var gridX = playerX - GRID_DISTANCE_TO_EDGE_OF_MINIMAP + minimapX;
-            var gridY = playerY - GRID_DISTANCE_TO_EDGE_OF_MINIMAP + minimapY;
+            var destX = X + cellPosX;
+            var destY = Y + cellPosY;
 
-            var color = GetCellColorForMinimap(gridX, gridY);
+            // Calculate the grid coordinates for this cell
+            var gridX = (int)Math.Floor(playerXFloat) - GRID_DISTANCE_TO_EDGE_OF_MINIMAP + minimapX;
+            var gridY = (int)Math.Floor(playerYFloat) - GRID_DISTANCE_TO_EDGE_OF_MINIMAP + minimapY;
 
+            var color = GetCellColorForMinimap(gridX, gridY) * 0.5f;
 
-            spriteBatch.Draw(_game.Textures["white"], destRect, color);
+            // Create rectangle for this cell
+            var cellRect = new Rectangle((int)destX, (int)destY, minimapGridSizePx, minimapGridSizePx);
 
-            base.Render(spriteBatch);
+            // Crop the cell rectangle to fit within the minimap bounds
+            var minimapBounds = new Rectangle(X, Y, ComputedWidth, ComputedHeight);
+            var intersection = Rectangle.Intersect(cellRect, minimapBounds);
+
+            // Only draw if there's a visible intersection
+            if (intersection.Width > 0 && intersection.Height > 0)
+                spriteBatch.Draw(_game.Textures["white"], intersection, color);
         }
 
         base.Render(spriteBatch);
