@@ -12,6 +12,7 @@ public class MinerRenderer(
     private const int MinerBoxOffsetX = -13;
     private const int MinerBoxOffsetY = -20;
     private const int MinerTextureSize = 64;
+    private const int IdlingAnimationMs = 300;
 
     public void RenderMiner(SpriteBatch spriteBatch, int entityId)
     {
@@ -40,7 +41,17 @@ public class MinerRenderer(
 
         spriteBatch.Draw(GetTracksTexture(positionComponent.Position, directionComponent.Direction, entityId),
             destinationRectangle, sourceRectangle, tintColor);
-        spriteBatch.Draw(shared.Textures["miner-no-tracks"], destinationRectangle, sourceRectangle, tintColor);
+
+        var animationPercentage =
+            shared.GameStateManager.GetTotalPlayTime() % IdlingAnimationMs / (float)IdlingAnimationMs;
+
+        var minerNoTracksDesignationRect = destinationRectangle;
+
+        if (animationPercentage > 0.5f)
+            minerNoTracksDesignationRect = new Rectangle(destinationRectangle.X, destinationRectangle.Y - 1,
+                destinationRectangle.Width, destinationRectangle.Height);
+
+        spriteBatch.Draw(shared.Textures["miner-no-tracks"], minerNoTracksDesignationRect, sourceRectangle, tintColor);
     }
 
     private Texture2D GetTracksTexture(Vector2 position, Direction direction, int entityId)
