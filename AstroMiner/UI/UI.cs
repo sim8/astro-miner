@@ -5,6 +5,7 @@ namespace AstroMiner.UI;
 public class UIState
 {
     public bool IsInMainMenu { get; set; } = true;
+    public bool IsInPauseMenu { get; set; } = true;
     public bool IsDebugMenuOpen { get; set; } = false;
     public bool IsInventoryOpen { get; set; } = false;
     public bool IsLaunchConsoleOpen { get; set; } = false;
@@ -26,6 +27,7 @@ public class UI(BaseGame game)
     public UIElement GetTree()
     {
         if (game.StateManager.Ui.State.IsInMainMenu) return new UIMainMenu(game);
+        if (game.StateManager.Ui.State.IsInPauseMenu) return new UIPauseMenu(game);
 
         var root = new UIElement(game)
         {

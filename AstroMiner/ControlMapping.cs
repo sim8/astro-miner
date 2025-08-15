@@ -22,8 +22,7 @@ public enum MiningControls
     // Miner-only
     UseGrapple,
 
-    NewGameOrReturnToBase, // TODO factor out
-    SaveGame // TEMP
+    NewGameOrReturnToBase // TODO factor out
 }
 
 public enum GlobalControls
@@ -78,7 +77,6 @@ public class ControlManager
         _miningControlMapper.AddMapping(MiningControls.ExitVehicle, Keys.E, Buttons.Y, false);
         _miningControlMapper.AddMapping(MiningControls.UseGrapple, Keys.G, Buttons.LeftTrigger, true);
         _miningControlMapper.AddMapping(MiningControls.NewGameOrReturnToBase, Keys.N, Buttons.Start, false);
-        _miningControlMapper.AddMapping(MiningControls.SaveGame, Keys.B, Buttons.Back, false);
     }
 
     /// <summary>
