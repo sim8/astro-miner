@@ -120,7 +120,6 @@ public class Renderer
                 Colors.VeryDarkBlue * _game.StateManager.TransitionManager.Opacity);
         }
 
-        if (_game.StateManager.IsInGame) _userInterfaceRenderer.RenderUserInterface(spriteBatch);
         _uiRenderer.Render(spriteBatch);
 
         spriteBatch.End();

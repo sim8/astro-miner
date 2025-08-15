@@ -1,3 +1,4 @@
+using AstroMiner.Definitions;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner.UI;
@@ -46,6 +47,7 @@ public class UI(BaseGame game)
                         ChildrenJustify = ChildrenJustify.SpaceBetween,
                         Children =
                         [
+                            game.Model.ActiveWorld == World.Asteroid ? new UIAsteroidHUD(game) : new UIElement(game),
                             new UITextElement(game)
                             {
                                 Text = "CREDITS " + game.Model.Inventory.Credits,
