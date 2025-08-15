@@ -9,12 +9,12 @@ public class UIMainMenu : UIScreen
         ChildrenDirection = ChildrenDirection.Column;
         ChildrenAlign = ChildrenAlign.Center;
         ChildrenJustify = ChildrenJustify.Center;
-        BackgroundColor = Color.Black;
+        BackgroundColor = Colors.VeryDarkBlue;
         Children =
         [
             new UITextElement(game)
             {
-                Text = "OIZUS",
+                Text = "GEM CARAVAN",
                 Color = Color.White,
                 Padding = 6,
                 Scale = 4
@@ -27,7 +27,7 @@ public class UIMainMenu : UIScreen
             {
                 Text = "NEW GAME",
                 Color = Color.White,
-                BackgroundColor = Color.Navy,
+                BackgroundColor = Colors.DarkBlue,
                 Padding = 6,
                 Scale = 3,
                 OnClick = () =>
@@ -43,7 +43,7 @@ public class UIMainMenu : UIScreen
             {
                 Text = "LOAD GAME",
                 Color = Color.White,
-                BackgroundColor = Color.Navy,
+                BackgroundColor = Colors.DarkBlue,
                 Padding = 6,
                 Scale = 3,
                 OnClick = () =>

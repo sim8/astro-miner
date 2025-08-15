@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner.ECS;
@@ -17,5 +16,5 @@ public abstract class System
         game = _game;
     }
 
-    public abstract void Update(GameTime gameTime, HashSet<MiningControls> activeControls);
+    public abstract void Update(GameTime gameTime, ActiveControls activeControls);
 }

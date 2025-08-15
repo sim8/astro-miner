@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using Microsoft.Xna.Framework;
@@ -52,7 +51,7 @@ public class HealthSystem : System
             game.StateManager.Ecs.Factories.CreateExplosionEntity(positionComponent.CenterPosition);
     }
 
-    public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
+    public override void Update(GameTime gameTime, ActiveControls activeControls)
     {
         if (game.Model.ActiveWorld != World.Asteroid) return;
 

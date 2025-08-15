@@ -1,3 +1,4 @@
+using AstroMiner.Definitions;
 using AstroMiner.Model;
 using Microsoft.Xna.Framework;
 
@@ -9,21 +10,41 @@ public class NewGameManager(BaseGame game)
     {
         game.Model = GameModelHelpers.CreateNewGameModel();
 
-        game.Model.Launch.LaunchPadFrontEntityId =
-            game.StateManager.Ecs.Factories.CreateLaunchPadFrontEntity(new Vector2());
-        game.Model.Launch.LaunchPadRearEntityId =
-            game.StateManager.Ecs.Factories.CreateLaunchPadRearEntity(new Vector2());
+        game.StateManager.Ecs.Factories.CreateMinerEntity();
+        var KrevikStartingPos = new Vector2(1.5f, 1.5f);
+        var playerEntityId = game.StateManager.Ecs.Factories.CreatePlayerEntity(KrevikStartingPos);
 
-        game.StateManager.Ecs.Factories.CreateMinerEntity(new Vector2());
-        game.StateManager.Ecs.Factories.CreatePlayerEntity(new Vector2());
+        game.StateManager.Ecs.SetActiveControllableEntity(playerEntityId);
 
         SetUpNpcs();
-
-        game.StateManager.HomeWorld.ResetEntities();
+        SetUpStaticEntitiesTEMP();
     }
 
     private void SetUpNpcs()
     {
         game.StateManager.Ecs.Factories.CreateMinExMerchantEntity();
+        game.StateManager.Ecs.Factories.CreateRikusEntity();
+    }
+
+    // TODO feels a weird pattern. Do they need to be in the model?
+    private void SetUpStaticEntitiesTEMP()
+    {
+        // Bedroom
+        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(13.5f, 1f));
+        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(15.95f, 1f));
+        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(17.95f, 1f));
+
+        // Corridor
+        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(21f, 10f));
+        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(15f, 10f));
+        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(9f, 10f));
+
+        // Hangar
+        game.StateManager.Ecs.Factories.CreateCeilingLightSourceEntity(World.ShipDownstairs, new Vector2(34f, 6f));
+
+        game.StateManager.Ecs.Factories.CreateLaunchConsoleEntity();
+
+        // Krevik
+        game.StateManager.Ecs.Factories.CreateShopEntity();
     }
 }

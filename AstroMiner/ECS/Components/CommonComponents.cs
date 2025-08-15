@@ -135,6 +135,10 @@ public class DirectionalLightSourceComponent : Component
 public class TextureComponent : Component
 {
     public string TextureName { get; set; }
+    public int TopPaddingPx { get; set; } = 0;
+    public int BottomPaddingPx { get; set; } = 0;
+    public int LeftPaddingPx { get; set; } = 0;
+    public int RightPaddingPx { get; set; } = 0;
 }
 
 public class RadialLightSourceComponent : Component
@@ -157,4 +161,5 @@ public class NpcComponent : Component
 public class InteractiveComponent : Component
 {
     public float InteractableDistance { get; set; } = 1f;
+    public InteractiveType InteractiveType { get; set; }
 }

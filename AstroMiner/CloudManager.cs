@@ -67,26 +67,27 @@ public class CloudManager
         for (var i = CloudsBg.Count - 1; i >= 0; i--)
         {
             var c = CloudsBg[i];
-            c.Y += BgCloudSpeed * elapsedSec;
+            c.X -= BgCloudSpeed * elapsedSec;
 
-            if (c.Y > _game.Graphics.GraphicsDevice.Viewport.Height) CloudsBg.RemoveAt(i);
+            if (c.X < -BackgroundCloudSizePx) CloudsBg.RemoveAt(i);
         }
 
         for (var i = CloudsFg.Count - 1; i >= 0; i--)
         {
             var c = CloudsFg[i];
-            c.Y += FgCloudSpeed * elapsedSec;
+            c.X -= FgCloudSpeed * elapsedSec;
 
-            if (c.Y > _game.Graphics.GraphicsDevice.Viewport.Height) CloudsFg.RemoveAt(i);
+            if (c.X < -ForegroundCloudSizePx) CloudsFg.RemoveAt(i);
         }
     }
 
     private void SpawnCloud(bool isForeground)
     {
         var size = isForeground ? ForegroundCloudSizePx : BackgroundCloudSizePx;
-        var xPos = (float)(_rng.NextDouble() * (_game.Graphics.GraphicsDevice.Viewport.Width + size)) - size;
+        var viewportWidth = _game.Graphics.GraphicsDevice.Viewport.Width;
 
-        var yPos = -size;
+        var yPos = (float)(_rng.NextDouble() * (_game.Graphics.GraphicsDevice.Viewport.Height + size)) - size;
+        var xPos = viewportWidth;
 
         var list = isForeground ? CloudsFg : CloudsBg;
         list.Add(new Cloud(xPos, yPos));

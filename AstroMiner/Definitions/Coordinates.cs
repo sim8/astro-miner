@@ -22,18 +22,10 @@ public static class Coordinates
         public static readonly (int x, int y) HomeToMinExPortal = (21, 18);
         public static readonly (int x, int y) MinExToHomePortal = (3, 7);
 
+        public static readonly (int x, int y) KrevikToShipDownstairsPortal = (11, 6);
+        public static readonly (int x, int y) ShipDownstairsToKrevikPortal = (25, 3);
 
-    }
-
-    public static class Px
-    {
-        public const int LaunchLight1X = 215;
-        public const int LaunchLight2X = 221;
-        public const int LaunchLight3X = 227;
-        public const int LaunchLightsY = 417;
-
-        public const int LaunchPadsX = 122;
-        public const int LaunchPadFrontStartY = 446;
-        public const int LaunchPadRearStartY = 415;
+        public static readonly (int x, int y) ShipDownstairsToShipUpstairsPortal = (21, 4);
+        public static readonly (int x, int y) ShipUpstairsToShipDownstairsPortal = (21, 4);
     }
 }

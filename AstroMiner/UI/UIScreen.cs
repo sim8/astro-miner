@@ -1,5 +1,3 @@
-using Microsoft.Xna.Framework;
-
 namespace AstroMiner.UI;
 
 public class UIScreen : UIElement
@@ -11,6 +9,6 @@ public class UIScreen : UIElement
         ChildrenAlign = ChildrenAlign.Center;
         ChildrenJustify = ChildrenJustify.Center;
         Position = PositionMode.Absolute;
-        BackgroundColor = Color.Black * 0.5f;
+        BackgroundColor = Colors.VeryDarkBlue * 0.5f;
     }
 }

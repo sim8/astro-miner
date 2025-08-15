@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using AstroMiner.Utilities;
@@ -13,7 +12,7 @@ public class FallOrLavaDamageSystem : System
     {
     }
 
-    public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
+    public override void Update(GameTime gameTime, ActiveControls activeControls)
     {
         if (game.Model.ActiveWorld != World.Asteroid) return;
 

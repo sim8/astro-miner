@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
@@ -89,22 +90,22 @@ public class MovementSystem : System
         return (Direction)newDirectionInt;
     }
 
-    private bool IsNewPositionIntersectingWithFilledCells(Vector2 position, float gridWidth, float gridHeight)
+    private bool IsNewPositionIntersectingWithFilledCells(World world, Vector2 position, float gridWidth, float gridHeight)
     {
         var topLeftCell = ViewHelpers.ToGridPosition(position);
         var bottomRightCell = ViewHelpers.ToGridPosition(position + new Vector2(gridWidth, gridHeight));
 
         for (var x = topLeftCell.x; x <= bottomRightCell.x; x++)
-        for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
-            if (game.StateManager.ActiveWorldState.CellIsCollideable(x, y))
-                return true;
+            for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
+                if (game.StateManager.GetWorldState(world).CellIsCollideable(x, y))
+                    return true;
         return false;
     }
 
     private bool ApplyVectorToPosIfNoCollisions(int entityId, Vector2 vector, PositionComponent positionComponent)
     {
         var newPosition = positionComponent.Position + vector;
-        var newPositionHasCollisions = IsNewPositionIntersectingWithFilledCells(newPosition,
+        var newPositionHasCollisions = IsNewPositionIntersectingWithFilledCells(positionComponent.World, newPosition,
             positionComponent.GridWidth, positionComponent.GridHeight);
 
         if (newPositionHasCollisions) return false;
@@ -135,9 +136,9 @@ public class MovementSystem : System
         return true;
     }
 
-    public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
+    public override void Update(GameTime gameTime, ActiveControls activeControls)
     {
-        var pressedDirection = GetDirectionFromActiveControls(activeControls);
+        var pressedDirection = GetDirectionFromActiveControls(activeControls.Mining);
 
         foreach (var movementComponent in Ecs.GetAllComponents<MovementComponent>())
         {

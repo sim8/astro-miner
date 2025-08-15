@@ -28,6 +28,7 @@ public class ProceduralGenViewerGame : BaseGame
     {
         StateManager = new GameStateManager(this);
         StateManager.Initialize();
+        StateManager.NewGame();
         InitializeAsteroidForViewing();
         _renderer = new ProceduralGenViewerRenderer(this, _proceduralGenViewerState);
         InitializeControls();
@@ -36,7 +37,6 @@ public class ProceduralGenViewerGame : BaseGame
 
     private void InitializeAsteroidForViewing()
     {
-        StateManager.Initialize();
         StateManager.SetActiveWorldAndInitialize(World.Asteroid);
     }
 

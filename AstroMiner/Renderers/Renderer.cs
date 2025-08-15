@@ -4,8 +4,9 @@ using AstroMiner.ECS.Components;
 using AstroMiner.Renderers.AsteroidWorld;
 using AstroMiner.Renderers.Entities;
 using AstroMiner.Renderers.HomeWorld;
-using AstroMiner.Renderers.InteriorsWorld;
+using AstroMiner.Renderers.StaticWorld;
 using AstroMiner.Renderers.UI;
+using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -18,13 +19,13 @@ public class Renderer
     private readonly ExplosionRenderer _explosionRenderer;
     private readonly BaseGame _game;
     private readonly BaseWorldRenderer _homeWorldRenderer;
-    private readonly BaseWorldRenderer _interiorsWorldRenderer;
     private readonly LaunchParallaxRenderer _launchParallaxRenderer;
     private readonly MinerRenderer _minerRenderer;
     private readonly BlendState _multiplyBlendState;
     private readonly PlayerRenderer _playerRenderer;
     private readonly ScrollingBackgroundRenderer _scrollingBackgroundRenderer;
     private readonly RendererShared _shared;
+    private readonly BaseWorldRenderer _staticWorldRenderer;
     private readonly UIRenderer _uiRenderer;
     private readonly UserInterfaceRenderer _userInterfaceRenderer;
     private RenderTarget2D _lightingRenderTarget;
@@ -43,8 +44,8 @@ public class Renderer
         _launchParallaxRenderer = new LaunchParallaxRenderer(_shared);
         _userInterfaceRenderer = new UserInterfaceRenderer(_shared);
         _asteroidWorldRenderer = new AsteroidWorldRenderer(_shared);
-        _homeWorldRenderer = new HomeWorldRenderer(_shared);
-        _interiorsWorldRenderer = new InteriorsWorldRenderer(_shared);
+        _homeWorldRenderer = new HomeWorldRenderer(_shared); // TODO deprecate
+        _staticWorldRenderer = new StaticWorldRenderer(_shared);
         _multiplyBlendState = new BlendState();
         _multiplyBlendState.ColorBlendFunction = BlendFunction.Add;
         _multiplyBlendState.ColorSourceBlend = Blend.DestinationColor;
@@ -57,10 +58,8 @@ public class Renderer
         _game.Model.ActiveWorld switch
         {
             World.Asteroid => _asteroidWorldRenderer,
-            World.Home => _homeWorldRenderer,
-            World.RigRoom => _interiorsWorldRenderer,
-            World.MinEx => _interiorsWorldRenderer,
-            _ => throw new Exception("Invalid world")
+            World.Home => _homeWorldRenderer, // TODO deprecate
+            _ => _staticWorldRenderer
         };
 
     public void HandleWindowResize(object sender, EventArgs e)
@@ -91,14 +90,16 @@ public class Renderer
             // Draw RenderTargets first to avoid wiping BackBuffer
             RenderLightingToRenderTarget(spriteBatch);
 
+            var (viewportWidth, viewportHeight) = _shared.ViewHelpers.GetViewportSize();
             spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
+            // Draw base color (even though we set in GraphicsDevice.Clear, wiped by BackBuffer)
+            spriteBatch.Draw(_shared.Textures["white"], new Rectangle(0, 0, viewportWidth, viewportHeight), Colors.VeryDarkBlue);
             RenderScene(spriteBatch);
 
             spriteBatch.End();
 
             // Multiply lights/shadow with scene
             spriteBatch.Begin(SpriteSortMode.Deferred, _multiplyBlendState, SamplerState.PointClamp);
-            var (viewportWidth, viewportHeight) = _shared.ViewHelpers.GetViewportSize();
             spriteBatch.Draw(_lightingRenderTarget, new Rectangle(0, 0, viewportWidth, viewportHeight), Color.White);
             spriteBatch.End();
 
@@ -108,8 +109,15 @@ public class Renderer
             spriteBatch.End();
         }
 
-        // Lastly, draw UI
+        // Lastly, draw UI / overlays
         spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
+
+        if (_game.StateManager.TransitionManager.Opacity > 0)
+        {
+            var (viewportWidth, viewportHeight) = _shared.ViewHelpers.GetViewportSize();
+            spriteBatch.Draw(_shared.Textures["white"], new Rectangle(0, 0, viewportWidth, viewportHeight),
+                Colors.VeryDarkBlue * _game.StateManager.TransitionManager.Opacity);
+        }
 
         if (!_game.StateManager.Ui.State.IsInMainMenu) _userInterfaceRenderer.RenderUserInterface(spriteBatch);
         _uiRenderer.Render(spriteBatch);
@@ -149,9 +157,16 @@ public class Renderer
                 var textureComponent = _game.StateManager.Ecs.GetComponent<TextureComponent>(entityId);
                 var positionComponent = _game.StateManager.Ecs.GetComponent<PositionComponent>(entityId);
 
-                var sourceRectangle = new Rectangle(0, 0, positionComponent.WidthPx, positionComponent.HeightPx);
-                var destinationRectangle = _shared.ViewHelpers.GetVisibleRectForObject(positionComponent.Position,
-                    positionComponent.WidthPx, positionComponent.HeightPx);
+                var textureWidth = positionComponent.WidthPx + textureComponent.LeftPaddingPx +
+                                   textureComponent.RightPaddingPx;
+                var textureHeight = positionComponent.HeightPx + textureComponent.TopPaddingPx +
+                                    textureComponent.BottomPaddingPx;
+                var texturePos = positionComponent.Position -
+                                 new Vector2(ViewHelpers.ConvertTexturePxToGridUnits(textureComponent.LeftPaddingPx),
+                                     ViewHelpers.ConvertTexturePxToGridUnits(textureComponent.TopPaddingPx));
+                var destinationRectangle = _shared.ViewHelpers.GetVisibleRectForObject(texturePos,
+                    textureWidth, textureHeight);
+                var sourceRectangle = new Rectangle(0, 0, textureWidth, textureHeight);
                 spriteBatch.Draw(_shared.Textures[textureComponent.TextureName], destinationRectangle, sourceRectangle,
                     Color.White);
             }
@@ -160,11 +175,8 @@ public class Renderer
 
     private void RenderScene(SpriteBatch spriteBatch)
     {
-        if (_game.Model.ActiveWorld == World.Asteroid || _game.Model.ActiveWorld == World.Home)
-        {
-            _scrollingBackgroundRenderer.RenderBackground(spriteBatch);
-            _launchParallaxRenderer.Render(spriteBatch);
-        }
+        if (_game.Model.ActiveWorld == World.Asteroid || _game.Model.ActiveWorld == World.ShipUpstairs ||
+            _game.Model.ActiveWorld == World.ShipDownstairs) _scrollingBackgroundRenderer.RenderBackground(spriteBatch);
 
         RenderEntities(spriteBatch, EntityRenderLayer.BehindWorld);
 

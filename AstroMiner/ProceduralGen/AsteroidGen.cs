@@ -7,45 +7,49 @@ namespace AstroMiner.ProceduralGen;
 
 public static class AsteroidGen
 {
-    public static (CellState[,], Vector2) InitializeGridAndStartingPos(int gridSize, int seed)
+    public static (CellState[,], Vector2) InitializeGridAndStartingCenterPos(int gridSize, int seed)
     {
         var perlinNoise1 = new PerlinNoiseGenerator(seed);
         var perlinNoise2 = new PerlinNoiseGenerator(seed + 42);
         var grid = InitializeGrid(gridSize, perlinNoise1, perlinNoise2, seed);
-        return (grid, ClearAndGetStartingPos(grid));
+        return (grid, ClearAndGetStartingCenterPos(grid));
     }
 
-    private static Vector2 ClearAndGetStartingPos(CellState[,] grid)
+    /// <summary>
+    /// Looks from the left side of the asteroid for the first column to contain 4 contiguous floored cells.
+    /// Clears a 2x4 landing area (current column and one to the right) and returns the centerPos of the 4 cells.
+    /// </summary>
+    /// <param name="grid">2d array representing the roughly circular asteroid. FloorType.Empty means empty space around the asteroid.</param>
+    /// <returns>The starting centerPos for the miner</returns>
+    /// <exception cref="Exception"></exception>
+    private static Vector2 ClearAndGetStartingCenterPos(CellState[,] grid)
     {
-        for (var row = grid.GetLength(0) - 1; row >= 0; row--)
+        for (var col = 0; col < grid.GetLength(1); col++)
         {
             var flooredCellsInARow = 0;
-            for (var col = 0; col < grid.GetLength(1); col++)
+            for (var row = 0; row < grid.GetLength(0); row++)
                 if (grid[row, col].FloorType != FloorType.Empty)
                 {
                     flooredCellsInARow++;
                 }
-                // Find first row which has >= 4 contiguous solid blocks as starting pos
+                // Find first column which has >= 4 contiguous solid blocks as starting pos
                 else if (flooredCellsInARow >= 4)
                 {
-                    var minerCellOffset = 1f - GameConfig.MinerSize / 2;
-                    var minerColIndex = col - flooredCellsInARow / 2 - 1; // -1 to account for miner being 2x cell size
+                    var minerRowIndex = row - flooredCellsInARow / 2;
 
                     // Clear 2x4 landing area
-                    for (var r = row - 1; r <= row; r++) // Rows: one above and the current row
-                    for (var c = minerColIndex - 1; c <= minerColIndex + 2; c++) // Columns: -1 to +2 from minerColIndex
-                    {
-                        grid[r, c].FloorType = FloorType.Floor;
-                        grid[r, c].WallType = WallType.Empty;
-                    }
+                    for (var c = col; c <= col + 1; c++) // Columns: current column and one to the right
+                        for (var r = minerRowIndex - 1; r <= minerRowIndex + 2; r++) // Rows: -1 to +2 from minerRowIndex
+                        {
+                            grid[r, c].FloorType = FloorType.Floor;
+                            grid[r, c].WallType = WallType.Empty;
+                        }
 
-
-                    return new Vector2(minerColIndex + minerCellOffset,
-                        row - 1 + minerCellOffset + GameConfig.Launch.AsteroidStartYOffset);
+                    return new Vector2(col + 1, minerRowIndex);
                 }
         }
 
-        throw new Exception("No 3x1 solid blocks in grid");
+        throw new Exception("No 4x1 solid blocks in grid");
     }
 
     private static CellState[,] InitializeGrid(int gridSize, PerlinNoiseGenerator perlinNoise1,
@@ -85,41 +89,41 @@ public static class AsteroidGen
 
         // Populate the grid
         for (var x = 0; x < gridSize; x++)
-        for (var y = 0; y < gridSize; y++)
-        {
-            double dx = x - centerX;
-            double dy = y - centerY;
-            var distance = Math.Sqrt(dx * dx + dy * dy);
-
-            // Calculate the angle and adjust it to be between 0 and 360 degrees
-            var angle = Math.Atan2(dy, dx) * (180 / Math.PI);
-            if (angle < 0) angle += 360;
-
-            var index = (int)Math.Round(angle * GameConfig.AsteroidGen.AngleSegments / 360.0) %
-                        GameConfig.AsteroidGen.AngleSegments;
-            var radius = radiusValues[index];
-            var perimeterWidth = perimeterWidths[index];
-
-
-            var distancePerc = (float)(distance / (radius + perimeterWidth));
-            var noise1Value = perlinNoise1.Noise(x * GameConfig.AsteroidGen.Perlin1NoiseScale,
-                y * GameConfig.AsteroidGen.Perlin1NoiseScale);
-            var noise2Value = perlinNoise2.Noise(x * GameConfig.AsteroidGen.Perlin2NoiseScale,
-                y * GameConfig.AsteroidGen.Perlin2NoiseScale);
-
-            var (wallType, floorType) = CellGenRules.EvaluateRules(distancePerc, noise1Value, noise2Value);
-
-            var layer = distance < radius * GameConfig.AsteroidGen.CoreRadius ? AsteroidLayer.Core :
-                distance < radius * GameConfig.AsteroidGen.MantleRadius ? AsteroidLayer.Mantle :
-                floorType != FloorType.Empty ? AsteroidLayer.Crust : AsteroidLayer.None;
-
-            grid[x, y] = new CellState
+            for (var y = 0; y < gridSize; y++)
             {
-                WallType = wallType,
-                FloorType = floorType,
-                Layer = layer
-            };
-        }
+                double dx = x - centerX;
+                double dy = y - centerY;
+                var distance = Math.Sqrt(dx * dx + dy * dy);
+
+                // Calculate the angle and adjust it to be between 0 and 360 degrees
+                var angle = Math.Atan2(dy, dx) * (180 / Math.PI);
+                if (angle < 0) angle += 360;
+
+                var index = (int)Math.Round(angle * GameConfig.AsteroidGen.AngleSegments / 360.0) %
+                            GameConfig.AsteroidGen.AngleSegments;
+                var radius = radiusValues[index];
+                var perimeterWidth = perimeterWidths[index];
+
+
+                var distancePerc = (float)(distance / (radius + perimeterWidth));
+                var noise1Value = perlinNoise1.Noise(x * GameConfig.AsteroidGen.Perlin1NoiseScale,
+                    y * GameConfig.AsteroidGen.Perlin1NoiseScale);
+                var noise2Value = perlinNoise2.Noise(x * GameConfig.AsteroidGen.Perlin2NoiseScale,
+                    y * GameConfig.AsteroidGen.Perlin2NoiseScale);
+
+                var (wallType, floorType) = CellGenRules.EvaluateRules(distancePerc, noise1Value, noise2Value);
+
+                var layer = distance < radius * GameConfig.AsteroidGen.CoreRadius ? AsteroidLayer.Core :
+                    distance < radius * GameConfig.AsteroidGen.MantleRadius ? AsteroidLayer.Mantle :
+                    floorType != FloorType.Empty ? AsteroidLayer.Crust : AsteroidLayer.None;
+
+                grid[x, y] = new CellState
+                {
+                    WallType = wallType,
+                    FloorType = floorType,
+                    Layer = layer
+                };
+            }
 
         return grid;
     }

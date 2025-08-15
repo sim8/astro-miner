@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using AstroMiner.AsteroidWorld;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
+using Microsoft.Xna.Framework;
 
 namespace AstroMiner.Model;
 
@@ -65,6 +66,7 @@ public class InventoryModel
 {
     public List<InventoryItem?> Items { get; set; }
     public int SelectedIndex { get; set; }
+    public int Credits { get; set; }
 }
 
 [Serializable]
@@ -103,6 +105,8 @@ public class AsteroidModel
 {
     public int Seed { get; set; }
     public long WillExplodeAt { get; set; }
+
+    public Vector2 MinerStartingPos { get; set; }
     public CellState[,] Grid { get; set; }
 
     // TODO nice way to combine these + other effects?
@@ -117,7 +121,7 @@ public static class GameModelHelpers
     {
         return new GameModel
         {
-            ActiveWorld = World.Home,
+            ActiveWorld = World.Krevik,
             SavedTotalPlaytimeMs = 0,
             Ecs = new EcsModel
             {
@@ -157,6 +161,7 @@ public static class GameModelHelpers
             },
             Inventory = new InventoryModel
             {
+                Credits = 0,
                 Items =
                 [
                     new InventoryItem

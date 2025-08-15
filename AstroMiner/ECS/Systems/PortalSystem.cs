@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using AstroMiner.Utilities;
@@ -7,33 +6,49 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner.ECS.Systems;
 
+// TODO introduce a WalkTo mechanism to abstract away a lot of this?
 public class PortalSystem : System
 {
     public PortalSystem(Ecs ecs, BaseGame game) : base(ecs, game)
     {
     }
 
-    private void MoveToTargetWorld(PortalConfig config, PositionComponent position, MovementComponent movement)
+    private void MoveToTargetWorld(PortalConfig config, PositionComponent position, MovementComponent movement,
+        DirectionComponent dirComp, bool isTransitioning)
     {
+        // This is awful
+        if (position.EntityId == game.Model.Ecs.ActiveControllableEntityId && isTransitioning)
+        {
+            return;
+        }
+
+
         position.World = config.TargetWorld;
         movement.PortalStatus = PortalStatus.Arriving;
 
         var (targetX, targetY) = config.Coordinates;
 
-        var centerPosition = config.Direction switch
+        var targetConfig = StaticWorlds.GetPortalConfig(config.TargetWorld, (targetX, targetY));
+
+        var centerPosition = targetConfig.Direction switch
         {
-            Direction.Top => new Vector2(targetX + 0.5f, targetY + 0.99f), // Bottom center of target cell
-            Direction.Bottom => new Vector2(targetX + 0.5f, targetY + 0.01f), // Top center of target cell
-            Direction.Left => new Vector2(targetX + 0.99f, targetY + 0.5f), // Right center of target cell
-            Direction.Right => new Vector2(targetX + 0.01f, targetY + 0.5f), // Left center of target cell
+            Direction.Bottom => new Vector2(targetX + 0.5f, targetY + 0.99f), // Bottom center of target cell
+            Direction.Top => new Vector2(targetX + 0.5f, targetY + 0.01f), // Top center of target cell
+            Direction.Right => new Vector2(targetX + 0.99f, targetY + 0.5f), // Right center of target cell
+            Direction.Left => new Vector2(targetX + 0.01f, targetY + 0.5f), // Left center of target cell
             _ => new Vector2(targetX + 0.5f, targetY + 0.5f)
         };
+
+        dirComp.Direction = DirectionHelpers.GetOppositeDirection(targetConfig.Direction);
 
         position.SetCenterPosition(centerPosition);
 
         // Only change active world if this entity is the player.
         if (position.EntityId == game.Model.Ecs.ActiveControllableEntityId)
+        {
             game.StateManager.SetActiveWorldAndInitialize(config.TargetWorld);
+            game.StateManager.TransitionManager.FadeIn();
+        }
     }
 
     private void MoveToDeparturePoint(MovementComponent movement, PositionComponent position,
@@ -77,7 +92,7 @@ public class PortalSystem : System
                 dirComp.Direction = config.Direction;
                 position.Position += DirectionHelpers.GetDirectionalVector(travel, config.Direction);
                 // If reached the edge, trigger portal teleport.
-                if (Math.Abs(remaining - travel) < 0.001f) MoveToTargetWorld(config, position, movement);
+                if (Math.Abs(remaining - travel) < 0.001f) MoveToTargetWorld(config, position, movement, dirComp, game.StateManager.TransitionManager.IsTransitioning);
             }
         }
         // For horizontal portals, align on Y then move on X.
@@ -103,7 +118,7 @@ public class PortalSystem : System
                 var travel = Math.Min(deltaDistance, remaining);
                 dirComp.Direction = config.Direction;
                 position.Position += DirectionHelpers.GetDirectionalVector(travel, config.Direction);
-                if (Math.Abs(remaining - travel) < 0.001f) MoveToTargetWorld(config, position, movement);
+                if (Math.Abs(remaining - travel) < 0.001f) MoveToTargetWorld(config, position, movement, dirComp, game.StateManager.TransitionManager.IsTransitioning);
             }
         }
     }
@@ -114,8 +129,8 @@ public class PortalSystem : System
         var (topLeftGridX, topLeftGridY) = ViewHelpers.ToGridPosition(position.Position);
         var (bottomRightGridX, bottomRightGridY) =
             ViewHelpers.ToGridPosition(position.Position + new Vector2(position.GridWidth, position.GridHeight));
-        if (!game.StateManager.ActiveWorldState.CellIsPortal(topLeftGridX, topLeftGridY) &&
-            !game.StateManager.ActiveWorldState.CellIsPortal(bottomRightGridX, bottomRightGridY))
+        if (!game.StateManager.GetWorldState(position.World).CellIsPortal(topLeftGridX, topLeftGridY) &&
+            !game.StateManager.GetWorldState(position.World).CellIsPortal(bottomRightGridX, bottomRightGridY))
         {
             movement.PortalStatus = PortalStatus.None;
         }
@@ -126,7 +141,7 @@ public class PortalSystem : System
         }
     }
 
-    public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
+    public override void Update(GameTime gameTime, ActiveControls activeControls)
     {
         foreach (var movement in Ecs.GetAllComponents<MovementComponent>())
         {
@@ -141,10 +156,10 @@ public class PortalSystem : System
             if (movement.PortalStatus == PortalStatus.Arriving)
                 MoveToArrivalPoint(position, movement, dirComp, gameTime);
 
-            if (!game.StateManager.ActiveWorldState.CellIsPortal(gridX, gridY))
+            if (!game.StateManager.GetWorldState(position.World).CellIsPortal(gridX, gridY))
                 continue;
 
-            var config = WorldGrid.GetPortalConfig(position.World, (gridX, gridY));
+            var config = StaticWorlds.GetPortalConfig(position.World, (gridX, gridY));
 
             if (movement.PortalStatus == PortalStatus.Departing)
                 MoveToDeparturePoint(movement, position, dirComp, config, gameTime);
@@ -154,6 +169,10 @@ public class PortalSystem : System
             {
                 movement.PortalStatus = PortalStatus.Departing;
                 movement.CurrentSpeed = GameConfig.Speeds.Walking;
+                if (position.EntityId == game.Model.Ecs.ActiveControllableEntityId)
+                {
+                    game.StateManager.TransitionManager.FadeOut();
+                }
             }
         }
     }

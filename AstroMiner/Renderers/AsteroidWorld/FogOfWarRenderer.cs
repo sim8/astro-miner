@@ -5,7 +5,7 @@ namespace AstroMiner.Renderers.AsteroidWorld;
 
 public class FogOfWarRenderer(RendererShared shared)
 {
-    public static readonly Color FogColor = new(37, 73, 99);
+    public static readonly Color FogColor = Colors.DarkBlue;
     public static readonly int FogGradientGridRadius = 2; // Roughly
 
     public void RenderFogOfWar(SpriteBatch spriteBatch, int col, int row)

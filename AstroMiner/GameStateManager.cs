@@ -4,33 +4,10 @@ using AstroMiner.AsteroidWorld;
 using AstroMiner.Definitions;
 using AstroMiner.ECS;
 using AstroMiner.HomeWorld;
-using AstroMiner.InteriorsWorld;
+using AstroMiner.StaticWorld;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner;
-
-public enum MiningControls
-{
-    // Movement
-    MoveUp,
-    MoveRight,
-    MoveDown,
-    MoveLeft,
-
-    Drill,
-    ExitVehicle,
-
-    // Player-only
-    UseItem,
-    Interact,
-
-    // Miner-only
-    UseGrapple,
-
-    ToggleInventory,
-    NewGameOrReturnToBase, // TODO factor out
-    SaveGame // TEMP
-}
 
 public enum Direction
 {
@@ -49,25 +26,26 @@ public class GameStateManager(BaseGame game)
     public CameraState Camera;
     public CloudManager CloudManager;
     public HomeWorldState HomeWorld;
-    public InteriorsWorldState InteriorsWorld;
     public Inventory Inventory;
+    public StaticWorldState StaticWorld;
+    public TransitionManager TransitionManager;
     public UI.UI Ui;
 
-    public bool FreezeControls { get; set; }
-
     public Ecs Ecs { get; private set; }
-    public GameTime GameTime { get; private set; }
+    public GameTime GameTime { get; private set; } = new();
 
 
-    public BaseWorldState ActiveWorldState =>
-        game.Model.ActiveWorld switch
+    public BaseWorldState ActiveWorldState => GetWorldState(game.Model.ActiveWorld);
+
+    public BaseWorldState GetWorldState(World world)
+    {
+        return world switch
         {
             World.Asteroid => AsteroidWorld,
-            World.Home => HomeWorld,
-            World.RigRoom => InteriorsWorld,
-            World.MinEx => InteriorsWorld,
-            _ => throw new Exception("Invalid world")
+            World.Home => HomeWorld, // TODO deprecate
+            _ => StaticWorld
         };
+    }
 
     public void SetActiveWorldAndInitialize(World world)
     {
@@ -77,7 +55,7 @@ public class GameStateManager(BaseGame game)
         else if (world == World.Home)
             HomeWorld.Initialize();
         else
-            InteriorsWorld.Initialize();
+            StaticWorld.Initialize();
     }
 
     public void Initialize()
@@ -86,8 +64,9 @@ public class GameStateManager(BaseGame game)
         Camera = new CameraState(game);
         AsteroidWorld = new AsteroidWorldState(game);
         HomeWorld = new HomeWorldState(game);
-        InteriorsWorld = new InteriorsWorldState(game);
+        StaticWorld = new StaticWorldState(game);
         CloudManager = new CloudManager(game);
+        TransitionManager = new TransitionManager(game);
         Ecs = new Ecs(game);
         Ui = new UI.UI(game);
         _newGameManager = new NewGameManager(game);
@@ -123,25 +102,27 @@ public class GameStateManager(BaseGame game)
         return game.Model.SavedTotalPlaytimeMs + (long)GameTime.TotalGameTime.TotalMilliseconds;
     }
 
-    public void Update(HashSet<MiningControls> activeMiningControls, GameTime gameTime)
+    public void Update(ActiveControls activeControls, GameTime gameTime)
     {
-        var controlsToUse = FreezeControls ? EmptyControls : activeMiningControls;
         GameTime = gameTime;
 
         if (!Ui.State.IsInMainMenu)
         {
-            ActiveWorldState.Update(controlsToUse, gameTime);
-            Camera.Update(gameTime, controlsToUse);
-            CloudManager.Update(gameTime);
-            Ecs.Update(gameTime, controlsToUse);
+            ActiveWorldState.Update(activeControls, gameTime); // TODO only utilized by AsteroidWorld
 
-            if (activeMiningControls.Contains(MiningControls.ToggleInventory))
+            Camera.Update(gameTime, activeControls);
+            CloudManager.Update(gameTime);
+            TransitionManager.Update(gameTime);
+            Ecs.Update(gameTime, activeControls);
+
+            // TODO move into UIState Updater?
+            if (activeControls.Global.Contains(GlobalControls.ToggleMenu))
                 Ui.State.IsInventoryOpen = !Ui.State.IsInventoryOpen;
         }
 
 
         Ui.Update(gameTime);
 
-        if (activeMiningControls.Contains(MiningControls.SaveGame)) SaveGameTEMP();
+        if (activeControls.Mining.Contains(MiningControls.SaveGame)) SaveGameTEMP();
     }
 }

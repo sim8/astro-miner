@@ -7,6 +7,9 @@ public class UIState
     public bool IsInMainMenu { get; set; } = true;
     public bool IsDebugMenuOpen { get; set; } = false;
     public bool IsInventoryOpen { get; set; } = false;
+    public bool IsLaunchConsoleOpen { get; set; } = false;
+    public bool IsInShopMenu { get; set; } = false;
+    public int sellConfirmationItemIndex { get; set; } = -1;
 
     // TODO all very temporary. Need a proper way of tracking dialog
     public bool IsInDialog { get; set; } = false;
@@ -32,69 +35,57 @@ public class UI(BaseGame game)
             ChildrenAlign = ChildrenAlign.Center,
             ChildrenJustify = ChildrenJustify.SpaceBetween,
             Children =
-            [
-                new UIElement(game)
-                {
-                    FullWidth = true,
-                    ChildrenAlign = ChildrenAlign.Start,
-                    ChildrenDirection = ChildrenDirection.Row,
-                    ChildrenJustify = ChildrenJustify.SpaceBetween,
-                    Children =
-                    [
-                        new UIElement(game)
-                        {
-                            // TODO put something here
-                            FixedWidth = 200 * UIScale,
-                            FixedHeight = 100 * UIScale
-                        },
-
-                        .. game.Debug.showFps
-                            ? new UIElement[]
+                UIHelpers.FilterNull([
+                    new UIElement(game)
+                    {
+                        FullWidth = true,
+                        ChildrenAlign = ChildrenAlign.Start,
+                        ChildrenDirection = ChildrenDirection.Row,
+                        ChildrenJustify = ChildrenJustify.SpaceBetween,
+                        Children =
+                        [
+                            new UITextElement(game)
                             {
-                                new UITextElement(game)
-                                {
-                                    Text = "FPS " + game.FrameCounter.AverageFramesPerSecond.ToString("F0"),
-                                    Color = Color.Aqua,
-                                    Padding = 10,
-                                    Scale = 3
-                                }
-                            }
-                            : []
-                    ]
-                },
+                                Text = "CREDITS " + game.Model.Inventory.Credits,
+                                Scale = 3,
+                                Color = Colors.LightBlue,
+                                Padding = 10
+                            },
 
-                .. game.StateManager.Ui.State.IsInDialog
-                    ? new UIElement[]
+                            .. game.Debug.showFps
+                                ? new UIElement[]
+                                {
+                                    new UITextElement(game)
+                                    {
+                                        Text = "FPS " + game.FrameCounter.AverageFramesPerSecond.ToString("F0"),
+                                        Color = Colors.LightBlue,
+                                        Padding = 10,
+                                        Scale = 3
+                                    }
+                                }
+                                : []
+                        ]
+                    },
+
+                    game.StateManager.Ui.State.IsInDialog ? new UIDialog(game) : null,
+                    game.StateManager.Ui.State.IsInventoryOpen ? new UIInventory(game) : null,
+                    !game.StateManager.Ui.State.IsInventoryOpen ? new UIInventoryFooter(game) : null,
+                    game.StateManager.Ui.State.IsLaunchConsoleOpen ? new UILaunchConsole(game) : null,
+                    game.StateManager.Ui.State.IsInShopMenu ? new UIShop(game) : null,
+                    new UIElement(game)
                     {
-                        new UIDialog(game)
+                        FullWidth = true,
+                        FullHeight = true,
+                        Position = PositionMode.Absolute,
+                        ChildrenAlign = ChildrenAlign.End,
+                        ChildrenDirection = ChildrenDirection.Row,
+                        ChildrenJustify = ChildrenJustify.End,
+                        Children =
+                        [
+                            new UIDebugButton(game)
+                        ]
                     }
-                    : [],
-                .. !game.StateManager.Ui.State.IsInDialog && game.StateManager.Ui.State.IsInventoryOpen
-                    ? new UIElement[]
-                    {
-                        new UIInventory(game)
-                    }
-                    : [],
-                .. !game.StateManager.Ui.State.IsInDialog && !game.StateManager.Ui.State.IsInventoryOpen
-                    ? new UIElement[]
-                    {
-                        new UIInventoryFooter(game)
-                    }
-                    : [],
-                new UIElement(game)
-                {
-                    FullWidth = true,
-                    FullHeight = true,
-                    Position = PositionMode.Absolute,
-                    ChildrenAlign = ChildrenAlign.End,
-                    ChildrenDirection = ChildrenDirection.Row,
-                    ChildrenJustify = ChildrenJustify.End,
-                    Children =
-                    [
-                        new UIDebugButton(game)
-                    ]
-                }
-            ]
+                ])
         };
 
         return root;

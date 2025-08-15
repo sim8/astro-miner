@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
@@ -13,10 +13,10 @@ public class InteractionSystem : System
 
     public int InteractableEntityId { get; private set; } = -1;
 
-    public override void Update(GameTime gameTime, HashSet<MiningControls> activeControls)
+    public override void Update(GameTime gameTime, ActiveControls activeControls)
     {
         CalculateInteractableEntityId();
-        if (activeControls.Contains(MiningControls.Interact))
+        if (activeControls.Mining.Contains(MiningControls.Interact))
         {
             if (InteractableEntityId != -1)
                 HandleInteraction();
@@ -29,13 +29,32 @@ public class InteractionSystem : System
 
     private void HandleInteraction()
     {
-        if (InteractableEntityId == Ecs.MinerEntityId) Ecs.SetActiveControllableEntity(Ecs.MinerEntityId.Value);
+        if (InteractableEntityId == Ecs.MinerEntityId)
+        {
+            Ecs.SetActiveControllableEntity(Ecs.MinerEntityId.Value);
+            return;
+        }
+
+        var interactiveType = Ecs.GetComponent<InteractiveComponent>(InteractableEntityId).InteractiveType;
+
+        if (interactiveType == InteractiveType.LaunchConsole)
+        {
+            game.StateManager.Ui.State.IsLaunchConsoleOpen = true;
+            return;
+        }
+
+        if (interactiveType == InteractiveType.Shop)
+        {
+            game.StateManager.Ui.State.IsInShopMenu = true;
+            return;
+        }
 
         var npc = Ecs.GetComponent<NpcComponent>(InteractableEntityId);
 
         if (npc is { Npc: Npc.MinExMerchant }) game.StateManager.Ui.State.IsInDialog = true;
     }
 
+    // TODO activeWorld hardcoded - change if NPCs use this
     private void CalculateInteractableEntityId()
     {
         InteractableEntityId = -1;

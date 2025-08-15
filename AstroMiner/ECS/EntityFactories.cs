@@ -15,13 +15,13 @@ public class EntityFactories
         _ecs = ecs;
     }
 
-    public int CreatePlayerEntity(Vector2 position)
+    public int CreatePlayerEntity(Vector2 centerPosition)
     {
         var entityId = _ecs.CreateEntity();
 
         // Add position component
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
-        positionComponent.Position = position;
+        positionComponent.SetCenterPosition(centerPosition);
         positionComponent.World = _game.Model.ActiveWorld;
         positionComponent.WidthPx = GameConfig.PlayerBoxSizePx;
         positionComponent.HeightPx = GameConfig.PlayerBoxSizePx;
@@ -45,20 +45,21 @@ public class EntityFactories
         return entityId;
     }
 
-    public int CreateMinerEntity(Vector2 position)
+    public int CreateMinerEntity()
     {
         var entityId = _ecs.CreateEntity();
 
         // Add position component
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
-        positionComponent.World = _game.Model.ActiveWorld;
-        positionComponent.Position = position;
+        positionComponent.World = World.ShipDownstairs;
         positionComponent.WidthPx = GameConfig.MinerBoxSizePx;
         positionComponent.HeightPx = GameConfig.MinerBoxSizePx;
+        positionComponent.SetCenterPosition(new Vector2(34f, 6f));
         positionComponent.IsCollideable = true;
 
         // Add direction component
-        _ecs.AddComponent<DirectionComponent>(entityId);
+        var directionComponent = _ecs.AddComponent<DirectionComponent>(entityId);
+        directionComponent.Direction = Direction.Right;
 
         // Add tag component for identification
         _ecs.AddComponent<MinerTag>(entityId);
@@ -92,6 +93,32 @@ public class EntityFactories
         // Add tag component for identification
         _ecs.AddComponent<NpcComponent>(entityId);
         _ecs.GetComponent<NpcComponent>(entityId).Npc = Npc.MinExMerchant;
+
+        // Add interactive component
+        _ecs.AddComponent<InteractiveComponent>(entityId);
+
+        return entityId;
+    }
+
+    public int CreateRikusEntity()
+    {
+        var entityId = _ecs.CreateEntity();
+
+        // Add position component
+        var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
+        positionComponent.World = World.Krevik;
+        positionComponent.SetCenterPosition(new Vector2(4.5f, 3.5f));
+        positionComponent.WidthPx = GameConfig.PlayerBoxSizePx;
+        positionComponent.HeightPx = GameConfig.PlayerBoxSizePx;
+        positionComponent.IsCollideable = true;
+
+        // Add direction component
+        var directionComponent = _ecs.AddComponent<DirectionComponent>(entityId);
+        directionComponent.Direction = Direction.Bottom;
+
+        // Add tag component for identification
+        _ecs.AddComponent<NpcComponent>(entityId);
+        _ecs.GetComponent<NpcComponent>(entityId).Npc = Npc.Rikus;
 
         // Add interactive component
         _ecs.AddComponent<InteractiveComponent>(entityId);
@@ -137,67 +164,85 @@ public class EntityFactories
         return entityId;
     }
 
-    public int CreateLaunchLightEntity(Vector2 position)
+    public int CreateWindowLightSourceEntity(World world, Vector2 position)
     {
         var entityId = _ecs.CreateEntity();
 
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
-        positionComponent.World = _game.Model.ActiveWorld;
+        positionComponent.World = world;
         positionComponent.Position = position;
-        positionComponent.WidthPx = 5;
-        positionComponent.HeightPx = 5;
+        positionComponent.WidthPx = 1;
+        positionComponent.HeightPx = 1;
         positionComponent.IsCollideable = false;
 
-        var textureComponent = _ecs.AddComponent<TextureComponent>(entityId);
-        textureComponent.TextureName = "launch-light";
-
-        var radialLightSourceComponent = _ecs.AddComponent<RadialLightSourceComponent>(entityId);
-        radialLightSourceComponent.Tint = new Color(226, 86, 86);
-        radialLightSourceComponent.SizePx = 128;
-        radialLightSourceComponent.Opacity = 0.3f;
-
-        var renderLayerComponent = _ecs.AddComponent<RenderLayerComponent>(entityId);
-        renderLayerComponent.EntityRenderLayer = EntityRenderLayer.BehindEntities;
+        var radialLightSource = _ecs.AddComponent<RadialLightSourceComponent>(entityId);
+        radialLightSource.Tint = Color.White;
+        radialLightSource.SizePx = 350;
+        radialLightSource.Opacity = 0.7f;
 
         return entityId;
     }
 
-    public int CreateLaunchPadFrontEntity(Vector2 position)
+    public int CreateCeilingLightSourceEntity(World world, Vector2 position)
     {
         var entityId = _ecs.CreateEntity();
 
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
-        positionComponent.World = _game.Model.ActiveWorld;
+        positionComponent.World = world;
         positionComponent.Position = position;
-        positionComponent.WidthPx = 76;
-        positionComponent.HeightPx = 63;
+        positionComponent.WidthPx = 1;
+        positionComponent.HeightPx = 1;
         positionComponent.IsCollideable = false;
 
-        var textureComponent = _ecs.AddComponent<TextureComponent>(entityId);
-        textureComponent.TextureName = "launch-pad-front";
-
-        var renderLayerComponent = _ecs.AddComponent<RenderLayerComponent>(entityId);
-        renderLayerComponent.EntityRenderLayer = EntityRenderLayer.BehindEntities;
+        var radialLightSource = _ecs.AddComponent<RadialLightSourceComponent>(entityId);
+        radialLightSource.Tint = new Color(255, 251, 220);
+        radialLightSource.SizePx = 256;
+        radialLightSource.Opacity = 1f;
 
         return entityId;
     }
 
-    public int CreateLaunchPadRearEntity(Vector2 position)
+    public int CreateLaunchConsoleEntity()
     {
         var entityId = _ecs.CreateEntity();
 
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
-        positionComponent.World = _game.Model.ActiveWorld;
-        positionComponent.Position = position;
-        positionComponent.WidthPx = 76;
-        positionComponent.HeightPx = 31;
-        positionComponent.IsCollideable = false;
+        positionComponent.World = World.ShipDownstairs;
+        positionComponent.Position = new Vector2(29, 5);
+        positionComponent.WidthPx = 64;
+        positionComponent.HeightPx = 64;
+        positionComponent.IsCollideable = true;
+
+        var radialLightSource = _ecs.AddComponent<RadialLightSourceComponent>(entityId);
+        radialLightSource.Tint = new Color(192, 210, 216);
+        radialLightSource.SizePx = 128;
+        radialLightSource.Opacity = 1f;
+
+        var interactiveComponent = _ecs.AddComponent<InteractiveComponent>(entityId);
+        interactiveComponent.InteractiveType = InteractiveType.LaunchConsole;
+        interactiveComponent.InteractableDistance = 1.5f;
 
         var textureComponent = _ecs.AddComponent<TextureComponent>(entityId);
-        textureComponent.TextureName = "launch-pad-rear";
+        textureComponent.TextureName = "launch-console";
+        textureComponent.TopPaddingPx = 10;
 
-        var renderLayerComponent = _ecs.AddComponent<RenderLayerComponent>(entityId);
-        renderLayerComponent.EntityRenderLayer = EntityRenderLayer.BehindWorld;
+        return entityId;
+    }
+
+    public int CreateShopEntity()
+    {
+        var entityId = _ecs.CreateEntity();
+
+        var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
+        positionComponent.World = World.Krevik;
+        positionComponent.Position = new Vector2(10.5f, 4);
+        positionComponent.WidthPx = 64;
+        positionComponent.HeightPx = 16;
+        positionComponent.IsCollideable = true;
+
+        var interactiveComponent = _ecs.AddComponent<InteractiveComponent>(entityId);
+        interactiveComponent.InteractiveType = InteractiveType.Shop;
+        interactiveComponent.InteractableDistance = 1.5f;
 
         return entityId;
     }

@@ -32,8 +32,8 @@ public class Ecs
         FallOrLavaDamageSystem = new FallOrLavaDamageSystem(this, game);
         MiningSystem = new MiningSystem(this, game);
         GrappleSystem = new GrappleSystem(this, game);
-        LaunchSystem = new LaunchSystem(this, game);
         InteractionSystem = new InteractionSystem(this, game);
+        EntityTransformSystem = new EntityTransformSystem(this, game);
     }
 
     public int? ActiveControllableEntityId => _game.Model.Ecs.ActiveControllableEntityId;
@@ -50,8 +50,8 @@ public class Ecs
     public FallOrLavaDamageSystem FallOrLavaDamageSystem { get; }
     public MiningSystem MiningSystem { get; }
     public GrappleSystem GrappleSystem { get; }
-    public LaunchSystem LaunchSystem { get; }
     public InteractionSystem InteractionSystem { get; }
+    public EntityTransformSystem EntityTransformSystem { get; }
 
     public Vector2 ActiveControllableEntityCenterPosition => ActiveControllableEntityId == null
         ? Vector2.Zero
@@ -80,18 +80,18 @@ public class Ecs
     public int? PlayerEntityId => _game.Model.Ecs.PlayerEntityId;
     public int? MinerEntityId => _game.Model.Ecs.MinerEntityId;
 
-    public void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
+    public void Update(GameTime gameTime, ActiveControls activeControls)
     {
-        DynamiteSystem.Update(gameTime, activeMiningControls);
-        ExplosionSystem.Update(gameTime, activeMiningControls);
-        MovementSystem.Update(gameTime, activeMiningControls);
-        PortalSystem.Update(gameTime, activeMiningControls);
-        HealthSystem.Update(gameTime, activeMiningControls);
-        FallOrLavaDamageSystem.Update(gameTime, activeMiningControls);
-        MiningSystem.Update(gameTime, activeMiningControls);
-        GrappleSystem.Update(gameTime, activeMiningControls);
-        LaunchSystem.Update(gameTime, activeMiningControls);
-        InteractionSystem.Update(gameTime, activeMiningControls);
+        DynamiteSystem.Update(gameTime, activeControls);
+        ExplosionSystem.Update(gameTime, activeControls);
+        MovementSystem.Update(gameTime, activeControls);
+        PortalSystem.Update(gameTime, activeControls);
+        HealthSystem.Update(gameTime, activeControls);
+        FallOrLavaDamageSystem.Update(gameTime, activeControls);
+        MiningSystem.Update(gameTime, activeControls);
+        GrappleSystem.Update(gameTime, activeControls);
+        InteractionSystem.Update(gameTime, activeControls);
+        EntityTransformSystem.Update(gameTime, activeControls);
         CalculateEntityIdsInActiveWorldSortedByDistance();
     }
 

@@ -1,18 +1,21 @@
+#nullable enable
+using System;
 using System.Collections.Generic;
 using AstroMiner.Definitions;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner.UI;
 
-public sealed class UIInventory : UIScreen
+public class UIInventory : UIScreen
 {
-    public UIInventory(BaseGame game) : base(game)
+    public UIInventory(BaseGame game,
+        Action<int>? onItemClick = null) : base(game)
     {
         Children =
         [
-            new UIInventoryRow(game, 0, 10),
-            new UIInventoryRow(game, 10, 20),
-            new UIInventoryRow(game, 20, 30)
+            new UIInventoryRow(game, 0, 10, onItemClick),
+            new UIInventoryRow(game, 10, 20, onItemClick),
+            new UIInventoryRow(game, 20, 30, onItemClick)
         ];
     }
 }
@@ -23,22 +26,23 @@ public sealed class UIInventoryFooter : UIElement
     {
         Children =
         [
-            new UIInventoryRow(game, 0, 10)
+            new UIInventoryRow(game, 0, 10, null)
         ];
     }
 }
 
 public sealed class UIInventoryRow : UIElement
 {
-    public UIInventoryRow(BaseGame game, int inventoryStartIndex, int inventoryEndIndex) : base(game)
+    public UIInventoryRow(BaseGame game, int inventoryStartIndex, int inventoryEndIndex, Action<int>? onItemClick) :
+        base(game)
     {
         ChildrenDirection = ChildrenDirection.Row;
         ChildrenAlign = ChildrenAlign.Center;
         ChildrenJustify = ChildrenJustify.Start;
-        Children = CreateInventoryItems(game, inventoryStartIndex, inventoryEndIndex);
+        Children = CreateInventoryItems(game, inventoryStartIndex, inventoryEndIndex, onItemClick);
     }
 
-    private List<UIElement> CreateInventoryItems(BaseGame game, int startIndex, int endIndex)
+    private List<UIElement> CreateInventoryItems(BaseGame game, int startIndex, int endIndex, Action<int>? onItemClick)
     {
         var items = new List<UIElement>();
         var inventory = game.Model.Inventory.Items;
@@ -48,7 +52,7 @@ public sealed class UIInventoryRow : UIElement
             {
                 var item = inventory[i];
                 var itemConfig = ItemTypes.GetConfig(item.Type);
-                items.Add(new UIInventoryItem(game, itemConfig.GetSourceRect(), item.Count, i));
+                items.Add(new UIInventoryItem(game, itemConfig.GetSourceRect(), item.Count, i, onItemClick));
             }
             else
             {
@@ -71,12 +75,23 @@ public sealed class UIInventoryItemEmpty : UIElement
 
 public sealed class UIInventoryItem : UIElement
 {
-    public UIInventoryItem(BaseGame game, Rectangle sourceRect, int count, int inventoryIndex) : base(game)
+    public UIInventoryItem(BaseGame game, Rectangle sourceRect, int count, int inventoryIndex,
+        Action<int>? onItemClick) : base(game)
     {
         FixedWidth = 32 * game.StateManager.Ui.UIScale;
         FixedHeight = 32 * game.StateManager.Ui.UIScale;
         BackgroundColor = Color.DarkGray;
-        OnClick = () => game.Model.Inventory.SelectedIndex = inventoryIndex;
+        OnClick = () =>
+            {
+                if (onItemClick != null)
+                {
+                    onItemClick(inventoryIndex);
+                }
+                else
+                {
+                    game.Model.Inventory.SelectedIndex = inventoryIndex;
+                }
+            };
         Children =
             UIHelpers.FilterNull([
                 inventoryIndex == game.Model.Inventory.SelectedIndex

@@ -153,7 +153,7 @@ public class GrappleSystem : System
             movementComponent.CurrentSpeed + speedIncrease);
     }
 
-    public override void Update(GameTime gameTime, HashSet<MiningControls> activeMiningControls)
+    public override void Update(GameTime gameTime, ActiveControls activeControls)
     {
         if (game.Model.ActiveWorld != World.Asteroid) return;
 
@@ -165,7 +165,7 @@ public class GrappleSystem : System
         grappleComponent.GrappleCooldownRemaining = Math.Max(0,
             grappleComponent.GrappleCooldownRemaining - gameTime.ElapsedGameTime.Milliseconds);
 
-        if (activeMiningControls.Contains(MiningControls.UseGrapple))
+        if (activeControls.Mining.Contains(MiningControls.UseGrapple))
         {
             UseGrapple(gameTime, grappleComponent);
             grappleComponent.PrevPressedUsedGrapple = true;

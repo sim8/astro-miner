@@ -6,4 +6,8 @@ public enum World
     Home,
     RigRoom,
     MinEx,
+    Krevik,
+    Ship,
+    ShipUpstairs,
+    ShipDownstairs,
 }

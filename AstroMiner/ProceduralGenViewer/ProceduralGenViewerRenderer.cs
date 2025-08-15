@@ -70,6 +70,17 @@ public class ProceduralGenViewerRenderer(BaseGame game, ProceduralGenViewerState
                 spriteBatch.Draw(game.Textures["white"], GetGridCellRect(col, row),
                     _asteroidLayerColors[cellState.Layer] * 0.6f);
         }
+
+        RenderStartPos(spriteBatch, game.Model.Asteroid.MinerStartingPos);
+    }
+
+    private void RenderStartPos(SpriteBatch spriteBatch, Vector2 startPos)
+    {
+        var x = (int)(startPos.X * CellSizePx);
+        var y = (int)(startPos.Y * CellSizePx);
+
+        spriteBatch.Draw(game.Textures["white"], new Rectangle(x, y, 6, 6), Color.Aqua);
+        spriteBatch.Draw(game.Textures["white"], new Rectangle(x - 6, y - 6, 6, 6), Color.Aqua);
     }
 
     private void RenderString(SpriteBatch spriteBatch, int startX, int startY, string str, int scale = 3)
