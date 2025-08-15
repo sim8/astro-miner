@@ -68,6 +68,8 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
         LoopVisibleCells(FogOfWarRenderer.FogGradientGridRadius,
             (col, row) => { _fogOfWarRenderer.RenderFogOfWar(spriteBatch, col, row); }
         );
+
+        if (Shared.Game.Debug.showGridDebug) RenderGridDebugOverlay(spriteBatch);
     }
 
     public override void RenderWorldOverlay(SpriteBatch spriteBatch)
@@ -131,5 +133,26 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
         for (var row = startRow; row < endRow; row++)
         for (var col = startCol; col < endCol; col++)
             cellAction(col, row);
+    }
+
+    private void RenderGridDebugOverlay(SpriteBatch spriteBatch)
+    {
+        LoopVisibleCells(
+            1,
+            (col, row) =>
+            {
+                var cellRect = Shared.ViewHelpers.GetVisibleRectForGridCell(col, row);
+                var leftBorderRect = cellRect;
+                leftBorderRect.Width = 1;
+                spriteBatch.Draw(Shared.Textures["white"], leftBorderRect, Color.Black);
+
+                var topBorderRect = cellRect;
+                topBorderRect.Height = 1;
+                spriteBatch.Draw(Shared.Textures["white"], topBorderRect, Color.Black);
+
+
+                var coordinatesStr = col + " " + row;
+                Shared.RenderString(spriteBatch, cellRect.X, cellRect.Y, coordinatesStr, 1);
+            });
     }
 }
