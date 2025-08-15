@@ -28,7 +28,13 @@ public sealed class UIShop : UIElement
                             Text = "SELL ITEMS"
                         },
                         new UIInventoryGrid(game,
-                            selectedIndex => game.StateManager.Ui.State.sellConfirmationItemIndex = selectedIndex)
+                            selectedIndex =>
+                            {
+                                var item = game.StateManager.Inventory.GetItemAtIndex(selectedIndex);
+                                var itemTypeConfig = ItemTypes.GetConfig(item.Type);
+                                if (itemTypeConfig.Price == -1) return;
+                                game.StateManager.Ui.State.sellConfirmationItemIndex = selectedIndex;
+                            })
                     ]
                 }
             ]
