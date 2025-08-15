@@ -138,6 +138,7 @@ The caravan moves continually round the traderoute of the 4 planets. Each planet
     - Often makes jokes about killing people - people aren't sure if Rikus did a good job
     - Has to be programmed to not shoot to kill strangers
     - Quest point - shoots person who comes onboard
+      - Crew has to wear disguises
 
 ## Game Opening Options
 
