@@ -102,26 +102,23 @@ public class GameStateManager(BaseGame game)
         return game.Model.SavedTotalPlaytimeMs + (long)GameTime.TotalGameTime.TotalMilliseconds;
     }
 
+    private void UpdateInGame(ActiveControls activeControls, GameTime gameTime)
+    {
+        ActiveWorldState.Update(activeControls, gameTime); // TODO only utilized by AsteroidWorld
+
+        Camera.Update(gameTime, activeControls);
+        CloudManager.Update(gameTime);
+        TransitionManager.Update(gameTime);
+        Ecs.Update(gameTime, activeControls);
+    }
+
     public void Update(ActiveControls activeControls, GameTime gameTime)
     {
         GameTime = gameTime;
 
-        if (!Ui.State.IsInMainMenu)
-        {
-            ActiveWorldState.Update(activeControls, gameTime); // TODO only utilized by AsteroidWorld
+        if (!Ui.State.IsInMainMenu) UpdateInGame(activeControls, gameTime);
 
-            Camera.Update(gameTime, activeControls);
-            CloudManager.Update(gameTime);
-            TransitionManager.Update(gameTime);
-            Ecs.Update(gameTime, activeControls);
-
-            // TODO move into UIState Updater?
-            if (activeControls.Global.Contains(GlobalControls.ToggleMenu))
-                Ui.State.IsInventoryOpen = !Ui.State.IsInventoryOpen;
-        }
-
-
-        Ui.Update(gameTime);
+        Ui.Update(gameTime, activeControls);
 
         if (activeControls.Mining.Contains(MiningControls.SaveGame)) SaveGameTEMP();
     }

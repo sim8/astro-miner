@@ -6,9 +6,9 @@ public class UIState
 {
     public bool IsInMainMenu { get; set; } = true;
     public bool IsDebugMenuOpen { get; set; } = false;
-    public bool IsInventoryOpen { get; set; } = false;
-    public bool IsLaunchConsoleOpen { get; set; } = false;
-    public bool IsInShopMenu { get; set; } = false;
+    public bool IsInventoryOpen { get; set; }
+    public bool IsLaunchConsoleOpen { get; set; }
+    public bool IsInShopMenu { get; set; }
     public int sellConfirmationItemIndex { get; set; } = -1;
 
     // TODO all very temporary. Need a proper way of tracking dialog
@@ -91,8 +91,22 @@ public class UI(BaseGame game)
         return root;
     }
 
-    public void Update(GameTime gameTime)
+    public void Update(GameTime gameTime, ActiveControls activeControls)
     {
+        if (activeControls.Global.Contains(GlobalControls.ToggleInventory))
+        {
+            if (State.IsLaunchConsoleOpen || State.IsInShopMenu)
+            {
+                State.IsLaunchConsoleOpen = false;
+                State.IsInShopMenu = false;
+                State.sellConfirmationItemIndex = -1;
+            }
+            else
+            {
+                State.IsInventoryOpen = !State.IsInventoryOpen;
+            }
+        }
+
         Root = GetTree();
 
         Root.ComputeDimensions(game.Graphics.GraphicsDevice.Viewport.Width,
