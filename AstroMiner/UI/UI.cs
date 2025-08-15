@@ -50,20 +50,7 @@ public class UI(BaseGame game)
                                 Scale = 3,
                                 Color = Colors.LightBlue,
                                 Padding = 10
-                            },
-
-                            .. game.Debug.showFps
-                                ? new UIElement[]
-                                {
-                                    new UITextElement(game)
-                                    {
-                                        Text = "FPS " + game.FrameCounter.AverageFramesPerSecond.ToString("F0"),
-                                        Color = Colors.LightBlue,
-                                        Padding = 10,
-                                        Scale = 3
-                                    }
-                                }
-                                : []
+                            }
                         ]
                     },
 
@@ -78,10 +65,34 @@ public class UI(BaseGame game)
                         FullHeight = true,
                         Position = PositionMode.Absolute,
                         ChildrenAlign = ChildrenAlign.End,
-                        ChildrenDirection = ChildrenDirection.Row,
+                        ChildrenDirection = ChildrenDirection.Column,
                         ChildrenJustify = ChildrenJustify.End,
                         Children =
                         [
+                            .. game.Debug.showSeed
+                                ? new UIElement[]
+                                {
+                                    new UITextElement(game)
+                                    {
+                                        Text = "SEED " + game.Model.Asteroid.Seed,
+                                        Color = Color.Aqua,
+                                        Padding = 10,
+                                        Scale = 3
+                                    }
+                                }
+                                : [],
+                            .. game.Debug.showFps
+                                ? new UIElement[]
+                                {
+                                    new UITextElement(game)
+                                    {
+                                        Text = "FPS " + game.FrameCounter.AverageFramesPerSecond.ToString("F0"),
+                                        Color = Color.Aqua,
+                                        Padding = 10,
+                                        Scale = 3
+                                    }
+                                }
+                                : [],
                             new UIDebugButton(game)
                         ]
                     }

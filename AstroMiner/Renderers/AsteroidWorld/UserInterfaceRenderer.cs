@@ -13,8 +13,6 @@ public class UserInterfaceRenderer(
 
     public void RenderUserInterface(SpriteBatch spriteBatch)
     {
-        RenderDebug(spriteBatch);
-
         if (shared.Game.Model.ActiveWorld == World.Asteroid) RenderAsteroidUserInterface(spriteBatch);
     }
 
@@ -38,12 +36,6 @@ public class UserInterfaceRenderer(
         if (shared.GameStateManager.Ecs.ActiveControllableEntityIsDead ||
             shared.GameStateManager.Ecs.ActiveControllableEntityIsOffAsteroid)
             RenderNewGameScreen(spriteBatch, shared.GameStateManager.Ecs.ActiveControllableEntityIsDead);
-    }
-
-    private void RenderDebug(SpriteBatch spriteBatch)
-    {
-        if (shared.Game.Model.ActiveWorld == World.Asteroid)
-            shared.RenderString(spriteBatch, 1000, 40, "SEED " + shared.Game.Model.Asteroid.Seed);
     }
 
     private void RenderHealthBar(SpriteBatch spriteBatch, int entityId, int xOffset, int yOffset)

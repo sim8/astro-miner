@@ -39,6 +39,19 @@ public sealed class UIDebugMenu : UIElement
         [
             new UITextElement(game)
             {
+                Text = "SHOW SEED",
+                Padding = 6,
+                Scale = 2,
+                Color = game.Debug.showSeed ? Color.Black : Color.Aqua,
+                BackgroundColor = game.Debug.showSeed ? Color.Aqua : Color.Black,
+                OnClick = () => game.Debug.showSeed = !game.Debug.showSeed
+            },
+            new UIElement(game)
+            {
+                FixedHeight = 10
+            },
+            new UITextElement(game)
+            {
                 Text = "SHOW GRID DEBUG",
                 Padding = 6,
                 Scale = 2,
