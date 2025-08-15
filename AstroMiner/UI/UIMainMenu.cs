@@ -21,7 +21,7 @@ public class UIMainMenu : UIScreen
             },
             new UIElement(game)
             {
-                FixedHeight = 20
+                FixedHeight = 40
             },
             new UITextElement(game)
             {
@@ -30,10 +30,7 @@ public class UIMainMenu : UIScreen
                 BackgroundColor = Colors.DarkBlue,
                 Padding = 6,
                 Scale = 3,
-                OnClick = () =>
-                {
-                    game.StateManager.NewGame();
-                }
+                OnClick = () => { game.StateManager.NewGame(); }
             },
             new UIElement(game)
             {
@@ -46,10 +43,7 @@ public class UIMainMenu : UIScreen
                 BackgroundColor = Colors.DarkBlue,
                 Padding = 6,
                 Scale = 3,
-                OnClick = () =>
-                {
-                    game.StateManager.LoadGame();
-                }
+                OnClick = () => { game.StateManager.LoadGame(); }
             }
         ];
     }

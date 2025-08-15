@@ -5,7 +5,7 @@ namespace AstroMiner.UI;
 public class UIState
 {
     public bool IsInMainMenu { get; set; } = true;
-    public bool IsInPauseMenu { get; set; } = true;
+    public bool IsInPauseMenu { get; set; }
     public bool IsDebugMenuOpen { get; set; } = false;
     public bool IsInventoryOpen { get; set; }
     public bool IsLaunchConsoleOpen { get; set; }
@@ -106,6 +106,9 @@ public class UI(BaseGame game)
 
     public void Update(GameTime gameTime, ActiveControls activeControls)
     {
+        if (activeControls.Global.Contains(GlobalControls.PauseGame) && !State.IsInMainMenu)
+            State.IsInPauseMenu = !State.IsInPauseMenu;
+
         if (activeControls.Global.Contains(GlobalControls.ToggleInventory))
         {
             if (State.IsLaunchConsoleOpen || State.IsInShopMenu)

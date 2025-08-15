@@ -85,7 +85,7 @@ public class Renderer
 
     public void Render(SpriteBatch spriteBatch)
     {
-        if (!_game.StateManager.Ui.State.IsInMainMenu)
+        if (_game.StateManager.IsInGame)
         {
             // Draw RenderTargets first to avoid wiping BackBuffer
             RenderLightingToRenderTarget(spriteBatch);
@@ -93,7 +93,8 @@ public class Renderer
             var (viewportWidth, viewportHeight) = _shared.ViewHelpers.GetViewportSize();
             spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
             // Draw base color (even though we set in GraphicsDevice.Clear, wiped by BackBuffer)
-            spriteBatch.Draw(_shared.Textures["white"], new Rectangle(0, 0, viewportWidth, viewportHeight), Colors.VeryDarkBlue);
+            spriteBatch.Draw(_shared.Textures["white"], new Rectangle(0, 0, viewportWidth, viewportHeight),
+                Colors.VeryDarkBlue);
             RenderScene(spriteBatch);
 
             spriteBatch.End();
@@ -119,7 +120,7 @@ public class Renderer
                 Colors.VeryDarkBlue * _game.StateManager.TransitionManager.Opacity);
         }
 
-        if (!_game.StateManager.Ui.State.IsInMainMenu) _userInterfaceRenderer.RenderUserInterface(spriteBatch);
+        if (_game.StateManager.IsInGame) _userInterfaceRenderer.RenderUserInterface(spriteBatch);
         _uiRenderer.Render(spriteBatch);
 
         spriteBatch.End();

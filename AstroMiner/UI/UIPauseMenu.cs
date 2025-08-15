@@ -21,7 +21,7 @@ public class UIPauseMenu : UIScreen
             },
             new UIElement(game)
             {
-                FixedHeight = 20
+                FixedHeight = 40
             },
             new UITextElement(game)
             {
@@ -34,7 +34,7 @@ public class UIPauseMenu : UIScreen
             },
             new UIElement(game)
             {
-                FixedHeight = 20
+                FixedHeight = 10
             },
             new UITextElement(game)
             {

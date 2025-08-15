@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using AstroMiner.AsteroidWorld;
 using AstroMiner.Definitions;
@@ -36,6 +35,8 @@ public class GameStateManager(BaseGame game)
 
 
     public BaseWorldState ActiveWorldState => GetWorldState(game.Model.ActiveWorld);
+
+    public bool IsInGame => !Ui.State.IsInMainMenu && !Ui.State.IsInPauseMenu;
 
     public BaseWorldState GetWorldState(World world)
     {
@@ -90,10 +91,9 @@ public class GameStateManager(BaseGame game)
         game.StateManager.Ui.State.IsInMainMenu = false;
     }
 
-    private void SaveGameTEMP()
+    public void SaveGame()
     {
         game.GameStateStorage.SaveState(game.Model);
-        Console.WriteLine("saved!");
     }
 
     public long GetTotalPlayTime()
@@ -116,7 +116,7 @@ public class GameStateManager(BaseGame game)
     {
         GameTime = gameTime;
 
-        if (!Ui.State.IsInMainMenu) UpdateInGame(activeControls, gameTime);
+        if (IsInGame) UpdateInGame(activeControls, gameTime);
 
         Ui.Update(gameTime, activeControls);
     }
