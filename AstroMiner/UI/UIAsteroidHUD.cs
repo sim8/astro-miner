@@ -57,7 +57,8 @@ public class UIMinimap : UIElement
     {
         var cell = _game.StateManager.AsteroidWorld.Grid.GetCellState(x, y);
         if (cell.WallType != WallType.Empty) return Colors.DarkBlue;
-        if (cell.FloorType != FloorType.Empty) return Colors.LightBlue;
+        if (cell.FloorType != FloorType.Empty)
+            return cell.DistanceToExploredFloor == 0 ? Colors.LightBlue : Colors.DarkBlue;
 
         return Colors.VeryDarkBlue;
     }

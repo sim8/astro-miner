@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using AstroMiner.Definitions;
 using Microsoft.Xna.Framework;
 
@@ -25,10 +24,13 @@ public class CameraState
         _zoomTransitionElapsed = 0;
     }
 
-    private float BaseScaleMultiplier =>
-        _game.StateManager.AsteroidWorld.IsInMiner && _game.Model.ActiveWorld == World.Asteroid
-            ? GetBaseZoomLevel()
-            : GetBaseZoomLevel() + 1;
+    // private float BaseScaleMultiplier =>
+    //     _game.StateManager.AsteroidWorld.IsInMiner && _game.Model.ActiveWorld == World.Asteroid
+    //         ? GetBaseZoomLevel()
+    //         : GetBaseZoomLevel() + 1;
+
+    // Temp disabling dynamic zoom in favour of minimap
+    private float BaseScaleMultiplier => GetBaseZoomLevel() + 1;
 
     public float ScaleMultiplier { get; private set; }
 
