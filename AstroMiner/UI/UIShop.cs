@@ -11,22 +11,39 @@ public sealed class UIShop : UIElement
         Position = PositionMode.Absolute;
         FullWidth = true;
         FullHeight = true;
-        Children =
-        [
-            game.StateManager.Ui.State.sellConfirmationItemIndex == -1
-                ? new UIInventory(game,
-                    selectedIndex => game.StateManager.Ui.State.sellConfirmationItemIndex = selectedIndex)
-                : new UISaleConfirm(game)
-        ];
+        ChildrenAlign = ChildrenAlign.Center;
+        ChildrenDirection = ChildrenDirection.Column;
+        ChildrenJustify = ChildrenJustify.Center;
+
+        Children = game.StateManager.Ui.State.sellConfirmationItemIndex == -1
+            ?
+            [
+                new UIScreen(game)
+                {
+                    Children =
+                    [
+                        new UITextElement(game)
+                        {
+                            Scale = 3,
+                            Text = "SELL ITEMS"
+                        },
+                        new UIInventoryGrid(game,
+                            selectedIndex =>
+                            {
+                                var item = game.StateManager.Inventory.GetItemAtIndex(selectedIndex);
+                                var itemTypeConfig = ItemTypes.GetConfig(item.Type);
+                                if (itemTypeConfig.Price == -1) return;
+                                game.StateManager.Ui.State.sellConfirmationItemIndex = selectedIndex;
+                            })
+                    ]
+                }
+            ]
+            : [new UISaleConfirm(game)];
     }
 }
 
 public class UISaleConfirm : UIScreen
 {
-    private InventoryItem GetSellConfirmationItem(BaseGame game)
-    {
-        return game.StateManager.Inventory.GetItemAtIndex(game.StateManager.Ui.State.sellConfirmationItemIndex);
-    }
     public UISaleConfirm(BaseGame game) : base(game)
     {
         Children =
@@ -39,7 +56,10 @@ public class UISaleConfirm : UIScreen
                 [
                     new UITextElement(game)
                     {
-                        Text = "SELL " + GetSellConfirmationItem(game).Count + " " + GetSellConfirmationItem(game).Type.ToString().ToUpper() + " FOR " + ItemTypes.GetConfig(GetSellConfirmationItem(game).Type).Price * GetSellConfirmationItem(game).Count + " CREDITS",
+                        Text = "SELL " + GetSellConfirmationItem(game).Count + " " +
+                               GetSellConfirmationItem(game).Type.ToString().ToUpper() + " FOR " +
+                               ItemTypes.GetConfig(GetSellConfirmationItem(game).Type).Price *
+                               GetSellConfirmationItem(game).Count + " CREDITS",
                         Scale = 4
                     },
                     new UIElement(game)
@@ -58,8 +78,10 @@ public class UISaleConfirm : UIScreen
                                 BackgroundColor = Color.Navy,
                                 Padding = 6,
                                 Scale = 3,
-                                OnClick = () => {
-                                    game.StateManager.Inventory.SellItem(game.StateManager.Ui.State.sellConfirmationItemIndex);
+                                OnClick = () =>
+                                {
+                                    game.StateManager.Inventory.SellItem(game.StateManager.Ui.State
+                                        .sellConfirmationItemIndex);
                                     game.StateManager.Ui.State.sellConfirmationItemIndex = -1;
                                 }
                             },
@@ -81,5 +103,10 @@ public class UISaleConfirm : UIScreen
                 ]
             }
         ];
+    }
+
+    private InventoryItem GetSellConfirmationItem(BaseGame game)
+    {
+        return game.StateManager.Inventory.GetItemAtIndex(game.StateManager.Ui.State.sellConfirmationItemIndex);
     }
 }

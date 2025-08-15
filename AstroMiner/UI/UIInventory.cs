@@ -13,6 +13,18 @@ public class UIInventory : UIScreen
     {
         Children =
         [
+            new UIInventoryGrid(game, onItemClick)
+        ];
+    }
+}
+
+public class UIInventoryGrid : UIElement
+{
+    public UIInventoryGrid(BaseGame game,
+        Action<int>? onItemClick = null) : base(game)
+    {
+        Children =
+        [
             new UIInventoryRow(game, 0, 10, onItemClick),
             new UIInventoryRow(game, 10, 20, onItemClick),
             new UIInventoryRow(game, 20, 30, onItemClick)
@@ -82,16 +94,12 @@ public sealed class UIInventoryItem : UIElement
         FixedHeight = 32 * game.StateManager.Ui.UIScale;
         BackgroundColor = Color.DarkGray;
         OnClick = () =>
-            {
-                if (onItemClick != null)
-                {
-                    onItemClick(inventoryIndex);
-                }
-                else
-                {
-                    game.Model.Inventory.SelectedIndex = inventoryIndex;
-                }
-            };
+        {
+            if (onItemClick != null)
+                onItemClick(inventoryIndex);
+            else
+                game.Model.Inventory.SelectedIndex = inventoryIndex;
+        };
         Children =
             UIHelpers.FilterNull([
                 inventoryIndex == game.Model.Inventory.SelectedIndex

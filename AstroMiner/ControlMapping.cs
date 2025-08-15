@@ -27,7 +27,7 @@ public enum MiningControls
 
 public enum GlobalControls
 {
-    ToggleMenu
+    ToggleInventory
 }
 
 /// <summary>
@@ -64,7 +64,7 @@ public class ControlManager
     private void InitializeControls()
     {
         // Global controls
-        _globalControlMapper.AddMapping(GlobalControls.ToggleMenu, Keys.Tab, Buttons.Back, false);
+        _globalControlMapper.AddMapping(GlobalControls.ToggleInventory, Keys.Tab, Buttons.Back, false);
 
         // Mining controls
         _miningControlMapper.AddMapping(MiningControls.MoveUp, Keys.W, Buttons.LeftThumbstickUp, true);
