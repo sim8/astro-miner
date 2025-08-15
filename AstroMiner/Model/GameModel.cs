@@ -173,6 +173,11 @@ public static class GameModelHelpers
                     {
                         Count = 3,
                         Type = ItemType.Dynamite
+                    },
+                    new InventoryItem // TEMP
+                    {
+                        Count = 3,
+                        Type = ItemType.Diamond
                     }
                 ]
             },
