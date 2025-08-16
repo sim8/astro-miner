@@ -49,19 +49,6 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
 
     private void RenderClouds(SpriteBatch spriteBatch)
     {
-        foreach (var cloud in shared.GameStateManager.CloudManager.CloudsBg)
-            spriteBatch.Draw(
-                shared.Textures["cloud-background"],
-                new Rectangle((int)cloud.X, (int)cloud.Y, CloudManager.BackgroundCloudSizePx,
-                    CloudManager.BackgroundCloudSizePx),
-                Color.White
-            );
-        foreach (var cloud in shared.GameStateManager.CloudManager.CloudsFg)
-            spriteBatch.Draw(
-                shared.Textures["cloud-background"],
-                new Rectangle((int)cloud.X, (int)cloud.Y, CloudManager.ForegroundCloudSizePx,
-                    CloudManager.ForegroundCloudSizePx),
-                Color.White
-            );
+        shared.GameStateManager.CloudEffects.Render(spriteBatch, shared.Textures);
     }
 }

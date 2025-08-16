@@ -1,9 +1,10 @@
 using AstroMiner.Definitions;
+using AstroMiner.Effects;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner.UI;
 
-public class UIState
+public class UIState(BaseGame game)
 {
     public bool IsInMainMenu { get; set; } = true;
     public bool IsInPauseMenu { get; set; }
@@ -16,12 +17,60 @@ public class UIState
     // TODO all very temporary. Need a proper way of tracking dialog
     public bool IsInDialog { get; set; } = false;
     public int DialogIndex { get; set; } = 0;
+
+    public ScrollingEffectManager StarBackground { get; init; } = new();
+
+    public void Update(GameTime gameTime, ActiveControls activeControls)
+    {
+        if (IsInMainMenu)
+        {
+            if (StarBackground.Layers.Count == 0)
+            {
+                StarBackground.AddLayer(new ScrollingEffectLayer
+                {
+                    TextureName = "star",
+                    TextureSize = 170,
+                    Speed = 8f,
+                    Density = 9f,
+                    MinOpacity = 0.1f,
+                    MaxOpacity = 0.2f
+                });
+                StarBackground.AddLayer(new ScrollingEffectLayer
+                {
+                    TextureName = "star",
+                    TextureSize = 170,
+                    Speed = 16f,
+                    Density = 7f,
+                    MinOpacity = 0.4f,
+                    MaxOpacity = 0.6f
+                });
+                // StarBackground.AddLayer(new ScrollingEffectLayer
+                // {
+                //     TextureName = "star",
+                //     TextureSize = 170,
+                //     Speed = 30f,
+                //     Density = 2f,
+                //     MinOpacity = 0.8f,
+                //     MaxOpacity = 1.0f
+                // });
+            }
+            else
+            {
+                StarBackground.Update(gameTime, game.Graphics.GraphicsDevice.Viewport.Width,
+                    game.Graphics.GraphicsDevice.Viewport.Height);
+            }
+        }
+        else if (StarBackground.Layers.Count > 0)
+        {
+            StarBackground.Layers.Clear();
+        }
+    }
 }
 
 public class UI(BaseGame game)
 {
     public UIElement Root { get; private set; }
-    public UIState State { get; init; } = new();
+    public UIState State { get; init; } = new(game);
 
     public int UIScale { get; set; } = 2;
 
@@ -108,6 +157,7 @@ public class UI(BaseGame game)
 
     public void Update(GameTime gameTime, ActiveControls activeControls)
     {
+        // Handle user events
         if (activeControls.Global.Contains(GlobalControls.PauseGame) && !State.IsInMainMenu)
             State.IsInPauseMenu = !State.IsInPauseMenu;
 
@@ -124,6 +174,9 @@ public class UI(BaseGame game)
                 State.IsInventoryOpen = !State.IsInventoryOpen;
             }
         }
+
+        // Update state animations etc
+        State.Update(gameTime, activeControls);
 
         Root = GetTree();
 

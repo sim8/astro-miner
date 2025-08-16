@@ -1,15 +1,19 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace AstroMiner.UI;
 
 public class UIMainMenu : UIScreen
 {
+    private readonly BaseGame _game;
+
     public UIMainMenu(BaseGame game) : base(game)
     {
+        _game = game;
         ChildrenDirection = ChildrenDirection.Column;
         ChildrenAlign = ChildrenAlign.Center;
         ChildrenJustify = ChildrenJustify.Center;
-        BackgroundColor = Colors.VeryDarkBlue;
+        BackgroundColor = Color.Transparent;
         Children =
         [
             new UITextElement(game)
@@ -46,5 +50,15 @@ public class UIMainMenu : UIScreen
                 OnClick = () => { game.StateManager.LoadGame(); }
             }
         ];
+    }
+
+    public override void Render(SpriteBatch spriteBatch)
+    {
+        var screenDestRect = new Rectangle(X, Y, ComputedWidth, ComputedHeight);
+        spriteBatch.Draw(_game.Textures["white"], screenDestRect, Colors.VeryDarkBlue);
+
+        _game.StateManager.Ui.State.StarBackground.Render(spriteBatch, _game.Textures);
+
+        base.Render(spriteBatch);
     }
 }
