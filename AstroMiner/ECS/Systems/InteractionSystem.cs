@@ -82,9 +82,32 @@ public class InteractionSystem : System
         Ecs.SetActiveControllableEntity(Ecs.PlayerEntityId.Value);
 
         var minerPosition = Ecs.GetComponent<PositionComponent>(Ecs.MinerEntityId.Value).Position;
+        var minerDirection = game.StateManager.Ecs.GetComponent<DirectionComponent>(Ecs.MinerEntityId.Value);
 
-        // Set player position to miner position
         var playerPosition = Ecs.GetComponent<PositionComponent>(Ecs.PlayerEntityId.Value);
+        var playerDirection = game.StateManager.Ecs.GetComponent<DirectionComponent>(Ecs.PlayerEntityId.Value);
+
+        // Prefer getting out left side of vehicle.
+        // If vehicle facing right, get out right side so player faces camera
+        Direction[] exitDirectionPriority = minerDirection.Direction == Direction.Right
+            ? [Direction.Right, Direction.Left, Direction.Bottom]
+            : [Direction.Left, Direction.Right, Direction.Bottom];
+
+        foreach (var dir in exitDirectionPriority)
+        {
+            var exitSuccess = Ecs.MovementSystem.SetPositionRelativeToDirectionalEntity(playerPosition,
+                Ecs.MinerEntityId.Value,
+                dir, false, true);
+            if (exitSuccess)
+            {
+                // Face away from vehicle
+                playerDirection.Direction = MovementSystem.GetRotatedDirection(dir, minerDirection.Direction);
+                return;
+            }
+        }
+
+        // Fallback in case of collisions on all sides
         playerPosition.Position = minerPosition;
+        playerDirection.Direction = Direction.Bottom;
     }
 }

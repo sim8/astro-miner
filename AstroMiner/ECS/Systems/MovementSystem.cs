@@ -90,21 +90,21 @@ public class MovementSystem : System
         return (Direction)newDirectionInt;
     }
 
-    private bool IsNewPositionIntersectingWithFilledCells(World world, Vector2 position, float gridWidth, float gridHeight)
+    private bool IsNewPositionIntersectingWithFilledCells(World world, Vector2 position, float gridWidth,
+        float gridHeight)
     {
         var topLeftCell = ViewHelpers.ToGridPosition(position);
         var bottomRightCell = ViewHelpers.ToGridPosition(position + new Vector2(gridWidth, gridHeight));
 
         for (var x = topLeftCell.x; x <= bottomRightCell.x; x++)
-            for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
-                if (game.StateManager.GetWorldState(world).CellIsCollideable(x, y))
-                    return true;
+        for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
+            if (game.StateManager.GetWorldState(world).CellIsCollideable(x, y))
+                return true;
         return false;
     }
 
-    private bool ApplyVectorToPosIfNoCollisions(int entityId, Vector2 vector, PositionComponent positionComponent)
+    private bool SetNewPosIfNoCollisions(int entityId, Vector2 newPosition, PositionComponent positionComponent)
     {
-        var newPosition = positionComponent.Position + vector;
         var newPositionHasCollisions = IsNewPositionIntersectingWithFilledCells(positionComponent.World, newPosition,
             positionComponent.GridWidth, positionComponent.GridHeight);
 
@@ -132,8 +132,15 @@ public class MovementSystem : System
                 return false;
         }
 
-        positionComponent.Position += vector;
+        positionComponent.Position = newPosition;
         return true;
+    }
+
+
+    private bool ApplyVectorToPosIfNoCollisions(int entityId, Vector2 vector, PositionComponent positionComponent)
+    {
+        var newPosition = positionComponent.Position + vector;
+        return SetNewPosIfNoCollisions(entityId, newPosition, positionComponent);
     }
 
     public override void Update(GameTime gameTime, ActiveControls activeControls)
@@ -170,15 +177,24 @@ public class MovementSystem : System
         }
     }
 
-    public void SetPositionRelativeToDirectionalEntity(PositionComponent positionComponent, int directionalEntityId,
+    /// <summary>
+    ///     Sets the position of an entity relative to another.
+    /// </summary>
+    /// <param name="positionComponent">The position to modify</param>
+    /// <param name="directionalEntityId">The entity to move in relation to</param>
+    /// <param name="rotation">The side of the origin entity to move the position to</param>
+    /// <param name="insideEdge">Sets the position to inside the origin entity</param>
+    /// <param name="cancelIfCollisions"></param>
+    /// <returns>Whether the move was successful (false means cancelled due to collisions)</returns>
+    public bool SetPositionRelativeToDirectionalEntity(PositionComponent positionComponent, int directionalEntityId,
         Direction rotation,
-        bool insideEdge = false)
+        bool insideEdge = false, bool cancelIfCollisions = false)
     {
         var directionalEntityMovementComponent = Ecs.GetComponent<MovementComponent>(directionalEntityId);
         var directionalEntityPositionComponent = Ecs.GetComponent<PositionComponent>(directionalEntityId);
         var directionalEntityDirectionComponent = Ecs.GetComponent<DirectionComponent>(directionalEntityId);
         if (directionalEntityMovementComponent == null || directionalEntityPositionComponent == null ||
-            directionalEntityDirectionComponent == null) return;
+            directionalEntityDirectionComponent == null) return true;
 
         var centerToCenterDistance =
             directionalEntityPositionComponent.GridWidth / 2 +
@@ -200,8 +216,13 @@ public class MovementSystem : System
             _ => directionalEntityPositionComponent.CenterPosition
         };
 
-        positionComponent.Position =
-            newCenterPos - new Vector2(positionComponent.GridWidth / 2, positionComponent.GridHeight / 2);
+        var newPosition = newCenterPos - new Vector2(positionComponent.GridWidth / 2, positionComponent.GridHeight / 2);
+
+        if (cancelIfCollisions)
+            return SetNewPosIfNoCollisions(positionComponent.EntityId, newPosition, positionComponent);
+
+        positionComponent.Position = newPosition;
+        return true;
     }
 
     public Vector2 GetFrontPosition(int directionalEntityId)
