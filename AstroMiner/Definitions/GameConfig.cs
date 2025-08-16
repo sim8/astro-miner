@@ -69,8 +69,10 @@ public static class GameConfig
         public const float MantleRadius = 0.7f;
         public const float CoreRadius = 0.27f;
 
-        public const int AverageRadius = 80;
-        public const int MaxDeviation = 12; // Adjusted for larger imperfections
+        public const int AverageRadius = 50;
+        public const int AverageTailRadius = 90;
+        public const double TailSegmentAngleDegrees = 80; // How wide the tail segment is before tapering off
+        public const int MaxDeviation = 9; // Adjusted for larger imperfections
         public const double MaxDelta = 9; // Adjusted for smoother transitions
         public const int AngleSegments = 140; // Adjusted for larger-scale variations
 

@@ -52,6 +52,37 @@ public static class AsteroidGen
         throw new Exception("No 4x1 solid blocks in grid");
     }
 
+    /// <summary>
+    /// Calculate the average radius for a given angle, with the tail side being longer.
+    /// </summary>
+    /// <param name="angleDegrees">Angle in degrees (0-360)</param>
+    /// <returns>Average radius for this angle</returns>
+    private static double GetAverageRadiusForAngle(double angleDegrees)
+    {
+        // Target angle for the tail
+        const double tailAngle = 270.0;
+
+        // Calculate the angular distance from the tail angle
+        var distanceFromTail = Math.Abs(angleDegrees - tailAngle);
+        if (distanceFromTail > 180) distanceFromTail = 360 - distanceFromTail;
+
+        // Only apply tail radius within the tail segment
+        var halfTailSegment = GameConfig.AsteroidGen.TailSegmentAngleDegrees / 2.0;
+
+        if (distanceFromTail > halfTailSegment)
+        {
+            // Outside the tail segment - use normal radius
+            return GameConfig.AsteroidGen.AverageRadius;
+        }
+
+        // Within the tail segment - smooth transition from center to edge
+        var influence = Math.Cos(Math.PI * distanceFromTail / (2 * halfTailSegment));
+
+        // Interpolate between normal radius and tail radius
+        return GameConfig.AsteroidGen.AverageRadius +
+               influence * (GameConfig.AsteroidGen.AverageTailRadius - GameConfig.AsteroidGen.AverageRadius);
+    }
+
     private static CellState[,] InitializeGrid(int gridSize, PerlinNoiseGenerator perlinNoise1,
         PerlinNoiseGenerator perlinNoise2, int seed)
     {
@@ -62,19 +93,26 @@ public static class AsteroidGen
         var perimeterWidths = new int[GameConfig.AsteroidGen.AngleSegments]; // New array for perimeter widths
         var rand = new Random(seed);
 
-        // Generate smooth radius values
-        radiusValues[0] = GameConfig.AsteroidGen.AverageRadius +
+        // Generate smooth radius values with angle-specific average radius
+        var angle0 = 0.0; // Start at 0 degrees
+        var averageRadius0 = GetAverageRadiusForAngle(angle0);
+        radiusValues[0] = averageRadius0 +
             rand.NextDouble() * GameConfig.AsteroidGen.MaxDeviation * 2 - GameConfig.AsteroidGen.MaxDeviation;
 
         for (var i = 1; i < GameConfig.AsteroidGen.AngleSegments; i++)
         {
+            // Calculate the angle for this segment
+            var angle = i * 360.0 / GameConfig.AsteroidGen.AngleSegments;
+            var averageRadius = GetAverageRadiusForAngle(angle);
+
             // Gradually change the radius to create smooth imperfections
             var delta = rand.NextDouble() * GameConfig.AsteroidGen.MaxDelta * 2 - GameConfig.AsteroidGen.MaxDelta;
             radiusValues[i] = radiusValues[i - 1] + delta;
 
             // Clamp the radius within [averageRadius - maxDeviation, averageRadius + maxDeviation]
-            radiusValues[i] = Math.Max(GameConfig.AsteroidGen.AverageRadius - GameConfig.AsteroidGen.MaxDeviation,
-                Math.Min(GameConfig.AsteroidGen.AverageRadius + GameConfig.AsteroidGen.MaxDeviation, radiusValues[i]));
+            // Use the angle-specific average radius for clamping bounds
+            radiusValues[i] = Math.Max(averageRadius - GameConfig.AsteroidGen.MaxDeviation,
+                Math.Min(averageRadius + GameConfig.AsteroidGen.MaxDeviation, radiusValues[i]));
         }
 
         // Optionally smooth the radius values further
