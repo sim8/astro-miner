@@ -13,6 +13,7 @@ public class UIMainMenu : UIScreen
         ChildrenDirection = ChildrenDirection.Column;
         ChildrenAlign = ChildrenAlign.Center;
         ChildrenJustify = ChildrenJustify.Center;
+        BackgroundColor = Color.Transparent;
         Children =
         [
             new UITextElement(game)
