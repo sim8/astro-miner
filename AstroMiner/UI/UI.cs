@@ -25,18 +25,40 @@ public class UIState(BaseGame game)
         if (IsInMainMenu)
         {
             if (StarBackground.Layers.Count == 0)
+            {
                 StarBackground.AddLayer(new ScrollingEffectLayer
                 {
                     TextureName = "star",
                     TextureSize = 170,
-                    Speed = 50f,
-                    Density = 2f,
-                    MinOpacity = 0.3f,
-                    MaxOpacity = 1.0f
+                    Speed = 8f,
+                    Density = 9f,
+                    MinOpacity = 0.1f,
+                    MaxOpacity = 0.2f
                 });
+                StarBackground.AddLayer(new ScrollingEffectLayer
+                {
+                    TextureName = "star",
+                    TextureSize = 170,
+                    Speed = 16f,
+                    Density = 7f,
+                    MinOpacity = 0.4f,
+                    MaxOpacity = 0.6f
+                });
+                // StarBackground.AddLayer(new ScrollingEffectLayer
+                // {
+                //     TextureName = "star",
+                //     TextureSize = 170,
+                //     Speed = 30f,
+                //     Density = 2f,
+                //     MinOpacity = 0.8f,
+                //     MaxOpacity = 1.0f
+                // });
+            }
             else
+            {
                 StarBackground.Update(gameTime, game.Graphics.GraphicsDevice.Viewport.Width,
                     game.Graphics.GraphicsDevice.Viewport.Height);
+            }
         }
         else if (StarBackground.Layers.Count > 0)
         {
