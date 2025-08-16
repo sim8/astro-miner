@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using AstroMiner.Definitions;
+using AstroMiner.Effects;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner.UI;
@@ -19,61 +20,21 @@ public class UIState
     public bool IsInDialog { get; set; } = false;
     public int DialogIndex { get; set; } = 0;
 
-    public StarBackgroundState StarBackground { get; init; } = new();
-}
+    public ScrollingEffectManager StarBackground { get; init; } = new();
 
-public class StarBackgroundState
-{
-    public List<Vector2> StarPositions { get; set; } = new();
-    public List<float> StarOpacities { get; set; } = new();
-    public float ScrollSpeed { get; set; } = 50f; // pixels per second
-    public int StarCount { get; set; } = 30;
-    public float StarSpacing { get; set; } = 200f; // minimum distance between stars
-    public float MinOpacity { get; set; } = 0.3f; // minimum star opacity
-    public float MaxOpacity { get; set; } = 1.0f; // maximum star opacity
-    public Random Random { get; set; } = new();
-    private bool _initialized = false;
-
-    public void Initialize(int screenWidth, int screenHeight)
+    public void InitializeStarBackground()
     {
-        if (_initialized) return;
-
-        StarPositions.Clear();
-        StarOpacities.Clear();
-
-        // Place stars randomly across the screen and beyond the right edge
-        for (int i = 0; i < StarCount; i++)
+        if (StarBackground.Layers.Count == 0)
         {
-            var x = Random.Next(-170, screenWidth + 340); // Extra space on both sides
-            var y = Random.Next(0, screenHeight);
-            var opacity = (float)(MinOpacity + Random.NextDouble() * (MaxOpacity - MinOpacity));
-
-            StarPositions.Add(new Vector2(x, y));
-            StarOpacities.Add(opacity);
-        }
-
-        _initialized = true;
-    }
-
-    public void Update(float deltaTime, int screenWidth, int screenHeight)
-    {
-        if (!_initialized) Initialize(screenWidth, screenHeight);
-
-        // Move all stars to the left
-        for (int i = 0; i < StarPositions.Count; i++)
-        {
-            var star = StarPositions[i];
-            star.X -= ScrollSpeed * deltaTime;
-
-            // If star has moved completely off the left side, recycle it to the right
-            if (star.X < -170)
+            StarBackground.AddLayer(new ScrollingEffectLayer
             {
-                star.X = screenWidth + Random.Next(0, 170); // Spawn somewhere off the right edge
-                star.Y = Random.Next(0, screenHeight);
-                StarOpacities[i] = (float)(MinOpacity + Random.NextDouble() * (MaxOpacity - MinOpacity));
-            }
-
-            StarPositions[i] = star;
+                TextureName = "star",
+                TextureSize = 170,
+                Speed = 50f,
+                Density = 2f, // Roughly equivalent to 30 stars for typical screen sizes
+                MinOpacity = 0.3f,
+                MaxOpacity = 1.0f
+            });
         }
     }
 }
