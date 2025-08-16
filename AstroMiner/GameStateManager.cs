@@ -109,7 +109,7 @@ public class GameStateManager(BaseGame game)
         ActiveWorldState.Update(activeControls, gameTime); // TODO only utilized by AsteroidWorld
 
         Camera.Update(gameTime, activeControls);
-        CloudEffects.Update((float)gameTime.ElapsedGameTime.TotalSeconds,
+        CloudEffects.Update(gameTime,
             game.Graphics.GraphicsDevice.Viewport.Width,
             game.Graphics.GraphicsDevice.Viewport.Height);
         TransitionManager.Update(gameTime);

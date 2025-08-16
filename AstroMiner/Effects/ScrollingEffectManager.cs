@@ -45,8 +45,9 @@ public class ScrollingEffectLayer
         _initialized = true;
     }
 
-    public void Update(float deltaTime, int screenWidth, int screenHeight)
+    public void Update(GameTime gameTime, int screenWidth, int screenHeight)
     {
+        var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
         if (!_initialized) Initialize(screenWidth, screenHeight);
 
         // Move all items to the left
@@ -91,11 +92,11 @@ public class ScrollingEffectManager
 {
     public List<ScrollingEffectLayer> Layers { get; set; } = new();
 
-    public void Update(float deltaTime, int screenWidth, int screenHeight)
+    public void Update(GameTime gameTime, int screenWidth, int screenHeight)
     {
         foreach (var layer in Layers)
         {
-            layer.Update(deltaTime, screenWidth, screenHeight);
+            layer.Update(gameTime, screenWidth, screenHeight);
         }
     }
 

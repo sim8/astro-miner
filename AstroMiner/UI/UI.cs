@@ -1,12 +1,10 @@
-using System;
-using System.Collections.Generic;
 using AstroMiner.Definitions;
 using AstroMiner.Effects;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner.UI;
 
-public class UIState
+public class UIState(BaseGame game)
 {
     public bool IsInMainMenu { get; set; } = true;
     public bool IsInPauseMenu { get; set; }
@@ -22,19 +20,27 @@ public class UIState
 
     public ScrollingEffectManager StarBackground { get; init; } = new();
 
-    public void InitializeStarBackground()
+    public void Update(GameTime gameTime, ActiveControls activeControls)
     {
-        if (StarBackground.Layers.Count == 0)
+        if (IsInMainMenu)
         {
-            StarBackground.AddLayer(new ScrollingEffectLayer
-            {
-                TextureName = "star",
-                TextureSize = 170,
-                Speed = 50f,
-                Density = 2f, // Roughly equivalent to 30 stars for typical screen sizes
-                MinOpacity = 0.3f,
-                MaxOpacity = 1.0f
-            });
+            if (StarBackground.Layers.Count == 0)
+                StarBackground.AddLayer(new ScrollingEffectLayer
+                {
+                    TextureName = "star",
+                    TextureSize = 170,
+                    Speed = 50f,
+                    Density = 2f,
+                    MinOpacity = 0.3f,
+                    MaxOpacity = 1.0f
+                });
+            else
+                StarBackground.Update(gameTime, game.Graphics.GraphicsDevice.Viewport.Width,
+                    game.Graphics.GraphicsDevice.Viewport.Height);
+        }
+        else if (StarBackground.Layers.Count > 0)
+        {
+            StarBackground.Layers.Clear();
         }
     }
 }
@@ -42,7 +48,7 @@ public class UIState
 public class UI(BaseGame game)
 {
     public UIElement Root { get; private set; }
-    public UIState State { get; init; } = new();
+    public UIState State { get; init; } = new(game);
 
     public int UIScale { get; set; } = 2;
 
@@ -129,6 +135,7 @@ public class UI(BaseGame game)
 
     public void Update(GameTime gameTime, ActiveControls activeControls)
     {
+        // Handle user events
         if (activeControls.Global.Contains(GlobalControls.PauseGame) && !State.IsInMainMenu)
             State.IsInPauseMenu = !State.IsInPauseMenu;
 
@@ -145,6 +152,9 @@ public class UI(BaseGame game)
                 State.IsInventoryOpen = !State.IsInventoryOpen;
             }
         }
+
+        // Update state animations etc
+        State.Update(gameTime, activeControls);
 
         Root = GetTree();
 

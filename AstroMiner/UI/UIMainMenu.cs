@@ -53,16 +53,10 @@ public class UIMainMenu : UIScreen
 
     public override void Render(SpriteBatch spriteBatch)
     {
-        var deltaTime = (float)_game.StateManager.GameTime.ElapsedGameTime.TotalSeconds;
-
         var screenDestRect = new Rectangle(X, Y, ComputedWidth, ComputedHeight);
         spriteBatch.Draw(_game.Textures["white"], screenDestRect, Colors.VeryDarkBlue);
 
-        // Initialize and render scrolling star background
-        var uiState = _game.StateManager.Ui.State;
-        uiState.InitializeStarBackground();
-        uiState.StarBackground.Update(deltaTime, ComputedWidth, ComputedHeight);
-        uiState.StarBackground.Render(spriteBatch, _game.Textures);
+        _game.StateManager.Ui.State.StarBackground.Render(spriteBatch, _game.Textures);
 
         base.Render(spriteBatch);
     }
