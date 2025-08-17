@@ -47,6 +47,7 @@ The caravan moves continually round the traderoute of the 4 planets. Each planet
      - Equipment
    - Interact with quest NPCs?
    - Ship upgrades
+     - Boosters / defense upgrades - unlock new asteroid belts?
 
 ### Economy System
 - Planet-specific demand
