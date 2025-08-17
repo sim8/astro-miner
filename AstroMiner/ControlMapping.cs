@@ -28,6 +28,7 @@ public enum MiningControls
 public enum GlobalControls
 {
     ToggleInventory,
+    ShowMap,
     PauseGame
 }
 
@@ -56,16 +57,14 @@ public class ControlManager
         InitializeControls();
     }
 
-    // TODO abstract these to e.g. State.InGameScreen
-    private bool MiningControlsEnabled => !_baseGame.StateManager.Ui.State.IsInventoryOpen &&
-                                          !_baseGame.StateManager.Ui.State.IsLaunchConsoleOpen &&
-                                          !_baseGame.StateManager.Ui.State.IsInShopMenu &&
+    private bool MiningControlsEnabled => _baseGame.StateManager.Ui.State.ActiveScreen == null &&
                                           !_baseGame.StateManager.TransitionManager.IsTransitioning;
 
     private void InitializeControls()
     {
         // Global controls
         _globalControlMapper.AddMapping(GlobalControls.ToggleInventory, Keys.Tab, Buttons.Back, false);
+        _globalControlMapper.AddMapping(GlobalControls.ShowMap, Keys.Q, Buttons.DPadUp, false);
         _globalControlMapper.AddMapping(GlobalControls.PauseGame, Keys.Escape, Buttons.Start, false);
 
         // Mining controls

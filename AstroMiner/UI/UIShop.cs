@@ -15,7 +15,7 @@ public sealed class UIShop : UIElement
         ChildrenDirection = ChildrenDirection.Column;
         ChildrenJustify = ChildrenJustify.Center;
 
-        Children = game.StateManager.Ui.State.sellConfirmationItemIndex == -1
+        Children = game.StateManager.Ui.State.SellConfirmationItemIndex == -1
             ?
             [
                 new UIScreen(game)
@@ -33,7 +33,7 @@ public sealed class UIShop : UIElement
                                 var item = game.StateManager.Inventory.GetItemAtIndex(selectedIndex);
                                 var itemTypeConfig = ItemTypes.GetConfig(item.Type);
                                 if (itemTypeConfig.Price == -1) return;
-                                game.StateManager.Ui.State.sellConfirmationItemIndex = selectedIndex;
+                                game.StateManager.Ui.State.SellConfirmationItemIndex = selectedIndex;
                             })
                     ]
                 }
@@ -81,8 +81,8 @@ public class UISaleConfirm : UIScreen
                                 OnClick = () =>
                                 {
                                     game.StateManager.Inventory.SellItem(game.StateManager.Ui.State
-                                        .sellConfirmationItemIndex);
-                                    game.StateManager.Ui.State.sellConfirmationItemIndex = -1;
+                                        .SellConfirmationItemIndex);
+                                    game.StateManager.Ui.State.SellConfirmationItemIndex = -1;
                                 }
                             },
                             new UIElement(game)
@@ -96,7 +96,7 @@ public class UISaleConfirm : UIScreen
                                 BackgroundColor = Color.Navy,
                                 Padding = 6,
                                 Scale = 3,
-                                OnClick = () => { game.StateManager.Ui.State.sellConfirmationItemIndex = -1; }
+                                OnClick = () => { game.StateManager.Ui.State.SellConfirmationItemIndex = -1; }
                             }
                         ]
                     }
@@ -107,6 +107,6 @@ public class UISaleConfirm : UIScreen
 
     private InventoryItem GetSellConfirmationItem(BaseGame game)
     {
-        return game.StateManager.Inventory.GetItemAtIndex(game.StateManager.Ui.State.sellConfirmationItemIndex);
+        return game.StateManager.Inventory.GetItemAtIndex(game.StateManager.Ui.State.SellConfirmationItemIndex);
     }
 }

@@ -1,50 +1,43 @@
-using AstroMiner.Definitions;
+using System;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner.UI;
 
-public class UILaunchConsole : UIScreen
+public class UIInGameMenu : UIScreen
 {
-    public UILaunchConsole(BaseGame game) : base(game)
+    private readonly BaseGame _game;
+
+    public UIInGameMenu(BaseGame game) : base(game)
     {
+        _game = game;
         Children =
         [
+            // Wrapper
             new UIElement(game)
             {
-                BackgroundColor = Colors.VeryDarkBlue,
-                Padding = 20,
+                Padding = 10,
+                ChildrenDirection = ChildrenDirection.Column,
+                ChildrenAlign = ChildrenAlign.Stretch,
                 Children =
                 [
-                    new UITextElement(game)
-                    {
-                        Text = "LAUNCH CONSOLE",
-                        Scale = 4
-                    },
-                    new UIElement(game)
-                    {
-                        FixedHeight = 30
-                    },
+                    // Header
                     new UIElement(game)
                     {
                         ChildrenDirection = ChildrenDirection.Row,
+                        ChildrenJustify = ChildrenJustify.Start,
                         Children =
                         [
                             new UITextElement(game)
                             {
-                                Text = "LAUNCH",
+                                Text = "INVENTORY",
                                 Color = Color.White,
                                 BackgroundColor = Colors.DarkBlue,
                                 Padding = 6,
                                 Scale = 3,
                                 OnClick = () =>
                                 {
-                                    game.StateManager.Ui.State.ActiveScreen = null;
-                                    game.StateManager.TransitionManager.FadeOut(1, () =>
-                                    {
-                                        game.StateManager.SetActiveWorldAndInitialize(World.Asteroid);
-                                        game.StateManager.Ecs.EntityTransformSystem.MoveMinerAndPlayerToAsteroid();
-                                        game.StateManager.TransitionManager.FadeIn();
-                                    });
+                                    game.StateManager.Ui.State.ActiveInGameMenuSubScreen =
+                                        InGameMenuSubScreen.Inventory;
                                 }
                             },
                             new UIElement(game)
@@ -53,17 +46,32 @@ public class UILaunchConsole : UIScreen
                             },
                             new UITextElement(game)
                             {
-                                Text = "CANCEL",
+                                Text = "MAP",
                                 Color = Color.White,
                                 BackgroundColor = Colors.DarkBlue,
                                 Padding = 6,
                                 Scale = 3,
-                                OnClick = () => { game.StateManager.Ui.State.ActiveScreen = null; }
+                                OnClick = () =>
+                                {
+                                    game.StateManager.Ui.State.ActiveInGameMenuSubScreen = InGameMenuSubScreen.Map;
+                                }
                             }
                         ]
-                    }
+                    },
+                    // Content
+                    GetActiveSubScreen()
                 ]
             }
         ];
+    }
+
+    private UIElement? GetActiveSubScreen()
+    {
+        return _game.StateManager.Ui.State.ActiveInGameMenuSubScreen switch
+        {
+            InGameMenuSubScreen.Inventory => new UIInventoryGrid(_game),
+            InGameMenuSubScreen.Map => new UIMap(_game),
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 }

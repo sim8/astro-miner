@@ -1,71 +1,7 @@
 using AstroMiner.Definitions;
-using AstroMiner.Effects;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner.UI;
-
-public class UIState(BaseGame game)
-{
-    public bool IsInMainMenu { get; set; } = true;
-    public bool IsInPauseMenu { get; set; }
-    public bool IsDebugMenuOpen { get; set; } = false;
-    public bool IsInventoryOpen { get; set; }
-    public bool IsLaunchConsoleOpen { get; set; }
-    public bool IsInShopMenu { get; set; }
-    public int sellConfirmationItemIndex { get; set; } = -1;
-
-    // TODO all very temporary. Need a proper way of tracking dialog
-    public bool IsInDialog { get; set; } = false;
-    public int DialogIndex { get; set; } = 0;
-
-    public ScrollingEffectManager StarBackground { get; init; } = new();
-
-    public void Update(GameTime gameTime, ActiveControls activeControls)
-    {
-        if (IsInMainMenu)
-        {
-            if (StarBackground.Layers.Count == 0)
-            {
-                StarBackground.AddLayer(new ScrollingEffectLayer
-                {
-                    TextureName = "star",
-                    TextureSize = 170,
-                    Speed = 8f,
-                    Density = 9f,
-                    MinOpacity = 0.1f,
-                    MaxOpacity = 0.2f
-                });
-                StarBackground.AddLayer(new ScrollingEffectLayer
-                {
-                    TextureName = "star",
-                    TextureSize = 170,
-                    Speed = 16f,
-                    Density = 7f,
-                    MinOpacity = 0.4f,
-                    MaxOpacity = 0.6f
-                });
-                // StarBackground.AddLayer(new ScrollingEffectLayer
-                // {
-                //     TextureName = "star",
-                //     TextureSize = 170,
-                //     Speed = 30f,
-                //     Density = 2f,
-                //     MinOpacity = 0.8f,
-                //     MaxOpacity = 1.0f
-                // });
-            }
-            else
-            {
-                StarBackground.Update(gameTime, game.Graphics.GraphicsDevice.Viewport.Width,
-                    game.Graphics.GraphicsDevice.Viewport.Height);
-            }
-        }
-        else if (StarBackground.Layers.Count > 0)
-        {
-            StarBackground.Layers.Clear();
-        }
-    }
-}
 
 public class UI(BaseGame game)
 {
@@ -73,6 +9,17 @@ public class UI(BaseGame game)
     public UIState State { get; init; } = new(game);
 
     public int UIScale { get; set; } = 2;
+
+    private UIElement? GetActiveScreen()
+    {
+        return game.StateManager.Ui.State.ActiveScreen switch
+        {
+            Screen.InGameMenu => new UIInGameMenu(game),
+            Screen.LaunchConsole => new UILaunchConsole(game),
+            Screen.SaleMenu => new UIShop(game),
+            _ => null
+        };
+    }
 
     public UIElement GetTree()
     {
@@ -108,10 +55,8 @@ public class UI(BaseGame game)
                     },
 
                     game.StateManager.Ui.State.IsInDialog ? new UIDialog(game) : null,
-                    game.StateManager.Ui.State.IsInventoryOpen ? new UIInventory(game) : null,
-                    !game.StateManager.Ui.State.IsInventoryOpen ? new UIInventoryFooter(game) : null,
-                    game.StateManager.Ui.State.IsLaunchConsoleOpen ? new UILaunchConsole(game) : null,
-                    game.StateManager.Ui.State.IsInShopMenu ? new UIShop(game) : null,
+                    GetActiveScreen(),
+                    new UIInventoryFooter(game),
                     new UIElement(game)
                     {
                         FullWidth = true,
@@ -163,15 +108,27 @@ public class UI(BaseGame game)
 
         if (activeControls.Global.Contains(GlobalControls.ToggleInventory))
         {
-            if (State.IsLaunchConsoleOpen || State.IsInShopMenu)
+            if (State.ActiveScreen == null)
             {
-                State.IsLaunchConsoleOpen = false;
-                State.IsInShopMenu = false;
-                State.sellConfirmationItemIndex = -1;
+                State.ActiveScreen = Screen.InGameMenu;
+                State.ActiveInGameMenuSubScreen = InGameMenuSubScreen.Inventory;
             }
             else
             {
-                State.IsInventoryOpen = !State.IsInventoryOpen;
+                State.ActiveScreen = null;
+            }
+        }
+
+        if (activeControls.Global.Contains(GlobalControls.ShowMap))
+        {
+            if (State.ActiveInGameMenuSubScreen != InGameMenuSubScreen.Map)
+            {
+                State.ActiveScreen = Screen.InGameMenu;
+                State.ActiveInGameMenuSubScreen = InGameMenuSubScreen.Map;
+            }
+            else
+            {
+                State.ActiveScreen = null;
             }
         }
 
