@@ -81,7 +81,7 @@ public sealed class UIInventoryItemEmpty : UIElement
     {
         FixedWidth = 32 * game.StateManager.Ui.UIScale;
         FixedHeight = 32 * game.StateManager.Ui.UIScale;
-        BackgroundColor = Color.DarkGray;
+        BackgroundColor = Colors.DarkBlue;
     }
 }
 
@@ -92,7 +92,7 @@ public sealed class UIInventoryItem : UIElement
     {
         FixedWidth = 32 * game.StateManager.Ui.UIScale;
         FixedHeight = 32 * game.StateManager.Ui.UIScale;
-        BackgroundColor = Color.DarkGray;
+        BackgroundColor = Colors.DarkBlue;
         OnClick = () =>
         {
             if (onItemClick != null)
@@ -108,7 +108,7 @@ public sealed class UIInventoryItem : UIElement
                         Position = PositionMode.Absolute,
                         FullHeight = true,
                         FullWidth = true,
-                        BackgroundColor = Color.Red
+                        BackgroundColor = Colors.LightBlue
                     }
                     : null,
                 new UIImageElement(game, "icons", sourceRect)

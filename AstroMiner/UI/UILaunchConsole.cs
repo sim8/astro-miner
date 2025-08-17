@@ -11,7 +11,7 @@ public class UILaunchConsole : UIScreen
         [
             new UIElement(game)
             {
-                BackgroundColor = Colors.LightBlue,
+                BackgroundColor = Colors.VeryDarkBlue,
                 Padding = 20,
                 Children =
                 [
@@ -33,7 +33,7 @@ public class UILaunchConsole : UIScreen
                             {
                                 Text = "LAUNCH",
                                 Color = Color.White,
-                                BackgroundColor = Color.Navy,
+                                BackgroundColor = Colors.DarkBlue,
                                 Padding = 6,
                                 Scale = 3,
                                 OnClick = () =>
@@ -55,7 +55,7 @@ public class UILaunchConsole : UIScreen
                             {
                                 Text = "CANCEL",
                                 Color = Color.White,
-                                BackgroundColor = Color.Navy,
+                                BackgroundColor = Colors.DarkBlue,
                                 Padding = 6,
                                 Scale = 3,
                                 OnClick = () => { game.StateManager.Ui.State.IsLaunchConsoleOpen = false; }
