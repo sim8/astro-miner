@@ -119,6 +119,19 @@ public class UI(BaseGame game)
             }
         }
 
+        if (activeControls.Global.Contains(GlobalControls.ShowMap))
+        {
+            if (State.ActiveInGameMenuSubScreen != InGameMenuSubScreen.Map)
+            {
+                State.ActiveScreen = Screen.InGameMenu;
+                State.ActiveInGameMenuSubScreen = InGameMenuSubScreen.Map;
+            }
+            else
+            {
+                State.ActiveScreen = null;
+            }
+        }
+
         // Update state animations etc
         State.Update(gameTime, activeControls);
 
