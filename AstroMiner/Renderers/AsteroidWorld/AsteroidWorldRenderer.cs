@@ -30,6 +30,10 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
             {
                 var cellState = _gameStateManager.AsteroidWorld.Grid.GetCellState(col, row);
 
+                if (cellState.FloorType == FloorType.Lava)
+                    spriteBatch.Draw(Shared.Textures["lava"],
+                        Shared.ViewHelpers.GetVisibleRectForGridCell(col, row), Color.White);
+
                 foreach (var corner in _cornersInRenderOrder)
                 {
                     // Render floor
