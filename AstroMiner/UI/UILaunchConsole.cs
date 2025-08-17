@@ -38,7 +38,7 @@ public class UILaunchConsole : UIScreen
                                 Scale = 3,
                                 OnClick = () =>
                                 {
-                                    game.StateManager.Ui.State.IsLaunchConsoleOpen = false;
+                                    game.StateManager.Ui.State.ActiveScreen = null;
                                     game.StateManager.TransitionManager.FadeOut(1, () =>
                                     {
                                         game.StateManager.SetActiveWorldAndInitialize(World.Asteroid);
@@ -58,7 +58,7 @@ public class UILaunchConsole : UIScreen
                                 BackgroundColor = Colors.DarkBlue,
                                 Padding = 6,
                                 Scale = 3,
-                                OnClick = () => { game.StateManager.Ui.State.IsLaunchConsoleOpen = false; }
+                                OnClick = () => { game.StateManager.Ui.State.ActiveScreen = null; }
                             }
                         ]
                     }

@@ -10,6 +10,17 @@ public class UI(BaseGame game)
 
     public int UIScale { get; set; } = 2;
 
+    private UIElement? GetActiveScreen()
+    {
+        return game.StateManager.Ui.State.ActiveScreen switch
+        {
+            Screen.InGameMenu => new UIInGameMenu(game),
+            Screen.LaunchConsole => new UILaunchConsole(game),
+            Screen.SaleMenu => new UIShop(game),
+            _ => null
+        };
+    }
+
     public UIElement GetTree()
     {
         if (game.StateManager.Ui.State.IsInMainMenu) return new UIMainMenu(game);
@@ -44,10 +55,8 @@ public class UI(BaseGame game)
                     },
 
                     game.StateManager.Ui.State.IsInDialog ? new UIDialog(game) : null,
-                    game.StateManager.Ui.State.IsInventoryOpen ? new UIInventory(game) : null,
-                    !game.StateManager.Ui.State.IsInventoryOpen ? new UIInventoryFooter(game) : null,
-                    game.StateManager.Ui.State.IsLaunchConsoleOpen ? new UILaunchConsole(game) : null,
-                    game.StateManager.Ui.State.IsInShopMenu ? new UIShop(game) : null,
+                    GetActiveScreen(),
+                    new UIInventoryFooter(game),
                     new UIElement(game)
                     {
                         FullWidth = true,
@@ -99,15 +108,14 @@ public class UI(BaseGame game)
 
         if (activeControls.Global.Contains(GlobalControls.ToggleInventory))
         {
-            if (State.IsLaunchConsoleOpen || State.IsInShopMenu)
+            if (State.ActiveScreen == null)
             {
-                State.IsLaunchConsoleOpen = false;
-                State.IsInShopMenu = false;
-                State.sellConfirmationItemIndex = -1;
+                State.ActiveScreen = Screen.InGameMenu;
+                State.ActiveInGameMenuSubScreen = InGameMenuSubScreen.Inventory;
             }
             else
             {
-                State.IsInventoryOpen = !State.IsInventoryOpen;
+                State.ActiveScreen = null;
             }
         }
 

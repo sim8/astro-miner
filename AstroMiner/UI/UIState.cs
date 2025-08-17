@@ -3,15 +3,28 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner.UI;
 
+// Top-level screens. Only one can be open at once
+public enum Screen
+{
+    InGameMenu,
+    LaunchConsole,
+    SaleMenu
+}
+
+public enum InGameMenuSubScreen
+{
+    Inventory,
+    Map
+}
+
 public class UIState(BaseGame game)
 {
+    public Screen? ActiveScreen { get; set; } = null;
+    public InGameMenuSubScreen ActiveInGameMenuSubScreen { get; set; } = InGameMenuSubScreen.Inventory;
     public bool IsInMainMenu { get; set; } = true;
     public bool IsInPauseMenu { get; set; }
     public bool IsDebugMenuOpen { get; set; } = false;
-    public bool IsInventoryOpen { get; set; }
-    public bool IsLaunchConsoleOpen { get; set; }
-    public bool IsInShopMenu { get; set; }
-    public int sellConfirmationItemIndex { get; set; } = -1;
+    public int SellConfirmationItemIndex { get; set; } = -1;
 
     // TODO all very temporary. Need a proper way of tracking dialog
     public bool IsInDialog { get; set; } = false;
@@ -19,7 +32,7 @@ public class UIState(BaseGame game)
 
     public ScrollingEffectManager StarBackground { get; init; } = new();
 
-    public void Update(GameTime gameTime, ActiveControls activeControls)
+    private void UpdateStarBackground(GameTime gameTime, ActiveControls activeControls)
     {
         if (IsInMainMenu)
         {
@@ -63,5 +76,10 @@ public class UIState(BaseGame game)
         {
             StarBackground.Layers.Clear();
         }
+    }
+
+    public void Update(GameTime gameTime, ActiveControls activeControls)
+    {
+        UpdateStarBackground(gameTime, activeControls);
     }
 }

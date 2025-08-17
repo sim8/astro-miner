@@ -56,10 +56,7 @@ public class ControlManager
         InitializeControls();
     }
 
-    // TODO abstract these to e.g. State.InGameScreen
-    private bool MiningControlsEnabled => !_baseGame.StateManager.Ui.State.IsInventoryOpen &&
-                                          !_baseGame.StateManager.Ui.State.IsLaunchConsoleOpen &&
-                                          !_baseGame.StateManager.Ui.State.IsInShopMenu &&
+    private bool MiningControlsEnabled => _baseGame.StateManager.Ui.State.ActiveScreen == null &&
                                           !_baseGame.StateManager.TransitionManager.IsTransitioning;
 
     private void InitializeControls()
