@@ -30,7 +30,8 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
             {
                 var cellState = _gameStateManager.AsteroidWorld.Grid.GetCellState(col, row);
 
-                if (cellState.FloorType == FloorType.Lava)
+                // TODO if we're not animating lava, can we just copy it into lava tileset?
+                if (FloorTypes.IsLavaLike(cellState.FloorType))
                     spriteBatch.Draw(Shared.Textures["lava"],
                         Shared.ViewHelpers.GetVisibleRectForGridCell(col, row), Color.White);
 
