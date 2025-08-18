@@ -63,10 +63,8 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
                     }
                 }
 
-                if (_gameStateManager.AsteroidWorld.Grid.GetFloorType(col, row) == FloorType.LavaCracks)
-                    spriteBatch.Draw(Shared.Textures["cracks"],
-                        Shared.ViewHelpers.GetVisibleRectForGridCell(col, row),
-                        Color.White);
+                // Render after floor+wall rendering as they're done by quadrant
+                RenderLavaCracks(spriteBatch, col, row);
             });
 
         LoopVisibleCells(FogOfWarRenderer.FogGradientGridRadius,
@@ -90,10 +88,15 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
             1, // Only lava, small light source
             (col, row) =>
             {
-                if (_gameStateManager.AsteroidWorld.Grid.GetFloorType(col, row) == FloorType.Lava)
+                var floorType = _gameStateManager.AsteroidWorld.Grid.GetFloorType(col, row);
+                if (FloorTypes.IsLavaLike(floorType))
                 {
+                    var baseOpacity = 0.6f;
+                    if (floorType == FloorType.CollapsingLavaCracks)
+                        baseOpacity *= _gameStateManager.AsteroidWorld.Grid.GetCollapsingCompletion(col, row);
+
                     var pos = new Vector2(col + 0.5f, row + 0.5f);
-                    Shared.RenderRadialLightSource(spriteBatch, pos, _lavaLightColor, 150, 0.6f);
+                    Shared.RenderRadialLightSource(spriteBatch, pos, _lavaLightColor, 150, baseOpacity);
                 }
             });
 
@@ -110,6 +113,33 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
                 if (overlayOpacity > 0f)
                     _fogOfWarRenderer.RenderGradientOverlay(spriteBatch, col, row, 120, overlayOpacity);
             });
+    }
+
+    private void RenderLavaCracks(SpriteBatch spriteBatch, int col, int row)
+    {
+        var cellState = _gameStateManager.AsteroidWorld.Grid.GetCellState(col, row);
+
+        // Happens after floor+wall rendering, should never overlay walls
+        if (cellState.WallType != WallType.Empty)
+            return;
+
+        if (cellState.FloorType == FloorType.LavaCracks)
+            spriteBatch.Draw(Shared.Textures["cracks"],
+                Shared.ViewHelpers.GetVisibleRectForGridCell(col, row),
+                new Rectangle(0, 0, 32, 32),
+                Color.White);
+
+        if (cellState.FloorType == FloorType.CollapsingLavaCracks)
+        {
+            var completionPercentage =
+                Shared.Game.StateManager.AsteroidWorld.Grid.GetCollapsingCompletion(col, row);
+            var keyframe = (int)(completionPercentage * 4); // 4 keyframes
+            var sourceRect = new Rectangle(32 * (keyframe + 1), 0, 32, 36); // +1 because 1st frame is non-collapsing
+            spriteBatch.Draw(Shared.Textures["cracks"],
+                Shared.ViewHelpers.GetVisibleRectForGridCell(col, row, 1f, 1.125f), // Is 32x36
+                sourceRect,
+                Color.White);
+        }
     }
 
     public override void RenderShadows(SpriteBatch spriteBatch)

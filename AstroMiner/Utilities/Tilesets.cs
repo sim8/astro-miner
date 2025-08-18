@@ -110,12 +110,13 @@ public static class Tilesets
 
         // Dual grid system doesn't normally allow for > 2 textures adjoining. Deriving the texture to use from the neighbors.
         // When adding more floor types will likely need a priority order for textures + try and ensure they don't adjoin
-        var textureOffset = topLeft == FloorType.Lava || topRight == FloorType.Lava || bottomLeft == FloorType.Lava ||
-                            bottomRight == FloorType.Lava
+        var textureOffset = FloorTypes.IsLavaLike(topLeft) || FloorTypes.IsLavaLike(topRight) ||
+                            FloorTypes.IsLavaLike(bottomLeft) ||
+                            FloorTypes.IsLavaLike(bottomRight)
             ? 1
             : 0;
 
-        return (RampKeys.CreateKey( // Needs to take cracks into account. Floor-like?
+        return (RampKeys.CreateKey(
             !FloorTypes.IsFloorLikeTileset(topLeft),
             !FloorTypes.IsFloorLikeTileset(topRight),
             !FloorTypes.IsFloorLikeTileset(bottomLeft),

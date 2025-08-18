@@ -64,6 +64,18 @@ public class GridState(BaseGame game)
         _activeCollapsingFloorCells.Add((x, y), new ActiveCollapsingFloorCell(game, (x, y)));
     }
 
+    public bool GetIsCollapsing(int x, int y)
+    {
+        return _activeCollapsingFloorCells.ContainsKey((x, y));
+    }
+
+    public float GetCollapsingCompletion(int x, int y)
+    {
+        if (!_activeCollapsingFloorCells.ContainsKey((x, y))) return 0;
+
+        return _activeCollapsingFloorCells[(x, y)].PercentageComplete;
+    }
+
     public void DeactivateExplosiveRockCell(int x, int y)
     {
         _activeExplosiveRockCells.Remove((x, y));

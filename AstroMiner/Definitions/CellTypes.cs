@@ -21,7 +21,8 @@ public enum FloorType
     Empty,
     Floor,
     Lava,
-    LavaCracks
+    LavaCracks,
+    CollapsingLavaCracks
 }
 
 public enum AsteroidLayer
@@ -69,5 +70,10 @@ public static class FloorTypes
     public static bool IsFloorLikeTileset(FloorType floorType)
     {
         return floorType == FloorType.Floor || floorType == FloorType.LavaCracks;
+    }
+
+    public static bool IsLavaLike(FloorType floorType)
+    {
+        return floorType is FloorType.Lava or FloorType.CollapsingLavaCracks;
     }
 }
