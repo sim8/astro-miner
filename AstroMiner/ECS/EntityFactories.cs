@@ -207,8 +207,8 @@ public class EntityFactories
         var entityId = _ecs.CreateEntity();
 
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
-        positionComponent.World = World.ShipDownstairs;
-        positionComponent.Position = new Vector2(29, 5);
+        positionComponent.World = World.ShipUpstairs;
+        positionComponent.Position = new Vector2(22, 7);
         positionComponent.WidthPx = 64;
         positionComponent.HeightPx = 64;
         positionComponent.IsCollideable = true;
