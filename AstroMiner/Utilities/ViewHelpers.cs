@@ -23,13 +23,24 @@ public class ViewHelpers(BaseGame game, GraphicsDeviceManager graphics)
         return ClampCameraPosForGridBounds(cameraPosWithPortal);
     }
 
-    private Vector2 OverrideCameraPosIfUsingPortal(Vector2 cameraPos)
+    private Vector2 OverrideCameraPosIfUsingPortal(Vector2 playerCenterPos)
     {
-        if (game.Model.Ecs.ActiveControllableEntityId == null) return cameraPos;
+        if (game.Model.Ecs.ActiveControllableEntityId == null) return playerCenterPos;
 
-        // TODO
+        var (portalX, portalY) = ToGridPosition(playerCenterPos);
 
-        return cameraPos;
+        var portalConfig = StaticWorlds.GetPortalConfig(game.Model.ActiveWorld, (portalX, portalY), true);
+
+        if (portalConfig == null) return playerCenterPos;
+
+        return portalConfig.Direction switch
+        {
+            Direction.Top => new Vector2(portalX + 0.5f, portalY + 1),
+            Direction.Right => new Vector2(portalX, portalY + 0.5f),
+            Direction.Bottom => new Vector2(portalX + 0.5f, portalY - 1),
+            Direction.Left => new Vector2(portalX + 1f, portalY + 0.5f),
+            _ => Vector2.Zero
+        };
     }
 
     /**
@@ -38,7 +49,6 @@ public class ViewHelpers(BaseGame game, GraphicsDeviceManager graphics)
      */
     private Vector2 ClampCameraPosForGridBounds(Vector2 cameraPos)
     {
-        return cameraPos;
         var (viewportGridWidth, viewportGridHeight) = GetViewportGridSize();
 
         var widthThreshold = viewportGridWidth / 2;
