@@ -25,6 +25,7 @@ public class Renderer
     private readonly PlayerRenderer _playerRenderer;
     private readonly ScrollingBackgroundRenderer _scrollingBackgroundRenderer;
     private readonly RendererShared _shared;
+    private readonly SlidingDoorRenderer _slidingDoorRenderer;
     private readonly BaseWorldRenderer _staticWorldRenderer;
     private readonly UIRenderer _uiRenderer;
     private readonly UserInterfaceRenderer _userInterfaceRenderer;
@@ -38,6 +39,7 @@ public class Renderer
         _uiRenderer = new UIRenderer(_game);
         _minerRenderer = new MinerRenderer(_shared);
         _playerRenderer = new PlayerRenderer(_shared);
+        _slidingDoorRenderer = new SlidingDoorRenderer(_shared);
         _dynamiteRenderer = new DynamiteRenderer(_shared);
         _explosionRenderer = new ExplosionRenderer(_shared);
         _scrollingBackgroundRenderer = new ScrollingBackgroundRenderer(_shared);
@@ -151,6 +153,10 @@ public class Renderer
                  !_game.StateManager.AsteroidWorld.IsInMiner) ||
                 _game.StateManager.Ecs.HasComponent<NpcComponent>(entityId))
                 _playerRenderer.RenderPlayer(spriteBatch, entityId);
+
+            // Sliding doors
+            if (_game.StateManager.Ecs.HasComponent<SlidingDoorComponent>(entityId))
+                _slidingDoorRenderer.RenderSlidingDoors(spriteBatch, entityId);
 
             if (_game.StateManager.Ecs.HasComponent<TextureComponent>(entityId))
             {

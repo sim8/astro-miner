@@ -163,3 +163,9 @@ public class InteractiveComponent : Component
     public float InteractableDistance { get; set; } = 1f;
     public InteractiveType InteractiveType { get; set; }
 }
+
+public class SlidingDoorComponent : Component
+{
+    public float OpenPercent { get; set; } = 0f;
+    public float OpenSpeed { get; set; } = 1f;
+}

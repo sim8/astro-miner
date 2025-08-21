@@ -259,6 +259,8 @@ public class Ecs
             return componentsByEntityId.Npc as Dictionary<int, T>;
         if (typeof(T) == typeof(InteractiveComponent))
             return componentsByEntityId.Interactive as Dictionary<int, T>;
+        if (typeof(T) == typeof(SlidingDoorComponent))
+            return componentsByEntityId.SlidingDoor as Dictionary<int, T>;
 
         throw new ArgumentException($"No handler for type {typeof(T)} in GetComponentsOfType");
     }

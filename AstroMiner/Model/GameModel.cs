@@ -52,6 +52,7 @@ public class ComponentsByEntityId
     public Dictionary<int, ExplosionTag> ExplosionTag { get; set; }
     public Dictionary<int, NpcComponent> Npc { get; set; }
     public Dictionary<int, InteractiveComponent> Interactive { get; set; }
+    public Dictionary<int, SlidingDoorComponent> SlidingDoor { get; set; }
 }
 
 [Serializable]
@@ -149,7 +150,8 @@ public static class GameModelHelpers
                     MinerTag = new Dictionary<int, MinerTag>(),
                     ExplosionTag = new Dictionary<int, ExplosionTag>(),
                     Npc = new Dictionary<int, NpcComponent>(),
-                    Interactive = new Dictionary<int, InteractiveComponent>()
+                    Interactive = new Dictionary<int, InteractiveComponent>(),
+                    SlidingDoor = new Dictionary<int, SlidingDoorComponent>()
                 }
             },
             Launch = new LaunchModel

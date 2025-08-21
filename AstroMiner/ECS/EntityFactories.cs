@@ -246,4 +246,22 @@ public class EntityFactories
 
         return entityId;
     }
+
+    public int CreateSlidingDoorEntity(World world, Vector2 position)
+    {
+        var entityId = _ecs.CreateEntity();
+
+        var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
+        positionComponent.World = world;
+        positionComponent.Position = position;
+        positionComponent.WidthPx = 64;
+        positionComponent.HeightPx = 3;
+        positionComponent.IsCollideable = true;
+
+        var slidingDoorComponent = _ecs.AddComponent<SlidingDoorComponent>(entityId);
+        slidingDoorComponent.OpenPercent = 0f;
+        slidingDoorComponent.OpenSpeed = 1f;
+
+        return entityId;
+    }
 }

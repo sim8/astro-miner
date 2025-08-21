@@ -66,6 +66,7 @@ public class AstroMinerGame : BaseGame
         LoadTexture("launch-console");
         LoadTexture("star");
         LoadTexture("lava");
+        LoadTexture("door");
     }
 
     protected override void Update(GameTime gameTime)
