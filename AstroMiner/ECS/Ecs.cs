@@ -34,6 +34,7 @@ public class Ecs
         GrappleSystem = new GrappleSystem(this, game);
         InteractionSystem = new InteractionSystem(this, game);
         EntityTransformSystem = new EntityTransformSystem(this, game);
+        SlidingDoorSystem = new SlidingDoorSystem(this, game);
     }
 
     public int? ActiveControllableEntityId => _game.Model.Ecs.ActiveControllableEntityId;
@@ -52,7 +53,7 @@ public class Ecs
     public GrappleSystem GrappleSystem { get; }
     public InteractionSystem InteractionSystem { get; }
     public EntityTransformSystem EntityTransformSystem { get; }
-
+    public SlidingDoorSystem SlidingDoorSystem { get; }
     public Vector2 ActiveControllableEntityCenterPosition => ActiveControllableEntityId == null
         ? Vector2.Zero
         : GetComponent<PositionComponent>(ActiveControllableEntityId.Value).CenterPosition;
@@ -92,6 +93,7 @@ public class Ecs
         GrappleSystem.Update(gameTime, activeControls);
         InteractionSystem.Update(gameTime, activeControls);
         EntityTransformSystem.Update(gameTime, activeControls);
+        SlidingDoorSystem.Update(gameTime, activeControls);
         CalculateEntityIdsInActiveWorldSortedByDistance();
     }
 

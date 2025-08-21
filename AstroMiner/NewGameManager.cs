@@ -33,6 +33,8 @@ public class NewGameManager(BaseGame game)
         game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(13.5f, 1f));
         game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(15.95f, 1f));
         game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(17.95f, 1f));
+        game.StateManager.Ecs.Factories.CreateSlidingDoorEntity(World.ShipDownstairs, new Vector2(4f, 7.82f));
+        game.StateManager.Ecs.Factories.CreateSlidingDoorEntity(World.ShipDownstairs, new Vector2(8f, 7.82f));
         game.StateManager.Ecs.Factories.CreateSlidingDoorEntity(World.ShipDownstairs, new Vector2(17f, 7.82f));
 
         // Corridor
