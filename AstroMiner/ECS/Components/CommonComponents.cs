@@ -170,6 +170,6 @@ public class SlidingDoorComponent : Component
     public float OpenSpeed { get; set; } = 1f;
     public double LastOpenedTimeMs { get; set; } = 0;
     public bool TargetOpen { get; set; } = false;
-    public double AnimationStartTimeMs { get; set; } = 0;
+    public double AnimationTimeMs { get; set; } = 0;
     public float AnimationStartPercent { get; set; } = 0f;
 }

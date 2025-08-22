@@ -9,7 +9,7 @@ namespace AstroMiner.ECS.Systems;
 
 public class SlidingDoorSystem : System
 {
-    private float doorOpenDistance = 1.2f;
+    private float doorOpenDistance = 1.5f;
     private float minOpenTimeMs = 2000;
 
     // Animation tuning variables
@@ -93,13 +93,13 @@ public class SlidingDoorSystem : System
             if (targetShouldBeOpen != slidingDoorComponent.TargetOpen)
             {
                 slidingDoorComponent.TargetOpen = targetShouldBeOpen;
-                slidingDoorComponent.AnimationStartTimeMs = gameTime.TotalGameTime.TotalMilliseconds;
+                slidingDoorComponent.AnimationTimeMs = 0;
                 slidingDoorComponent.AnimationStartPercent = slidingDoorComponent.OpenPercent;
             }
 
-            // Animate the door open percent using ease-in-out
-            var animationElapsed = gameTime.TotalGameTime.TotalMilliseconds - slidingDoorComponent.AnimationStartTimeMs;
-            var animationProgress = Math.Min(1.0, animationElapsed / doorAnimationSpeedMs);
+            // Update animation time and calculate progress
+            slidingDoorComponent.AnimationTimeMs += gameTime.ElapsedGameTime.TotalMilliseconds;
+            var animationProgress = Math.Min(1.0, slidingDoorComponent.AnimationTimeMs / doorAnimationSpeedMs);
 
             if (animationProgress < 1.0)
             {
@@ -119,7 +119,7 @@ public class SlidingDoorSystem : System
             var doorPositionComponent = game.StateManager.Ecs.GetComponent<PositionComponent>(slidingDoorComponent.EntityId);
             if (doorPositionComponent != null)
             {
-                doorPositionComponent.IsCollideable = slidingDoorComponent.OpenPercent != 1f;
+                doorPositionComponent.IsCollideable = slidingDoorComponent.OpenPercent < 0.2f;
             }
         }
     }

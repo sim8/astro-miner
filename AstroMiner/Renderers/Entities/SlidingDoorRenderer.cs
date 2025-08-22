@@ -25,7 +25,7 @@ public class SlidingDoorRenderer(
 
         // Left door
         var leftSourceRect = new Rectangle(
-            0, 0,
+            DoorWidthPx - visiblePx, 0,
             visiblePx,
             DoorHeightPx);
 
@@ -37,7 +37,7 @@ public class SlidingDoorRenderer(
 
         // Right door
         var rightSourceRect = new Rectangle(
-            DoorWidthPx * 2 - visiblePx, 0,
+            DoorWidthPx, 0,
             visiblePx,
             DoorHeightPx);
         var rightRenderPos =
