@@ -54,7 +54,7 @@ public class EntityFactories
         positionComponent.World = World.ShipDownstairs;
         positionComponent.WidthPx = GameConfig.MinerBoxSizePx;
         positionComponent.HeightPx = GameConfig.MinerBoxSizePx;
-        positionComponent.SetCenterPosition(new Vector2(34f, 6f));
+        positionComponent.SetCenterPosition(new Vector2(33.5f, 6f));
         positionComponent.IsCollideable = true;
 
         // Add direction component
@@ -208,7 +208,7 @@ public class EntityFactories
 
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
         positionComponent.World = World.ShipUpstairs;
-        positionComponent.Position = new Vector2(22, 7);
+        positionComponent.Position = new Vector2(25, 7);
         positionComponent.WidthPx = 64;
         positionComponent.HeightPx = 64;
         positionComponent.IsCollideable = true;

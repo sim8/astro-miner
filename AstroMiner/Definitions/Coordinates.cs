@@ -23,9 +23,9 @@ public static class Coordinates
         public static readonly (int x, int y) MinExToHomePortal = (3, 7);
 
         public static readonly (int x, int y) KrevikToShipDownstairsPortal = (11, 6);
-        public static readonly (int x, int y) ShipDownstairsToKrevikPortal = (25, 3);
+        public static readonly (int x, int y) ShipDownstairsToKrevikPortal = (28, 3);
 
-        public static readonly (int x, int y) ShipDownstairsToShipUpstairsPortal = (21, 4);
-        public static readonly (int x, int y) ShipUpstairsToShipDownstairsPortal = (21, 4);
+        public static readonly (int x, int y) ShipDownstairsToShipUpstairsPortal = (24, 4);
+        public static readonly (int x, int y) ShipUpstairsToShipDownstairsPortal = (24, 4);
     }
 }

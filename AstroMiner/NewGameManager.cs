@@ -30,20 +30,20 @@ public class NewGameManager(BaseGame game)
     private void SetUpStaticEntitiesTEMP()
     {
         // Bedroom
-        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(13.5f, 1f));
-        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(15.95f, 1f));
-        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(17.95f, 1f));
-        game.StateManager.Ecs.Factories.CreateSlidingDoorEntity(World.ShipDownstairs, new Vector2(4f, 7.82f));
-        game.StateManager.Ecs.Factories.CreateSlidingDoorEntity(World.ShipDownstairs, new Vector2(8f, 7.82f));
-        game.StateManager.Ecs.Factories.CreateSlidingDoorEntity(World.ShipDownstairs, new Vector2(17f, 7.82f));
+        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(16.5f, 1f));
+        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(18.95f, 1f));
+        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(20.95f, 1f));
+        game.StateManager.Ecs.Factories.CreateSlidingDoorEntity(World.ShipDownstairs, new Vector2(7f, 7.82f));
+        game.StateManager.Ecs.Factories.CreateSlidingDoorEntity(World.ShipDownstairs, new Vector2(11f, 7.82f));
+        game.StateManager.Ecs.Factories.CreateSlidingDoorEntity(World.ShipDownstairs, new Vector2(20f, 7.82f));
 
         // Corridor
-        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(21f, 10f));
-        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(15f, 10f));
-        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(9f, 10f));
+        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(24f, 10f));
+        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(18f, 10f));
+        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(12f, 10f));
 
         // Hangar
-        game.StateManager.Ecs.Factories.CreateCeilingLightSourceEntity(World.ShipDownstairs, new Vector2(34f, 6f));
+        game.StateManager.Ecs.Factories.CreateCeilingLightSourceEntity(World.ShipDownstairs, new Vector2(33.5f, 6f));
 
         game.StateManager.Ecs.Factories.CreateLaunchConsoleEntity();
 
