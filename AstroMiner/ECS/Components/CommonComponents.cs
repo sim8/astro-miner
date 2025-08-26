@@ -139,6 +139,8 @@ public class TextureComponent : Component
     public int BottomPaddingPx { get; set; } = 0;
     public int LeftPaddingPx { get; set; } = 0;
     public int RightPaddingPx { get; set; } = 0;
+    public int TextureOffsetXPx { get; set; } = 0;
+    public int TextureOffsetYPx { get; set; } = 0;
 }
 
 public class RadialLightSourceComponent : Component

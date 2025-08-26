@@ -264,4 +264,27 @@ public class EntityFactories
 
         return entityId;
     }
+
+    public int CreateShipEntity(Vector2 entrancePosition)
+    {
+        var entityId = _ecs.CreateEntity();
+
+        var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
+        positionComponent.World = World.Krevik;
+        positionComponent.Position = new Vector2(entrancePosition.X - 25, entrancePosition.Y + 4);
+        positionComponent.WidthPx = 1024;
+        positionComponent.HeightPx = 256;
+        positionComponent.IsCollideable = true;
+
+        var textureComponent = _ecs.AddComponent<TextureComponent>(entityId);
+        textureComponent.TextureName = "ship";
+        textureComponent.TopPaddingPx = 160;
+        textureComponent.LeftPaddingPx = 64;
+        textureComponent.BottomPaddingPx = 32;
+
+        textureComponent.TextureOffsetXPx = 64;
+        textureComponent.TextureOffsetYPx = 800;
+
+        return entityId;
+    }
 }

@@ -4,3 +4,6 @@
     - Shouldn't crash if out of bounds (edge case)
 - Simplify UI code? Callback function to set props?
 - More aggressive fog-of-warw
+- Improve entity management
+    - Get static entities (merge into dynamic)
+    - CreateIfNotExisting (maybe using predetermined IDs?) for things like NPCs

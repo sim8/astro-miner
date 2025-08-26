@@ -49,5 +49,7 @@ public class NewGameManager(BaseGame game)
 
         // Krevik
         game.StateManager.Ecs.Factories.CreateShopEntity();
+        game.StateManager.Ecs.Factories.CreateShipEntity(new Vector2(Coordinates.Grid.KrevikToShipDownstairsPortal.x, Coordinates.Grid.KrevikToShipDownstairsPortal.y));
+        
     }
 }

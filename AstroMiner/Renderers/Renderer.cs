@@ -172,7 +172,7 @@ public class Renderer
                                      ViewHelpers.ConvertTexturePxToGridUnits(textureComponent.TopPaddingPx));
                 var destinationRectangle = _shared.ViewHelpers.GetVisibleRectForObject(texturePos,
                     textureWidth, textureHeight);
-                var sourceRectangle = new Rectangle(0, 0, textureWidth, textureHeight);
+                var sourceRectangle = new Rectangle(textureComponent.TextureOffsetXPx, textureComponent.TextureOffsetYPx, textureWidth, textureHeight);
                 spriteBatch.Draw(_shared.Textures[textureComponent.TextureName], destinationRectangle, sourceRectangle,
                     Color.White);
             }
