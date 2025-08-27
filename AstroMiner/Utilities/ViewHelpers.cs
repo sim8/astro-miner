@@ -249,6 +249,8 @@ public class ViewHelpers(BaseGame game, GraphicsDeviceManager graphics)
 
         if (healthComponent == null) return Color.White;
 
+        if (healthComponent.CurrentHealth <= 0) return Color.Gray;
+
         if (!healthComponent.IsAnimatingDamage)
         {
             if (healthComponent.TimeOnLavaMs > 0)

@@ -1,4 +1,5 @@
 using System;
+using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
@@ -42,16 +43,30 @@ public class MinerRenderer(
         spriteBatch.Draw(GetTracksTexture(positionComponent.Position, directionComponent.Direction, entityId),
             destinationRectangle, sourceRectangle, tintColor);
 
-        var animationPercentage =
-            shared.GameStateManager.GetTotalPlayTime() % IdlingAnimationMs / (float)IdlingAnimationMs;
+
 
         var minerNoTracksDesignationRect = destinationRectangle;
 
-        if (animationPercentage > 0.5f)
-            minerNoTracksDesignationRect = new Rectangle(destinationRectangle.X, destinationRectangle.Y - 1,
-                destinationRectangle.Width, destinationRectangle.Height);
+        if (ShowIdlingAnimation(entityId))
+        {
+            var animationPercentage =
+    shared.GameStateManager.GetTotalPlayTime() % IdlingAnimationMs / (float)IdlingAnimationMs;
+            if (animationPercentage > 0.5f)
+                minerNoTracksDesignationRect = new Rectangle(destinationRectangle.X, destinationRectangle.Y - 1,
+                    destinationRectangle.Width, destinationRectangle.Height);
+        }
+
+
 
         spriteBatch.Draw(shared.Textures["miner-no-tracks"], minerNoTracksDesignationRect, sourceRectangle, tintColor);
+    }
+
+    private bool ShowIdlingAnimation(int entityId)
+    {
+        var healthComponent = shared.GameStateManager.Ecs.GetComponent<HealthComponent>(entityId);
+        var positionComponent = shared.GameStateManager.Ecs.GetComponent<PositionComponent>(entityId);
+        if (healthComponent == null || positionComponent == null) return false;
+        return healthComponent.CurrentHealth > 0 && positionComponent.World == World.Asteroid;
     }
 
     private Texture2D GetTracksTexture(Vector2 position, Direction direction, int entityId)
