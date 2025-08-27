@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework;
 
 namespace AstroMiner.ECS.Systems;
 
+// TODO would be better if components added/removed dynamically based on required components for worlds
+
 public class EntityTransformSystem : System
 {
     public EntityTransformSystem(Ecs ecs, BaseGame game) : base(ecs, game)
