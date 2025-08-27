@@ -1,3 +1,4 @@
+using AstroMiner.Definitions;
 using AstroMiner.Effects;
 using Microsoft.Xna.Framework;
 
@@ -8,7 +9,8 @@ public enum Screen
 {
     InGameMenu,
     LaunchConsole,
-    SaleMenu
+    SaleMenu,
+    MerchantMenu,
 }
 
 public enum InGameMenuSubScreen
@@ -25,6 +27,8 @@ public class UIState(BaseGame game)
     public bool IsInPauseMenu { get; set; }
     public bool IsDebugMenuOpen { get; set; } = false;
     public int SellConfirmationItemIndex { get; set; } = -1;
+    public ItemType? PurchaseConfirmationItemType { get; set; } = null;
+    public MerchantType? ActiveMerchantType { get; set; } = null;
 
     // TODO all very temporary. Need a proper way of tracking dialog
     public bool IsInDialog { get; set; } = false;

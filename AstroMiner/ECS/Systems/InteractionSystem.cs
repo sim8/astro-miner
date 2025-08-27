@@ -50,6 +50,13 @@ public class InteractionSystem : System
             return;
         }
 
+        if (interactiveType == InteractiveType.Merchant)
+        {
+            game.StateManager.Ui.State.ActiveScreen = Screen.MerchantMenu;
+            game.StateManager.Ui.State.ActiveMerchantType = Ecs.GetComponent<InteractiveComponent>(InteractableEntityId).MerchantType;
+            return;
+        }
+
         var npc = Ecs.GetComponent<NpcComponent>(InteractableEntityId);
 
         if (npc is { Npc: Npc.MinExMerchant }) game.StateManager.Ui.State.IsInDialog = true;
