@@ -17,6 +17,7 @@ public class UI(BaseGame game)
             Screen.InGameMenu => new UIInGameMenu(game),
             Screen.LaunchConsole => new UILaunchConsole(game),
             Screen.SaleMenu => new UIShop(game),
+            Screen.MerchantMenu => new UIMerchant(game),
             _ => null
         };
     }

@@ -55,8 +55,8 @@ public static class StaticWorlds
                 // --------------------------------------------------------0,1,2,3,4,5,6,7,8,9,0,1,2,3
                 World.Krevik, new StaticWorldConfig("krevik-docks", 14, 8, """
                                                                            X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                                                                           X,-,-,X,X,X,X,X,X,X,X,X,X,X
-                                                                           X,-,-,X,X,X,X,X,X,X,X,X,X,X
+                                                                           X,-,-,X,X,X,X,-,-,-,-,-,-,X
+                                                                           X,-,-,X,X,X,X,-,-,-,-,-,-,X
                                                                            X,-,-,-,-,-,-,-,-,-,-,-,-,X
                                                                            X,-,-,-,-,-,-,-,-,-,-,-,-,X
                                                                            X,-,-,-,-,-,-,-,-,-,-,-,-,X

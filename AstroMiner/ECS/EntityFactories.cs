@@ -247,6 +247,25 @@ public class EntityFactories
         return entityId;
     }
 
+    public int CreateMerchantEntity(World world, Vector2 position, int widthPx, int heightPx, MerchantType merchantType)
+    {
+        var entityId = _ecs.CreateEntity();
+
+        var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
+        positionComponent.World = world;
+        positionComponent.Position = position;
+        positionComponent.WidthPx = widthPx;
+        positionComponent.HeightPx = heightPx;
+        positionComponent.IsCollideable = true;
+
+        var interactiveComponent = _ecs.AddComponent<InteractiveComponent>(entityId);
+        interactiveComponent.InteractiveType = InteractiveType.Merchant;
+        interactiveComponent.InteractableDistance = 1.5f;
+        interactiveComponent.MerchantType = merchantType;
+
+        return entityId;
+    }
+
     public int CreateSlidingDoorEntity(World world, Vector2 position)
     {
         var entityId = _ecs.CreateEntity();

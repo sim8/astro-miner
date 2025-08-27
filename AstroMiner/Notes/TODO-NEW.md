@@ -8,3 +8,7 @@
 - Improve entity management
     - Get static entities (merge into dynamic)
     - CreateIfNotExisting (maybe using predetermined IDs?) for things like NPCs
+- Ship rendering
+  - Blur when close to camera (asteroid drop-off or on-planet)
+    - Gaussian blur in RenderTarget2D
+  - Parallax (on-planet)

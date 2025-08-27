@@ -32,7 +32,7 @@ public sealed class UIShop : UIElement
                             {
                                 var item = game.StateManager.Inventory.GetItemAtIndex(selectedIndex);
                                 var itemTypeConfig = ItemTypes.GetConfig(item.Type);
-                                if (itemTypeConfig.Price == -1) return;
+                                if (itemTypeConfig.SalePrice == -1) return;
                                 game.StateManager.Ui.State.SellConfirmationItemIndex = selectedIndex;
                             })
                     ]
@@ -58,7 +58,7 @@ public class UISaleConfirm : UIScreen
                     {
                         Text = "SELL " + GetSellConfirmationItem(game).Count + " " +
                                GetSellConfirmationItem(game).Type.ToString().ToUpper() + " FOR " +
-                               ItemTypes.GetConfig(GetSellConfirmationItem(game).Type).Price *
+                               ItemTypes.GetConfig(GetSellConfirmationItem(game).Type).SalePrice *
                                GetSellConfirmationItem(game).Count + " CREDITS",
                         Scale = 4
                     },

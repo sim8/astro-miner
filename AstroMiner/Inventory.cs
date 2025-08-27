@@ -27,8 +27,23 @@ public class Inventory(BaseGame game)
     public void SellItem(int index)
     {
         var inventoryItem = game.Model.Inventory.Items[index];
-        game.Model.Inventory.Credits += ItemTypes.GetConfig(inventoryItem.Type).Price * inventoryItem.Count;
+        game.Model.Inventory.Credits += ItemTypes.GetConfig(inventoryItem.Type).SalePrice * inventoryItem.Count;
         game.Model.Inventory.Items.Remove(inventoryItem);
+    }
+
+    public bool BuyItem(ItemType itemType, int count = 1)
+    {
+        var itemConfig = ItemTypes.GetConfig(itemType);
+        var totalCost = itemConfig.BuyPrice * count;
+
+        // Check if item is purchasable and player has enough credits
+        if (itemConfig.BuyPrice == -1 || game.Model.Inventory.Credits < totalCost)
+            return false;
+
+        // Deduct credits and add item
+        game.Model.Inventory.Credits -= totalCost;
+        AddItem(itemType, count);
+        return true;
     }
 
     public void ConsumeSelectedItem()
