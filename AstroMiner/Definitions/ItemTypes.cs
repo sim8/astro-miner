@@ -11,15 +11,18 @@ public enum ItemType
     Gold,
     Nickel,
     Dynamite,
-    Drill
+    Drill,
+    HealthJuice
 }
 
-public class ItemTypeConfig(string name, int colIndex, int rowIndex, int price)
+public class ItemTypeConfig(string name, int colIndex, int rowIndex, int salePrice, int buyPrice = -1)
 {
     private readonly int colIndex = colIndex;
     private readonly int rowIndex = rowIndex;
     public string Name { get; } = name;
-    public int Price { get; } = price;
+    public int SalePrice { get; } = salePrice;
+    public int BuyPrice { get; } = buyPrice;
+
     public Rectangle GetSourceRect()
     {
         return new Rectangle(colIndex * 16, rowIndex * 16, 16, 16);
@@ -36,7 +39,8 @@ public static class ItemTypes
             { ItemType.Gold, new ItemTypeConfig("Gold", 2, 0, 6) },
             { ItemType.Nickel, new ItemTypeConfig("Nickel", 3, 0, 4) },
             { ItemType.Dynamite, new ItemTypeConfig("Dynamite", 4, 0, -1) },
-            { ItemType.Drill, new ItemTypeConfig("Drill", 5, 0, -1) }
+            { ItemType.Drill, new ItemTypeConfig("Drill", 5, 0, -1) },
+            { ItemType.HealthJuice, new ItemTypeConfig("Health Juice", 6, 0, -1, 10) }
         };
 
     public static ItemTypeConfig GetConfig(ItemType itemType)

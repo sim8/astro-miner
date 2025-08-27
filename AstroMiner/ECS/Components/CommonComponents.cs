@@ -164,6 +164,7 @@ public class InteractiveComponent : Component
 {
     public float InteractableDistance { get; set; } = 1f;
     public InteractiveType InteractiveType { get; set; }
+    public MerchantType? MerchantType { get; set; } // TODO any cleaner way to do this?
 }
 
 public class SlidingDoorComponent : Component

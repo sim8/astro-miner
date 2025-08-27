@@ -27,7 +27,7 @@ public class Inventory(BaseGame game)
     public void SellItem(int index)
     {
         var inventoryItem = game.Model.Inventory.Items[index];
-        game.Model.Inventory.Credits += ItemTypes.GetConfig(inventoryItem.Type).Price * inventoryItem.Count;
+        game.Model.Inventory.Credits += ItemTypes.GetConfig(inventoryItem.Type).SalePrice * inventoryItem.Count;
         game.Model.Inventory.Items.Remove(inventoryItem);
     }
 

@@ -179,7 +179,7 @@ public static class GameModelHelpers
                     new InventoryItem // TEMP
                     {
                         Count = 3,
-                        Type = ItemType.Diamond
+                        Type = ItemType.HealthJuice
                     }
                 ]
             },
