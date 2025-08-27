@@ -28,4 +28,12 @@ public static class DirectionHelpers
             _ => throw new ArgumentOutOfRangeException()
         };
     }
+
+    public static Direction GetRotatedDirection(Direction baseDirection, Direction rotation)
+    {
+        var directionInt = (int)baseDirection;
+        var rotationInt = (int)rotation;
+        var newDirectionInt = (directionInt + rotationInt) % 4;
+        return (Direction)newDirectionInt;
+    }
 }

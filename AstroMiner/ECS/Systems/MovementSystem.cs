@@ -82,14 +82,6 @@ public class MovementSystem : System
             directionComponent.Direction = selectedDirection.Value;
     }
 
-    public static Direction GetRotatedDirection(Direction baseDirection, Direction rotation)
-    {
-        var directionInt = (int)baseDirection;
-        var rotationInt = (int)rotation;
-        var newDirectionInt = (directionInt + rotationInt) % 4;
-        return (Direction)newDirectionInt;
-    }
-
     private bool IsNewPositionIntersectingWithFilledCells(World world, Vector2 position, float gridWidth,
         float gridHeight)
     {
@@ -97,9 +89,9 @@ public class MovementSystem : System
         var bottomRightCell = ViewHelpers.ToGridPosition(position + new Vector2(gridWidth, gridHeight));
 
         for (var x = topLeftCell.x; x <= bottomRightCell.x; x++)
-        for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
-            if (game.StateManager.GetWorldState(world).CellIsCollideable(x, y))
-                return true;
+            for (var y = topLeftCell.y; y <= bottomRightCell.y; y++)
+                if (game.StateManager.GetWorldState(world).CellIsCollideable(x, y))
+                    return true;
         return false;
     }
 
@@ -202,7 +194,7 @@ public class MovementSystem : System
                 ? -(positionComponent.GridWidth / 2)
                 : positionComponent.GridWidth /
                   2); // TODO should be width OR height depending on direction. Is the same anyway for mining components
-        var actualDirection = GetRotatedDirection(directionalEntityDirectionComponent.Direction, rotation);
+        var actualDirection = DirectionHelpers.GetRotatedDirection(directionalEntityDirectionComponent.Direction, rotation);
         var newCenterPos = actualDirection switch
         {
             Direction.Top => directionalEntityPositionComponent.CenterPosition +

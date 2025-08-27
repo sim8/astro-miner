@@ -109,7 +109,7 @@ public class InteractionSystem : System
             if (exitSuccess)
             {
                 // Face away from vehicle
-                playerDirection.Direction = MovementSystem.GetRotatedDirection(dir, minerDirection.Direction);
+                playerDirection.Direction = DirectionHelpers.GetRotatedDirection(dir, minerDirection.Direction);
                 return;
             }
         }
