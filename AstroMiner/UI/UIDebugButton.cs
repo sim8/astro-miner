@@ -39,7 +39,7 @@ public sealed class UIDebugMenu : UIElement
         [
             new UITextElement(game)
             {
-                Text = "SHOW SEED",
+                Text = "SEED",
                 Padding = 6,
                 Scale = 2,
                 Color = game.Debug.showSeed ? Color.Black : Color.Aqua,
@@ -50,9 +50,22 @@ public sealed class UIDebugMenu : UIElement
             {
                 FixedHeight = 10
             },
+                        new UITextElement(game)
+            {
+                Text = "ENTITY BOUNDING BOXES",
+                Padding = 6,
+                Scale = 2,
+                Color = game.Debug.showEntityBoundingBoxes ? Color.Black : Color.Aqua,
+                BackgroundColor = game.Debug.showEntityBoundingBoxes ? Color.Aqua : Color.Black,
+                OnClick = () => game.Debug.showEntityBoundingBoxes = !game.Debug.showEntityBoundingBoxes
+            },
+            new UIElement(game)
+            {
+                FixedHeight = 10
+            },
             new UITextElement(game)
             {
-                Text = "SHOW GRID DEBUG",
+                Text = "GRID DEBUG",
                 Padding = 6,
                 Scale = 2,
                 Color = game.Debug.showGridDebug ? Color.Black : Color.Aqua,
@@ -65,7 +78,7 @@ public sealed class UIDebugMenu : UIElement
             },
             new UITextElement(game)
             {
-                Text = "SHOW FPS",
+                Text = "FPS",
                 Padding = 6,
                 Scale = 2,
                 Color = game.Debug.showFps ? Color.Black : Color.Aqua,

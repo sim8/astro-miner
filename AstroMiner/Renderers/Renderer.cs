@@ -176,6 +176,27 @@ public class Renderer
                 spriteBatch.Draw(_shared.Textures[textureComponent.TextureName], destinationRectangle, sourceRectangle,
                     Color.White);
             }
+
+            if (_game.Debug.showEntityBoundingBoxes)
+            {
+                const int borderWidth = 3;
+                Color borderColor = Color.Red;
+                var positionComponent = _game.StateManager.Ecs.GetComponent<PositionComponent>(entityId);
+                var destinationRectangle = _shared.ViewHelpers.GetVisibleRectForObject(positionComponent.Position,
+                    positionComponent.WidthPx, positionComponent.HeightPx);
+
+                var topBorder = new Rectangle(destinationRectangle.X, destinationRectangle.Y, destinationRectangle.Width, borderWidth);
+                spriteBatch.Draw(_shared.Textures["white"], topBorder, borderColor);
+
+                var bottomBorder = new Rectangle(destinationRectangle.X, destinationRectangle.Y + destinationRectangle.Height - borderWidth, destinationRectangle.Width, borderWidth);
+                spriteBatch.Draw(_shared.Textures["white"], bottomBorder, borderColor);
+
+                var leftBorder = new Rectangle(destinationRectangle.X, destinationRectangle.Y, borderWidth, destinationRectangle.Height);
+                spriteBatch.Draw(_shared.Textures["white"], leftBorder, borderColor);
+
+                var rightBorder = new Rectangle(destinationRectangle.X + destinationRectangle.Width - borderWidth, destinationRectangle.Y, borderWidth, destinationRectangle.Height);
+                spriteBatch.Draw(_shared.Textures["white"], rightBorder, borderColor);
+            }
         }
     }
 
