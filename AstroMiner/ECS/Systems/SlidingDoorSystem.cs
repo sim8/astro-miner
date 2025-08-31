@@ -1,7 +1,5 @@
 using System;
-using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
-using AstroMiner.UI;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 
@@ -9,7 +7,8 @@ namespace AstroMiner.ECS.Systems;
 
 public class SlidingDoorSystem : System
 {
-    private float doorOpenDistance = 1.5f;
+    private float frontOpenDistance = 1f;
+    private float rearOpenDistance = 2f;
     private float minOpenTimeMs = 2000;
 
     // Animation tuning variables
@@ -54,11 +53,19 @@ public class SlidingDoorSystem : System
                     var distance = EntityHelpers.GetDistanceBetween(game.StateManager.Ecs,
                         slidingDoorComponent.EntityId, movementComponent.EntityId);
 
-                    // If within range, mark door to open
-                    if (distance <= doorOpenDistance)
+                    // Get door position to determine if entity is behind or in front
+                    var slidingDoorPositionComponent = game.StateManager.Ecs.GetComponent<PositionComponent>(slidingDoorComponent.EntityId);
+
+                    if (slidingDoorPositionComponent != null)
                     {
-                        shouldOpen = true;
-                        break; // No need to check other entities once we found one in range
+                        float thresholdDistance = positionComponent.CenterPosition.Y < slidingDoorPositionComponent.CenterPosition.Y ? rearOpenDistance : frontOpenDistance;
+
+                        // If within range, mark door to open
+                        if (distance <= thresholdDistance)
+                        {
+                            shouldOpen = true;
+                            break; // No need to check other entities once we found one in range
+                        }
                     }
                 }
             }

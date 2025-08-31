@@ -1,3 +1,4 @@
+using System;
 using AstroMiner.Definitions;
 using AstroMiner.Renderers.AsteroidWorld;
 using Microsoft.Xna.Framework;
@@ -20,6 +21,9 @@ public class StaticWorldRenderer(RendererShared shared) : BaseWorldRenderer(shar
                 destRect,
                 sourceRect,
                 Color.White);
+
+            // Fill outer gaps here
+            FillBackgroundGaps(spriteBatch, destRect);
         }
 
         if (shared.Game.Debug.showGridDebug) RenderGridDebugOverlay(spriteBatch);
@@ -65,5 +69,42 @@ public class StaticWorldRenderer(RendererShared shared) : BaseWorldRenderer(shar
                 var coordinatesStr = col + " " + row;
                 shared.RenderString(spriteBatch, cellRect.X, cellRect.Y, coordinatesStr, 2);
             }
+    }
+
+    private void FillBackgroundGaps(SpriteBatch spriteBatch, Rectangle mainBackgroundRect)
+    {
+        var (viewportWidth, viewportHeight) = Shared.ViewHelpers.GetViewportSize();
+        var fillColor = Colors.VeryDarkBlue;
+
+        // Top gap
+        if (mainBackgroundRect.Top > 0)
+        {
+            var topGapRect = new Rectangle(0, 0, viewportWidth, mainBackgroundRect.Top);
+            spriteBatch.Draw(Shared.Textures["white"], topGapRect, fillColor);
+        }
+
+        // Bottom gap
+        if (mainBackgroundRect.Bottom < viewportHeight)
+        {
+            var bottomGapRect = new Rectangle(0, mainBackgroundRect.Bottom, viewportWidth, viewportHeight - mainBackgroundRect.Bottom);
+            spriteBatch.Draw(Shared.Textures["white"], bottomGapRect, fillColor);
+        }
+
+        // Left gap
+        if (mainBackgroundRect.Left > 0)
+        {
+            var leftGapRect = new Rectangle(0, Math.Max(0, mainBackgroundRect.Top), mainBackgroundRect.Left,
+                Math.Min(viewportHeight, mainBackgroundRect.Bottom) - Math.Max(0, mainBackgroundRect.Top));
+            spriteBatch.Draw(Shared.Textures["white"], leftGapRect, fillColor);
+        }
+
+        // Right gap  
+        if (mainBackgroundRect.Right < viewportWidth)
+        {
+            var rightGapRect = new Rectangle(mainBackgroundRect.Right, Math.Max(0, mainBackgroundRect.Top),
+                viewportWidth - mainBackgroundRect.Right,
+                Math.Min(viewportHeight, mainBackgroundRect.Bottom) - Math.Max(0, mainBackgroundRect.Top));
+            spriteBatch.Draw(Shared.Textures["white"], rightGapRect, fillColor);
+        }
     }
 }
