@@ -20,7 +20,7 @@ public class SlidingDoorRenderer(
             return;
 
         var visiblePx = (int)((1f - slidingDoorComponent.OpenPercent) * DoorWidthPx);
-        var yRenderPos = positionComponent.Position.Y + positionComponent.GridHeight / 2 -
+        var yRenderPos = positionComponent.Position.Y + positionComponent.GridHeight -
                          ViewHelpers.ConvertTexturePxToGridUnits(DoorHeightPx);
 
         // Left door
@@ -47,16 +47,5 @@ public class SlidingDoorRenderer(
             visiblePx, DoorHeightPx);
 
         spriteBatch.Draw(shared.Textures["door"], rightDestRect, rightSourceRect, Color.White);
-
-        // // Right door (which visually overlays left)
-        // var rightSourceRect = new Rectangle(
-        //     DoorWidthPx, 0,
-        //     DoorWidthPx + visiblePx,
-        //     DoorHeightPx);
-        // var pos = new Vector2(positionComponent.Position.X + visiblePx, positionComponent.Position.Y);
-        // var rightDestRect = shared.ViewHelpers.GetVisibleRectForObject(positionComponent.Position,
-        //     DoorWidthPx, DoorWidthPx);
-
-        // spriteBatch.Draw(shared.Textures["door"], rightSourceRect, rightDestRect, Color.White);
     }
 }

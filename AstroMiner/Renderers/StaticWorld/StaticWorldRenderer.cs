@@ -37,7 +37,7 @@ public class StaticWorldRenderer(RendererShared shared) : BaseWorldRenderer(shar
                 spriteBatch.Draw(Shared.Textures["ship-shadow-map"],
                     destRect,
                     sourceRect,
-                    FogOfWarRenderer.FogColor * 0.8f);
+                    FogOfWarRenderer.FogColor * 0.4f);
             }
         }
     }

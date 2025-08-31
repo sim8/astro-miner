@@ -30,12 +30,14 @@ public class NewGameManager(BaseGame game)
     private void SetUpStaticEntitiesTEMP()
     {
         // Bedroom
-        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(16.5f, 1f));
-        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(18.95f, 1f));
-        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(20.95f, 1f));
-        game.StateManager.Ecs.Factories.CreateSlidingDoorEntity(World.ShipDownstairs, new Vector2(7f, 7.82f));
-        game.StateManager.Ecs.Factories.CreateSlidingDoorEntity(World.ShipDownstairs, new Vector2(11f, 7.82f));
-        game.StateManager.Ecs.Factories.CreateSlidingDoorEntity(World.ShipDownstairs, new Vector2(20f, 7.82f));
+        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(7.4f, 1f));
+        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(11.4f, 1f));
+        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(17.3f, 1f));
+        game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(19.9f, 1f));
+
+        game.StateManager.Ecs.Factories.CreateSlidingDoorEntity(World.ShipDownstairs, new Vector2(7f, 7f + game.StateManager.Ecs.Factories.SlidingDoorOffset));
+        game.StateManager.Ecs.Factories.CreateSlidingDoorEntity(World.ShipDownstairs, new Vector2(11f, 7f + game.StateManager.Ecs.Factories.SlidingDoorOffset));
+        game.StateManager.Ecs.Factories.CreateSlidingDoorEntity(World.ShipDownstairs, new Vector2(20f, 7f + game.StateManager.Ecs.Factories.SlidingDoorOffset));
 
         // Corridor
         game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(24f, 10f));

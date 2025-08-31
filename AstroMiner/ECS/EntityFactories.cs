@@ -9,6 +9,8 @@ public class EntityFactories
     private readonly Ecs _ecs;
     private readonly BaseGame _game;
 
+    public readonly float SlidingDoorOffset = .75f;
+
     public EntityFactories(Ecs ecs, BaseGame game)
     {
         _game = game;
@@ -273,8 +275,8 @@ public class EntityFactories
         var positionComponent = _ecs.AddComponent<PositionComponent>(entityId);
         positionComponent.World = world;
         positionComponent.Position = position;
-        positionComponent.WidthPx = 64;
-        positionComponent.HeightPx = 3;
+        positionComponent.WidthPx = 32;
+        positionComponent.HeightPx = 4;
         positionComponent.IsCollideable = true;
 
         var slidingDoorComponent = _ecs.AddComponent<SlidingDoorComponent>(entityId);
