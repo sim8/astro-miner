@@ -52,6 +52,7 @@ public class NewGameManager(BaseGame game)
         // Krevik
         game.StateManager.Ecs.Factories.CreateMerchantEntity(World.Krevik, new Vector2(8f, 1.5f), 48, 16, MerchantType.Explosives);
         game.StateManager.Ecs.Factories.CreateMerchantEntity(World.Krevik, new Vector2(11f, 1.5f), 48, 16, MerchantType.Medic);
+        game.StateManager.Ecs.Factories.CreateShopEntity();
         game.StateManager.Ecs.Factories.CreateShipEntity(new Vector2(Coordinates.Grid.KrevikToShipDownstairsPortal.x, Coordinates.Grid.KrevikToShipDownstairsPortal.y));
 
     }
