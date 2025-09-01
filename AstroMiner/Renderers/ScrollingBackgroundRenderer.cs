@@ -10,19 +10,25 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
     private const int LandTextureWidthPx = 1600;
     private const int LandTextureHeightPx = 1600;
 
-    private readonly float Speed = 2f;
+    private readonly float Speed = 0.5f;
+    private readonly float ParallaxFactorX = 0.4f;
+    private readonly float ParallaxFactorY = 0.2f;
 
     private readonly float LandTextureGridWidth = LandTextureWidthPx / GameConfig.CellTextureSizePx * 0.5f;
     private readonly float LandTextureGridHeight = LandTextureHeightPx / GameConfig.CellTextureSizePx * 0.5f;
 
     private (float, float, float, float) GetVisibleRectForLandTexture()
     {
+        var cameraPos = shared.ViewHelpers.GetCameraPos();
+
+
+        var offsetXForParallax = cameraPos.X * ParallaxFactorX - cameraPos.X;
+        var offsetYForParallax = cameraPos.Y * ParallaxFactorY - cameraPos.Y;
+
         var movedGridDistance = (float)(shared.GameStateManager.GameTime.TotalGameTime.TotalMilliseconds / 1000f * Speed);
 
-        Console.WriteLine($"movedGridDistance: {movedGridDistance}");
-
         var (startX, startY, viewportGridWidth, viewportGridHeight) = shared.ViewHelpers.GetViewportGridRect();
-        return (startX + movedGridDistance, startY, viewportGridWidth, viewportGridHeight);
+        return (startX + offsetXForParallax + movedGridDistance, startY + offsetYForParallax, viewportGridWidth, viewportGridHeight);
     }
 
 
