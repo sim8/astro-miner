@@ -11,6 +11,7 @@ namespace AstroMiner.Renderers;
 // - Remove other version
 // - Fix jumping out - instead of hardcoded padding, calculate from grid + texture
 //   - Also only apply to top + left
+//   - TESTS
 // - Only define cloudTextureSizePx once
 // - Factor out config
 //   - Wire up for ship interior
@@ -29,7 +30,6 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
     private readonly float CloudsPerGridCell = 0.1f;
     private readonly int CloudSeed = 42;
     private readonly float CloudSpeed = 1f;
-    private readonly float CloudPadding = 2.0f;
     private readonly float CloudParallaxFactorX = 0.6f;
     private readonly float CloudParallaxFactorY = 0.3f;
 
@@ -137,7 +137,7 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
         // Get cloud placements for the visible area
         var cloudPlacements = CloudGenerator.GetCloudPlacements(
             gridRectX, gridRectY, gridRectWidth, gridRectHeight,
-            CloudsPerGridCell, CloudSeed, CloudPadding);
+            CloudsPerGridCell, CloudSeed, CloudTextureSizePx);
 
 
 

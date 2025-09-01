@@ -26,7 +26,7 @@ public static class CloudGenerator
     /// <param name="gridRectHeight">Height of visible area in grid units</param>
     /// <param name="cloudsPerGridCell">Density of clouds (e.g., 0.05 = 5% chance per grid cell)</param>
     /// <param name="seed">Seed for consistent random generation</param>
-    /// <param name="padding">Extra padding around visible area to allow clouds to appear partially offscreen</param>
+    /// <param name="textureSizePx">Size of the texture in pixels</param>
     /// <returns>List of cloud placements in grid coordinates</returns>
     public static List<CloudPlacement> GetCloudPlacements(
         float gridRectX,
@@ -35,7 +35,6 @@ public static class CloudGenerator
         float gridRectHeight,
         float cloudsPerGridCell = 0.05f,
         int seed = 12345,
-        float padding = 2.0f,
         int textureSizePx = 128)
     {
         var clouds = new List<CloudPlacement>();
@@ -43,10 +42,11 @@ public static class CloudGenerator
         float textureSizeGridUnits = textureSizePx / GameConfig.CellTextureSizePx;
 
         // Expand the area to include padding for partially visible clouds
-        var paddedStartX = gridRectX - padding;
-        var paddedStartY = gridRectY - padding;
-        var paddedEndX = gridRectX + gridRectWidth + padding;
-        var paddedEndY = gridRectY + gridRectHeight + padding;
+        // We only pad left+top as CloudPlacements are for their top/left positions
+        var paddedStartX = gridRectX - textureSizeGridUnits;
+        var paddedStartY = gridRectY - textureSizeGridUnits;
+        var endX = gridRectX + gridRectWidth;
+        var endY = gridRectY + gridRectHeight;
 
         // We'll sample at a grid resolution based on cloud size to avoid over-densification
         // Sample every half cloud width to get good coverage without too many overlaps
@@ -57,9 +57,9 @@ public static class CloudGenerator
         var startSampleY = (float)Math.Floor(paddedStartY / sampleStep) * sampleStep;
 
         // Iterate through sample points
-        for (var sampleX = startSampleX; sampleX < paddedEndX; sampleX += sampleStep)
+        for (var sampleX = startSampleX; sampleX < endX; sampleX += sampleStep)
         {
-            for (var sampleY = startSampleY; sampleY < paddedEndY; sampleY += sampleStep)
+            for (var sampleY = startSampleY; sampleY < endY; sampleY += sampleStep)
             {
                 // Create a deterministic hash based on position and seed
                 var hash = GetPositionHash((int)(sampleX * 1000), (int)(sampleY * 1000), seed);

@@ -83,19 +83,21 @@ public class CloudPlacementTests
         var gridRectWidth = 20f;
         var gridRectHeight = 20f;
         var cloudsPerGridCell = 0.2f; // Higher density to ensure we get some clouds
-        var padding = 3f;
+        var textureSizePx = 96; // Custom texture size for testing
         var seed = 12345;
 
         // Act
-        var clouds = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight, cloudsPerGridCell, seed, padding);
+        var clouds = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight, cloudsPerGridCell, seed, textureSizePx);
 
         // Assert - Clouds should be in reasonable area (allowing for natural offset beyond padding)
-        // With the fix, clouds can extend slightly beyond the padded area due to random offsets
-        var tolerance = 1.1f; // Allow some natural variation beyond padding
-        var paddedMinX = gridRectX - padding - tolerance;
-        var paddedMinY = gridRectY - padding - tolerance;
-        var paddedMaxX = gridRectX + gridRectWidth + padding + tolerance;
-        var paddedMaxY = gridRectY + gridRectHeight + padding + tolerance;
+        // Calculate padding based on texture size (matching the implementation)
+        var textureSizeGridUnits = textureSizePx / 32f; // GameConfig.CellTextureSizePx = 32
+        var sampleStep = textureSizeGridUnits * 0.5f; // Sample step from implementation
+        var tolerance = sampleStep * 0.8f + 0.5f; // Account for random offset + extra margin
+        var paddedMinX = gridRectX - textureSizeGridUnits - tolerance;
+        var paddedMinY = gridRectY - textureSizeGridUnits - tolerance;
+        var paddedMaxX = gridRectX + gridRectWidth + tolerance;
+        var paddedMaxY = gridRectY + gridRectHeight + tolerance;
 
         foreach (var cloud in clouds)
         {
@@ -205,14 +207,52 @@ public class CloudPlacementTests
         Assert.IsTrue(clouds.Count >= 0, "Should handle negative coordinates");
 
         // Verify clouds are in reasonable area (allowing for natural offset beyond padding)
-        var padding = 2f; // Default padding
-        var tolerance = 1.1f; // Allow some natural variation beyond padding
+        var textureSizeGridUnits = 128f / 32f; // Default texture size / GameConfig.CellTextureSizePx
+        var sampleStep = textureSizeGridUnits * 0.5f; // Sample step from implementation
+        var tolerance = sampleStep * 0.8f + 0.5f; // Account for random offset + extra margin
         foreach (var cloud in clouds)
         {
-            Assert.IsTrue(cloud.X >= gridRectX - padding - tolerance && cloud.X <= gridRectX + gridRectWidth + padding + tolerance,
+            Assert.IsTrue(cloud.X >= gridRectX - textureSizeGridUnits - tolerance && cloud.X <= gridRectX + gridRectWidth + tolerance,
                 $"Cloud X {cloud.X} should be within reasonable range");
-            Assert.IsTrue(cloud.Y >= gridRectY - padding - tolerance && cloud.Y <= gridRectY + gridRectHeight + padding + tolerance,
+            Assert.IsTrue(cloud.Y >= gridRectY - textureSizeGridUnits - tolerance && cloud.Y <= gridRectY + gridRectHeight + tolerance,
                 $"Cloud Y {cloud.Y} should be within reasonable range");
+        }
+    }
+
+    [TestMethod]
+    public void GetCloudPlacements_DifferentTextureSizes_ProducesConsistentResults()
+    {
+        // Arrange - Test with different texture sizes
+        var gridRectX = 10f;
+        var gridRectY = 10f;
+        var gridRectWidth = 20f;
+        var gridRectHeight = 20f;
+        var cloudsPerGridCell = 0.1f;
+        var seed = 12345;
+
+        // Act - Test with different texture sizes
+        var cloudsSmallTexture = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight, cloudsPerGridCell, seed, 64);
+        var cloudsLargeTexture = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight, cloudsPerGridCell, seed, 256);
+
+        // Assert - Both should produce clouds, but potentially different patterns due to different sampling
+        Assert.IsTrue(cloudsSmallTexture.Count >= 0, "Small texture should produce valid cloud count");
+        Assert.IsTrue(cloudsLargeTexture.Count >= 0, "Large texture should produce valid cloud count");
+
+        // Verify clouds are within reasonable bounds for each texture size
+        foreach (var cloud in cloudsSmallTexture)
+        {
+            Assert.IsTrue(cloud.X >= gridRectX - 10f && cloud.X <= gridRectX + gridRectWidth + 5f,
+                $"Small texture cloud X {cloud.X} should be within reasonable range");
+            Assert.IsTrue(cloud.Y >= gridRectY - 10f && cloud.Y <= gridRectY + gridRectHeight + 5f,
+                $"Small texture cloud Y {cloud.Y} should be within reasonable range");
+        }
+
+        foreach (var cloud in cloudsLargeTexture)
+        {
+            Assert.IsTrue(cloud.X >= gridRectX - 15f && cloud.X <= gridRectX + gridRectWidth + 5f,
+                $"Large texture cloud X {cloud.X} should be within reasonable range");
+            Assert.IsTrue(cloud.Y >= gridRectY - 15f && cloud.Y <= gridRectY + gridRectHeight + 5f,
+                $"Large texture cloud Y {cloud.Y} should be within reasonable range");
         }
     }
 
@@ -226,17 +266,19 @@ public class CloudPlacementTests
         var gridRectHeight = 10f;
         var cloudsPerGridCell = 1.0f; // Very high density to ensure we get clouds that would be offset
         var seed = 12345;
-        var padding = 2f;
+        var textureSizePx = 128;
 
         // Act
-        var clouds = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight, cloudsPerGridCell, seed, padding);
+        var clouds = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight, cloudsPerGridCell, seed, textureSizePx);
 
         // Assert - Check that clouds are not artificially clustered at the exact boundary edges
         var boundaryTolerance = 0.001f;
-        var paddedMinX = gridRectX - padding;
-        var paddedMinY = gridRectY - padding;
-        var paddedMaxX = gridRectX + gridRectWidth + padding;
-        var paddedMaxY = gridRectY + gridRectHeight + padding;
+        // Calculate padding based on texture size (matching the implementation)
+        var textureSizeGridUnits = textureSizePx / 32f; // Assuming GameConfig.CellTextureSizePx = 32
+        var paddedMinX = gridRectX - textureSizeGridUnits;
+        var paddedMinY = gridRectY - textureSizeGridUnits;
+        var paddedMaxX = gridRectX + gridRectWidth;
+        var paddedMaxY = gridRectY + gridRectHeight;
 
         var cloudsAtMinX = clouds.Count(c => Math.Abs(c.X - paddedMinX) < boundaryTolerance);
         var cloudsAtMinY = clouds.Count(c => Math.Abs(c.Y - paddedMinY) < boundaryTolerance);
