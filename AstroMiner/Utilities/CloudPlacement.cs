@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using AstroMiner.Definitions;
 using Microsoft.Xna.Framework;
 
 namespace AstroMiner.Utilities;
@@ -15,8 +16,6 @@ public record CloudPlacement(float X, float Y);
 /// </summary>
 public static class CloudGenerator
 {
-    private const int CloudTextureSizePx = 128;
-    private const float CloudTextureSizeGridUnits = CloudTextureSizePx / 32f; // 4 grid units
 
     /// <summary>
     /// Gets cloud placements for a given visible grid rectangle
@@ -36,9 +35,12 @@ public static class CloudGenerator
         float gridRectHeight,
         float cloudsPerGridCell = 0.05f,
         int seed = 12345,
-        float padding = 2.0f)
+        float padding = 2.0f,
+        int textureSizePx = 128)
     {
         var clouds = new List<CloudPlacement>();
+
+        float textureSizeGridUnits = textureSizePx / GameConfig.CellTextureSizePx;
 
         // Expand the area to include padding for partially visible clouds
         var paddedStartX = gridRectX - padding;
@@ -48,7 +50,7 @@ public static class CloudGenerator
 
         // We'll sample at a grid resolution based on cloud size to avoid over-densification
         // Sample every half cloud width to get good coverage without too many overlaps
-        var sampleStep = CloudTextureSizeGridUnits * 0.5f;
+        var sampleStep = textureSizeGridUnits * 0.5f;
 
         // Calculate the grid bounds for sampling
         var startSampleX = (float)Math.Floor(paddedStartX / sampleStep) * sampleStep;
