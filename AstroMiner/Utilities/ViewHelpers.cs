@@ -16,7 +16,7 @@ public class ViewHelpers(BaseGame game, GraphicsDeviceManager graphics)
         return (int)Math.Ceiling(value);
     }
 
-    private Vector2 GetCameraPos()
+    public Vector2 GetCameraPos()
     {
         var playerCenterPos = game.StateManager.Ecs.ActiveControllableEntityCenterPosition;
         var cameraPosWithPortal = OverrideCameraPosIfUsingPortal(playerCenterPos);
