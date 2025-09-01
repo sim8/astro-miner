@@ -10,26 +10,38 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
     private const int LandTextureWidthPx = 1600;
     private const int LandTextureHeightPx = 1600;
 
+    private readonly float Speed = 2f;
+
     private readonly float LandTextureGridWidth = LandTextureWidthPx / GameConfig.CellTextureSizePx * 0.5f;
     private readonly float LandTextureGridHeight = LandTextureHeightPx / GameConfig.CellTextureSizePx * 0.5f;
+
+    private (float, float, float, float) GetVisibleRectForLandTexture()
+    {
+        var movedGridDistance = (float)(shared.GameStateManager.GameTime.TotalGameTime.TotalMilliseconds / 1000f * Speed);
+
+        Console.WriteLine($"movedGridDistance: {movedGridDistance}");
+
+        var (startX, startY, viewportGridWidth, viewportGridHeight) = shared.ViewHelpers.GetViewportGridRect();
+        return (startX + movedGridDistance, startY, viewportGridWidth, viewportGridHeight);
+    }
 
 
     public void RenderBackground(SpriteBatch spriteBatch)
     {
-        var (startX, startY, viewportGridWidth, viewportGridHeight) = shared.ViewHelpers.GetViewportGridRect();
+        var (gridRectX, gridY, gridRectWidth, gridRectHeight) = GetVisibleRectForLandTexture();
 
         var (screenWidthPx, screenHeightPx) = shared.ViewHelpers.GetViewportSize();
 
         // Calculate pixels per grid unit based on viewport size
-        var pixelsPerGridUnit = screenWidthPx / viewportGridWidth;
+        var pixelsPerGridUnit = screenWidthPx / gridRectWidth;
 
         // Calculate which background tiles are visible
         // Add padding to ensure we cover the entire screen even during sub-tile movements
         var padding = 1.0f;
-        var tilesStartX = (float)Math.Floor((startX - padding) / LandTextureGridWidth) * LandTextureGridWidth;
-        var tilesStartY = (float)Math.Floor((startY - padding) / LandTextureGridHeight) * LandTextureGridHeight;
-        var tilesEndX = tilesStartX + viewportGridWidth + padding * 2 + LandTextureGridWidth;
-        var tilesEndY = tilesStartY + viewportGridHeight + padding * 2 + LandTextureGridHeight;
+        var tilesStartX = (float)Math.Floor((gridRectX - padding) / LandTextureGridWidth) * LandTextureGridWidth;
+        var tilesStartY = (float)Math.Floor((gridY - padding) / LandTextureGridHeight) * LandTextureGridHeight;
+        var tilesEndX = tilesStartX + gridRectWidth + padding * 2 + LandTextureGridWidth;
+        var tilesEndY = tilesStartY + gridRectHeight + padding * 2 + LandTextureGridHeight;
 
         // Iterate over all visible background tiles
         for (var tileX = tilesStartX; tileX < tilesEndX; tileX += LandTextureGridWidth)
@@ -37,8 +49,8 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
             for (var tileY = tilesStartY; tileY < tilesEndY; tileY += LandTextureGridHeight)
             {
                 // Calculate tile position relative to viewport start
-                var relativePosX = (tileX - startX) * pixelsPerGridUnit;
-                var relativePosY = (tileY - startY) * pixelsPerGridUnit;
+                var relativePosX = (tileX - gridRectX) * pixelsPerGridUnit;
+                var relativePosY = (tileY - gridY) * pixelsPerGridUnit;
 
                 // Calculate tile size in pixels
                 var tileSizeX = LandTextureGridWidth * pixelsPerGridUnit;
