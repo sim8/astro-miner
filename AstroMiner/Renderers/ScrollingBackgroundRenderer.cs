@@ -6,6 +6,15 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace AstroMiner.Renderers;
 
+// TODO
+// - Tidy up this file
+// - Remove other version
+// - Fix jumping out - instead of hardcoded padding, calculate from grid + texture
+//   - Also only apply to top + left
+// - Only define cloudTextureSizePx once
+// - Factor out config
+//   - Wire up for ship interior
+
 public class ScrollingBackgroundRenderer(RendererShared shared)
 {
     private const int LandTextureWidthPx = 1600;
