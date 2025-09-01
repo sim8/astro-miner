@@ -7,45 +7,29 @@ using Microsoft.Xna.Framework.Graphics;
 namespace AstroMiner.Renderers;
 
 // TODO
-// - Tidy up this file
 // - Remove other version
-// - Fix jumping out - instead of hardcoded padding, calculate from grid + texture
-//   - Also only apply to top + left
-//   - TESTS
 // - Only define cloudTextureSizePx once
-// - Factor out config
-//   - Wire up for ship interior
+// - Factor wire up for ship interior
+
+
 
 public class ScrollingBackgroundRenderer(RendererShared shared)
 {
-    private const int LandTextureWidthPx = 1600;
-    private const int LandTextureHeightPx = 1600;
-    private const int CloudTextureSizePx = 128;
-
-    private readonly float LandSpeed = 0.5f;
-    private readonly float LandParallaxFactorX = 0.4f;
-    private readonly float LandParallaxFactorY = 0.2f;
-
-    // Cloud configuration
-    private readonly float CloudsPerGridCell = 0.1f;
-    private readonly int CloudSeed = 42;
-    private readonly float CloudSpeed = 1f;
-    private readonly float CloudParallaxFactorX = 0.6f;
-    private readonly float CloudParallaxFactorY = 0.3f;
-
-    private readonly float LandTextureGridWidth = LandTextureWidthPx / GameConfig.CellTextureSizePx * 0.5f;
-    private readonly float LandTextureGridHeight = LandTextureHeightPx / GameConfig.CellTextureSizePx * 0.5f;
-    private readonly float CloudTextureSizeGridUnits = CloudTextureSizePx / (float)GameConfig.CellTextureSizePx;
+    private ScrollingBackgroundConfig GetScrollingBackgroundConfig()
+    {
+        return ScrollingBackgrounds.OizusAsteroid;
+    }
 
     private (float, float, float, float) GetGridRectForVisibleLand()
     {
         var cameraPos = shared.ViewHelpers.GetCameraPos();
 
 
-        var offsetXForParallax = cameraPos.X * LandParallaxFactorX - cameraPos.X;
-        var offsetYForParallax = cameraPos.Y * LandParallaxFactorY - cameraPos.Y;
+        var config = GetScrollingBackgroundConfig();
+        var offsetXForParallax = cameraPos.X * config.LandParallaxFactorX - cameraPos.X;
+        var offsetYForParallax = cameraPos.Y * config.LandParallaxFactorY - cameraPos.Y;
 
-        var movedGridDistance = (float)(shared.GameStateManager.GameTime.TotalGameTime.TotalMilliseconds / 1000f * LandSpeed);
+        var movedGridDistance = (float)(shared.GameStateManager.GameTime.TotalGameTime.TotalMilliseconds / 1000f * config.LandSpeed);
 
         var (startX, startY, viewportGridWidth, viewportGridHeight) = shared.ViewHelpers.GetViewportGridRect();
         return (startX + offsetXForParallax + movedGridDistance, startY + offsetYForParallax, viewportGridWidth, viewportGridHeight);
@@ -56,10 +40,11 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
         var cameraPos = shared.ViewHelpers.GetCameraPos();
 
 
-        var offsetXForParallax = cameraPos.X * CloudParallaxFactorX - cameraPos.X;
-        var offsetYForParallax = cameraPos.Y * CloudParallaxFactorY - cameraPos.Y;
+        var config = GetScrollingBackgroundConfig();
+        var offsetXForParallax = cameraPos.X * config.CloudParallaxFactorX - cameraPos.X;
+        var offsetYForParallax = cameraPos.Y * config.CloudParallaxFactorY - cameraPos.Y;
 
-        var movedGridDistance = (float)(shared.GameStateManager.GameTime.TotalGameTime.TotalMilliseconds / 1000f * CloudSpeed);
+        var movedGridDistance = (float)(shared.GameStateManager.GameTime.TotalGameTime.TotalMilliseconds / 1000f * config.CloudSpeed);
 
         var (startX, startY, viewportGridWidth, viewportGridHeight) = shared.ViewHelpers.GetViewportGridRect();
         return (startX + offsetXForParallax + movedGridDistance, startY + offsetYForParallax, viewportGridWidth, viewportGridHeight);
@@ -83,6 +68,10 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
 
     private void RenderLandBackground(SpriteBatch spriteBatch)
     {
+        var config = GetScrollingBackgroundConfig();
+        var LandTextureGridWidth = config.LandTextureWidthPx / GameConfig.CellTextureSizePx * config.LandTextureScale;
+        var LandTextureGridHeight = config.LandTextureHeightPx / GameConfig.CellTextureSizePx * config.LandTextureScale;
+
         var (gridRectX, gridY, gridRectWidth, gridRectHeight) = GetGridRectForVisibleLand();
 
         // Calculate pixels per grid unit based on viewport size
@@ -130,6 +119,8 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
     private void RenderClouds(SpriteBatch spriteBatch)
     {
         var (gridRectX, gridRectY, gridRectWidth, gridRectHeight) = GetGridRectForVisibleClouds();
+        var config = GetScrollingBackgroundConfig();
+        float CloudTextureSizeGridUnits = config.CloudTextureSizePx / (float)GameConfig.CellTextureSizePx;
 
         // Calculate pixels per grid unit based on viewport size
         var pixelsPerGridUnit = GetPixelsPerGridUnit(gridRectWidth);
@@ -137,7 +128,7 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
         // Get cloud placements for the visible area
         var cloudPlacements = CloudGenerator.GetCloudPlacements(
             gridRectX, gridRectY, gridRectWidth, gridRectHeight,
-            CloudsPerGridCell, CloudSeed, CloudTextureSizePx);
+            config.CloudsPerGridCell, config.CloudSeed, config.CloudTextureSizePx);
 
 
 
