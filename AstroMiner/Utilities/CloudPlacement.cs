@@ -1,24 +1,22 @@
 using System;
 using System.Collections.Generic;
 using AstroMiner.Definitions;
-using Microsoft.Xna.Framework;
 
 namespace AstroMiner.Utilities;
 
 /// <summary>
-/// Represents a cloud placement with position in grid coordinates
+///     Represents a cloud placement with position in grid coordinates
 /// </summary>
 public record CloudPlacement(float X, float Y);
 
 /// <summary>
-/// Stateless cloud placement system that generates consistent cloud positions
-/// based on a seed and visible grid rectangle
+///     Stateless cloud placement system that generates consistent cloud positions
+///     based on a seed and visible grid rectangle
 /// </summary>
 public static class CloudGenerator
 {
-
     /// <summary>
-    /// Gets cloud placements for a given visible grid rectangle
+    ///     Gets cloud placements for a given visible grid rectangle
     /// </summary>
     /// <param name="gridRectX">X position of visible area in grid coordinates</param>
     /// <param name="gridRectY">Y position of visible area in grid coordinates</param>
@@ -33,13 +31,13 @@ public static class CloudGenerator
         float gridRectY,
         float gridRectWidth,
         float gridRectHeight,
-        float cloudsPerGridCell = 0.05f,
-        int seed = 12345,
-        int textureSizePx = 128)
+        float cloudsPerGridCell,
+        int seed,
+        int textureSizePx)
     {
         var clouds = new List<CloudPlacement>();
 
-        float textureSizeGridUnits = textureSizePx / GameConfig.CellTextureSizePx;
+        var textureSizeGridUnits = textureSizePx / (float)GameConfig.CellTextureSizePx;
 
         // Expand the area to include padding for partially visible clouds
         // We only pad left+top as CloudPlacements are for their top/left positions
@@ -58,30 +56,28 @@ public static class CloudGenerator
 
         // Iterate through sample points
         for (var sampleX = startSampleX; sampleX < endX; sampleX += sampleStep)
+        for (var sampleY = startSampleY; sampleY < endY; sampleY += sampleStep)
         {
-            for (var sampleY = startSampleY; sampleY < endY; sampleY += sampleStep)
+            // Create a deterministic hash based on position and seed
+            var hash = GetPositionHash((int)(sampleX * 1000), (int)(sampleY * 1000), seed);
+
+            // Convert hash to a 0-1 probability
+            var probability = (hash & 0xFFFF) / (float)0xFFFF;
+
+            // Check if we should place a cloud at this sample point
+            if (probability < cloudsPerGridCell)
             {
-                // Create a deterministic hash based on position and seed
-                var hash = GetPositionHash((int)(sampleX * 1000), (int)(sampleY * 1000), seed);
+                // Add some sub-grid randomness to the position using the hash
+                var offsetHash = GetPositionHash((int)(sampleX * 1000) + 1, (int)(sampleY * 1000) + 1, seed);
+                var offsetX = ((offsetHash & 0xFF) / 255f - 0.5f) * sampleStep * 0.8f;
+                var offsetY = (((offsetHash >> 8) & 0xFF) / 255f - 0.5f) * sampleStep * 0.8f;
 
-                // Convert hash to a 0-1 probability
-                var probability = (hash & 0xFFFF) / (float)0xFFFF;
+                var finalX = sampleX + offsetX;
+                var finalY = sampleY + offsetY;
 
-                // Check if we should place a cloud at this sample point
-                if (probability < cloudsPerGridCell)
-                {
-                    // Add some sub-grid randomness to the position using the hash
-                    var offsetHash = GetPositionHash((int)(sampleX * 1000) + 1, (int)(sampleY * 1000) + 1, seed);
-                    var offsetX = ((offsetHash & 0xFF) / 255f - 0.5f) * sampleStep * 0.8f;
-                    var offsetY = (((offsetHash >> 8) & 0xFF) / 255f - 0.5f) * sampleStep * 0.8f;
-
-                    var finalX = sampleX + offsetX;
-                    var finalY = sampleY + offsetY;
-
-                    // No clamping - let clouds appear naturally at their calculated positions
-                    // This allows for more natural distribution without artificial clustering at boundaries
-                    clouds.Add(new CloudPlacement(finalX, finalY));
-                }
+                // No clamping - let clouds appear naturally at their calculated positions
+                // This allows for more natural distribution without artificial clustering at boundaries
+                clouds.Add(new CloudPlacement(finalX, finalY));
             }
         }
 
@@ -89,7 +85,7 @@ public static class CloudGenerator
     }
 
     /// <summary>
-    /// Creates a deterministic hash from position coordinates and seed
+    ///     Creates a deterministic hash from position coordinates and seed
     /// </summary>
     private static int GetPositionHash(int x, int y, int seed)
     {
