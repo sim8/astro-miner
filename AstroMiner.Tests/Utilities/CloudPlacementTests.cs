@@ -18,15 +18,18 @@ public class CloudPlacementTests
         var gridRectHeight = 20f;
         var cloudsPerGridCell = 0.1f;
         var seed = 12345;
+        var textureSizePx = 128;
 
         // Act - Call twice with same parameters
-        var clouds1 = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight, cloudsPerGridCell, seed);
-        var clouds2 = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight, cloudsPerGridCell, seed);
+        var clouds1 = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight,
+            cloudsPerGridCell, seed, textureSizePx);
+        var clouds2 = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight,
+            cloudsPerGridCell, seed, textureSizePx);
 
         // Assert - Should be identical
         Assert.AreEqual(clouds1.Count, clouds2.Count, "Cloud count should be identical for same parameters");
 
-        for (int i = 0; i < clouds1.Count; i++)
+        for (var i = 0; i < clouds1.Count; i++)
         {
             Assert.AreEqual(clouds1[i].X, clouds2[i].X, 0.001f, $"Cloud {i} X position should be identical");
             Assert.AreEqual(clouds1[i].Y, clouds2[i].Y, 0.001f, $"Cloud {i} Y position should be identical");
@@ -44,12 +47,14 @@ public class CloudPlacementTests
         var cloudsPerGridCell = 0.1f;
 
         // Act - Call with different seeds
-        var clouds1 = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight, cloudsPerGridCell, 12345);
-        var clouds2 = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight, cloudsPerGridCell, 54321);
+        var clouds1 = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight,
+            cloudsPerGridCell, 12345, 128);
+        var clouds2 = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight,
+            cloudsPerGridCell, 54321, 128);
 
         // Assert - Should be different (very unlikely to be identical by chance)
         var identical = clouds1.Count == clouds2.Count &&
-                       clouds1.Zip(clouds2, (c1, c2) => c1.X == c2.X && c1.Y == c2.Y).All(x => x);
+                        clouds1.Zip(clouds2, (c1, c2) => c1.X == c2.X && c1.Y == c2.Y).All(x => x);
 
         Assert.IsFalse(identical, "Different seeds should produce different cloud patterns");
     }
@@ -65,8 +70,10 @@ public class CloudPlacementTests
         var seed = 12345;
 
         // Act - Test different densities
-        var lowDensityClouds = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight, 0.01f, seed);
-        var highDensityClouds = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight, 0.1f, seed);
+        var lowDensityClouds =
+            CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight, 0.01f, seed, 128);
+        var highDensityClouds =
+            CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight, 0.1f, seed, 128);
 
         // Assert - Higher density should generally produce more clouds
         // We use a range check since it's probabilistic
@@ -87,7 +94,8 @@ public class CloudPlacementTests
         var seed = 12345;
 
         // Act
-        var clouds = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight, cloudsPerGridCell, seed, textureSizePx);
+        var clouds = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight,
+            cloudsPerGridCell, seed, textureSizePx);
 
         // Assert - Clouds should be in reasonable area (allowing for natural offset beyond padding)
         // Calculate padding based on texture size (matching the implementation)
@@ -120,8 +128,9 @@ public class CloudPlacementTests
         var seed = 12345;
 
         // Act - Get clouds for overlapping areas as camera moves
-        var clouds1 = CloudGenerator.GetCloudPlacements(baseX, baseY, width, height, cloudsPerGridCell, seed);
-        var clouds2 = CloudGenerator.GetCloudPlacements(baseX + 10f, baseY + 5f, width, height, cloudsPerGridCell, seed);
+        var clouds1 = CloudGenerator.GetCloudPlacements(baseX, baseY, width, height, cloudsPerGridCell, seed, 128);
+        var clouds2 =
+            CloudGenerator.GetCloudPlacements(baseX + 10f, baseY + 5f, width, height, cloudsPerGridCell, seed, 128);
 
         // Assert - Clouds in overlapping area should be consistent
         // Find clouds from first call that should also appear in second call
@@ -138,8 +147,8 @@ public class CloudPlacementTests
         foreach (var cloud in cloudsInOverlap1)
         {
             var matchingCloud = clouds2.FirstOrDefault(c =>
-                System.Math.Abs(c.X - cloud.X) < 0.001f &&
-                System.Math.Abs(c.Y - cloud.Y) < 0.001f);
+                Math.Abs(c.X - cloud.X) < 0.001f &&
+                Math.Abs(c.Y - cloud.Y) < 0.001f);
 
             Assert.IsNotNull(matchingCloud,
                 $"Cloud at ({cloud.X}, {cloud.Y}) should appear in both overlapping areas");
@@ -158,7 +167,8 @@ public class CloudPlacementTests
         var seed = 12345;
 
         // Act
-        var clouds = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight, cloudsPerGridCell, seed);
+        var clouds = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight,
+            cloudsPerGridCell, seed, 128);
 
         // Assert
         Assert.AreEqual(0, clouds.Count, "Zero density should produce no clouds");
@@ -176,7 +186,8 @@ public class CloudPlacementTests
         var seed = 12345;
 
         // Act
-        var clouds = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight, cloudsPerGridCell, seed);
+        var clouds = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight,
+            cloudsPerGridCell, seed, 128);
 
         // Assert - Should not crash and should return reasonable results
         Assert.IsTrue(clouds.Count >= 0, "Should handle small areas without crashing");
@@ -201,7 +212,8 @@ public class CloudPlacementTests
         var seed = 12345;
 
         // Act
-        var clouds = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight, cloudsPerGridCell, seed);
+        var clouds = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight,
+            cloudsPerGridCell, seed, 128);
 
         // Assert - Should work with negative coordinates
         Assert.IsTrue(clouds.Count >= 0, "Should handle negative coordinates");
@@ -212,9 +224,13 @@ public class CloudPlacementTests
         var tolerance = sampleStep * 0.8f + 0.5f; // Account for random offset + extra margin
         foreach (var cloud in clouds)
         {
-            Assert.IsTrue(cloud.X >= gridRectX - textureSizeGridUnits - tolerance && cloud.X <= gridRectX + gridRectWidth + tolerance,
+            Assert.IsTrue(
+                cloud.X >= gridRectX - textureSizeGridUnits - tolerance &&
+                cloud.X <= gridRectX + gridRectWidth + tolerance,
                 $"Cloud X {cloud.X} should be within reasonable range");
-            Assert.IsTrue(cloud.Y >= gridRectY - textureSizeGridUnits - tolerance && cloud.Y <= gridRectY + gridRectHeight + tolerance,
+            Assert.IsTrue(
+                cloud.Y >= gridRectY - textureSizeGridUnits - tolerance &&
+                cloud.Y <= gridRectY + gridRectHeight + tolerance,
                 $"Cloud Y {cloud.Y} should be within reasonable range");
         }
     }
@@ -231,8 +247,10 @@ public class CloudPlacementTests
         var seed = 12345;
 
         // Act - Test with different texture sizes
-        var cloudsSmallTexture = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight, cloudsPerGridCell, seed, 64);
-        var cloudsLargeTexture = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight, cloudsPerGridCell, seed, 256);
+        var cloudsSmallTexture = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight,
+            cloudsPerGridCell, seed, 64);
+        var cloudsLargeTexture = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight,
+            cloudsPerGridCell, seed, 256);
 
         // Assert - Both should produce clouds, but potentially different patterns due to different sampling
         Assert.IsTrue(cloudsSmallTexture.Count >= 0, "Small texture should produce valid cloud count");
@@ -262,14 +280,15 @@ public class CloudPlacementTests
         // Arrange - Test that clouds don't get artificially clustered at boundary edges
         var gridRectX = 0f;
         var gridRectY = 0f;
-        var gridRectWidth = 10f;  // Smaller area to make the effect more pronounced
+        var gridRectWidth = 10f; // Smaller area to make the effect more pronounced
         var gridRectHeight = 10f;
         var cloudsPerGridCell = 1.0f; // Very high density to ensure we get clouds that would be offset
         var seed = 12345;
         var textureSizePx = 128;
 
         // Act
-        var clouds = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight, cloudsPerGridCell, seed, textureSizePx);
+        var clouds = CloudGenerator.GetCloudPlacements(gridRectX, gridRectY, gridRectWidth, gridRectHeight,
+            cloudsPerGridCell, seed, textureSizePx);
 
         // Assert - Check that clouds are not artificially clustered at the exact boundary edges
         var boundaryTolerance = 0.001f;
