@@ -23,6 +23,7 @@ public record ScrollingBackgroundConfig
     public float LandSpeed { get; init; } = 0.5f;
     public float LandParallaxFactorX { get; init; } = 0.4f;
     public float LandParallaxFactorY { get; init; } = 0.2f;
+    public string LandTextureName { get; init; } = "mountains-nice-tiled";
 
     // Cloud configuration
     public List<CloudConfig> CloudLayers { get; init; } = new();
@@ -38,6 +39,7 @@ public static class ScrollingBackgrounds
         LandSpeed = 0.5f,
         LandParallaxFactorX = 0.4f,
         LandParallaxFactorY = 0.2f,
+        LandTextureName = "mountains-nice-tiled",
         CloudLayers = new List<CloudConfig>
         {
             // Background cloud layer
