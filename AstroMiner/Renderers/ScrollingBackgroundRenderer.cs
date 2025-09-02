@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using AstroMiner.Definitions;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
@@ -35,16 +36,14 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
         return (startX + offsetXForParallax + movedGridDistance, startY + offsetYForParallax, viewportGridWidth, viewportGridHeight);
     }
 
-    private (float, float, float, float) GetGridRectForVisibleClouds()
+    private (float, float, float, float) GetGridRectForVisibleClouds(CloudConfig cloudConfig)
     {
         var cameraPos = shared.ViewHelpers.GetCameraPos();
 
+        var offsetXForParallax = cameraPos.X * cloudConfig.CloudParallaxFactorX - cameraPos.X;
+        var offsetYForParallax = cameraPos.Y * cloudConfig.CloudParallaxFactorY - cameraPos.Y;
 
-        var config = GetScrollingBackgroundConfig();
-        var offsetXForParallax = cameraPos.X * config.CloudParallaxFactorX - cameraPos.X;
-        var offsetYForParallax = cameraPos.Y * config.CloudParallaxFactorY - cameraPos.Y;
-
-        var movedGridDistance = (float)(shared.GameStateManager.GameTime.TotalGameTime.TotalMilliseconds / 1000f * config.CloudSpeed);
+        var movedGridDistance = (float)(shared.GameStateManager.GameTime.TotalGameTime.TotalMilliseconds / 1000f * cloudConfig.CloudSpeed);
 
         var (startX, startY, viewportGridWidth, viewportGridHeight) = shared.ViewHelpers.GetViewportGridRect();
         return (startX + offsetXForParallax + movedGridDistance, startY + offsetYForParallax, viewportGridWidth, viewportGridHeight);
@@ -118,44 +117,47 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
 
     private void RenderClouds(SpriteBatch spriteBatch)
     {
-        var (gridRectX, gridRectY, gridRectWidth, gridRectHeight) = GetGridRectForVisibleClouds();
         var config = GetScrollingBackgroundConfig();
-        float CloudTextureSizeGridUnits = config.CloudTextureSizePx / (float)GameConfig.CellTextureSizePx;
 
-        // Calculate pixels per grid unit based on viewport size
-        var pixelsPerGridUnit = GetPixelsPerGridUnit(gridRectWidth);
-
-        // Get cloud placements for the visible area
-        var cloudPlacements = CloudGenerator.GetCloudPlacements(
-            gridRectX, gridRectY, gridRectWidth, gridRectHeight,
-            config.CloudsPerGridCell, config.CloudSeed, config.CloudTextureSizePx);
-
-
-
-        // Render each cloud
-        foreach (var cloud in cloudPlacements)
+        // Render each cloud layer
+        foreach (var cloudConfig in config.CloudLayers)
         {
-            // Calculate cloud position relative to viewport start
-            var relativePosX = (cloud.X - gridRectX) * pixelsPerGridUnit;
-            var relativePosY = (cloud.Y - gridRectY) * pixelsPerGridUnit;
+            var (gridRectX, gridRectY, gridRectWidth, gridRectHeight) = GetGridRectForVisibleClouds(cloudConfig);
+            float CloudTextureSizeGridUnits = cloudConfig.CloudTextureSizePx / (float)GameConfig.CellTextureSizePx * cloudConfig.CloudTextureScale;
 
-            // Calculate cloud size in pixels
-            var cloudSizeX = CloudTextureSizeGridUnits * pixelsPerGridUnit;
-            var cloudSizeY = CloudTextureSizeGridUnits * pixelsPerGridUnit;
+            // Calculate pixels per grid unit based on viewport size
+            var pixelsPerGridUnit = GetPixelsPerGridUnit(gridRectWidth);
 
-            // Create the rectangle for this cloud
-            var cloudRect = new Rectangle(
-                shared.ViewHelpers.ConvertToRenderedPxValue_CAUTION(relativePosX),
-                shared.ViewHelpers.ConvertToRenderedPxValue_CAUTION(relativePosY),
-                shared.ViewHelpers.ConvertToRenderedPxValue_CAUTION(cloudSizeX),
-                shared.ViewHelpers.ConvertToRenderedPxValue_CAUTION(cloudSizeY)
-            );
+            // Get cloud placements for the visible area
+            var cloudPlacements = CloudGenerator.GetCloudPlacements(
+                gridRectX, gridRectY, gridRectWidth, gridRectHeight,
+                cloudConfig.CloudsPerGridCell, cloudConfig.CloudSeed, cloudConfig.CloudTextureSizePx);
 
-            spriteBatch.Draw(
-                shared.Textures["cloud-background"],
-                cloudRect,
-                Color.White
-            );
+            // Render each cloud in this layer
+            foreach (var cloud in cloudPlacements)
+            {
+                // Calculate cloud position relative to viewport start
+                var relativePosX = (cloud.X - gridRectX) * pixelsPerGridUnit;
+                var relativePosY = (cloud.Y - gridRectY) * pixelsPerGridUnit;
+
+                // Calculate cloud size in pixels
+                var cloudSizeX = CloudTextureSizeGridUnits * pixelsPerGridUnit;
+                var cloudSizeY = CloudTextureSizeGridUnits * pixelsPerGridUnit;
+
+                // Create the rectangle for this cloud
+                var cloudRect = new Rectangle(
+                    shared.ViewHelpers.ConvertToRenderedPxValue_CAUTION(relativePosX),
+                    shared.ViewHelpers.ConvertToRenderedPxValue_CAUTION(relativePosY),
+                    shared.ViewHelpers.ConvertToRenderedPxValue_CAUTION(cloudSizeX),
+                    shared.ViewHelpers.ConvertToRenderedPxValue_CAUTION(cloudSizeY)
+                );
+
+                spriteBatch.Draw(
+                    shared.Textures[cloudConfig.TextureName],
+                    cloudRect,
+                    Color.White
+                );
+            }
         }
     }
 }

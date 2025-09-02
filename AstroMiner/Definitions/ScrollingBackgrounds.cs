@@ -1,4 +1,18 @@
+using System.Collections.Generic;
+
 namespace AstroMiner.Definitions;
+
+public record CloudConfig
+{
+    public int CloudTextureSizePx { get; init; } = 128;
+    public float CloudTextureScale { get; init; } = 1.0f;
+    public float CloudsPerGridCell { get; init; } = 0.1f;
+    public int CloudSeed { get; init; } = 42;
+    public float CloudSpeed { get; init; } = 1f;
+    public float CloudParallaxFactorX { get; init; } = 0.6f;
+    public float CloudParallaxFactorY { get; init; } = 0.3f;
+    public string TextureName { get; init; } = "cloud-background";
+}
 
 public record ScrollingBackgroundConfig
 {
@@ -11,12 +25,7 @@ public record ScrollingBackgroundConfig
     public float LandParallaxFactorY { get; init; } = 0.2f;
 
     // Cloud configuration
-    public int CloudTextureSizePx { get; init; } = 128;
-    public float CloudsPerGridCell { get; init; } = 0.1f;
-    public int CloudSeed { get; init; } = 42;
-    public float CloudSpeed { get; init; } = 1f;
-    public float CloudParallaxFactorX { get; init; } = 0.6f;
-    public float CloudParallaxFactorY { get; init; } = 0.3f;
+    public List<CloudConfig> CloudLayers { get; init; } = new();
 }
 
 public static class ScrollingBackgrounds
@@ -29,11 +38,32 @@ public static class ScrollingBackgrounds
         LandSpeed = 0.5f,
         LandParallaxFactorX = 0.4f,
         LandParallaxFactorY = 0.2f,
-        CloudTextureSizePx = 128,
-        CloudsPerGridCell = 0.1f,
-        CloudSeed = 42,
-        CloudSpeed = 1f,
-        CloudParallaxFactorX = 0.6f,
-        CloudParallaxFactorY = 0.3f
+        CloudLayers = new List<CloudConfig>
+        {
+            // Background cloud layer
+            new CloudConfig
+            {
+                CloudTextureSizePx = 128,
+                CloudTextureScale = 0.5f,
+                CloudsPerGridCell = 0.1f,
+                CloudSeed = 42,
+                CloudSpeed = 1f,
+                CloudParallaxFactorX = 0.6f,
+                CloudParallaxFactorY = 0.3f,
+                TextureName = "cloud-background"
+            },
+            // Foreground cloud layer
+            new CloudConfig
+            {
+                CloudTextureSizePx = 128,
+                CloudTextureScale = 1f,
+                CloudsPerGridCell = 0.05f,
+                CloudSeed = 123,
+                CloudSpeed = 1.5f,
+                CloudParallaxFactorX = 0.8f,
+                CloudParallaxFactorY = 0.4f,
+                TextureName = "cloud-background"
+            }
+        }
     };
 }
