@@ -107,7 +107,7 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
 
                 // Draw the tile
                 spriteBatch.Draw(
-                    shared.Textures[Tx.MountainsNiceTiled],
+                    shared.Textures[config.LandTextureName],
                     tileRect,
                     Color.White
                 );
