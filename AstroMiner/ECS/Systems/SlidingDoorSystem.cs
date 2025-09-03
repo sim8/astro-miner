@@ -34,6 +34,13 @@ public class SlidingDoorSystem : System
         }
     }
 
+    private void SetOpenPercentAndUpdateFrame(SlidingDoorComponent slidingDoorComponent, float openPercent)
+    {
+        slidingDoorComponent.OpenPercent = openPercent;
+        var textureComponent = game.StateManager.Ecs.GetComponent<TextureComponent>(slidingDoorComponent.EntityId);
+        textureComponent.frameIndex = (int)(openPercent * (textureComponent.totalFrames - 1));
+    }
+
 
     public override void Update(GameTime gameTime, ActiveControls activeControls)
     {
@@ -113,13 +120,13 @@ public class SlidingDoorSystem : System
                 // Animation in progress
                 var easedProgress = EaseInOut((float)animationProgress);
                 var targetPercent = slidingDoorComponent.TargetOpen ? 1f : 0f;
-                slidingDoorComponent.OpenPercent = slidingDoorComponent.AnimationStartPercent +
-                    (targetPercent - slidingDoorComponent.AnimationStartPercent) * easedProgress;
+                SetOpenPercentAndUpdateFrame(slidingDoorComponent, slidingDoorComponent.AnimationStartPercent +
+                    (targetPercent - slidingDoorComponent.AnimationStartPercent) * easedProgress);
             }
             else
             {
                 // Animation complete - snap to target
-                slidingDoorComponent.OpenPercent = slidingDoorComponent.TargetOpen ? 1f : 0f;
+                SetOpenPercentAndUpdateFrame(slidingDoorComponent, slidingDoorComponent.TargetOpen ? 1f : 0f);
             }
 
             // Set collision state - door should not be collideable when fully open
