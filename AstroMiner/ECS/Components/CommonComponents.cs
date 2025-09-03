@@ -175,4 +175,5 @@ public class SlidingDoorComponent : Component
     public bool TargetOpen { get; set; } = false;
     public double AnimationTimeMs { get; set; } = 0;
     public float AnimationStartPercent { get; set; } = 0f;
+    public bool IsElevator { get; set; } = false;
 }

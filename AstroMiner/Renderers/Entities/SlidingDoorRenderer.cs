@@ -23,6 +23,8 @@ public class SlidingDoorRenderer(
         var yRenderPos = positionComponent.Position.Y + positionComponent.GridHeight -
                          ViewHelpers.ConvertTexturePxToGridUnits(DoorHeightPx);
 
+        var textureName = slidingDoorComponent.IsElevator ? "elevator-door" : "door";
+
         // Left door
         var leftSourceRect = new Rectangle(
             DoorWidthPx - visiblePx, 0,
@@ -33,7 +35,7 @@ public class SlidingDoorRenderer(
         var leftDestRect = shared.ViewHelpers.GetVisibleRectForObject(leftRenderPos,
             visiblePx, DoorHeightPx);
 
-        spriteBatch.Draw(shared.Textures["door"], leftDestRect, leftSourceRect, Color.White);
+        spriteBatch.Draw(shared.Textures[textureName], leftDestRect, leftSourceRect, Color.White);
 
         // Right door
         var rightSourceRect = new Rectangle(
@@ -46,6 +48,7 @@ public class SlidingDoorRenderer(
         var rightDestRect = shared.ViewHelpers.GetVisibleRectForObject(rightRenderPos,
             visiblePx, DoorHeightPx);
 
-        spriteBatch.Draw(shared.Textures["door"], rightDestRect, rightSourceRect, Color.White);
+
+        spriteBatch.Draw(shared.Textures[textureName], rightDestRect, rightSourceRect, Color.White);
     }
 }

@@ -39,7 +39,12 @@ public class NewGameManager(BaseGame game)
         game.StateManager.Ecs.Factories.CreateSlidingDoorEntity(World.ShipDownstairs, new Vector2(11f, 7f + game.StateManager.Ecs.Factories.SlidingDoorOffset));
         game.StateManager.Ecs.Factories.CreateSlidingDoorEntity(World.ShipDownstairs, new Vector2(20f, 7f + game.StateManager.Ecs.Factories.SlidingDoorOffset));
 
-        game.StateManager.Ecs.Factories.CreateSlidingDoorEntity(World.ShipUpstairs, new Vector2(7f, 5f + game.StateManager.Ecs.Factories.SlidingDoorOffset));
+        game.StateManager.Ecs.Factories.CreateSlidingDoorEntity(World.ShipDownstairs, new Vector2(20f, 7f + game.StateManager.Ecs.Factories.SlidingDoorOffset));
+
+        // Elevator downstairs
+        game.StateManager.Ecs.Factories.CreateSlidingDoorEntity(World.ShipDownstairs, new Vector2(24f, 4f + game.StateManager.Ecs.Factories.SlidingDoorOffset), true);
+        // Elevator upstairs
+        game.StateManager.Ecs.Factories.CreateSlidingDoorEntity(World.ShipUpstairs, new Vector2(24f, 4f + game.StateManager.Ecs.Factories.SlidingDoorOffset), true);
 
         // Corridor
         game.StateManager.Ecs.Factories.CreateWindowLightSourceEntity(World.ShipDownstairs, new Vector2(24f, 10f));

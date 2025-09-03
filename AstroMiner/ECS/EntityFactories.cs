@@ -268,7 +268,7 @@ public class EntityFactories
         return entityId;
     }
 
-    public int CreateSlidingDoorEntity(World world, Vector2 position)
+    public int CreateSlidingDoorEntity(World world, Vector2 position, bool isElevator = false)
     {
         var entityId = _ecs.CreateEntity();
 
@@ -277,12 +277,12 @@ public class EntityFactories
         positionComponent.Position = position;
         positionComponent.WidthPx = 32;
         positionComponent.HeightPx = 4;
-        positionComponent.IsCollideable = true;
+        positionComponent.IsCollideable = !isElevator;
 
         var slidingDoorComponent = _ecs.AddComponent<SlidingDoorComponent>(entityId);
         slidingDoorComponent.OpenPercent = 0f;
         slidingDoorComponent.OpenSpeed = 1f;
-
+        slidingDoorComponent.IsElevator = isElevator;
         return entityId;
     }
 
