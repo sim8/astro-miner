@@ -135,12 +135,24 @@ public class DirectionalLightSourceComponent : Component
 public class TextureComponent : Component
 {
     public string TextureName { get; set; }
+
+
+    // How much bigger the texture is than the entity on each side
     public int TopPaddingPx { get; set; } = 0;
+
     public int BottomPaddingPx { get; set; } = 0;
     public int LeftPaddingPx { get; set; } = 0;
     public int RightPaddingPx { get; set; } = 0;
+
+
+    // How much bigger the texture is than the entity on each side
     public int TextureOffsetXPx { get; set; } = 0;
+
     public int TextureOffsetYPx { get; set; } = 0;
+
+    // The current animation frame to use (assumes frames are stacked horizontally)
+    public int frameIndex { get; set; } = 0;
+    public int totalFrames { get; set; } = 1;
 }
 
 public class RadialLightSourceComponent : Component

@@ -283,6 +283,15 @@ public class EntityFactories
         slidingDoorComponent.OpenPercent = 0f;
         slidingDoorComponent.OpenSpeed = 1f;
         slidingDoorComponent.IsElevator = isElevator;
+
+        var textureComponent = _ecs.AddComponent<TextureComponent>(entityId);
+        textureComponent.TextureName = "door";
+        textureComponent.TopPaddingPx = 60;
+
+        textureComponent.TextureOffsetYPx = isElevator ? 64 : 0;
+
+        textureComponent.totalFrames = 24;
+
         return entityId;
     }
 
