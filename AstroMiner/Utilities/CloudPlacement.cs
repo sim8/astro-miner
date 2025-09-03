@@ -24,7 +24,7 @@ public static class CloudGenerator
     /// <param name="gridRectHeight">Height of visible area in grid units</param>
     /// <param name="cloudsPerGridCell">Density of clouds (e.g., 0.05 = 5% chance per grid cell)</param>
     /// <param name="seed">Seed for consistent random generation</param>
-    /// <param name="textureSizePx">Size of the texture in pixels</param>
+    /// <param name="renderedTextureSizePx">Size of the texture in pixels</param>
     /// <returns>List of cloud placements in grid coordinates</returns>
     public static List<CloudPlacement> GetCloudPlacements(
         float gridRectX,
@@ -33,11 +33,11 @@ public static class CloudGenerator
         float gridRectHeight,
         float cloudsPerGridCell,
         int seed,
-        int textureSizePx)
+        float renderedTextureSizePx)
     {
         var clouds = new List<CloudPlacement>();
 
-        var textureSizeGridUnits = textureSizePx / (float)GameConfig.CellTextureSizePx;
+        var textureSizeGridUnits = renderedTextureSizePx / (float)GameConfig.CellTextureSizePx;
 
         // Expand the area to include padding for partially visible clouds
         // We only pad left+top as CloudPlacements are for their top/left positions
@@ -56,30 +56,30 @@ public static class CloudGenerator
 
         // Iterate through sample points
         for (var sampleX = startSampleX; sampleX < endX; sampleX += sampleStep)
-        for (var sampleY = startSampleY; sampleY < endY; sampleY += sampleStep)
-        {
-            // Create a deterministic hash based on position and seed
-            var hash = GetPositionHash((int)(sampleX * 1000), (int)(sampleY * 1000), seed);
-
-            // Convert hash to a 0-1 probability
-            var probability = (hash & 0xFFFF) / (float)0xFFFF;
-
-            // Check if we should place a cloud at this sample point
-            if (probability < cloudsPerGridCell)
+            for (var sampleY = startSampleY; sampleY < endY; sampleY += sampleStep)
             {
-                // Add some sub-grid randomness to the position using the hash
-                var offsetHash = GetPositionHash((int)(sampleX * 1000) + 1, (int)(sampleY * 1000) + 1, seed);
-                var offsetX = ((offsetHash & 0xFF) / 255f - 0.5f) * sampleStep * 0.8f;
-                var offsetY = (((offsetHash >> 8) & 0xFF) / 255f - 0.5f) * sampleStep * 0.8f;
+                // Create a deterministic hash based on position and seed
+                var hash = GetPositionHash((int)(sampleX * 1000), (int)(sampleY * 1000), seed);
 
-                var finalX = sampleX + offsetX;
-                var finalY = sampleY + offsetY;
+                // Convert hash to a 0-1 probability
+                var probability = (hash & 0xFFFF) / (float)0xFFFF;
 
-                // No clamping - let clouds appear naturally at their calculated positions
-                // This allows for more natural distribution without artificial clustering at boundaries
-                clouds.Add(new CloudPlacement(finalX, finalY));
+                // Check if we should place a cloud at this sample point
+                if (probability < cloudsPerGridCell)
+                {
+                    // Add some sub-grid randomness to the position using the hash
+                    var offsetHash = GetPositionHash((int)(sampleX * 1000) + 1, (int)(sampleY * 1000) + 1, seed);
+                    var offsetX = ((offsetHash & 0xFF) / 255f - 0.5f) * sampleStep * 0.8f;
+                    var offsetY = (((offsetHash >> 8) & 0xFF) / 255f - 0.5f) * sampleStep * 0.8f;
+
+                    var finalX = sampleX + offsetX;
+                    var finalY = sampleY + offsetY;
+
+                    // No clamping - let clouds appear naturally at their calculated positions
+                    // This allows for more natural distribution without artificial clustering at boundaries
+                    clouds.Add(new CloudPlacement(finalX, finalY));
+                }
             }
-        }
 
         return clouds;
     }

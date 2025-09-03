@@ -191,12 +191,16 @@ public class Renderer
 
     private void RenderScene(SpriteBatch spriteBatch)
     {
-        if (_game.Model.ActiveWorld == World.Asteroid || _game.Model.ActiveWorld == World.ShipUpstairs ||
-            _game.Model.ActiveWorld == World.ShipDownstairs) _scrollingBackgroundRenderer.RenderBackground(spriteBatch);
+
+        var scrollingBackgroundConfig = ScrollingBackgrounds.GetScrollingBackgroundConfig(_game.Model.ActiveWorld);
+        if (scrollingBackgroundConfig != null)
+        {
+            _scrollingBackgroundRenderer.RenderBackground(spriteBatch, scrollingBackgroundConfig);
+        }
 
         RenderEntities(spriteBatch, EntityRenderLayer.BehindWorld);
 
-        ActiveWorldRenderer.RenderWorld(spriteBatch);
+        // ActiveWorldRenderer.RenderWorld(spriteBatch);
 
         RenderEntities(spriteBatch, EntityRenderLayer.BehindEntities);
 

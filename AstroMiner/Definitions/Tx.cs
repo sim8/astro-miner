@@ -6,7 +6,6 @@ namespace AstroMiner.Definitions
 {
     public static class Tx
     {
-        public const string CloudBackground = "CloudBackground";
         public const string Cracks = "Cracks";
         public const string DirectionalLight = "DirectionalLight";
         public const string DogicaFont = "DogicaFont";
@@ -36,7 +35,6 @@ namespace AstroMiner.Definitions
 
         public static readonly List<string> AllTextures = new List<string>
         {
-            "CloudBackground",
             "Cracks",
             "DirectionalLight",
             "DogicaFont",

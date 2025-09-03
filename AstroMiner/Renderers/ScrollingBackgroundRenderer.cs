@@ -7,26 +7,15 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace AstroMiner.Renderers;
 
-// TODO
-// - Remove other version
-// - Only define cloudTextureSizePx once
-// - Factor wire up for ship interior
-
-
-
 public class ScrollingBackgroundRenderer(RendererShared shared)
 {
-    private ScrollingBackgroundConfig GetScrollingBackgroundConfig()
-    {
-        return ScrollingBackgrounds.OizusAsteroid;
-    }
 
-    private (float, float, float, float) GetGridRectForVisibleLand()
+
+    private (float, float, float, float) GetGridRectForVisibleLand(ScrollingBackgroundConfig config)
     {
         var cameraPos = shared.ViewHelpers.GetCameraPos();
 
 
-        var config = GetScrollingBackgroundConfig();
         var offsetXForParallax = cameraPos.X * config.LandParallaxFactorX - cameraPos.X;
         var offsetYForParallax = cameraPos.Y * config.LandParallaxFactorY - cameraPos.Y;
 
@@ -56,22 +45,21 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
     }
 
 
-    public void RenderBackground(SpriteBatch spriteBatch)
+    public void RenderBackground(SpriteBatch spriteBatch, ScrollingBackgroundConfig config)
     {
         // Render land background
-        RenderLandBackground(spriteBatch);
+        RenderLandBackground(spriteBatch, config);
 
         // Render clouds on top
-        RenderClouds(spriteBatch);
+        RenderClouds(spriteBatch, config);
     }
 
-    private void RenderLandBackground(SpriteBatch spriteBatch)
+    private void RenderLandBackground(SpriteBatch spriteBatch, ScrollingBackgroundConfig config)
     {
-        var config = GetScrollingBackgroundConfig();
         var LandTextureGridWidth = config.LandTextureWidthPx / GameConfig.CellTextureSizePx * config.LandTextureScale;
         var LandTextureGridHeight = config.LandTextureHeightPx / GameConfig.CellTextureSizePx * config.LandTextureScale;
 
-        var (gridRectX, gridY, gridRectWidth, gridRectHeight) = GetGridRectForVisibleLand();
+        var (gridRectX, gridY, gridRectWidth, gridRectHeight) = GetGridRectForVisibleLand(config);
 
         // Calculate pixels per grid unit based on viewport size
         var pixelsPerGridUnit = GetPixelsPerGridUnit(gridRectWidth);
@@ -115,15 +103,16 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
         }
     }
 
-    private void RenderClouds(SpriteBatch spriteBatch)
+    private void RenderClouds(SpriteBatch spriteBatch, ScrollingBackgroundConfig config)
     {
-        var config = GetScrollingBackgroundConfig();
 
         // Render each cloud layer
         foreach (var cloudConfig in config.CloudLayers)
         {
             var (gridRectX, gridRectY, gridRectWidth, gridRectHeight) = GetGridRectForVisibleClouds(cloudConfig);
-            float CloudTextureSizeGridUnits = cloudConfig.CloudTextureSizePx / (float)GameConfig.CellTextureSizePx * cloudConfig.CloudTextureScale;
+
+            var renderedCloudSize = (float)GameConfig.CellTextureSizePx * cloudConfig.CloudTextureScale;
+            float CloudTextureSizeGridUnits = cloudConfig.CloudTextureSizePx / renderedCloudSize;
 
             // Calculate pixels per grid unit based on viewport size
             var pixelsPerGridUnit = GetPixelsPerGridUnit(gridRectWidth);
@@ -131,7 +120,7 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
             // Get cloud placements for the visible area
             var cloudPlacements = CloudGenerator.GetCloudPlacements(
                 gridRectX, gridRectY, gridRectWidth, gridRectHeight,
-                cloudConfig.CloudsPerGridCell, cloudConfig.CloudSeed, cloudConfig.CloudTextureSizePx);
+                cloudConfig.CloudsPerGridCell, cloudConfig.CloudSeed, renderedCloudSize);
 
             // Render each cloud in this layer
             foreach (var cloud in cloudPlacements)
@@ -155,7 +144,7 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
                 spriteBatch.Draw(
                     shared.Textures[cloudConfig.TextureName],
                     cloudRect,
-                    Color.White
+                    Color.Red
                 );
             }
         }

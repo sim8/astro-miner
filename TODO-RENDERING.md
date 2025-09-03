@@ -1,0 +1,2 @@
+- Something's up with cloud sizing
+- Debug rendering + positions
