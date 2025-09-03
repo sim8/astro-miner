@@ -38,7 +38,7 @@ public class SlidingDoorSystem : System
     {
         slidingDoorComponent.OpenPercent = openPercent;
         var textureComponent = game.StateManager.Ecs.GetComponent<TextureComponent>(slidingDoorComponent.EntityId);
-        textureComponent.frameIndex = (int)(openPercent * textureComponent.totalFrames);
+        textureComponent.frameIndex = (int)(openPercent * (textureComponent.totalFrames - 1));
     }
 
 
