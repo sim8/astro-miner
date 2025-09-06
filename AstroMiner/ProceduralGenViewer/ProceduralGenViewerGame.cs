@@ -9,6 +9,7 @@ public class ProceduralGenViewerState
 {
     public bool showLayers;
     public bool showWalls = true;
+    public bool showStability = true;
 }
 
 public enum ViewerControls
@@ -50,8 +51,8 @@ public class ProceduralGenViewerGame : BaseGame
     protected override void LoadContent()
     {
         SpriteBatch = new SpriteBatch(GraphicsDevice);
-        LoadTexture("white");
-        LoadTexture("dogica-font");
+        LoadTexture(Tx.White);
+        LoadTexture(Tx.DogicaFont);
     }
 
     protected override void Update(GameTime gameTime)

@@ -166,8 +166,8 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
         var (startCol, startRow, endCol, endRow) = Shared.ViewHelpers.GetVisibleGrid(padding);
 
         for (var row = startRow; row < endRow; row++)
-            for (var col = startCol; col < endCol; col++)
-                cellAction(col, row);
+        for (var col = startCol; col < endCol; col++)
+            cellAction(col, row);
     }
 
     private void RenderGridDebugOverlay(SpriteBatch spriteBatch)
@@ -176,7 +176,12 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
             1,
             (col, row) =>
             {
+                var cellState = _gameStateManager.AsteroidWorld.Grid.GetCellState(col, row);
+
                 var cellRect = Shared.ViewHelpers.GetVisibleRectForGridCell(col, row);
+
+                spriteBatch.Draw(Shared.Textures[Tx.White], cellRect, Color.Red * (1f - cellState.Stability));
+
                 var leftBorderRect = cellRect;
                 leftBorderRect.Width = 1;
                 spriteBatch.Draw(Shared.Textures[Tx.White], leftBorderRect, Color.Black);
@@ -184,7 +189,6 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
                 var topBorderRect = cellRect;
                 topBorderRect.Height = 1;
                 spriteBatch.Draw(Shared.Textures[Tx.White], topBorderRect, Color.Black);
-
 
                 var coordinatesStr = col + " " + row;
                 Shared.RenderString(spriteBatch, cellRect.X, cellRect.Y, coordinatesStr, 1);

@@ -69,6 +69,10 @@ public class ProceduralGenViewerRenderer(BaseGame game, ProceduralGenViewerState
                 if (proceduralGenViewerState.showLayers && cellState.Layer != AsteroidLayer.None)
                     spriteBatch.Draw(game.Textures[Tx.White], GetGridCellRect(col, row),
                         _asteroidLayerColors[cellState.Layer] * 0.6f);
+
+                if (proceduralGenViewerState.showStability && cellState.Stability != 1f)
+                    spriteBatch.Draw(game.Textures[Tx.White], GetGridCellRect(col, row),
+                        Color.Red * (1f - cellState.Stability));
             }
 
         RenderStartPos(spriteBatch, game.Model.Asteroid.MinerStartingPos);

@@ -94,6 +94,12 @@ public class CellState
 
     public FloorType FloorType { get; set; }
 
+    /**
+     * Percentage of how stable the cell is.
+     * Lower values more likely to collapse/explode.
+     */
+    public float Stability { get; set; } = 1f;
+
     public float FogOpacity { get; set; } = 1f; // Assume fog
 
     public WallType WallType { get; set; }
