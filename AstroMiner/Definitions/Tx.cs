@@ -17,8 +17,6 @@ namespace AstroMiner.Definitions
         public const string KrevikDocks = "KrevikDocks";
         public const string LaunchConsole = "LaunchConsole";
         public const string Lava = "Lava";
-        public const string MountainsNice = "MountainsNice";
-        public const string MountainsNiceMask = "MountainsNiceMask";
         public const string MountainsNiceTiled = "MountainsNiceTiled";
         public const string Player = "Player";
         public const string RadialLight = "RadialLight";
@@ -49,8 +47,6 @@ namespace AstroMiner.Definitions
             "KrevikDocks",
             "LaunchConsole",
             "Lava",
-            "MountainsNice",
-            "MountainsNiceMask",
             "MountainsNiceTiled",
             "Player",
             "RadialLight",

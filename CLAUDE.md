@@ -38,7 +38,6 @@ dotnet restore
 ### World System
 The game supports multiple world types:
 - **AsteroidWorld**: Procedurally generated mining environments
-- **HomeWorld**: Base/hub area (legacy, being deprecated)
 - **StaticWorld**: Predefined areas like the launch pad and shop
 
 All world states inherit from `BaseWorldState` and must implement collision detection and grid size methods.

@@ -3,7 +3,6 @@ using AstroMiner.AsteroidWorld;
 using AstroMiner.Definitions;
 using AstroMiner.ECS;
 using AstroMiner.Effects;
-using AstroMiner.HomeWorld;
 using AstroMiner.StaticWorld;
 using Microsoft.Xna.Framework;
 
@@ -25,7 +24,6 @@ public class GameStateManager(BaseGame game)
     public AsteroidWorldState AsteroidWorld;
     public CameraState Camera;
     public ScrollingEffectManager CloudEffects;
-    public HomeWorldState HomeWorld;
     public Inventory Inventory;
     public StaticWorldState StaticWorld;
     public TransitionManager TransitionManager;
@@ -44,7 +42,6 @@ public class GameStateManager(BaseGame game)
         return world switch
         {
             World.Asteroid => AsteroidWorld,
-            World.Home => HomeWorld, // TODO deprecate
             _ => StaticWorld
         };
     }
@@ -54,8 +51,6 @@ public class GameStateManager(BaseGame game)
         game.Model.ActiveWorld = world;
         if (world == World.Asteroid)
             AsteroidWorld.Initialize();
-        else if (world == World.Home)
-            HomeWorld.Initialize();
         else
             StaticWorld.Initialize();
     }
@@ -65,7 +60,6 @@ public class GameStateManager(BaseGame game)
         Inventory = new Inventory(game);
         Camera = new CameraState(game);
         AsteroidWorld = new AsteroidWorldState(game);
-        HomeWorld = new HomeWorldState(game);
         StaticWorld = new StaticWorldState(game);
         CloudEffects = new ScrollingEffectManager();
         InitializeCloudEffects();

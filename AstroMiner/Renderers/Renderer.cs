@@ -3,7 +3,6 @@ using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using AstroMiner.Renderers.AsteroidWorld;
 using AstroMiner.Renderers.Entities;
-using AstroMiner.Renderers.HomeWorld;
 using AstroMiner.Renderers.StaticWorld;
 using AstroMiner.Renderers.UI;
 using AstroMiner.Utilities;
@@ -18,8 +17,6 @@ public class Renderer
     private readonly DynamiteRenderer _dynamiteRenderer;
     private readonly ExplosionRenderer _explosionRenderer;
     private readonly BaseGame _game;
-    private readonly BaseWorldRenderer _homeWorldRenderer;
-    private readonly LaunchParallaxRenderer _launchParallaxRenderer;
     private readonly MinerRenderer _minerRenderer;
     private readonly BlendState _multiplyBlendState;
     private readonly PlayerRenderer _playerRenderer;
@@ -41,10 +38,8 @@ public class Renderer
         _dynamiteRenderer = new DynamiteRenderer(_shared);
         _explosionRenderer = new ExplosionRenderer(_shared);
         _scrollingBackgroundRenderer = new ScrollingBackgroundRenderer(_shared);
-        _launchParallaxRenderer = new LaunchParallaxRenderer(_shared);
         _userInterfaceRenderer = new UserInterfaceRenderer(_shared);
-        _asteroidWorldRenderer = new AsteroidWorldRenderer(_shared);
-        _homeWorldRenderer = new HomeWorldRenderer(_shared); // TODO deprecate
+        _asteroidWorldRenderer = new AsteroidWorldRenderer(_shared);// TODO deprecate
         _staticWorldRenderer = new StaticWorldRenderer(_shared);
         _multiplyBlendState = new BlendState();
         _multiplyBlendState.ColorBlendFunction = BlendFunction.Add;
@@ -58,7 +53,6 @@ public class Renderer
         _game.Model.ActiveWorld switch
         {
             World.Asteroid => _asteroidWorldRenderer,
-            World.Home => _homeWorldRenderer, // TODO deprecate
             _ => _staticWorldRenderer
         };
 

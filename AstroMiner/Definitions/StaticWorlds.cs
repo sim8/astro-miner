@@ -38,20 +38,6 @@ public static class StaticWorlds
         new Dictionary<World, StaticWorldConfig>
         {
             {
-                // ----------------------------------------------------0,1,2,3,4,5,6,7
-                World.RigRoom, new StaticWorldConfig(Tx.RigRoom, 8, 9, """
-                                                                       X,X,X,X,X,X,X,X
-                                                                       X,X,X,X,X,X,X,X
-                                                                       X,X,X,X,X,X,X,X
-                                                                       X,-,-,-,-,-,-,X
-                                                                       X,-,-,-,-,-,-,X
-                                                                       X,-,-,-,-,-,-,X
-                                                                       X,-,-,-,-,-,-,X
-                                                                       X,X,X,X,@,X,X,X
-                                                                       X,X,X,X,X,X,X,X
-                                                                       """)
-            },
-            {
                 // --------------------------------------------------------0,1,2,3,4,5,6,7,8,9,0,1,2,3
                 World.Krevik, new StaticWorldConfig(Tx.KrevikDocks, 14, 8, """
                                                                            X,X,X,X,X,X,X,X,X,X,X,X,X,X
@@ -63,56 +49,6 @@ public static class StaticWorlds
                                                                            X,X,X,X,X,X,X,X,X,X,X,@,X,X
                                                                            X,X,X,X,X,X,X,X,X,X,X,X,X,X
                                                                            """)
-            },
-            {
-                // ------------------------------------------------0,1,2,3,4,5,6,7
-                World.MinEx, new StaticWorldConfig(Tx.MinEx, 8, 9, """
-                                                                   X,X,X,X,X,X,X,X
-                                                                   X,X,X,X,X,X,X,X
-                                                                   X,X,X,X,X,X,X,X
-                                                                   X,-,-,-,-,-,-,X
-                                                                   X,-,-,-,-,-,-,X
-                                                                   X,-,-,-,-,-,-,X
-                                                                   X,-,-,-,-,-,-,X
-                                                                   X,X,X,@,X,X,X,X
-                                                                   X,X,X,X,X,X,X,X
-                                                                   """)
-            },
-            {
-                // -0-------------------1-------------------2--------------
-                // -0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7
-                World.Home, new StaticWorldConfig(Tx.OizusBg, Coordinates.Grid.OizusWidth, Coordinates.Grid.OizusHeight,
-                    """
-                    X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                    X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                    X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                    X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                    X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                    X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                    X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                    X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                    X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                    X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                    X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                    X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                    X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                    X,X,X,X,-,-,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                    X,X,X,X,-,-,-,-,X,X,X,X,-,-,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                    X,X,X,X,X,X,X,-,X,X,X,X,X,-,X,X,X,X,-,-,X,X,X,X,X,X,X,X
-                    X,-,-,X,X,X,X,-,X,X,X,X,X,-,X,X,X,X,-,-,X,X,X,X,X,X,X,X
-                    X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,X,X,X,X,X,X,X,X
-                    X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X,-,-,X,@,X,X,X,X,X,X
-                    X,-,-,X,X,X,X,X,X,X,X,X,X,X,-,-,X,X,-,-,-,-,-,-,-,-,-,X
-                    X,X,X,X,X,X,X,X,X,X,X,X,@,X,-,-,X,X,-,-,-,-,-,-,-,-,-,X
-                    X,X,X,X,X,X,X,X,X,X,X,X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X
-                    X,X,X,X,X,X,X,X,X,X,X,X,X,-,-,-,-,-,-,-,-,X,X,X,-,-,-,X
-                    X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,-,-,-,X,X,X,-,-,-,X
-                    X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,-,-,-,X,X,X,-,-,-,X
-                    X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,-,-,-,-,-,-,-,-,-,X
-                    X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,-,-,-,-,-,-,-,-,-,X
-                    X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,-,-,-,-,-,-,-,-,-,X
-                    X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
-                    """)
             },
             {
                 // -------------------------------------------------------0-------------------1-------------------2-------------------3
