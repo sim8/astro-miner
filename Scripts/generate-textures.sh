@@ -1,11 +1,13 @@
 #!/bin/bash
 
 # Generates AstroMiner/Definitions/Tx.cs with string constants for all PNG files in the Content/img directory.
+# Also generates AstroMiner/Content/Content.mgcb with texture build configuration.
 # Run from the project root: ./Scripts/generate-textures.sh
 
 # Configuration
 sourceDirectory="AstroMiner/Content/img"
-destinationPath="AstroMiner/Definitions/Tx.cs"
+txDestinationPath="AstroMiner/Definitions/Tx.cs"
+mgcbDestinationPath="AstroMiner/Content/Content.mgcb"
 
 # Function to convert filename to property name (remove extension)
 to_property_name() {
@@ -64,8 +66,71 @@ collect_all_textures() {
     done
 }
 
+# Function to generate Content.mgcb header
+generate_mgcb_header() {
+    cat << 'EOF'
+
+#----------------------------- Global Properties ----------------------------#
+
+/outputDir:bin/$(Platform)
+/intermediateDir:obj/$(Platform)
+/platform:DesktopGL
+/config:
+/profile:Reach
+/compress:False
+
+#-------------------------------- References --------------------------------#
+
+
+#---------------------------------- Content ---------------------------------#
+
+EOF
+}
+
+# Function to generate a single texture entry for Content.mgcb
+generate_mgcb_texture_entry() {
+    local texture_path="$1"
+    cat << EOF
+#begin img/$texture_path.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:img/$texture_path.png
+
+EOF
+}
+
+# Function to generate all texture entries for Content.mgcb recursively
+generate_mgcb_texture_entries() {
+    local dir="$1"
+    local relative_path="$2"
+    
+    # Process PNG files in current directory
+    for file in "$dir"/*.png; do
+        [ -f "$file" ] || continue
+        local filename=$(basename "$file")
+        local property_name=$(to_property_name "$filename")
+        local file_path="$relative_path$(to_property_name "$filename")"
+        generate_mgcb_texture_entry "$file_path"
+    done
+    
+    # Process subdirectories recursively
+    for subdir in "$dir"/*/; do
+        [ -d "$subdir" ] || continue
+        local dirname=$(basename "$subdir")
+        local sub_relative_path="$relative_path$dirname/"
+        generate_mgcb_texture_entries "$subdir" "$sub_relative_path"
+    done
+}
+
 # Generate the C# file
-cat > "$destinationPath" << 'EOF'
+cat > "$txDestinationPath" << 'EOF'
 using System.Collections.Generic;
 
 namespace AstroMiner.Definitions
@@ -75,19 +140,24 @@ namespace AstroMiner.Definitions
 EOF
 
 # Generate class content
-generate_class_content "$sourceDirectory" "        " "" >> "$destinationPath"
+generate_class_content "$sourceDirectory" "        " "" >> "$txDestinationPath"
 
 # Generate AllTextures list
-echo "" >> "$destinationPath"
-echo "        public static readonly List<string> AllTextures = new List<string>" >> "$destinationPath"
-echo "        {" >> "$destinationPath"
-collect_all_textures "$sourceDirectory" "" >> "$destinationPath"
-echo "        };" >> "$destinationPath"
+echo "" >> "$txDestinationPath"
+echo "        public static readonly List<string> AllTextures = new List<string>" >> "$txDestinationPath"
+echo "        {" >> "$txDestinationPath"
+collect_all_textures "$sourceDirectory" "" >> "$txDestinationPath"
+echo "        };" >> "$txDestinationPath"
 
 # Close the class and namespace
-cat >> "$destinationPath" << 'EOF'
+cat >> "$txDestinationPath" << 'EOF'
     }
 }
 EOF
 
-echo "Generated $destinationPath"
+# Generate the Content.mgcb file
+generate_mgcb_header > "$mgcbDestinationPath"
+generate_mgcb_texture_entries "$sourceDirectory" "" >> "$mgcbDestinationPath"
+
+echo "Generated $txDestinationPath"
+echo "Generated $mgcbDestinationPath"
