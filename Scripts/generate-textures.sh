@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Generates AstroMiner/Definitions/Textures.cs with string constants for all PNG files in the Content/img directory.
+# Generates AstroMiner/Definitions/Tx.cs with string constants for all PNG files in the Content/img directory.
 # Run from the project root: ./Scripts/generate-textures.sh
 
 # Configuration
 sourceDirectory="AstroMiner/Content/img"
-destinationPath="AstroMiner/Definitions/Textures.cs"
+destinationPath="AstroMiner/Definitions/Tx.cs"
 
 # Function to convert filename to property name (remove extension)
 to_property_name() {
