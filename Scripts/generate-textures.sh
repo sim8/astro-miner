@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Generates AstroMiner/Definitions/Textures.cs with string constants for all PNG files in the Content/img directory.
+# Run from the project root: ./Scripts/generate-textures.sh
+
 # Configuration
 sourceDirectory="AstroMiner/Content/img"
 destinationPath="AstroMiner/Definitions/Textures.cs"
@@ -21,8 +24,8 @@ generate_class_content() {
         [ -f "$file" ] || continue
         local filename=$(basename "$file")
         local property_name=$(to_property_name "$filename")
-        local file_path="$relative_path$filename"
-        echo "${indent}public static readonly string $property_name = \"$file_path\";"
+        local file_path="$relative_path$(to_property_name "$filename")"
+        echo "${indent}public const string $property_name = \"$file_path\";"
     done
     
     # Process subdirectories
@@ -48,7 +51,7 @@ collect_all_textures() {
         [ -f "$file" ] || continue
         local filename=$(basename "$file")
         local property_name=$(to_property_name "$filename")
-        local file_path="$relative_path$filename"
+        local file_path="$relative_path$(to_property_name "$filename")"
         echo "            \"$file_path\","
     done
     
@@ -67,7 +70,7 @@ using System.Collections.Generic;
 
 namespace AstroMiner.Definitions
 {
-    public static class Textures
+    public static class Tx
     {
 EOF
 
