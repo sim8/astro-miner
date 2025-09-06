@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AstroMiner.Definitions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -96,7 +97,7 @@ public class UIElement(BaseGame game)
     public virtual void Render(SpriteBatch spriteBatch)
     {
         if (BackgroundColor.HasValue)
-            spriteBatch.Draw(game.Textures["white"],
+            spriteBatch.Draw(game.Textures[Tx.White],
                 new Rectangle(X, Y, ComputedWidth, ComputedHeight),
                 BackgroundColor.Value);
 

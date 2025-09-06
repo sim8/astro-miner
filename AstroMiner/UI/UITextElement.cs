@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using AstroMiner.Definitions;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -32,7 +33,7 @@ public class UITextElement(BaseGame game) : UIElement(game)
             var scaledCharWidth = charWidth * Scale;
             var scaledCharHeight = charHeight * Scale;
             var destRect = new Rectangle(X + currentXOffset, Y + yOffset, scaledCharWidth, scaledCharHeight);
-            spriteBatch.Draw(game.Textures["dogica-font"], destRect, sourceRect, Color);
+            spriteBatch.Draw(game.Textures[Tx.DogicaFont], destRect, sourceRect, Color);
             currentXOffset += scaledCharWidth;
         }
     }

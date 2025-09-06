@@ -54,22 +54,22 @@ public class ProceduralGenViewerRenderer(BaseGame game, ProceduralGenViewerState
     private void RenderScene(SpriteBatch spriteBatch)
     {
         for (var row = 0; row < GameConfig.GridSize; row++)
-        for (var col = 0; col < GameConfig.GridSize; col++)
-        {
-            var cellState = game.StateManager.AsteroidWorld.Grid.GetCellState(col, row);
+            for (var col = 0; col < GameConfig.GridSize; col++)
+            {
+                var cellState = game.StateManager.AsteroidWorld.Grid.GetCellState(col, row);
 
-            if (cellState.FloorType != FloorType.Empty)
-                spriteBatch.Draw(game.Textures["white"], GetGridCellRect(col, row),
-                    _floorColors[cellState.FloorType]);
+                if (cellState.FloorType != FloorType.Empty)
+                    spriteBatch.Draw(game.Textures[Tx.White], GetGridCellRect(col, row),
+                        _floorColors[cellState.FloorType]);
 
-            if (proceduralGenViewerState.showWalls && cellState.WallType != WallType.Empty)
-                spriteBatch.Draw(game.Textures["white"], GetGridCellRect(col, row),
-                    _wallColors[cellState.WallType]);
+                if (proceduralGenViewerState.showWalls && cellState.WallType != WallType.Empty)
+                    spriteBatch.Draw(game.Textures[Tx.White], GetGridCellRect(col, row),
+                        _wallColors[cellState.WallType]);
 
-            if (proceduralGenViewerState.showLayers && cellState.Layer != AsteroidLayer.None)
-                spriteBatch.Draw(game.Textures["white"], GetGridCellRect(col, row),
-                    _asteroidLayerColors[cellState.Layer] * 0.6f);
-        }
+                if (proceduralGenViewerState.showLayers && cellState.Layer != AsteroidLayer.None)
+                    spriteBatch.Draw(game.Textures[Tx.White], GetGridCellRect(col, row),
+                        _asteroidLayerColors[cellState.Layer] * 0.6f);
+            }
 
         RenderStartPos(spriteBatch, game.Model.Asteroid.MinerStartingPos);
     }
@@ -79,8 +79,8 @@ public class ProceduralGenViewerRenderer(BaseGame game, ProceduralGenViewerState
         var x = (int)(startPos.X * CellSizePx);
         var y = (int)(startPos.Y * CellSizePx);
 
-        spriteBatch.Draw(game.Textures["white"], new Rectangle(x, y, 6, 6), Color.Aqua);
-        spriteBatch.Draw(game.Textures["white"], new Rectangle(x - 6, y - 6, 6, 6), Color.Aqua);
+        spriteBatch.Draw(game.Textures[Tx.White], new Rectangle(x, y, 6, 6), Color.Aqua);
+        spriteBatch.Draw(game.Textures[Tx.White], new Rectangle(x - 6, y - 6, 6, 6), Color.Aqua);
     }
 
     private void RenderString(SpriteBatch spriteBatch, int startX, int startY, string str, int scale = 3)
@@ -90,7 +90,7 @@ public class ProceduralGenViewerRenderer(BaseGame game, ProceduralGenViewerState
         {
             var sourceRect = new Rectangle(x, y, width, 8);
             var destRect = new Rectangle(startX + linePxCount * scale, startY + 10, width * scale, height * scale);
-            spriteBatch.Draw(game.Textures["dogica-font"], destRect, sourceRect, Color.LimeGreen);
+            spriteBatch.Draw(game.Textures[Tx.DogicaFont], destRect, sourceRect, Color.LimeGreen);
             linePxCount += width;
         }
     }

@@ -45,7 +45,7 @@ public class UserInterfaceRenderer(
             return;
 
         var healthBarWidth = (int)(200 * healthComponent.HealthPercentage);
-        spriteBatch.Draw(shared.Textures["white"],
+        spriteBatch.Draw(shared.Textures[Tx.White],
             new Rectangle(xOffset, yOffset, healthBarWidth, 3),
             Color.LimeGreen);
     }
@@ -59,7 +59,7 @@ public class UserInterfaceRenderer(
         var color = grappleComponent.GrappleAvailable
             ? Color.LimeGreen
             : _gridColor;
-        spriteBatch.Draw(shared.Textures["grapple-icon"],
+        spriteBatch.Draw(shared.Textures[Tx.GrappleIcon],
             new Rectangle(10, 185, 32, 32),
             color);
     }
@@ -82,18 +82,18 @@ public class UserInterfaceRenderer(
 
 
         // Top border
-        spriteBatch.Draw(shared.Textures["white"], new Rectangle(xOffset, yOffset, minimapTotalSizePx, borderThickness),
+        spriteBatch.Draw(shared.Textures[Tx.White], new Rectangle(xOffset, yOffset, minimapTotalSizePx, borderThickness),
             _gridColor);
         // Bottom border
-        spriteBatch.Draw(shared.Textures["white"],
+        spriteBatch.Draw(shared.Textures[Tx.White],
             new Rectangle(xOffset, yOffset + minimapGridSizePx + borderThickness, minimapTotalSizePx, borderThickness),
             _gridColor);
         // Left border
-        spriteBatch.Draw(shared.Textures["white"],
+        spriteBatch.Draw(shared.Textures[Tx.White],
             new Rectangle(xOffset, yOffset, borderThickness, minimapTotalSizePx),
             _gridColor);
         // Right border
-        spriteBatch.Draw(shared.Textures["white"],
+        spriteBatch.Draw(shared.Textures[Tx.White],
             new Rectangle(xOffset + minimapGridSizePx + borderThickness, yOffset, borderThickness, minimapTotalSizePx),
             _gridColor);
 
@@ -105,7 +105,7 @@ public class UserInterfaceRenderer(
         for (var i = 1; i <= dividingLines; i++)
         {
             var x = xOffset + borderThickness + cellWidth * i;
-            spriteBatch.Draw(shared.Textures["white"],
+            spriteBatch.Draw(shared.Textures[Tx.White],
                 new Rectangle(x, yOffset, dividingLinesThickness, minimapTotalSizePx),
                 _gridColor);
         }
@@ -114,7 +114,7 @@ public class UserInterfaceRenderer(
         for (var i = 1; i <= dividingLines; i++)
         {
             var y = yOffset + borderThickness + cellHeight * i;
-            spriteBatch.Draw(shared.Textures["white"],
+            spriteBatch.Draw(shared.Textures[Tx.White],
                 new Rectangle(xOffset, y, minimapTotalSizePx, dividingLinesThickness),
                 _gridColor);
         }
@@ -125,7 +125,7 @@ public class UserInterfaceRenderer(
             var y = yOffset + gameStateEdgeCell.y * scale;
             var edgeCellDestRect = new Rectangle((int)x, (int)y,
                 asteroidLineThickness, asteroidLineThickness);
-            spriteBatch.Draw(shared.Textures["white"], edgeCellDestRect, Color.White);
+            spriteBatch.Draw(shared.Textures[Tx.White], edgeCellDestRect, Color.White);
         }
 
         var playerGridPos =
@@ -133,13 +133,13 @@ public class UserInterfaceRenderer(
         var playerX = xOffset + playerGridPos.x * scale - playerSize / 2;
         var playerY = yOffset + playerGridPos.y * scale - playerSize / 2;
         var playerDestRect = new Rectangle((int)playerX, (int)playerY, playerSize, playerSize);
-        spriteBatch.Draw(shared.Textures["radial-light"], playerDestRect, Color.Red);
+        spriteBatch.Draw(shared.Textures[Tx.RadialLight], playerDestRect, Color.Red);
     }
 
     private void RenderNewGameScreen(SpriteBatch spriteBatch, bool isDead)
     {
         var (viewportWidth, viewportHeight) = shared.ViewHelpers.GetViewportSize();
-        spriteBatch.Draw(shared.Textures["white"], new Rectangle(0, 0, viewportWidth, viewportHeight),
+        spriteBatch.Draw(shared.Textures[Tx.White], new Rectangle(0, 0, viewportWidth, viewportHeight),
             isDead ? new Color(107, 7, 0) * 0.7f : Color.DarkGreen);
 
         if (isDead)

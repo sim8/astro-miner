@@ -44,7 +44,7 @@ public class UIState(BaseGame game)
             {
                 StarBackground.AddLayer(new ScrollingEffectLayer
                 {
-                    TextureName = "star",
+                    TextureName = Tx.Star,
                     TextureSize = 170,
                     Speed = 8f,
                     Density = 9f,
@@ -53,7 +53,7 @@ public class UIState(BaseGame game)
                 });
                 StarBackground.AddLayer(new ScrollingEffectLayer
                 {
-                    TextureName = "star",
+                    TextureName = Tx.Star,
                     TextureSize = 170,
                     Speed = 16f,
                     Density = 7f,
@@ -62,7 +62,7 @@ public class UIState(BaseGame game)
                 });
                 // StarBackground.AddLayer(new ScrollingEffectLayer
                 // {
-                //     TextureName = "star",
+                //     TextureName = Tx.Star,
                 //     TextureSize = 170,
                 //     Speed = 30f,
                 //     Density = 2f,

@@ -38,7 +38,7 @@ public class StaticWorldRenderer(RendererShared shared) : BaseWorldRenderer(shar
                 var destRect = Shared.ViewHelpers.GetVisibleRectForGridCell(0, 0, config.GridWidth, config.GridHeight);
                 var sourceRect = new Rectangle(0, config.TextureGridYOffset * 32, config.GridWidth * 32,
                     config.GridHeight * 32);
-                spriteBatch.Draw(Shared.Textures["ship-shadow-map"],
+                spriteBatch.Draw(Shared.Textures[Tx.ShipShadowMap],
                     destRect,
                     sourceRect,
                     FogOfWarRenderer.FogColor * 0.4f);
@@ -53,17 +53,17 @@ public class StaticWorldRenderer(RendererShared shared) : BaseWorldRenderer(shar
             {
                 var cellRect = Shared.ViewHelpers.GetVisibleRectForGridCell(col, row);
                 if (_gameStateManager.StaticWorld.Grid[row, col] == WorldCellType.Filled)
-                    spriteBatch.Draw(Shared.Textures["white"], cellRect, Color.Red * 0.5f);
+                    spriteBatch.Draw(Shared.Textures[Tx.White], cellRect, Color.Red * 0.5f);
                 if (_gameStateManager.StaticWorld.Grid[row, col] == WorldCellType.Portal)
-                    spriteBatch.Draw(Shared.Textures["white"], cellRect, Color.Green * 0.5f);
+                    spriteBatch.Draw(Shared.Textures[Tx.White], cellRect, Color.Green * 0.5f);
 
                 var leftBorderRect = cellRect;
                 leftBorderRect.Width = 1;
-                spriteBatch.Draw(Shared.Textures["white"], leftBorderRect, Color.Black);
+                spriteBatch.Draw(Shared.Textures[Tx.White], leftBorderRect, Color.Black);
 
                 var topBorderRect = cellRect;
                 topBorderRect.Height = 1;
-                spriteBatch.Draw(Shared.Textures["white"], topBorderRect, Color.Black);
+                spriteBatch.Draw(Shared.Textures[Tx.White], topBorderRect, Color.Black);
 
 
                 var coordinatesStr = col + " " + row;
@@ -80,14 +80,14 @@ public class StaticWorldRenderer(RendererShared shared) : BaseWorldRenderer(shar
         if (mainBackgroundRect.Top > 0)
         {
             var topGapRect = new Rectangle(0, 0, viewportWidth, mainBackgroundRect.Top);
-            spriteBatch.Draw(Shared.Textures["white"], topGapRect, fillColor);
+            spriteBatch.Draw(Shared.Textures[Tx.White], topGapRect, fillColor);
         }
 
         // Bottom gap
         if (mainBackgroundRect.Bottom < viewportHeight)
         {
             var bottomGapRect = new Rectangle(0, mainBackgroundRect.Bottom, viewportWidth, viewportHeight - mainBackgroundRect.Bottom);
-            spriteBatch.Draw(Shared.Textures["white"], bottomGapRect, fillColor);
+            spriteBatch.Draw(Shared.Textures[Tx.White], bottomGapRect, fillColor);
         }
 
         // Left gap
@@ -95,7 +95,7 @@ public class StaticWorldRenderer(RendererShared shared) : BaseWorldRenderer(shar
         {
             var leftGapRect = new Rectangle(0, Math.Max(0, mainBackgroundRect.Top), mainBackgroundRect.Left,
                 Math.Min(viewportHeight, mainBackgroundRect.Bottom) - Math.Max(0, mainBackgroundRect.Top));
-            spriteBatch.Draw(Shared.Textures["white"], leftGapRect, fillColor);
+            spriteBatch.Draw(Shared.Textures[Tx.White], leftGapRect, fillColor);
         }
 
         // Right gap  
@@ -104,7 +104,7 @@ public class StaticWorldRenderer(RendererShared shared) : BaseWorldRenderer(shar
             var rightGapRect = new Rectangle(mainBackgroundRect.Right, Math.Max(0, mainBackgroundRect.Top),
                 viewportWidth - mainBackgroundRect.Right,
                 Math.Min(viewportHeight, mainBackgroundRect.Bottom) - Math.Max(0, mainBackgroundRect.Top));
-            spriteBatch.Draw(Shared.Textures["white"], rightGapRect, fillColor);
+            spriteBatch.Draw(Shared.Textures[Tx.White], rightGapRect, fillColor);
         }
     }
 }

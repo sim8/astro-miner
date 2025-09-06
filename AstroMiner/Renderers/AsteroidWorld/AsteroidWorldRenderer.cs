@@ -32,7 +32,7 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
 
                 // TODO if we're not animating lava, can we just copy it into lava tileset?
                 if (FloorTypes.IsLavaLike(cellState.FloorType))
-                    spriteBatch.Draw(Shared.Textures["lava"],
+                    spriteBatch.Draw(Shared.Textures[Tx.Lava],
                         Shared.ViewHelpers.GetVisibleRectForGridCell(col, row), Color.White);
 
                 foreach (var corner in _cornersInRenderOrder)
@@ -40,7 +40,7 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
                     // Render floor
                     var floorQuadrantSourceRect =
                         Tilesets.GetFloorQuadrantSourceRect(Shared.Game, col, row, corner);
-                    spriteBatch.Draw(Shared.Textures["tileset"],
+                    spriteBatch.Draw(Shared.Textures[Tx.Tileset],
                         Shared.ViewHelpers.GetVisibleRectForFloorQuadrant(col, row, corner),
                         floorQuadrantSourceRect,
                         Color.White);
@@ -57,7 +57,7 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
                                 ? Color.LightGreen
                                 : Color.White;
 
-                        spriteBatch.Draw(Shared.Textures["tileset"],
+                        spriteBatch.Draw(Shared.Textures[Tx.Tileset],
                             Shared.ViewHelpers.GetVisibleRectForWallQuadrant(col, row, corner),
                             dualTilesetSourceRect,
                             tintColor);
@@ -78,7 +78,7 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
     public override void RenderWorldOverlay(SpriteBatch spriteBatch)
     {
         var (viewportWidth, viewportHeight) = Shared.ViewHelpers.GetViewportSize();
-        spriteBatch.Draw(Shared.Textures["white"], new Rectangle(0, 0, viewportWidth, viewportHeight),
+        spriteBatch.Draw(Shared.Textures[Tx.White], new Rectangle(0, 0, viewportWidth, viewportHeight),
             FogOfWarRenderer.FogColor * 0.8f);
     }
 
@@ -125,7 +125,7 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
             return;
 
         if (cellState.FloorType == FloorType.LavaCracks)
-            spriteBatch.Draw(Shared.Textures["cracks"],
+            spriteBatch.Draw(Shared.Textures[Tx.Cracks],
                 Shared.ViewHelpers.GetVisibleRectForGridCell(col, row),
                 new Rectangle(0, 0, 32, 32),
                 Color.White);
@@ -136,7 +136,7 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
                 Shared.Game.StateManager.AsteroidWorld.Grid.GetCollapsingCompletion(col, row);
             var keyframe = (int)(completionPercentage * 4); // 4 keyframes
             var sourceRect = new Rectangle(32 * (keyframe + 1), 0, 32, 36); // +1 because 1st frame is non-collapsing
-            spriteBatch.Draw(Shared.Textures["cracks"],
+            spriteBatch.Draw(Shared.Textures[Tx.Cracks],
                 Shared.ViewHelpers.GetVisibleRectForGridCell(col, row, 1f, 1.125f), // Is 32x36
                 sourceRect,
                 Color.White);
@@ -166,8 +166,8 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
         var (startCol, startRow, endCol, endRow) = Shared.ViewHelpers.GetVisibleGrid(padding);
 
         for (var row = startRow; row < endRow; row++)
-        for (var col = startCol; col < endCol; col++)
-            cellAction(col, row);
+            for (var col = startCol; col < endCol; col++)
+                cellAction(col, row);
     }
 
     private void RenderGridDebugOverlay(SpriteBatch spriteBatch)
@@ -179,11 +179,11 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
                 var cellRect = Shared.ViewHelpers.GetVisibleRectForGridCell(col, row);
                 var leftBorderRect = cellRect;
                 leftBorderRect.Width = 1;
-                spriteBatch.Draw(Shared.Textures["white"], leftBorderRect, Color.Black);
+                spriteBatch.Draw(Shared.Textures[Tx.White], leftBorderRect, Color.Black);
 
                 var topBorderRect = cellRect;
                 topBorderRect.Height = 1;
-                spriteBatch.Draw(Shared.Textures["white"], topBorderRect, Color.Black);
+                spriteBatch.Draw(Shared.Textures[Tx.White], topBorderRect, Color.Black);
 
 
                 var coordinatesStr = col + " " + row;

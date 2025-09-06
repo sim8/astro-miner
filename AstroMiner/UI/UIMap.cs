@@ -78,7 +78,7 @@ public class UIMap : UIElement
 
         var playerDestRect = new Rectangle(playerCenterX - playerMarkerSize / 2, playerCenterY - playerMarkerSize / 2,
             playerMarkerSize, playerMarkerSize);
-        spriteBatch.Draw(_game.Textures["radial-light"], playerDestRect, Color.Red);
+        spriteBatch.Draw(_game.Textures[Tx.RadialLight], playerDestRect, Color.Red);
     }
 
 
@@ -94,14 +94,14 @@ public class UIMap : UIElement
 
         // Only iterate through the bounded area of the asteroid
         for (var row = boundingBox.Y; row <= boundingBox.Bottom; row++)
-        for (var col = boundingBox.X; col <= boundingBox.Right; col++)
-        {
-            var cellState = _game.StateManager.AsteroidWorld.Grid.GetCellState(col, row);
+            for (var col = boundingBox.X; col <= boundingBox.Right; col++)
+            {
+                var cellState = _game.StateManager.AsteroidWorld.Grid.GetCellState(col, row);
 
-            if (cellState.FloorType != FloorType.Empty)
-                spriteBatch.Draw(_game.Textures["white"], GetGridCellRect(col, row, boundingBox),
-                    GetCellColorForMap(col, row));
-        }
+                if (cellState.FloorType != FloorType.Empty)
+                    spriteBatch.Draw(_game.Textures[Tx.White], GetGridCellRect(col, row, boundingBox),
+                        GetCellColorForMap(col, row));
+            }
 
         RenderPlayer(spriteBatch, boundingBox);
     }

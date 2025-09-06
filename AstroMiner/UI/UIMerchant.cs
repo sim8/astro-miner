@@ -109,7 +109,7 @@ public class UIMerchantItemRow : UIElement
         Children =
         [
             // Item image
-            new UIImageElement(game, "icons", itemConfig.GetSourceRect())
+            new UIImageElement(game, Tx.Icons, itemConfig.GetSourceRect())
             {
                 FixedWidth = 32 * game.StateManager.Ui.UIScale,
                 FixedHeight = 32 * game.StateManager.Ui.UIScale

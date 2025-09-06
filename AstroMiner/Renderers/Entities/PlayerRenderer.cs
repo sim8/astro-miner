@@ -1,3 +1,4 @@
+using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
@@ -38,6 +39,6 @@ public class PlayerRenderer(
 
         var tintColor = ViewHelpers.GetEntityTintColor(shared.GameStateManager.Ecs, entityId);
 
-        spriteBatch.Draw(shared.Textures["player"], destinationRectangle, sourceRectangle, tintColor);
+        spriteBatch.Draw(shared.Textures[Tx.Player], destinationRectangle, sourceRectangle, tintColor);
     }
 }

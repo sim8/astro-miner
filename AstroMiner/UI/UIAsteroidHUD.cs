@@ -80,32 +80,32 @@ public class UIMinimap : UIElement
         var extendedGridSize = MINIMAP_GRID_SIZE + 1;
 
         for (var minimapX = 0; minimapX < extendedGridSize; minimapX++)
-        for (var minimapY = 0; minimapY < extendedGridSize; minimapY++)
-        {
-            // Calculate position with floating-point offset
-            var cellPosX = (minimapX - playerGridOffsetX) * minimapGridSizePx;
-            var cellPosY = (minimapY - playerGridOffsetY) * minimapGridSizePx;
+            for (var minimapY = 0; minimapY < extendedGridSize; minimapY++)
+            {
+                // Calculate position with floating-point offset
+                var cellPosX = (minimapX - playerGridOffsetX) * minimapGridSizePx;
+                var cellPosY = (minimapY - playerGridOffsetY) * minimapGridSizePx;
 
-            var destX = X + cellPosX;
-            var destY = Y + cellPosY;
+                var destX = X + cellPosX;
+                var destY = Y + cellPosY;
 
-            // Calculate the grid coordinates for this cell
-            var gridX = (int)Math.Floor(playerXFloat) - GRID_DISTANCE_TO_EDGE_OF_MINIMAP + minimapX;
-            var gridY = (int)Math.Floor(playerYFloat) - GRID_DISTANCE_TO_EDGE_OF_MINIMAP + minimapY;
+                // Calculate the grid coordinates for this cell
+                var gridX = (int)Math.Floor(playerXFloat) - GRID_DISTANCE_TO_EDGE_OF_MINIMAP + minimapX;
+                var gridY = (int)Math.Floor(playerYFloat) - GRID_DISTANCE_TO_EDGE_OF_MINIMAP + minimapY;
 
-            var color = GetCellColorForMinimap(gridX, gridY) * 0.5f;
+                var color = GetCellColorForMinimap(gridX, gridY) * 0.5f;
 
-            // Create rectangle for this cell
-            var cellRect = new Rectangle((int)destX, (int)destY, minimapGridSizePx, minimapGridSizePx);
+                // Create rectangle for this cell
+                var cellRect = new Rectangle((int)destX, (int)destY, minimapGridSizePx, minimapGridSizePx);
 
-            // Crop the cell rectangle to fit within the minimap bounds
-            var minimapBounds = new Rectangle(X, Y, ComputedWidth, ComputedHeight);
-            var intersection = Rectangle.Intersect(cellRect, minimapBounds);
+                // Crop the cell rectangle to fit within the minimap bounds
+                var minimapBounds = new Rectangle(X, Y, ComputedWidth, ComputedHeight);
+                var intersection = Rectangle.Intersect(cellRect, minimapBounds);
 
-            // Only draw if there's a visible intersection
-            if (intersection.Width > 0 && intersection.Height > 0)
-                spriteBatch.Draw(_game.Textures["white"], intersection, color);
-        }
+                // Only draw if there's a visible intersection
+                if (intersection.Width > 0 && intersection.Height > 0)
+                    spriteBatch.Draw(_game.Textures[Tx.White], intersection, color);
+            }
 
         base.Render(spriteBatch);
     }

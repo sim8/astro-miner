@@ -54,7 +54,7 @@ public class GameModelSerializationTests
         // Texture component
         var textureComponent = new TextureComponent
         {
-            TextureName = "player"
+            TextureName = Tx.Player
         };
         model.Ecs.ComponentsByEntityId.Texture[entityId] = textureComponent;
 
