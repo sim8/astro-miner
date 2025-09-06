@@ -39,7 +39,7 @@ public static class StaticWorlds
         {
             {
                 // ----------------------------------------------------0,1,2,3,4,5,6,7
-                World.RigRoom, new StaticWorldConfig("rig-room", 8, 9, """
+                World.RigRoom, new StaticWorldConfig(Tx.RigRoom, 8, 9, """
                                                                        X,X,X,X,X,X,X,X
                                                                        X,X,X,X,X,X,X,X
                                                                        X,X,X,X,X,X,X,X
@@ -53,7 +53,7 @@ public static class StaticWorlds
             },
             {
                 // --------------------------------------------------------0,1,2,3,4,5,6,7,8,9,0,1,2,3
-                World.Krevik, new StaticWorldConfig("krevik-docks", 14, 8, """
+                World.Krevik, new StaticWorldConfig(Tx.KrevikDocks, 14, 8, """
                                                                            X,X,X,X,X,X,X,X,X,X,X,X,X,X
                                                                            X,-,-,X,X,X,X,-,-,-,-,-,-,X
                                                                            X,-,-,X,X,X,X,-,-,-,-,-,-,X
@@ -66,7 +66,7 @@ public static class StaticWorlds
             },
             {
                 // ------------------------------------------------0,1,2,3,4,5,6,7
-                World.MinEx, new StaticWorldConfig("min-ex", 8, 9, """
+                World.MinEx, new StaticWorldConfig(Tx.MinEx, 8, 9, """
                                                                    X,X,X,X,X,X,X,X
                                                                    X,X,X,X,X,X,X,X
                                                                    X,X,X,X,X,X,X,X
@@ -81,7 +81,7 @@ public static class StaticWorlds
             {
                 // -0-------------------1-------------------2--------------
                 // -0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7
-                World.Home, new StaticWorldConfig("oizus-bg", Coordinates.Grid.OizusWidth, Coordinates.Grid.OizusHeight,
+                World.Home, new StaticWorldConfig(Tx.OizusBg, Coordinates.Grid.OizusWidth, Coordinates.Grid.OizusHeight,
                     """
                     X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
                     X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
@@ -117,7 +117,7 @@ public static class StaticWorlds
             {
                 // -------------------------------------------------------0-------------------1-------------------2-------------------3
                 // -------------------------------------------------------0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0
-                World.ShipUpstairs, new StaticWorldConfig("ship", 31, 11, """
+                World.ShipUpstairs, new StaticWorldConfig(Tx.Ship, 31, 11, """
                                                                           X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
                                                                           X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
                                                                           X,X,X,X,X,X,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,X,X,X,X,-,-,X,X
@@ -134,7 +134,7 @@ public static class StaticWorlds
             {
                 // ---------------------------------------------------------0-------------------1-------------------2-------------------3-------------------4
                 // ---------------------------------------------------------0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0
-                World.ShipDownstairs, new StaticWorldConfig("ship", 41, 11, """
+                World.ShipDownstairs, new StaticWorldConfig(Tx.Ship, 41, 11, """
                                                                             X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
                                                                             X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X
                                                                             X,X,X,X,-,-,-,-,-,X,-,-,-,-,-,X,-,-,-,-,-,-,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X

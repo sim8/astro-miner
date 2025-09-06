@@ -111,7 +111,7 @@ public sealed class UIInventoryItem : UIElement
                         BackgroundColor = Colors.LightBlue
                     }
                     : null,
-                new UIImageElement(game, "icons", sourceRect)
+                new UIImageElement(game, Tx.Icons, sourceRect)
                 {
                     Padding = 2 * game.StateManager.Ui.UIScale,
                     FixedWidth = 32 * game.StateManager.Ui.UIScale,

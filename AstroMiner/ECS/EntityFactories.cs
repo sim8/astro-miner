@@ -225,7 +225,7 @@ public class EntityFactories
         interactiveComponent.InteractableDistance = 1.5f;
 
         var textureComponent = _ecs.AddComponent<TextureComponent>(entityId);
-        textureComponent.TextureName = "launch-console";
+        textureComponent.TextureName = Tx.LaunchConsole;
         textureComponent.TopPaddingPx = 10;
 
         return entityId;
@@ -285,7 +285,7 @@ public class EntityFactories
         slidingDoorComponent.IsElevator = isElevator;
 
         var textureComponent = _ecs.AddComponent<TextureComponent>(entityId);
-        textureComponent.TextureName = "door";
+        textureComponent.TextureName = Tx.Door;
         textureComponent.TopPaddingPx = 60;
 
         textureComponent.TextureOffsetYPx = isElevator ? 64 : 0;
@@ -307,7 +307,7 @@ public class EntityFactories
         positionComponent.IsCollideable = true;
 
         var textureComponent = _ecs.AddComponent<TextureComponent>(entityId);
-        textureComponent.TextureName = "ship";
+        textureComponent.TextureName = Tx.Ship;
         textureComponent.TopPaddingPx = 160;
         textureComponent.LeftPaddingPx = 64;
         textureComponent.BottomPaddingPx = 32;

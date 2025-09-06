@@ -1,3 +1,4 @@
+using AstroMiner.Definitions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -55,7 +56,7 @@ public class UIMainMenu : UIScreen
     public override void Render(SpriteBatch spriteBatch)
     {
         var screenDestRect = new Rectangle(X, Y, ComputedWidth, ComputedHeight);
-        spriteBatch.Draw(_game.Textures["white"], screenDestRect, Colors.VeryDarkBlue);
+        spriteBatch.Draw(_game.Textures[Tx.White], screenDestRect, Colors.VeryDarkBlue);
 
         _game.StateManager.Ui.State.StarBackground.Render(spriteBatch, _game.Textures);
 

@@ -1,4 +1,5 @@
 using System;
+using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -42,7 +43,7 @@ public class DynamiteRenderer(
         var destinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(positionComponent.Position,
             6, 11, DynamiteBoxOffsetX, DynamiteBoxOffsetY);
 
-        spriteBatch.Draw(shared.Textures["dynamite"], destinationRectangle, sourceRectangle, Color.White);
+        spriteBatch.Draw(shared.Textures[Tx.Dynamite], destinationRectangle, sourceRectangle, Color.White);
 
         var fuseLeftPx = (int)Math.Floor(fuseComponent.FusePercentLeft * FuseLengthPx);
 
@@ -57,7 +58,7 @@ public class DynamiteRenderer(
             var sparksDestinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(positionComponent.Position,
                 SparksBoxSize, SparksBoxSize, 0, -(5 + fuseLeftPx));
 
-            spriteBatch.Draw(shared.Textures["dynamite"], sparksDestinationRectangle, sparksSourceRectangle,
+            spriteBatch.Draw(shared.Textures[Tx.Dynamite], sparksDestinationRectangle, sparksSourceRectangle,
                 Color.White);
         }
     }

@@ -1,4 +1,5 @@
 using System;
+using AstroMiner.Definitions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -37,7 +38,7 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
             {
                 var xPos = startX + col * RenderedWidth;
                 spriteBatch.Draw(
-                    shared.Textures["mountains-nice-tiled"],
+                    shared.Textures[Tx.MountainsNiceTiled],
                     new Rectangle(xPos, yPos, RenderedWidth, RenderedHeight),
                     Color.White
                 );

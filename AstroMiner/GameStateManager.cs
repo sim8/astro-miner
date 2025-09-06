@@ -130,7 +130,7 @@ public class GameStateManager(BaseGame game)
         // Background clouds (slower, smaller)
         CloudEffects.AddLayer(new ScrollingEffectLayer
         {
-            TextureName = "cloud-background",
+            TextureName = Tx.CloudBackground,
             TextureSize = 256, // Equivalent to CloudManager.BackgroundCloudSizePx
             Speed = 1000f,
             Density = 0.15f // Adjusted for density-based spawning
@@ -139,7 +139,7 @@ public class GameStateManager(BaseGame game)
         // Foreground clouds (faster, larger)
         CloudEffects.AddLayer(new ScrollingEffectLayer
         {
-            TextureName = "cloud-background",
+            TextureName = Tx.CloudBackground,
             TextureSize = 1024, // Equivalent to CloudManager.ForegroundCloudSizePx
             Speed = 4000f,
             Density = 0.1f // Adjusted for density-based spawning

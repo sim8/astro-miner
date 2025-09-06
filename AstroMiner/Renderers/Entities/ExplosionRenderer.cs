@@ -1,3 +1,4 @@
+using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -26,7 +27,7 @@ public class ExplosionRenderer(
         var sourceRectangle = new Rectangle(frameIndex * SourceSizePx, 0, SourceSizePx, SourceSizePx);
         var destinationRectangle = shared.ViewHelpers.GetVisibleRectForObject(positionComponent.Position,
             SizePx, SizePx, -(SizePx / 2), -(SizePx / 2));
-        spriteBatch.Draw(shared.Textures["explosion"], destinationRectangle, sourceRectangle, Color.White);
+        spriteBatch.Draw(shared.Textures[Tx.Explosion], destinationRectangle, sourceRectangle, Color.White);
     }
 
     public void RenderLightSource(SpriteBatch spriteBatch, int entityId)

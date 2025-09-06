@@ -15,10 +15,10 @@ public class LaunchParallaxRenderer(RendererShared shared)
 
     private void RenderLayer(SpriteBatch spriteBatch, float gridY, float parallaxLayer, float opacity)
     {
-        spriteBatch.Draw(shared.Textures["mountains-nice"],
+        spriteBatch.Draw(shared.Textures[Tx.MountainsNice],
             shared.ViewHelpers.GetVisibleRectForGridCell(BackgroundX, gridY, 25,
                 20, parallaxLayer), Color.White);
-        spriteBatch.Draw(shared.Textures["mountains-nice-mask"],
+        spriteBatch.Draw(shared.Textures[Tx.MountainsNiceMask],
             shared.ViewHelpers.GetVisibleRectForGridCell(BackgroundX, gridY, 25,
                 20, parallaxLayer), Color.White * opacity);
     }
@@ -29,7 +29,7 @@ public class LaunchParallaxRenderer(RendererShared shared)
         RenderLayer(spriteBatch, Coordinates.Grid.ParallaxMountains2Y, 0.15f, 0.6f);
         RenderLayer(spriteBatch, Coordinates.Grid.ParallaxMountains1Y, 0.2f, 0.3f);
 
-        spriteBatch.Draw(shared.Textures["oizus-rocks-under"],
+        spriteBatch.Draw(shared.Textures[Tx.OizusRocksUnder],
             shared.ViewHelpers.GetVisibleRectForGridCell(Coordinates.Grid.UnderRocksX, Coordinates.Grid.UnderRocksY, 23,
                 20, 0.6f), Color.White);
     }

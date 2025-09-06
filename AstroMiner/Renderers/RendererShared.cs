@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using AstroMiner.Definitions;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,7 +21,7 @@ public class RendererShared(
     {
         var offset = -(size / 2);
         var destinationRect = ViewHelpers.GetVisibleRectForObject(pos, size, size, offset, offset);
-        spriteBatch.Draw(Textures["radial-light"], destinationRect, color * opacity);
+        spriteBatch.Draw(Textures[Tx.RadialLight], destinationRect, color * opacity);
     }
 
     public void RenderRadialLightSource(SpriteBatch spriteBatch, Vector2 pos, int size = 256, float opacity = 1)
@@ -43,9 +44,9 @@ public class RendererShared(
             _ => 0
         };
 
-        var origin = new Vector2(Textures["directional-light"].Width / 2f, Textures["directional-light"].Height);
+        var origin = new Vector2(Textures[Tx.DirectionalLight].Width / 2f, Textures[Tx.DirectionalLight].Height);
 
-        spriteBatch.Draw(Textures["directional-light"], destinationRect, null, Color.White * opacity, radians, origin,
+        spriteBatch.Draw(Textures[Tx.DirectionalLight], destinationRect, null, Color.White * opacity, radians, origin,
             SpriteEffects.None, 0);
     }
 
@@ -56,7 +57,7 @@ public class RendererShared(
         {
             var sourceRect = new Rectangle(x, y, width, 8);
             var destRect = new Rectangle(startX + letterXOffset * scale, startY + 10, width * scale, height * scale);
-            spriteBatch.Draw(Textures["dogica-font"], destRect, sourceRect, Color.LimeGreen);
+            spriteBatch.Draw(Textures[Tx.DogicaFont], destRect, sourceRect, Color.LimeGreen);
             letterXOffset += width;
         }
     }

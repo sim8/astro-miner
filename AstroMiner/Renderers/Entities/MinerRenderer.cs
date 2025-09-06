@@ -58,7 +58,7 @@ public class MinerRenderer(
 
 
 
-        spriteBatch.Draw(shared.Textures["miner-no-tracks"], minerNoTracksDesignationRect, sourceRectangle, tintColor);
+        spriteBatch.Draw(shared.Textures[Tx.MinerNoTracks], minerNoTracksDesignationRect, sourceRectangle, tintColor);
     }
 
     private bool ShowIdlingAnimation(int entityId)
@@ -73,18 +73,18 @@ public class MinerRenderer(
     {
         // Movement removed when off asteroid
         var movementComponent = shared.GameStateManager.Ecs.GetComponent<MovementComponent>(entityId);
-        if (movementComponent == null) return shared.Textures["tracks-1"];
+        if (movementComponent == null) return shared.Textures[Tx.Tracks1];
 
         var (gridX, gridY) = ViewHelpers.GridPosToTexturePx(position);
         switch (direction)
         {
-            case Direction.Top: return shared.Textures["tracks-" + (2 - gridY % 3)];
-            case Direction.Right: return shared.Textures["tracks-" + gridX % 3];
-            case Direction.Bottom: return shared.Textures["tracks-" + gridY % 3];
-            case Direction.Left: return shared.Textures["tracks-" + (2 - gridX % 3)];
+            case Direction.Top: return shared.Textures["Tracks" + (2 - gridY % 3)];
+            case Direction.Right: return shared.Textures["Tracks" + gridX % 3];
+            case Direction.Bottom: return shared.Textures["Tracks" + gridY % 3];
+            case Direction.Left: return shared.Textures["Tracks" + (2 - gridX % 3)];
         }
 
-        return shared.Textures["tracks-1"];
+        return shared.Textures[Tx.Tracks1];
     }
 
     private void RenderGrapple(SpriteBatch spriteBatch, int entityId)
@@ -136,7 +136,7 @@ public class MinerRenderer(
                 grappleVisibleGridWidth),
             _ => throw new ArgumentOutOfRangeException()
         };
-        spriteBatch.Draw(shared.Textures["white"], leftDestRect, Color.Black);
+        spriteBatch.Draw(shared.Textures[Tx.White], leftDestRect, Color.Black);
 
         // Render right grapple
         var rightDestRect = directionComponent.Direction switch
@@ -161,6 +161,6 @@ public class MinerRenderer(
                 grappleVisibleGridWidth),
             _ => throw new ArgumentOutOfRangeException()
         };
-        spriteBatch.Draw(shared.Textures["white"], rightDestRect, Color.Black);
+        spriteBatch.Draw(shared.Textures[Tx.White], rightDestRect, Color.Black);
     }
 }

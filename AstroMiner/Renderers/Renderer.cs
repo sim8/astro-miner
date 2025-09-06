@@ -93,7 +93,7 @@ public class Renderer
             var (viewportWidth, viewportHeight) = _shared.ViewHelpers.GetViewportSize();
             spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
             // Draw base color (even though we set in GraphicsDevice.Clear, wiped by BackBuffer)
-            spriteBatch.Draw(_shared.Textures["white"], new Rectangle(0, 0, viewportWidth, viewportHeight),
+            spriteBatch.Draw(_shared.Textures[Tx.White], new Rectangle(0, 0, viewportWidth, viewportHeight),
                 Colors.VeryDarkBlue);
             RenderScene(spriteBatch);
 
@@ -116,7 +116,7 @@ public class Renderer
         if (_game.StateManager.TransitionManager.Opacity > 0)
         {
             var (viewportWidth, viewportHeight) = _shared.ViewHelpers.GetViewportSize();
-            spriteBatch.Draw(_shared.Textures["white"], new Rectangle(0, 0, viewportWidth, viewportHeight),
+            spriteBatch.Draw(_shared.Textures[Tx.White], new Rectangle(0, 0, viewportWidth, viewportHeight),
                 Colors.VeryDarkBlue * _game.StateManager.TransitionManager.Opacity);
         }
 
@@ -181,16 +181,16 @@ public class Renderer
                     positionComponent.WidthPx, positionComponent.HeightPx);
 
                 var topBorder = new Rectangle(destinationRectangle.X, destinationRectangle.Y, destinationRectangle.Width, borderWidth);
-                spriteBatch.Draw(_shared.Textures["white"], topBorder, borderColor);
+                spriteBatch.Draw(_shared.Textures[Tx.White], topBorder, borderColor);
 
                 var bottomBorder = new Rectangle(destinationRectangle.X, destinationRectangle.Y + destinationRectangle.Height - borderWidth, destinationRectangle.Width, borderWidth);
-                spriteBatch.Draw(_shared.Textures["white"], bottomBorder, borderColor);
+                spriteBatch.Draw(_shared.Textures[Tx.White], bottomBorder, borderColor);
 
                 var leftBorder = new Rectangle(destinationRectangle.X, destinationRectangle.Y, borderWidth, destinationRectangle.Height);
-                spriteBatch.Draw(_shared.Textures["white"], leftBorder, borderColor);
+                spriteBatch.Draw(_shared.Textures[Tx.White], leftBorder, borderColor);
 
                 var rightBorder = new Rectangle(destinationRectangle.X + destinationRectangle.Width - borderWidth, destinationRectangle.Y, borderWidth, destinationRectangle.Height);
-                spriteBatch.Draw(_shared.Textures["white"], rightBorder, borderColor);
+                spriteBatch.Draw(_shared.Textures[Tx.White], rightBorder, borderColor);
             }
         }
     }
