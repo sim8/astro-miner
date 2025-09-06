@@ -193,6 +193,18 @@
 /processorParam:TextureFormat=Color
 /build:img/cloud-background.png
 
+#begin img/cloud-background-many.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:img/cloud-background-many.png
+
 #begin img/land-background.png
 /importer:TextureImporter
 /processor:TextureProcessor

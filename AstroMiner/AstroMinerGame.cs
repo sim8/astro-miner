@@ -45,6 +45,7 @@ public class AstroMinerGame : BaseGame
         LoadTexture("dynamite");
         LoadTexture("explosion");
         LoadTexture("cloud-background");
+        LoadTexture("cloud-background-many");
         LoadTexture("land-background");
         LoadTexture("grapple-icon");
         LoadTexture("oizus-bg");
