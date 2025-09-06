@@ -15,6 +15,59 @@ to_property_name() {
     echo "${filename%.*}"
 }
 
+# Function to validate filename format
+validate_filename() {
+    local filename="$1"
+    local basename_no_ext="${filename%.*}"
+    
+    # Check if filename starts with capital letter and only contains letters, numbers, underscores
+    if [[ ! "$basename_no_ext" =~ ^[A-Z][A-Za-z0-9_]*$ ]]; then
+        echo "ERROR: Invalid filename format '$filename'. Filenames must start with a capital letter and only contain letters, numbers, or underscores." >&2
+        return 1
+    fi
+    return 0
+}
+
+# Function to validate all files in a directory recursively
+validate_all_files() {
+    local dir="$1"
+    local has_errors=0
+    
+    # Check for non-PNG files
+    for file in "$dir"/*; do
+        [ -f "$file" ] || continue
+        local filename=$(basename "$file")
+        
+        # Skip if it's a PNG file (we'll validate PNG filenames separately)
+        if [[ "$filename" == *.png ]]; then
+            continue
+        fi
+        
+        echo "ERROR: Non-PNG file found: $file" >&2
+        has_errors=1
+    done
+    
+    # Validate PNG filenames
+    for file in "$dir"/*.png; do
+        [ -f "$file" ] || continue
+        local filename=$(basename "$file")
+        
+        if ! validate_filename "$filename"; then
+            has_errors=1
+        fi
+    done
+    
+    # Process subdirectories recursively
+    for subdir in "$dir"/*/; do
+        [ -d "$subdir" ] || continue
+        if ! validate_all_files "$subdir"; then
+            has_errors=1
+        fi
+    done
+    
+    return $has_errors
+}
+
 # Function to generate class content recursively
 generate_class_content() {
     local dir="$1"
@@ -129,6 +182,14 @@ generate_mgcb_texture_entries() {
         generate_mgcb_texture_entries "$subdir" "$sub_relative_path"
     done
 }
+
+# Validate all files before generating
+echo "Validating files in $sourceDirectory..."
+if ! validate_all_files "$sourceDirectory"; then
+    echo "Validation failed. Aborting generation." >&2
+    exit 1
+fi
+echo "Validation passed."
 
 # Generate the C# file
 cat > "$txDestinationPath" << 'EOF'
