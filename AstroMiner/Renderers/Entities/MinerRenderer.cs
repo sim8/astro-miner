@@ -58,7 +58,7 @@ public class MinerRenderer(
 
 
 
-        spriteBatch.Draw(shared.Textures[Tx.MinerNoTracks], minerNoTracksDesignationRect, sourceRectangle, tintColor);
+        spriteBatch.Draw(shared.Textures[Tx.Miner.MinerNoTracks], minerNoTracksDesignationRect, sourceRectangle, tintColor);
     }
 
     private bool ShowIdlingAnimation(int entityId)
@@ -73,18 +73,18 @@ public class MinerRenderer(
     {
         // Movement removed when off asteroid
         var movementComponent = shared.GameStateManager.Ecs.GetComponent<MovementComponent>(entityId);
-        if (movementComponent == null) return shared.Textures[Tx.Tracks1];
+        if (movementComponent == null) return shared.Textures[Tx.Miner.Tracks1];
 
         var (gridX, gridY) = ViewHelpers.GridPosToTexturePx(position);
         switch (direction)
         {
-            case Direction.Top: return shared.Textures["Tracks" + (2 - gridY % 3)];
-            case Direction.Right: return shared.Textures["Tracks" + gridX % 3];
-            case Direction.Bottom: return shared.Textures["Tracks" + gridY % 3];
-            case Direction.Left: return shared.Textures["Tracks" + (2 - gridX % 3)];
+            case Direction.Top: return shared.Textures["Miner/Tracks" + (2 - gridY % 3)];
+            case Direction.Right: return shared.Textures["Miner/Tracks" + gridX % 3];
+            case Direction.Bottom: return shared.Textures["Miner/Tracks" + gridY % 3];
+            case Direction.Left: return shared.Textures["Miner/Tracks" + (2 - gridX % 3)];
         }
 
-        return shared.Textures[Tx.Tracks1];
+        return shared.Textures[Tx.Miner.Tracks1];
     }
 
     private void RenderGrapple(SpriteBatch spriteBatch, int entityId)
