@@ -139,7 +139,7 @@ public class MovementSystem : System
         var maxDistance = 2f;
         var damageMultiplier = 0.1f;
 
-        var cellsInRadius = Ecs.ExplosionSystem.GetCellsInRadius(position.CenterPosition.X, position.CenterPosition.Y, maxDistance);
+        var cellsInRadius = AsteroidGridHelpers.GetCellsInRadius(position.CenterPosition.X, position.CenterPosition.Y, maxDistance);
         foreach (var (x, y, cellDistance) in cellsInRadius)
         {
             var percentageOfDamageToApply = cellDistance / maxDistance;
