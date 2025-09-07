@@ -197,8 +197,7 @@ public class Ecs
     public IEnumerable<T> GetAllComponents<T>() where T : Component
     {
         var components = GetComponentsOfType<T>();
-
-        foreach (var component in components.Values) yield return component;
+        return components.Values.ToList();
     }
 
     public IEnumerable<T> GetAllComponentsInActiveWorld<T>() where T : Component
