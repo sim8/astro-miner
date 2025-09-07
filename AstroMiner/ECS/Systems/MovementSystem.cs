@@ -124,8 +124,28 @@ public class MovementSystem : System
                 return false;
         }
 
+        MaybeUpdateStability(positionComponent, newPosition);
+
         positionComponent.Position = newPosition;
         return true;
+    }
+
+    private void MaybeUpdateStability(PositionComponent position, Vector2 newPosition)
+    {
+        if (!game.StateManager.AsteroidWorld.IsInMiner) return;
+
+        var delta = Vector2.Distance(position.Position, newPosition);
+
+        var maxDistance = 4f;
+        var damageMultiplier = 0.1f;
+
+        var cellsInRadius = Ecs.ExplosionSystem.GetCellsInRadius(position.CenterPosition.X, position.CenterPosition.Y, maxDistance);
+        foreach (var (x, y, cellDistance) in cellsInRadius)
+        {
+            var percentageOfDamageToApply = cellDistance / maxDistance;
+            var damageToApply = percentageOfDamageToApply * delta * damageMultiplier;
+            game.StateManager.AsteroidWorld.Grid.GetCellState(x, y).Stability -= damageToApply;
+        }
     }
 
 
@@ -194,7 +214,8 @@ public class MovementSystem : System
                 ? -(positionComponent.GridWidth / 2)
                 : positionComponent.GridWidth /
                   2); // TODO should be width OR height depending on direction. Is the same anyway for mining components
-        var actualDirection = DirectionHelpers.GetRotatedDirection(directionalEntityDirectionComponent.Direction, rotation);
+        var actualDirection =
+            DirectionHelpers.GetRotatedDirection(directionalEntityDirectionComponent.Direction, rotation);
         var newCenterPos = actualDirection switch
         {
             Direction.Top => directionalEntityPositionComponent.CenterPosition +

@@ -26,7 +26,7 @@ public class ExplosionSystem : System
         var gridPos = ViewHelpers.ToGridPosition(position);
         var explodedCells = GetCellsInRadius(position.X, position.Y, ExplodeRockRadius);
 
-        foreach (var (x, y) in explodedCells)
+        foreach (var (x, y, distance) in explodedCells)
             // If x,y = gridPos, already triggered explosion
             if (game.StateManager.AsteroidWorld.Grid.GetWallType(x, y) == WallType.ExplosiveRock && (x, y) != gridPos)
             {
@@ -61,9 +61,10 @@ public class ExplosionSystem : System
         }
     }
 
-    private List<(int x, int y)> GetCellsInRadius(float centerX, float centerY, float radius)
+    // TODO move elsehwere. Can be static + use GameConfig.GridSize
+    public List<(int x, int y, float distance)> GetCellsInRadius(float centerX, float centerY, float radius)
     {
-        var cells = new List<(int x, int y)>();
+        var cells = new List<(int x, int y, float distance)>();
 
         // Calculate the bounds to iterate over, based on the radius
         var startX = Math.Max(0, (int)Math.Floor(centerX - radius));
@@ -81,7 +82,7 @@ public class ExplosionSystem : System
             var distance = (float)Math.Sqrt(Math.Pow(cellCenterX - centerX, 2) + Math.Pow(cellCenterY - centerY, 2));
 
             // If the distance is less than or equal to the radius, include the cell
-            if (distance <= radius) cells.Add((i, j));
+            if (distance <= radius) cells.Add((i, j, distance));
         }
 
         return cells;
