@@ -57,13 +57,18 @@ public class CellStabilitySystem(Ecs ecs, BaseGame game) : System(ecs, game)
     {
         var cellState = game.StateManager.AsteroidWorld.Grid.GetCellState(x, y);
 
-        if (!CellCanDeteriorate(cellState) || game.Model.Asteroid.CriticalStabilityCells.Contains((x, y)))
+        if (!CellCanDeteriorate(cellState) || game.Model.Asteroid.CriticalStabilityCells.Contains((x, y)) ||
+            cellState.Stability <= CriticalStabilityThreshold)
             return;
 
         cellState.Stability = Math.Max(CriticalStabilityThreshold, stabilityFunc(cellState.Stability));
 
         if (cellState.Stability == CriticalStabilityThreshold)
+        {
+            // TODO do we still need FloorType.CollapsingLavaCracks?
+            if (cellState.FloorType == FloorType.LavaCracks) cellState.FloorType = FloorType.CollapsingLavaCracks;
             game.Model.Asteroid.CriticalStabilityCells.Add((x, y));
+        }
     }
 
     public void UpdateCellStabilityForMovement(PositionComponent position, float distanceMoved)
