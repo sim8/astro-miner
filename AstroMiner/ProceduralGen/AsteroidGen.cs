@@ -98,8 +98,8 @@ public static class AsteroidGen
 
         var normalizedStability = 1f - Math.Clamp((noise2Value - (LavaNoise2Start - UnstableNoiseRange)) / UnstableNoiseRange, 0f, 1f);
 
-        // Map from 0-1 range to CriticalStabilityThreshold-1 range while preserving distribution
-        return CellStabilitySystem.CriticalStabilityThreshold + normalizedStability * (1f - CellStabilitySystem.CriticalStabilityThreshold);
+        var minimum = CellStabilitySystem.CriticalStabilityThreshold * 1.01f; // Add a small buffer ensure all cells stable
+        return minimum + normalizedStability * (1f - minimum);
     }
 
     private static CellState[,] InitializeGrid(int gridSize, PerlinNoiseGenerator perlinNoise1,

@@ -194,6 +194,9 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
 
                 var coordinatesStr = col + " " + row;
                 Shared.RenderString(spriteBatch, cellRect.X, cellRect.Y, coordinatesStr, 1);
+
+                var stabilityStr = cellState.Stability.ToString("F2").Replace(".", " ");
+                Shared.RenderString(spriteBatch, cellRect.X, cellRect.Y + cellRect.Height / 2, stabilityStr, 1);
             });
     }
 }
