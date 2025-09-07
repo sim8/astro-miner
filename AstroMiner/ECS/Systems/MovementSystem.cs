@@ -136,7 +136,7 @@ public class MovementSystem : System
 
         var delta = Vector2.Distance(position.Position, newPosition);
 
-        var maxDistance = 4f;
+        var maxDistance = 2f;
         var damageMultiplier = 0.1f;
 
         var cellsInRadius = Ecs.ExplosionSystem.GetCellsInRadius(position.CenterPosition.X, position.CenterPosition.Y, maxDistance);
@@ -144,7 +144,12 @@ public class MovementSystem : System
         {
             var percentageOfDamageToApply = cellDistance / maxDistance;
             var damageToApply = percentageOfDamageToApply * delta * damageMultiplier;
-            game.StateManager.AsteroidWorld.Grid.GetCellState(x, y).Stability -= damageToApply;
+            var cellState = game.StateManager.AsteroidWorld.Grid.GetCellState(x, y);
+            cellState.Stability -= damageToApply;
+            if (cellState.Stability < .2f)
+            {
+                game.StateManager.AsteroidWorld.Grid.ActivateCollapsingFloorCell(x, y);
+            }
         }
     }
 

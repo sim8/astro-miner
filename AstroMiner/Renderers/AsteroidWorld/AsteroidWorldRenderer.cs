@@ -116,6 +116,7 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
             });
     }
 
+
     private void RenderLavaCracks(SpriteBatch spriteBatch, int col, int row)
     {
         var cellState = _gameStateManager.AsteroidWorld.Grid.GetCellState(col, row);
@@ -128,7 +129,7 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
             spriteBatch.Draw(Shared.Textures[Tx.Cracks],
                 Shared.ViewHelpers.GetVisibleRectForGridCell(col, row),
                 new Rectangle(0, 0, 32, 32),
-                Color.White);
+                Color.White * MathHelpers.GetPercentageBetween(cellState.Stability, 1f, 0.2f));
 
         if (cellState.FloorType == FloorType.CollapsingLavaCracks)
         {
@@ -166,8 +167,8 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
         var (startCol, startRow, endCol, endRow) = Shared.ViewHelpers.GetVisibleGrid(padding);
 
         for (var row = startRow; row < endRow; row++)
-        for (var col = startCol; col < endCol; col++)
-            cellAction(col, row);
+            for (var col = startCol; col < endCol; col++)
+                cellAction(col, row);
     }
 
     private void RenderGridDebugOverlay(SpriteBatch spriteBatch)

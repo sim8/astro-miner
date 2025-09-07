@@ -61,6 +61,8 @@ public class GridState(BaseGame game)
         if (_activeCollapsingFloorCells.ContainsKey((x, y)) || GetFloorType(x, y) != FloorType.LavaCracks ||
             GetWallType(x, y) != WallType.Empty) return;
 
+        if (GetCellState(x, y).Stability >= .4f) return;
+
         _activeCollapsingFloorCells.Add((x, y), new ActiveCollapsingFloorCell(game, (x, y)));
     }
 

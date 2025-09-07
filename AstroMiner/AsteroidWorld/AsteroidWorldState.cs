@@ -11,7 +11,6 @@ namespace AstroMiner.AsteroidWorld;
 
 public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
 {
-    public CollapsingFloorTriggerer CollapsingFloorTriggerer;
     public List<(int x, int y)> EdgeCells;
     public FogAnimationManager FogAnimationManager;
     public GridState Grid;
@@ -48,7 +47,6 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
         Grid.MarkAllDistancesFromExploredFloor(minerPosX, minerPosY, true);
 
         EdgeCells = UserInterfaceHelpers.GetAsteroidEdgeCells(Grid);
-        CollapsingFloorTriggerer = new CollapsingFloorTriggerer(game);
         FogAnimationManager = new FogAnimationManager(game);
         game.Model.Asteroid.WillExplodeAt =
             game.StateManager.GetTotalPlayTime() + GameConfig.AsteroidExplodeTimeMs;
@@ -75,8 +73,6 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
 
         foreach (var cell in Grid._activeExplosiveRockCells) cell.Value.Update(gameTime);
         foreach (var cell in Grid._activeCollapsingFloorCells.Values.ToList()) cell.Update(gameTime);
-
-        CollapsingFloorTriggerer.Update(gameTime);
 
         FogAnimationManager.Update(gameTime);
     }
