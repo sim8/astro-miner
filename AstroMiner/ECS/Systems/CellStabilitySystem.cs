@@ -23,52 +23,47 @@ public class CellStabilitySystem(Ecs ecs, BaseGame game) : System(ecs, game)
 
         foreach (var (x, y) in game.Model.Asteroid.CriticalStabilityCells.ToList())
         {
-            var newStability = UpdateCellStability(x, y,
-                stability =>
-                    stability - gameTime.ElapsedGameTime.Milliseconds / (float)GameConfig.CollapsingFloorSpreadTime, true);
-            if (newStability == 0) game.Model.Asteroid.CriticalStabilityCells.Remove((x, y));
+            // Reduce stability of critical cells at constant rate
+            var cellState = game.StateManager.AsteroidWorld.Grid.GetCellState(x, y);
+            var prevStability = cellState.Stability;
+
+            cellState.Stability = Math.Max(0,
+                cellState.Stability -
+                gameTime.ElapsedGameTime.Milliseconds / (float)GameConfig.CollapsingFloorSpreadTime);
+
+            if (prevStability > 0 && cellState.Stability == 0)
+            {
+                GridState.Map4Neighbors(x, y,
+                    (nx, ny) => { UpdateCellStability(nx, ny, stability => stability - 0.1f); });
+                game.Model.Asteroid.CriticalStabilityCells.Remove((x, y));
+            }
         }
     }
 
-    private bool cellCanBeMadeUnstable(CellState cellState)
+    private static bool CellCanDeteriorate(CellState cellState)
     {
         if (cellState.WallType == WallType.ExplosiveRock) return true;
         if (cellState.WallType != WallType.Empty) return false;
 
-        return cellState.FloorType == FloorType.LavaCracks || cellState.FloorType == FloorType.CollapsingLavaCracks;
+        return cellState.FloorType is FloorType.LavaCracks or FloorType.CollapsingLavaCracks;
     }
 
-    public float UpdateCellStability(int x, int y, Func<float, float> stabilityFunc, bool updateIfCritical = false)
+
+    /***
+     * Updates cell stability via callback func. Cell will become critical if new stability is below threshold.
+     * Is a noop if cell is not valid type to have modified stability or if cell is already critical.
+     */
+    public void UpdateCellStability(int x, int y, Func<float, float> stabilityFunc)
     {
         var cellState = game.StateManager.AsteroidWorld.Grid.GetCellState(x, y);
-        var prevStability = cellState.Stability;
 
+        if (!CellCanDeteriorate(cellState) || game.Model.Asteroid.CriticalStabilityCells.Contains((x, y)))
+            return;
 
-        if (!cellCanBeMadeUnstable(cellState))
-            return prevStability;
+        cellState.Stability = Math.Max(CriticalStabilityThreshold, stabilityFunc(cellState.Stability));
 
-        if (!updateIfCritical && cellState.Stability <= CriticalStabilityThreshold)
-            return prevStability;
-
-
-        var newStability = stabilityFunc(cellState.Stability);
-        cellState.Stability = Math.Max(0, newStability);
-
-        if (prevStability == cellState.Stability) return cellState.Stability;
-
-        if (cellState.Stability < CriticalStabilityThreshold &&
-            !game.Model.Asteroid.CriticalStabilityCells.Contains((x, y)))
-        {
-            // TODO do we still need FloorType.CollapsingLavaCracks?
-            if (cellState.FloorType == FloorType.LavaCracks) cellState.FloorType = FloorType.CollapsingLavaCracks;
+        if (cellState.Stability == CriticalStabilityThreshold)
             game.Model.Asteroid.CriticalStabilityCells.Add((x, y));
-        }
-
-        if (cellState.Stability == 0)
-            GridState.Map4Neighbors(x, y,
-                (nx, ny) => { UpdateCellStability(nx, ny, stability => stability - 0.1f); });
-
-        return cellState.Stability;
     }
 
     public void UpdateCellStabilityForMovement(PositionComponent position, float distanceMoved)
