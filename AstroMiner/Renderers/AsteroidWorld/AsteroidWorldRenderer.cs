@@ -52,9 +52,7 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
                         var dualTilesetSourceRect =
                             Tilesets.GetWallQuadrantSourceRect(Shared.Game, col, row, corner);
 
-                        var tintColor = _gameStateManager.AsteroidWorld.Grid.ExplosiveRockCellIsActive(col, row)
-                            ? Color.Red
-                            : cellState.WallType == WallType.LooseRock
+                        var tintColor = cellState.WallType == WallType.LooseRock
                                 ? Color.LightGreen
                                 : Color.White;
 
@@ -62,6 +60,15 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
                             Shared.ViewHelpers.GetVisibleRectForWallQuadrant(col, row, corner),
                             dualTilesetSourceRect,
                             tintColor);
+
+                        // TEMP 
+                        if (cellState.WallType == WallType.ExplosiveRock)
+                        {
+                            spriteBatch.Draw(Shared.Textures[Tx.Tileset],
+                            Shared.ViewHelpers.GetVisibleRectForWallQuadrant(col, row, corner),
+                            dualTilesetSourceRect,
+                            Color.Red * (1f - cellState.Stability));
+                        }
                     }
                 }
 

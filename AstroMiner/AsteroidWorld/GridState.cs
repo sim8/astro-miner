@@ -32,40 +32,14 @@ public class GridState(BaseGame game)
         new[] { -1, 0, 1, 0 }
     );
 
-    public readonly Dictionary<(int x, int y), ActiveExplosiveRockCell> _activeExplosiveRockCells =
-        game.Model.Asteroid.ActiveExplosiveRockCells;
-
     private readonly CellState[,] _grid = game.Model.Asteroid.Grid;
     public int Columns => _grid.GetLength(0);
     public int Rows => _grid.GetLength(1);
-
-    public void ActivateExplosiveRockCell(int x, int y, int timeToExplodeMs = 1100)
-    {
-        if (_activeExplosiveRockCells.ContainsKey((x, y)))
-        {
-            _activeExplosiveRockCells[(x, y)].TimeToExplodeMs =
-                Math.Min(_activeExplosiveRockCells[(x, y)].TimeToExplodeMs, timeToExplodeMs);
-            return;
-        }
-
-        _activeExplosiveRockCells.Add((x, y), new ActiveExplosiveRockCell(game, (x, y), timeToExplodeMs));
-    }
 
     public float GetCollapsingCompletion(int x, int y)
     {
         return MathHelpers.GetPercentageBetween(GetCellState(x, y).Stability, CellStabilitySystem.CriticalStabilityThreshold, 0f);
     }
-
-    public void DeactivateExplosiveRockCell(int x, int y)
-    {
-        _activeExplosiveRockCells.Remove((x, y));
-    }
-
-    public bool ExplosiveRockCellIsActive(int x, int y)
-    {
-        return _activeExplosiveRockCells.ContainsKey((x, y));
-    }
-
 
     public CellState GetCellState(Vector2 position)
     {
@@ -110,7 +84,6 @@ public class GridState(BaseGame game)
     public void ClearWall(int x, int y)
     {
         _grid[y, x].WallType = WallType.Empty;
-        DeactivateExplosiveRockCell(x, y);
         MarkAllDistancesFromExploredFloor(x, y);
     }
 

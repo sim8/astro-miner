@@ -40,11 +40,11 @@ public class MiningSystem : System
 
         var wallType = game.StateManager.AsteroidWorld.Grid.GetWallType(x, y);
 
-        if (wallType == WallType.ExplosiveRock)
-        {
-            game.StateManager.AsteroidWorld.Grid.ActivateExplosiveRockCell(x, y, 100);
-            return; // No point adding to drilling time
-        }
+        // TODO needed?
+        // if (wallType == WallType.ExplosiveRock)
+        // {
+        //     return; // No point adding to drilling time
+        // }
 
         var wallTypeConfig = game.StateManager.AsteroidWorld.Grid.GetWallTypeConfig(x, y);
         if (wallTypeConfig is { IsMineable: true })

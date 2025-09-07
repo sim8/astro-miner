@@ -33,11 +33,26 @@ public class CellStabilitySystem(Ecs ecs, BaseGame game) : System(ecs, game)
 
             if (prevStability > 0 && cellState.Stability == 0)
             {
-                GridState.Map4Neighbors(x, y,
-                    (nx, ny) => { UpdateCellStability(nx, ny, stability => stability - 0.1f); });
+                HandleStabilityZero(x, y);
                 game.Model.Asteroid.CriticalStabilityCells.Remove((x, y));
             }
         }
+    }
+
+    private void HandleStabilityZero(int x, int y)
+    {
+        var cellState = game.StateManager.AsteroidWorld.Grid.GetCellState(x, y);
+        if (cellState.WallType == WallType.ExplosiveRock)
+        {
+            var explosionPos = new Vector2(x + 0.5f, y + 0.5f);
+            game.StateManager.Ecs.Factories.CreateExplosionEntity(explosionPos);
+        }
+        else if (cellState.WallType == WallType.Empty && (cellState.FloorType == FloorType.LavaCracks || cellState.FloorType == FloorType.CollapsingLavaCracks))
+        {
+            cellState.FloorType = FloorType.Lava;
+            GridState.Map4Neighbors(x, y, (nx, ny) => { UpdateCellStability(nx, ny, stability => stability - 0.1f); });
+        }
+
     }
 
     private static bool CellCanDeteriorate(CellState cellState)

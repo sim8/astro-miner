@@ -71,8 +71,6 @@ public class AsteroidWorldState(BaseGame game) : BaseWorldState(game)
 
         base.Update(activeControls, gameTime);
 
-        foreach (var cell in Grid._activeExplosiveRockCells) cell.Value.Update(gameTime);
-
         FogAnimationManager.Update(gameTime);
     }
 

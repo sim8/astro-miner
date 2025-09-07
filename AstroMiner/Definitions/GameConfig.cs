@@ -156,6 +156,12 @@ public static class GameConfig
             //----------------------------------------------
             // CRUST RULES
             //----------------------------------------------
+
+            new WallRule(WallType.ExplosiveRock, new RuleOptions // TEMP
+            {
+                DistanceRange = (MantleRadius, 1f),
+                Noise1Range = (0f, 0.28f)
+            }),
             new WallAndFloorRule(WallType.Empty, FloorType.Floor, new RuleOptions
             {
                 DistanceRange = (MantleRadius, 1f),

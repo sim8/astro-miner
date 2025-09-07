@@ -26,16 +26,15 @@ public class ExplosionSystem : System
         var gridPos = ViewHelpers.ToGridPosition(position);
         var explodedCells = AsteroidGridHelpers.GetCellsInRadius(position.X, position.Y, ExplodeRockRadius);
         foreach (var (x, y, _) in explodedCells)
+        {
             // If x,y = gridPos, already triggered explosion
-            if (game.StateManager.AsteroidWorld.Grid.GetWallType(x, y) == WallType.ExplosiveRock && (x, y) != gridPos)
-            {
-                game.StateManager.AsteroidWorld.Grid.ActivateExplosiveRockCell(x, y, 300);
-            }
-            else
+            // Leave explosive walls intact so they can also explode
+            if (game.StateManager.AsteroidWorld.Grid.GetWallType(x, y) != WallType.ExplosiveRock || (x, y) == gridPos)
             {
                 game.StateManager.AsteroidWorld.Grid.ClearWall(x, y);
-                game.StateManager.Ecs.CellStabilitySystem.UpdateCellStability(x, y, (stability) => Math.Min(stability, CellStabilitySystem.CriticalStabilityThreshold));
             }
+            game.StateManager.Ecs.CellStabilitySystem.UpdateCellStability(x, y, (stability) => Math.Min(stability, CellStabilitySystem.CriticalStabilityThreshold));
+        }
     }
 
     private void CalculateEntityDamage(Vector2 explosionPosition)
