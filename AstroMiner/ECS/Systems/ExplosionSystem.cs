@@ -34,7 +34,7 @@ public class ExplosionSystem : System
             else
             {
                 game.StateManager.AsteroidWorld.Grid.ClearWall(x, y);
-                game.StateManager.AsteroidWorld.Grid.ActivateCollapsingFloorCell(x, y);
+                game.StateManager.Ecs.CellStabilitySystem.UpdateCellStability(x, y, (stability) => Math.Min(stability, CellStabilitySystem.CriticalStabilityThreshold));
             }
     }
 

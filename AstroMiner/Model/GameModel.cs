@@ -116,9 +116,10 @@ public class AsteroidModel
     public Vector2 MinerStartingPos { get; set; }
     public CellState[,] Grid { get; set; }
 
+    public HashSet<(int x, int y)> CriticalStabilityCells { get; set; }
+
     // TODO nice way to combine these + other effects?
     // Would be nice if cell classes had a nice deactive method
-    public Dictionary<(int x, int y), ActiveCollapsingFloorCell> ActiveCollapsingFloorCells { get; init; }
     public Dictionary<(int x, int y), ActiveExplosiveRockCell> ActiveExplosiveRockCells { get; init; }
 }
 
@@ -191,8 +192,8 @@ public static class GameModelHelpers
             },
             Asteroid = new AsteroidModel
             {
+                CriticalStabilityCells = new HashSet<(int x, int y)>(),
                 ActiveExplosiveRockCells = new Dictionary<(int x, int y), ActiveExplosiveRockCell>(),
-                ActiveCollapsingFloorCells = new Dictionary<(int x, int y), ActiveCollapsingFloorCell>()
             }
         };
     }

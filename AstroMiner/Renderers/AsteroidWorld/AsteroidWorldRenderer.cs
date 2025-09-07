@@ -1,5 +1,6 @@
 using System;
 using AstroMiner.Definitions;
+using AstroMiner.ECS.Systems;
 using AstroMiner.Model;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
@@ -129,7 +130,7 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
             spriteBatch.Draw(Shared.Textures[Tx.Cracks],
                 Shared.ViewHelpers.GetVisibleRectForGridCell(col, row),
                 new Rectangle(0, 0, 32, 32),
-                Color.White * MathHelpers.GetPercentageBetween(cellState.Stability, 1f, 0.2f));
+                Color.White * MathHelpers.GetPercentageBetween(cellState.Stability, 1f, CellStabilitySystem.CriticalStabilityThreshold));
 
         if (cellState.FloorType == FloorType.CollapsingLavaCracks)
         {
