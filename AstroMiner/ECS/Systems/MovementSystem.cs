@@ -124,33 +124,11 @@ public class MovementSystem : System
                 return false;
         }
 
-        MaybeUpdateStability(positionComponent, newPosition);
+        var distanceMoved = Vector2.Distance(positionComponent.Position, newPosition);
+        Ecs.CellStabilitySystem.UpdateCellStabilityForMovement(positionComponent, distanceMoved);
 
         positionComponent.Position = newPosition;
         return true;
-    }
-
-    private void MaybeUpdateStability(PositionComponent position, Vector2 newPosition)
-    {
-        if (!game.StateManager.AsteroidWorld.IsInMiner) return;
-
-        var delta = Vector2.Distance(position.Position, newPosition);
-
-        var maxDistance = 2f;
-        var damageMultiplier = 0.1f;
-
-        var cellsInRadius = AsteroidGridHelpers.GetCellsInRadius(position.CenterPosition.X, position.CenterPosition.Y, maxDistance);
-        foreach (var (x, y, cellDistance) in cellsInRadius)
-        {
-            var percentageOfDamageToApply = cellDistance / maxDistance;
-            var damageToApply = percentageOfDamageToApply * delta * damageMultiplier;
-            var cellState = game.StateManager.AsteroidWorld.Grid.GetCellState(x, y);
-            cellState.Stability -= damageToApply;
-            if (cellState.Stability < .2f)
-            {
-                game.StateManager.AsteroidWorld.Grid.ActivateCollapsingFloorCell(x, y);
-            }
-        }
     }
 
 
