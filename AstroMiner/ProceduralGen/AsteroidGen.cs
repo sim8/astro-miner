@@ -1,5 +1,6 @@
 using System;
 using AstroMiner.Definitions;
+using AstroMiner.ECS.Systems;
 using AstroMiner.Model;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
@@ -47,11 +48,11 @@ public static class AsteroidGen
 
                     // Clear 2x4 landing area
                     for (var c = col; c <= col + 1; c++) // Columns: current column and one to the right
-                    for (var r = minerRowIndex - 1; r <= minerRowIndex + 2; r++) // Rows: -1 to +2 from minerRowIndex
-                    {
-                        grid[r, c].FloorType = FloorType.Floor;
-                        grid[r, c].WallType = WallType.Empty;
-                    }
+                        for (var r = minerRowIndex - 1; r <= minerRowIndex + 2; r++) // Rows: -1 to +2 from minerRowIndex
+                        {
+                            grid[r, c].FloorType = FloorType.Floor;
+                            grid[r, c].WallType = WallType.Empty;
+                        }
 
                     return new Vector2(col + 1, minerRowIndex);
                 }
@@ -95,7 +96,10 @@ public static class AsteroidGen
         if (distancePerc is < GameConfig.AsteroidGen.CoreRadius or > GameConfig.AsteroidGen.MantleRadius)
             return 1f;
 
-        return 1f - Math.Clamp((noise2Value - (LavaNoise2Start - UnstableNoiseRange)) / UnstableNoiseRange, 0f, 1f);
+        var normalizedStability = 1f - Math.Clamp((noise2Value - (LavaNoise2Start - UnstableNoiseRange)) / UnstableNoiseRange, 0f, 1f);
+
+        // Map from 0-1 range to CriticalStabilityThreshold-1 range while preserving distribution
+        return CellStabilitySystem.CriticalStabilityThreshold + normalizedStability * (1f - CellStabilitySystem.CriticalStabilityThreshold);
     }
 
     private static CellState[,] InitializeGrid(int gridSize, PerlinNoiseGenerator perlinNoise1,
@@ -142,43 +146,43 @@ public static class AsteroidGen
 
         // Populate the grid
         for (var x = 0; x < gridSize; x++)
-        for (var y = 0; y < gridSize; y++)
-        {
-            double dx = x - centerX;
-            double dy = y - centerY;
-            var distance = Math.Sqrt(dx * dx + dy * dy);
-
-            // Calculate the angle and adjust it to be between 0 and 360 degrees
-            var angle = Math.Atan2(dy, dx) * (180 / Math.PI);
-            if (angle < 0) angle += 360;
-
-            var index = (int)Math.Round(angle * GameConfig.AsteroidGen.AngleSegments / 360.0) %
-                        GameConfig.AsteroidGen.AngleSegments;
-            var radius = radiusValues[index];
-            var perimeterWidth = perimeterWidths[index];
-
-
-            var distancePerc = (float)(distance / (radius + perimeterWidth));
-            var noise1Value = perlinNoise1.Noise(x * GameConfig.AsteroidGen.Perlin1NoiseScale,
-                y * GameConfig.AsteroidGen.Perlin1NoiseScale);
-            var noise2Value = perlinNoise2.Noise(x * GameConfig.AsteroidGen.Perlin2NoiseScale,
-                y * GameConfig.AsteroidGen.Perlin2NoiseScale);
-
-            var (wallType, floorType) = CellGenRules.EvaluateRules(distancePerc, noise1Value, noise2Value);
-            var stability = GetStability(distancePerc, noise1Value, noise2Value);
-
-            var layer = distance < radius * GameConfig.AsteroidGen.CoreRadius ? AsteroidLayer.Core :
-                distance < radius * GameConfig.AsteroidGen.MantleRadius ? AsteroidLayer.Mantle :
-                floorType != FloorType.Empty ? AsteroidLayer.Crust : AsteroidLayer.None;
-
-            grid[x, y] = new CellState
+            for (var y = 0; y < gridSize; y++)
             {
-                WallType = wallType,
-                FloorType = floorType,
-                Layer = layer,
-                Stability = stability
-            };
-        }
+                double dx = x - centerX;
+                double dy = y - centerY;
+                var distance = Math.Sqrt(dx * dx + dy * dy);
+
+                // Calculate the angle and adjust it to be between 0 and 360 degrees
+                var angle = Math.Atan2(dy, dx) * (180 / Math.PI);
+                if (angle < 0) angle += 360;
+
+                var index = (int)Math.Round(angle * GameConfig.AsteroidGen.AngleSegments / 360.0) %
+                            GameConfig.AsteroidGen.AngleSegments;
+                var radius = radiusValues[index];
+                var perimeterWidth = perimeterWidths[index];
+
+
+                var distancePerc = (float)(distance / (radius + perimeterWidth));
+                var noise1Value = perlinNoise1.Noise(x * GameConfig.AsteroidGen.Perlin1NoiseScale,
+                    y * GameConfig.AsteroidGen.Perlin1NoiseScale);
+                var noise2Value = perlinNoise2.Noise(x * GameConfig.AsteroidGen.Perlin2NoiseScale,
+                    y * GameConfig.AsteroidGen.Perlin2NoiseScale);
+
+                var (wallType, floorType) = CellGenRules.EvaluateRules(distancePerc, noise1Value, noise2Value);
+                var stability = GetStability(distancePerc, noise1Value, noise2Value);
+
+                var layer = distance < radius * GameConfig.AsteroidGen.CoreRadius ? AsteroidLayer.Core :
+                    distance < radius * GameConfig.AsteroidGen.MantleRadius ? AsteroidLayer.Mantle :
+                    floorType != FloorType.Empty ? AsteroidLayer.Crust : AsteroidLayer.None;
+
+                grid[x, y] = new CellState
+                {
+                    WallType = wallType,
+                    FloorType = floorType,
+                    Layer = layer,
+                    Stability = stability
+                };
+            }
 
         return grid;
     }

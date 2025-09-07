@@ -3,6 +3,7 @@ using System.Linq;
 using AstroMiner.AsteroidWorld;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
+using AstroMiner.Model;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
 
@@ -13,7 +14,7 @@ public class CellStabilitySystem(Ecs ecs, BaseGame game) : System(ecs, game)
     private const float MaxUpdateDistance = 2f;
     private const float DamageMultiplier = 0.1f;
 
-    public const float CriticalStabilityThreshold = 0.2f; // Could be different thresholds for collapsing/explosive
+    public const float CriticalStabilityThreshold = 0.5f; // Could be different thresholds for collapsing/explosive
 
 
     public override void Update(GameTime gameTime, ActiveControls activeControls)
@@ -24,19 +25,29 @@ public class CellStabilitySystem(Ecs ecs, BaseGame game) : System(ecs, game)
         {
             var newStability = UpdateCellStability(x, y,
                 stability =>
-                    stability - gameTime.ElapsedGameTime.Milliseconds / (float)GameConfig.CollapsingFloorSpreadTime);
+                    stability - gameTime.ElapsedGameTime.Milliseconds / (float)GameConfig.CollapsingFloorSpreadTime, true);
             if (newStability == 0) game.Model.Asteroid.CriticalStabilityCells.Remove((x, y));
         }
     }
 
-    public float UpdateCellStability(int x, int y, Func<float, float> stabilityFunc)
+    private bool cellCanBeMadeUnstable(CellState cellState)
+    {
+        if (cellState.WallType == WallType.ExplosiveRock) return true;
+        if (cellState.WallType != WallType.Empty) return false;
+
+        return cellState.FloorType == FloorType.LavaCracks || cellState.FloorType == FloorType.CollapsingLavaCracks;
+    }
+
+    public float UpdateCellStability(int x, int y, Func<float, float> stabilityFunc, bool updateIfCritical = false)
     {
         var cellState = game.StateManager.AsteroidWorld.Grid.GetCellState(x, y);
         var prevStability = cellState.Stability;
 
 
-        if (prevStability == 1)
-            // Temporary? Only really relevant to collapsing cells
+        if (!cellCanBeMadeUnstable(cellState))
+            return prevStability;
+
+        if (!updateIfCritical && cellState.Stability <= CriticalStabilityThreshold)
             return prevStability;
 
 
