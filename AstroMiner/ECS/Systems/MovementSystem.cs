@@ -124,6 +124,9 @@ public class MovementSystem : System
                 return false;
         }
 
+        var distanceMoved = Vector2.Distance(positionComponent.Position, newPosition);
+        Ecs.CellStabilitySystem.UpdateCellStabilityForMovement(positionComponent, distanceMoved);
+
         positionComponent.Position = newPosition;
         return true;
     }
@@ -194,7 +197,8 @@ public class MovementSystem : System
                 ? -(positionComponent.GridWidth / 2)
                 : positionComponent.GridWidth /
                   2); // TODO should be width OR height depending on direction. Is the same anyway for mining components
-        var actualDirection = DirectionHelpers.GetRotatedDirection(directionalEntityDirectionComponent.Direction, rotation);
+        var actualDirection =
+            DirectionHelpers.GetRotatedDirection(directionalEntityDirectionComponent.Direction, rotation);
         var newCenterPos = actualDirection switch
         {
             Direction.Top => directionalEntityPositionComponent.CenterPosition +

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using AstroMiner.Definitions;
 using AstroMiner.Model;
 
@@ -51,25 +52,25 @@ public static class AsteroidGridHelpers
 
         // Initialize all cells as empty
         for (var row = 0; row < gridSize; row++)
-        for (var col = 0; col < gridSize; col++)
-            centeredGrid[row, col] = new CellState
-            {
-                WallType = WallType.Empty,
-                FloorType = FloorType.Empty,
-                Layer = AsteroidLayer.None
-            };
+            for (var col = 0; col < gridSize; col++)
+                centeredGrid[row, col] = new CellState
+                {
+                    WallType = WallType.Empty,
+                    FloorType = FloorType.Empty,
+                    Layer = AsteroidLayer.None
+                };
 
         // Copy the asteroid with the calculated offset
         for (var row = 0; row < gridSize; row++)
-        for (var col = 0; col < gridSize; col++)
-        {
-            var newRow = row + offsetRow;
-            var newCol = col + offsetCol;
+            for (var col = 0; col < gridSize; col++)
+            {
+                var newRow = row + offsetRow;
+                var newCol = col + offsetCol;
 
-            // Only copy if the destination is within bounds
-            if (newRow >= 0 && newRow < gridSize && newCol >= 0 && newCol < gridSize)
-                centeredGrid[newRow, newCol] = grid[row, col];
-        }
+                // Only copy if the destination is within bounds
+                if (newRow >= 0 && newRow < gridSize && newCol >= 0 && newCol < gridSize)
+                    centeredGrid[newRow, newCol] = grid[row, col];
+            }
 
         return centeredGrid;
     }
@@ -89,14 +90,14 @@ public static class AsteroidGridHelpers
 
         // Find the bounding box of the asteroid (non-empty cells)
         for (var row = 0; row < gridSize; row++)
-        for (var col = 0; col < gridSize; col++)
-            if (grid[row, col].FloorType != FloorType.Empty)
-            {
-                minRow = Math.Min(minRow, row);
-                maxRow = Math.Max(maxRow, row);
-                minCol = Math.Min(minCol, col);
-                maxCol = Math.Max(maxCol, col);
-            }
+            for (var col = 0; col < gridSize; col++)
+                if (grid[row, col].FloorType != FloorType.Empty)
+                {
+                    minRow = Math.Min(minRow, row);
+                    maxRow = Math.Max(maxRow, row);
+                    minCol = Math.Min(minCol, col);
+                    maxCol = Math.Max(maxCol, col);
+                }
 
         return new AsteroidBoundingBox
         {
@@ -107,5 +108,32 @@ public static class AsteroidGridHelpers
             Right = maxCol,
             Bottom = maxRow
         };
+    }
+
+
+    public static List<(int x, int y, float distance)> GetCellsInRadius(float centerX, float centerY, float radius)
+    {
+        var cells = new List<(int x, int y, float distance)>();
+
+        // Calculate the bounds to iterate over, based on the radius
+        var startX = Math.Max(0, (int)Math.Floor(centerX - radius));
+        var endX = Math.Min(GameConfig.GridSize - 1, (int)Math.Ceiling(centerX + radius));
+        var startY = Math.Max(0, (int)Math.Floor(centerY - radius));
+        var endY = Math.Min(GameConfig.GridSize - 1, (int)Math.Ceiling(centerY + radius));
+
+        // Iterate through the grid cells within these bounds
+        for (var i = startX; i <= endX; i++)
+            for (var j = startY; j <= endY; j++)
+            {
+                // Calculate the distance from the center of the cell to the point
+                var cellCenterX = i + 0.5f;
+                var cellCenterY = j + 0.5f;
+                var distance = (float)Math.Sqrt(Math.Pow(cellCenterX - centerX, 2) + Math.Pow(cellCenterY - centerY, 2));
+
+                // If the distance is less than or equal to the radius, include the cell
+                if (distance <= radius) cells.Add((i, j, distance));
+            }
+
+        return cells;
     }
 }

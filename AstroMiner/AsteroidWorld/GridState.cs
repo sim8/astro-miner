@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using AstroMiner.Definitions;
+using AstroMiner.ECS.Systems;
 using AstroMiner.Model;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
@@ -31,66 +32,14 @@ public class GridState(BaseGame game)
         new[] { -1, 0, 1, 0 }
     );
 
-    // TODO nice way to combine these + other effects?
-    // Would be nice if cell classes had a nice deactive method
-    public readonly Dictionary<(int x, int y), ActiveCollapsingFloorCell> _activeCollapsingFloorCells =
-        game.Model.Asteroid.ActiveCollapsingFloorCells;
-
-    public readonly Dictionary<(int x, int y), ActiveExplosiveRockCell> _activeExplosiveRockCells =
-        game.Model.Asteroid.ActiveExplosiveRockCells;
-
     private readonly CellState[,] _grid = game.Model.Asteroid.Grid;
     public int Columns => _grid.GetLength(0);
     public int Rows => _grid.GetLength(1);
 
-    public void ActivateExplosiveRockCell(int x, int y, int timeToExplodeMs = 1100)
-    {
-        if (_activeExplosiveRockCells.ContainsKey((x, y)))
-        {
-            _activeExplosiveRockCells[(x, y)].TimeToExplodeMs =
-                Math.Min(_activeExplosiveRockCells[(x, y)].TimeToExplodeMs, timeToExplodeMs);
-            return;
-        }
-
-        _activeExplosiveRockCells.Add((x, y), new ActiveExplosiveRockCell(game, (x, y), timeToExplodeMs));
-    }
-
-    public void ActivateCollapsingFloorCell(int x, int y)
-    {
-        // Only spread if neighbor has empty wall
-        if (_activeCollapsingFloorCells.ContainsKey((x, y)) || GetFloorType(x, y) != FloorType.LavaCracks ||
-            GetWallType(x, y) != WallType.Empty) return;
-
-        _activeCollapsingFloorCells.Add((x, y), new ActiveCollapsingFloorCell(game, (x, y)));
-    }
-
-    public bool GetIsCollapsing(int x, int y)
-    {
-        return _activeCollapsingFloorCells.ContainsKey((x, y));
-    }
-
     public float GetCollapsingCompletion(int x, int y)
     {
-        if (!_activeCollapsingFloorCells.ContainsKey((x, y))) return 0;
-
-        return _activeCollapsingFloorCells[(x, y)].PercentageComplete;
+        return MathHelpers.GetPercentageBetween(GetCellState(x, y).Stability, CellStabilitySystem.CriticalStabilityThreshold, 0f);
     }
-
-    public void DeactivateExplosiveRockCell(int x, int y)
-    {
-        _activeExplosiveRockCells.Remove((x, y));
-    }
-
-    public void DeactiveCollapsingFloorCell(int x, int y)
-    {
-        _activeCollapsingFloorCells.Remove((x, y));
-    }
-
-    public bool ExplosiveRockCellIsActive(int x, int y)
-    {
-        return _activeExplosiveRockCells.ContainsKey((x, y));
-    }
-
 
     public CellState GetCellState(Vector2 position)
     {
@@ -135,7 +84,6 @@ public class GridState(BaseGame game)
     public void ClearWall(int x, int y)
     {
         _grid[y, x].WallType = WallType.Empty;
-        DeactivateExplosiveRockCell(x, y);
         MarkAllDistancesFromExploredFloor(x, y);
     }
 

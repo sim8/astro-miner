@@ -1,5 +1,6 @@
 using System;
 using AstroMiner.Definitions;
+using AstroMiner.ECS.Systems;
 using AstroMiner.Model;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
@@ -51,9 +52,7 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
                         var dualTilesetSourceRect =
                             Tilesets.GetWallQuadrantSourceRect(Shared.Game, col, row, corner);
 
-                        var tintColor = _gameStateManager.AsteroidWorld.Grid.ExplosiveRockCellIsActive(col, row)
-                            ? Color.Red
-                            : cellState.WallType == WallType.LooseRock
+                        var tintColor = cellState.WallType == WallType.LooseRock
                                 ? Color.LightGreen
                                 : Color.White;
 
@@ -61,6 +60,15 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
                             Shared.ViewHelpers.GetVisibleRectForWallQuadrant(col, row, corner),
                             dualTilesetSourceRect,
                             tintColor);
+
+                        // TEMP 
+                        if (cellState.WallType == WallType.ExplosiveRock)
+                        {
+                            spriteBatch.Draw(Shared.Textures[Tx.Tileset],
+                            Shared.ViewHelpers.GetVisibleRectForWallQuadrant(col, row, corner),
+                            dualTilesetSourceRect,
+                            Color.Red * (1f - cellState.Stability));
+                        }
                     }
                 }
 
@@ -116,6 +124,7 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
             });
     }
 
+
     private void RenderLavaCracks(SpriteBatch spriteBatch, int col, int row)
     {
         var cellState = _gameStateManager.AsteroidWorld.Grid.GetCellState(col, row);
@@ -128,7 +137,7 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
             spriteBatch.Draw(Shared.Textures[Tx.Cracks],
                 Shared.ViewHelpers.GetVisibleRectForGridCell(col, row),
                 new Rectangle(0, 0, 32, 32),
-                Color.White);
+                Color.White * MathHelpers.GetPercentageBetween(cellState.Stability, 1f, CellStabilitySystem.CriticalStabilityThreshold));
 
         if (cellState.FloorType == FloorType.CollapsingLavaCracks)
         {
@@ -176,7 +185,12 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
             1,
             (col, row) =>
             {
+                var cellState = _gameStateManager.AsteroidWorld.Grid.GetCellState(col, row);
+
                 var cellRect = Shared.ViewHelpers.GetVisibleRectForGridCell(col, row);
+
+                spriteBatch.Draw(Shared.Textures[Tx.White], cellRect, Color.Red * (1f - cellState.Stability));
+
                 var leftBorderRect = cellRect;
                 leftBorderRect.Width = 1;
                 spriteBatch.Draw(Shared.Textures[Tx.White], leftBorderRect, Color.Black);
@@ -185,9 +199,11 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
                 topBorderRect.Height = 1;
                 spriteBatch.Draw(Shared.Textures[Tx.White], topBorderRect, Color.Black);
 
-
                 var coordinatesStr = col + " " + row;
                 Shared.RenderString(spriteBatch, cellRect.X, cellRect.Y, coordinatesStr, 1);
+
+                var stabilityStr = cellState.Stability.ToString("F2").Replace(".", " ");
+                Shared.RenderString(spriteBatch, cellRect.X, cellRect.Y + cellRect.Height / 2, stabilityStr, 1);
             });
     }
 }

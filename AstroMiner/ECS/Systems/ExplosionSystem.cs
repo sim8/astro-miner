@@ -24,19 +24,17 @@ public class ExplosionSystem : System
     private void ExplodeGrid(Vector2 position)
     {
         var gridPos = ViewHelpers.ToGridPosition(position);
-        var explodedCells = GetCellsInRadius(position.X, position.Y, ExplodeRockRadius);
-
-        foreach (var (x, y) in explodedCells)
+        var explodedCells = AsteroidGridHelpers.GetCellsInRadius(position.X, position.Y, ExplodeRockRadius);
+        foreach (var (x, y, _) in explodedCells)
+        {
             // If x,y = gridPos, already triggered explosion
-            if (game.StateManager.AsteroidWorld.Grid.GetWallType(x, y) == WallType.ExplosiveRock && (x, y) != gridPos)
-            {
-                game.StateManager.AsteroidWorld.Grid.ActivateExplosiveRockCell(x, y, 300);
-            }
-            else
+            // Leave explosive walls intact so they can also explode
+            if (game.StateManager.AsteroidWorld.Grid.GetWallType(x, y) != WallType.ExplosiveRock || (x, y) == gridPos)
             {
                 game.StateManager.AsteroidWorld.Grid.ClearWall(x, y);
-                game.StateManager.AsteroidWorld.Grid.ActivateCollapsingFloorCell(x, y);
             }
+            game.StateManager.Ecs.CellStabilitySystem.UpdateCellStability(x, y, (stability) => Math.Min(stability, CellStabilitySystem.CriticalStabilityThreshold));
+        }
     }
 
     private void CalculateEntityDamage(Vector2 explosionPosition)
@@ -59,32 +57,6 @@ public class ExplosionSystem : System
                 game.StateManager.Ecs.HealthSystem.TakeDamage(healthComponent.EntityId, damage);
             }
         }
-    }
-
-    private List<(int x, int y)> GetCellsInRadius(float centerX, float centerY, float radius)
-    {
-        var cells = new List<(int x, int y)>();
-
-        // Calculate the bounds to iterate over, based on the radius
-        var startX = Math.Max(0, (int)Math.Floor(centerX - radius));
-        var endX = Math.Min(game.StateManager.AsteroidWorld.Grid.Columns - 1, (int)Math.Ceiling(centerX + radius));
-        var startY = Math.Max(0, (int)Math.Floor(centerY - radius));
-        var endY = Math.Min(game.StateManager.AsteroidWorld.Grid.Rows - 1, (int)Math.Ceiling(centerY + radius));
-
-        // Iterate through the grid cells within these bounds
-        for (var i = startX; i <= endX; i++)
-        for (var j = startY; j <= endY; j++)
-        {
-            // Calculate the distance from the center of the cell to the point
-            var cellCenterX = i + 0.5f;
-            var cellCenterY = j + 0.5f;
-            var distance = (float)Math.Sqrt(Math.Pow(cellCenterX - centerX, 2) + Math.Pow(cellCenterY - centerY, 2));
-
-            // If the distance is less than or equal to the radius, include the cell
-            if (distance <= radius) cells.Add((i, j));
-        }
-
-        return cells;
     }
 
     public override void Update(GameTime gameTime, ActiveControls activeControls)

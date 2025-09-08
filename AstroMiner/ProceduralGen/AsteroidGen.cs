@@ -1,5 +1,6 @@
 using System;
 using AstroMiner.Definitions;
+using AstroMiner.ECS.Systems;
 using AstroMiner.Model;
 using AstroMiner.Utilities;
 using Microsoft.Xna.Framework;
@@ -8,6 +9,9 @@ namespace AstroMiner.ProceduralGen;
 
 public static class AsteroidGen
 {
+    private const float LavaNoise2Start = 0.55f;
+    private const float UnstableNoiseRange = 0.15f;
+
     public static (CellState[,], Vector2) InitializeGridAndStartingCenterPos(int gridSize, int seed)
     {
         var perlinNoise1 = new PerlinNoiseGenerator(seed);
@@ -18,10 +22,13 @@ public static class AsteroidGen
     }
 
     /// <summary>
-    /// Looks from the left side of the asteroid for the first column to contain 4 contiguous floored cells.
-    /// Clears a 2x4 landing area (current column and one to the right) and returns the centerPos of the 4 cells.
+    ///     Looks from the left side of the asteroid for the first column to contain 4 contiguous floored cells.
+    ///     Clears a 2x4 landing area (current column and one to the right) and returns the centerPos of the 4 cells.
     /// </summary>
-    /// <param name="grid">2d array representing the roughly circular asteroid. FloorType.Empty means empty space around the asteroid.</param>
+    /// <param name="grid">
+    ///     2d array representing the roughly circular asteroid. FloorType.Empty means empty space around the
+    ///     asteroid.
+    /// </param>
     /// <returns>The starting centerPos for the miner</returns>
     /// <exception cref="Exception"></exception>
     private static Vector2 ClearAndGetStartingCenterPos(CellState[,] grid)
@@ -55,7 +62,7 @@ public static class AsteroidGen
     }
 
     /// <summary>
-    /// Calculate the average radius for a given angle, with the tail side being longer.
+    ///     Calculate the average radius for a given angle, with the tail side being longer.
     /// </summary>
     /// <param name="angleDegrees">Angle in degrees (0-360)</param>
     /// <returns>Average radius for this angle</returns>
@@ -72,10 +79,8 @@ public static class AsteroidGen
         var halfTailSegment = GameConfig.AsteroidGen.TailSegmentAngleDegrees / 2.0;
 
         if (distanceFromTail > halfTailSegment)
-        {
             // Outside the tail segment - use normal radius
             return GameConfig.AsteroidGen.AverageRadius;
-        }
 
         // Within the tail segment - smooth transition from center to edge
         var influence = Math.Cos(Math.PI * distanceFromTail / (2 * halfTailSegment));
@@ -83,6 +88,18 @@ public static class AsteroidGen
         // Interpolate between normal radius and tail radius
         return GameConfig.AsteroidGen.AverageRadius +
                influence * (GameConfig.AsteroidGen.AverageTailRadius - GameConfig.AsteroidGen.AverageRadius);
+    }
+
+    // TODO gross. Does it have to be separate from rest of the config?
+    private static float GetStability(float distancePerc, float noise1Value, float noise2Value)
+    {
+        if (distancePerc is < GameConfig.AsteroidGen.CoreRadius or > GameConfig.AsteroidGen.MantleRadius)
+            return 1f;
+
+        var normalizedStability = 1f - Math.Clamp((noise2Value - (LavaNoise2Start - UnstableNoiseRange)) / UnstableNoiseRange, 0f, 1f);
+
+        var minimum = CellStabilitySystem.CriticalStabilityThreshold * 1.01f; // Add a small buffer ensure all cells stable
+        return minimum + normalizedStability * (1f - minimum);
     }
 
     private static CellState[,] InitializeGrid(int gridSize, PerlinNoiseGenerator perlinNoise1,
@@ -152,6 +169,7 @@ public static class AsteroidGen
                     y * GameConfig.AsteroidGen.Perlin2NoiseScale);
 
                 var (wallType, floorType) = CellGenRules.EvaluateRules(distancePerc, noise1Value, noise2Value);
+                var stability = GetStability(distancePerc, noise1Value, noise2Value);
 
                 var layer = distance < radius * GameConfig.AsteroidGen.CoreRadius ? AsteroidLayer.Core :
                     distance < radius * GameConfig.AsteroidGen.MantleRadius ? AsteroidLayer.Mantle :
@@ -161,7 +179,8 @@ public static class AsteroidGen
                 {
                     WallType = wallType,
                     FloorType = floorType,
-                    Layer = layer
+                    Layer = layer,
+                    Stability = stability
                 };
             }
 

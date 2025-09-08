@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using AstroMiner.Definitions;
 using AstroMiner.ECS.Components;
 using AstroMiner.Utilities;
@@ -40,16 +39,18 @@ public class MiningSystem : System
 
         var wallType = game.StateManager.AsteroidWorld.Grid.GetWallType(x, y);
 
-        if (wallType == WallType.ExplosiveRock)
-        {
-            game.StateManager.AsteroidWorld.Grid.ActivateExplosiveRockCell(x, y, 100);
-            return; // No point adding to drilling time
-        }
+        // TODO needed?
+        // if (wallType == WallType.ExplosiveRock)
+        // {
+        //     return; // No point adding to drilling time
+        // }
 
         var wallTypeConfig = game.StateManager.AsteroidWorld.Grid.GetWallTypeConfig(x, y);
         if (wallTypeConfig is { IsMineable: true })
+        {
             miningComponent.DrillingTotalTimeRequired += wallTypeConfig.DrillTimeMs;
-        miningComponent.DrillingCells.Add((x, y));
+            miningComponent.DrillingCells.Add((x, y));
+        }
     }
 
     /// <summary>
@@ -68,6 +69,7 @@ public class MiningSystem : System
         if (gridPos == miningComponent.DrillingPos)
         {
             miningComponent.DrillingMs += gameTime.ElapsedGameTime.Milliseconds;
+
         }
         else
         {
@@ -90,6 +92,12 @@ public class MiningSystem : System
                 var bottomY = ViewHelpers.ToXorYCoordinate(drillPos.Y + miningComponent.DrillingWidth / 2);
                 for (var iY = topY; iY <= bottomY; iY++) UseDrillOnCell(gridPos.x, iY, miningComponent);
             }
+        }
+
+        // Once DrillingCells known, update cell stability
+        if (miningComponent.DrillingCells.Count > 0)
+        {
+            Ecs.CellStabilitySystem.UpdateCellStabilityForMining(drillPos, gameTime.ElapsedGameTime.Milliseconds, game.StateManager.AsteroidWorld.IsInMiner);
         }
 
         // Once we've drilled long enough to exceed the sum of all drill times, mine them all.
