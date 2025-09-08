@@ -33,35 +33,35 @@ public static class ScrollingBackgrounds
 {
     private static readonly ScrollingBackgroundConfig OizusAsteroid = new()
     {
-        LandTextureWidthPx = 1600,
-        LandTextureHeightPx = 1600,
-        LandTextureScale = 0.5f,
-        LandSpeed = 0.5f,
+        LandTextureWidthPx = 640,
+        LandTextureHeightPx = 640,
+        LandTextureScale = 1f,
+        LandSpeed = 5f,
         LandParallaxFactorX = 0.4f,
         LandParallaxFactorY = 0.2f,
-        LandTextureName = "mountains-nice-tiled",
+        LandTextureName = Tx.Backgrounds.Oizus,
         CloudLayers =
         [
-            new CloudConfig
-            {
-                CloudTextureScale = 0.5f,
-                CloudsPerGridCell = 0.1f,
-                CloudSeed = 42,
-                CloudSpeed = 1f,
-                CloudParallaxFactorX = 0.6f,
-                CloudParallaxFactorY = 0.3f
-            },
-            // Foreground cloud layer
+            // new CloudConfig
+            // {
+            //     CloudTextureScale = 0.5f,
+            //     CloudsPerGridCell = 0.1f,
+            //     CloudSeed = 42,
+            //     CloudSpeed = 1f,
+            //     CloudParallaxFactorX = 0.6f,
+            //     CloudParallaxFactorY = 0.3f
+            // },
+            // // Foreground cloud layer
 
-            new CloudConfig
-            {
-                CloudTextureScale = 1f,
-                CloudsPerGridCell = 0.05f,
-                CloudSeed = 123,
-                CloudSpeed = 1.5f,
-                CloudParallaxFactorX = 0.8f,
-                CloudParallaxFactorY = 0.4f
-            }
+            // new CloudConfig
+            // {
+            //     CloudTextureScale = 1f,
+            //     CloudsPerGridCell = 0.05f,
+            //     CloudSeed = 123,
+            //     CloudSpeed = 1.5f,
+            //     CloudParallaxFactorX = 0.8f,
+            //     CloudParallaxFactorY = 0.4f
+            // }
         ]
     };
 
@@ -73,20 +73,10 @@ public static class ScrollingBackgrounds
         LandSpeed = 0.2f,
         LandParallaxFactorX = 0.4f,
         LandParallaxFactorY = 0.2f,
-        LandTextureName = "mountains-nice-tiled",
+        LandTextureName = Tx.Backgrounds.Oizus,
         CloudLayers =
         [
-            new CloudConfig
-            {
-                CloudTextureScale = 0.25f,
-                CloudsPerGridCell = 0.001f,
-                CloudSeed = 42,
-                CloudSpeed = 0.3f,
-                CloudParallaxFactorX = 0.5f,
-                CloudParallaxFactorY = 0.25f,
-                CloudTextureSizePx = 512,
-                TextureName = "cloud-background-many"
-            }
+
         ]
     };
 

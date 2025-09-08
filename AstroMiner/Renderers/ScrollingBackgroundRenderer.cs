@@ -25,19 +25,6 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
         return (startX + offsetXForParallax + movedGridDistance, startY + offsetYForParallax, viewportGridWidth, viewportGridHeight);
     }
 
-    private (float, float, float, float) GetGridRectForVisibleClouds(CloudConfig cloudConfig)
-    {
-        var cameraPos = shared.ViewHelpers.GetCameraPos();
-
-        var offsetXForParallax = cameraPos.X * cloudConfig.CloudParallaxFactorX - cameraPos.X;
-        var offsetYForParallax = cameraPos.Y * cloudConfig.CloudParallaxFactorY - cameraPos.Y;
-
-        var movedGridDistance = (float)(shared.GameStateManager.GameTime.TotalGameTime.TotalMilliseconds / 1000f * cloudConfig.CloudSpeed);
-
-        var (startX, startY, viewportGridWidth, viewportGridHeight) = shared.ViewHelpers.GetViewportGridRect();
-        return (startX + offsetXForParallax + movedGridDistance, startY + offsetYForParallax, viewportGridWidth, viewportGridHeight);
-    }
-
     private float GetPixelsPerGridUnit(float gridRectWidth)
     {
         var (screenWidthPx, screenHeightPx) = shared.ViewHelpers.GetViewportSize();
@@ -49,15 +36,12 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
     {
         // Render land background
         RenderLandBackground(spriteBatch, config);
-
-        // Render clouds on top
-        RenderClouds(spriteBatch, config);
     }
 
     private void RenderLandBackground(SpriteBatch spriteBatch, ScrollingBackgroundConfig config)
     {
-        var LandTextureGridWidth = config.LandTextureWidthPx / GameConfig.CellTextureSizePx * config.LandTextureScale;
-        var LandTextureGridHeight = config.LandTextureHeightPx / GameConfig.CellTextureSizePx * config.LandTextureScale;
+        var LandTextureGridWidth = config.LandTextureWidthPx / GameConfig.CellTextureSizePx;
+        var LandTextureGridHeight = config.LandTextureHeightPx / GameConfig.CellTextureSizePx;
 
         var (gridRectX, gridY, gridRectWidth, gridRectHeight) = GetGridRectForVisibleLand(config);
 
@@ -103,50 +87,4 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
         }
     }
 
-    private void RenderClouds(SpriteBatch spriteBatch, ScrollingBackgroundConfig config)
-    {
-
-        // Render each cloud layer
-        foreach (var cloudConfig in config.CloudLayers)
-        {
-            var (gridRectX, gridRectY, gridRectWidth, gridRectHeight) = GetGridRectForVisibleClouds(cloudConfig);
-
-            var renderedCloudSize = (float)GameConfig.CellTextureSizePx * cloudConfig.CloudTextureScale;
-            float CloudTextureSizeGridUnits = cloudConfig.CloudTextureSizePx / renderedCloudSize;
-
-            // Calculate pixels per grid unit based on viewport size
-            var pixelsPerGridUnit = GetPixelsPerGridUnit(gridRectWidth);
-
-            // Get cloud placements for the visible area
-            var cloudPlacements = CloudGenerator.GetCloudPlacements(
-                gridRectX, gridRectY, gridRectWidth, gridRectHeight,
-                cloudConfig.CloudsPerGridCell, cloudConfig.CloudSeed, renderedCloudSize);
-
-            // Render each cloud in this layer
-            foreach (var cloud in cloudPlacements)
-            {
-                // Calculate cloud position relative to viewport start
-                var relativePosX = (cloud.X - gridRectX) * pixelsPerGridUnit;
-                var relativePosY = (cloud.Y - gridRectY) * pixelsPerGridUnit;
-
-                // Calculate cloud size in pixels
-                var cloudSizeX = CloudTextureSizeGridUnits * pixelsPerGridUnit;
-                var cloudSizeY = CloudTextureSizeGridUnits * pixelsPerGridUnit;
-
-                // Create the rectangle for this cloud
-                var cloudRect = new Rectangle(
-                    shared.ViewHelpers.ConvertToRenderedPxValue_CAUTION(relativePosX),
-                    shared.ViewHelpers.ConvertToRenderedPxValue_CAUTION(relativePosY),
-                    shared.ViewHelpers.ConvertToRenderedPxValue_CAUTION(cloudSizeX),
-                    shared.ViewHelpers.ConvertToRenderedPxValue_CAUTION(cloudSizeY)
-                );
-
-                spriteBatch.Draw(
-                    shared.Textures[cloudConfig.TextureName],
-                    cloudRect,
-                    Color.Red
-                );
-            }
-        }
-    }
 }

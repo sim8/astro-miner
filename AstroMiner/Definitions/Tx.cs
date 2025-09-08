@@ -25,6 +25,11 @@ namespace AstroMiner.Definitions
         public const string Star = "Star";
         public const string Tileset = "Tileset";
         public const string White = "White";
+        public static class Backgrounds
+        {
+            public const string Oizus = "Backgrounds/Oizus";
+            public const string OizusClouds = "Backgrounds/OizusClouds";
+        }
         public static class Miner
         {
             public const string MinerNoTracks = "Miner/MinerNoTracks";
@@ -54,6 +59,8 @@ namespace AstroMiner.Definitions
             "Star",
             "Tileset",
             "White",
+            "Backgrounds/Oizus",
+            "Backgrounds/OizusClouds",
             "Miner/MinerNoTracks",
             "Miner/Tracks0",
             "Miner/Tracks1",

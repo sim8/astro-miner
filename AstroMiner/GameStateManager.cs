@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using AstroMiner.AsteroidWorld;
 using AstroMiner.Definitions;
 using AstroMiner.ECS;
-using AstroMiner.Effects;
 using AstroMiner.StaticWorld;
 using Microsoft.Xna.Framework;
 
@@ -23,7 +22,6 @@ public class GameStateManager(BaseGame game)
     private NewGameManager _newGameManager;
     public AsteroidWorldState AsteroidWorld;
     public CameraState Camera;
-    public ScrollingEffectManager CloudEffects;
     public Inventory Inventory;
     public StaticWorldState StaticWorld;
     public TransitionManager TransitionManager;
@@ -61,8 +59,6 @@ public class GameStateManager(BaseGame game)
         Camera = new CameraState(game);
         AsteroidWorld = new AsteroidWorldState(game);
         StaticWorld = new StaticWorldState(game);
-        CloudEffects = new ScrollingEffectManager();
-        InitializeCloudEffects();
         TransitionManager = new TransitionManager(game);
         Ecs = new Ecs(game);
         Ui = new UI.UI(game);
@@ -103,9 +99,6 @@ public class GameStateManager(BaseGame game)
         ActiveWorldState.Update(activeControls, gameTime); // TODO only utilized by AsteroidWorld
 
         Camera.Update(gameTime, activeControls);
-        CloudEffects.Update(gameTime,
-            game.Graphics.GraphicsDevice.Viewport.Width,
-            game.Graphics.GraphicsDevice.Viewport.Height);
         TransitionManager.Update(gameTime);
         Ecs.Update(gameTime, activeControls);
     }
@@ -117,26 +110,5 @@ public class GameStateManager(BaseGame game)
         if (IsInGame) UpdateInGame(activeControls, gameTime);
 
         Ui.Update(gameTime, activeControls);
-    }
-
-    private void InitializeCloudEffects()
-    {
-        // Background clouds (slower, smaller)
-        CloudEffects.AddLayer(new ScrollingEffectLayer
-        {
-            TextureName = Tx.CloudBackground,
-            TextureSize = 256, // Equivalent to CloudManager.BackgroundCloudSizePx
-            Speed = 1000f,
-            Density = 0.15f // Adjusted for density-based spawning
-        });
-
-        // Foreground clouds (faster, larger)
-        CloudEffects.AddLayer(new ScrollingEffectLayer
-        {
-            TextureName = Tx.CloudBackground,
-            TextureSize = 1024, // Equivalent to CloudManager.ForegroundCloudSizePx
-            Speed = 4000f,
-            Density = 0.1f // Adjusted for density-based spawning
-        });
     }
 }

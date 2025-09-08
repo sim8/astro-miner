@@ -58,8 +58,6 @@ public class UIMainMenu : UIScreen
         var screenDestRect = new Rectangle(X, Y, ComputedWidth, ComputedHeight);
         spriteBatch.Draw(_game.Textures[Tx.White], screenDestRect, Colors.VeryDarkBlue);
 
-        _game.StateManager.Ui.State.StarBackground.Render(spriteBatch, _game.Textures);
-
         base.Render(spriteBatch);
     }
 }

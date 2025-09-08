@@ -200,7 +200,7 @@ public class Renderer
 
         RenderEntities(spriteBatch, EntityRenderLayer.BehindWorld);
 
-        // ActiveWorldRenderer.RenderWorld(spriteBatch);
+        ActiveWorldRenderer.RenderWorld(spriteBatch);
 
         RenderEntities(spriteBatch, EntityRenderLayer.BehindEntities);
 

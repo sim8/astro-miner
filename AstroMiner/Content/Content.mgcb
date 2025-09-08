@@ -242,6 +242,30 @@
 /processorParam:TextureFormat=Color
 /build:img/White.png
 
+#begin img/Backgrounds/Oizus.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:img/Backgrounds/Oizus.png
+
+#begin img/Backgrounds/OizusClouds.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:img/Backgrounds/OizusClouds.png
+
 #begin img/Miner/MinerNoTracks.png
 /importer:TextureImporter
 /processor:TextureProcessor
