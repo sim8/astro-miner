@@ -11,15 +11,15 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
 {
 
 
-    private (float, float, float, float) GetGridRectForVisibleLand(ScrollingBackgroundConfig config)
+    private (float, float, float, float) GetGridRectForVisibleLand(ScrollingBackgroundLayer layer)
     {
         var cameraPos = shared.ViewHelpers.GetCameraPos();
 
 
-        var offsetXForParallax = cameraPos.X * config.LandParallaxFactorX - cameraPos.X;
-        var offsetYForParallax = cameraPos.Y * config.LandParallaxFactorY - cameraPos.Y;
+        var offsetXForParallax = cameraPos.X * layer.LandParallaxFactorX - cameraPos.X;
+        var offsetYForParallax = cameraPos.Y * layer.LandParallaxFactorY - cameraPos.Y;
 
-        var movedGridDistance = (float)(shared.GameStateManager.GameTime.TotalGameTime.TotalMilliseconds / 1000f * config.LandSpeed);
+        var movedGridDistance = (float)(shared.GameStateManager.GameTime.TotalGameTime.TotalMilliseconds / 1000f * layer.LandSpeed);
 
         var (startX, startY, viewportGridWidth, viewportGridHeight) = shared.ViewHelpers.GetViewportGridRect();
         return (startX + offsetXForParallax + movedGridDistance, startY + offsetYForParallax, viewportGridWidth, viewportGridHeight);
@@ -34,16 +34,19 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
 
     public void RenderBackground(SpriteBatch spriteBatch, ScrollingBackgroundConfig config)
     {
-        // Render land background
-        RenderLandBackground(spriteBatch, config);
+        // Render each layer in order
+        foreach (var layer in config.Layers)
+        {
+            RenderLandBackground(spriteBatch, layer);
+        }
     }
 
-    private void RenderLandBackground(SpriteBatch spriteBatch, ScrollingBackgroundConfig config)
+    private void RenderLandBackground(SpriteBatch spriteBatch, ScrollingBackgroundLayer layer)
     {
-        var LandTextureGridWidth = config.LandTextureWidthPx / GameConfig.CellTextureSizePx;
-        var LandTextureGridHeight = config.LandTextureHeightPx / GameConfig.CellTextureSizePx;
+        var LandTextureGridWidth = layer.LandTextureWidthPx / GameConfig.CellTextureSizePx;
+        var LandTextureGridHeight = layer.LandTextureHeightPx / GameConfig.CellTextureSizePx;
 
-        var (gridRectX, gridY, gridRectWidth, gridRectHeight) = GetGridRectForVisibleLand(config);
+        var (gridRectX, gridY, gridRectWidth, gridRectHeight) = GetGridRectForVisibleLand(layer);
 
         // Calculate pixels per grid unit based on viewport size
         var pixelsPerGridUnit = GetPixelsPerGridUnit(gridRectWidth);
@@ -79,7 +82,7 @@ public class ScrollingBackgroundRenderer(RendererShared shared)
 
                 // Draw the tile
                 spriteBatch.Draw(
-                    shared.Textures[config.LandTextureName],
+                    shared.Textures[layer.LandTextureName],
                     tileRect,
                     Color.White
                 );

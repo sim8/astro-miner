@@ -29,6 +29,8 @@ namespace AstroMiner.Definitions
         {
             public const string Oizus = "Backgrounds/Oizus";
             public const string OizusClouds = "Backgrounds/OizusClouds";
+            public const string OizusClouds1 = "Backgrounds/OizusClouds1";
+            public const string OizusClouds2 = "Backgrounds/OizusClouds2";
         }
         public static class Miner
         {
@@ -61,6 +63,8 @@ namespace AstroMiner.Definitions
             "White",
             "Backgrounds/Oizus",
             "Backgrounds/OizusClouds",
+            "Backgrounds/OizusClouds1",
+            "Backgrounds/OizusClouds2",
             "Miner/MinerNoTracks",
             "Miner/Tracks0",
             "Miner/Tracks1",
