@@ -4,14 +4,12 @@ namespace AstroMiner.Definitions;
 
 public record ScrollingBackgroundLayer
 {
-    // Land configuration
-    public int LandTextureWidthPx { get; init; } = 1600;
-    public int LandTextureHeightPx { get; init; } = 1600;
-    public float LandTextureScale { get; init; } = 0.5f;
-    public float LandSpeed { get; init; } = 0.5f;
-    public float LandParallaxFactorX { get; init; } = 0.4f;
-    public float LandParallaxFactorY { get; init; } = 0.2f;
-    public string LandTextureName { get; init; } = Tx.Backgrounds.Oizus;
+    public string TextureName { get; init; } = Tx.Backgrounds.Oizus;
+    public int TextureWidthPx { get; init; } = 1600;
+    public int TextureHeightPx { get; init; } = 1600;
+    public float Speed { get; init; } = 0.5f;
+    public float ParallaxFactorX { get; init; } = 0.4f;
+    public float ParallaxFactorY { get; init; } = 0.2f;
 }
 
 public record ScrollingBackgroundConfig
@@ -27,33 +25,30 @@ public static class ScrollingBackgrounds
         {
             new()
             {
-                LandTextureWidthPx = 640,
-                LandTextureHeightPx = 640,
-                LandTextureScale = 1f,
-                LandSpeed = 5f,
-                LandParallaxFactorX = 0.4f,
-                LandParallaxFactorY = 0.2f,
-                LandTextureName = Tx.Backgrounds.Oizus,
+                TextureName = Tx.Backgrounds.Oizus,
+                TextureWidthPx = 640,
+                TextureHeightPx = 640,
+                Speed = 5f,
+                ParallaxFactorX = 0.4f,
+                ParallaxFactorY = 0.2f,
             },
             new()
             {
-                LandTextureWidthPx = 640,
-                LandTextureHeightPx = 640,
-                LandTextureScale = 1f,
-                LandSpeed = 6f,
-                LandParallaxFactorX = 0.5f,
-                LandParallaxFactorY = 0.25f,
-                LandTextureName = Tx.Backgrounds.OizusClouds1,
+                TextureName = Tx.Backgrounds.OizusClouds1,
+                TextureWidthPx = 640,
+                TextureHeightPx = 640,
+                Speed = 6f,
+                ParallaxFactorX = 0.5f,
+                ParallaxFactorY = 0.25f,
             },
             new()
             {
-                LandTextureWidthPx = 640,
-                LandTextureHeightPx = 640,
-                LandTextureScale = 1f,
-                LandSpeed = 10f,
-                LandParallaxFactorX = 1f,
-                LandParallaxFactorY = 0.5f,
-                LandTextureName = Tx.Backgrounds.OizusClouds2,
+                TextureName = Tx.Backgrounds.OizusClouds2,
+                TextureWidthPx = 640,
+                TextureHeightPx = 640,
+                Speed = 10f,
+                ParallaxFactorX = 1f,
+                ParallaxFactorY = 0.5f,
             }
         }
     };
@@ -64,13 +59,12 @@ public static class ScrollingBackgrounds
         {
             new()
             {
-                LandTextureWidthPx = 640,
-                LandTextureHeightPx = 640,
-                LandTextureScale = 1f,
-                LandSpeed = 5f,
-                LandParallaxFactorX = 0.4f,
-                LandParallaxFactorY = 0.2f,
-                LandTextureName = Tx.Backgrounds.Oizus,
+                TextureWidthPx = 640,
+                TextureHeightPx = 640,
+                Speed = 5f,
+                ParallaxFactorX = 0.4f,
+                ParallaxFactorY = 0.2f,
+                TextureName = Tx.Backgrounds.Oizus,
             }
         }
     };
