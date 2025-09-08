@@ -97,7 +97,7 @@ public class MiningSystem : System
         // Once DrillingCells known, update cell stability
         if (miningComponent.DrillingCells.Count > 0)
         {
-            Ecs.CellStabilitySystem.UpdateCellStabilityForMining(drillPos, miningComponent.DrillingMs);
+            Ecs.CellStabilitySystem.UpdateCellStabilityForMining(drillPos, miningComponent.DrillingMs, game.StateManager.AsteroidWorld.IsInMiner);
         }
 
         // Once we've drilled long enough to exceed the sum of all drill times, mine them all.
