@@ -11,7 +11,9 @@ namespace AstroMiner.ECS.Systems;
 
 public class CellStabilitySystem(Ecs ecs, BaseGame game) : System(ecs, game)
 {
-    private const float MaxUpdateDistance = 2f;
+    private const float MovementStabilityRadius = 3f;
+    private const float MiningStabilityRadius = 2f;
+    private const float MiningDamagePerSecond = 0.02f;
     private const float DamageMultiplier = 0.1f;
 
     public const float CriticalStabilityThreshold = 0.5f; // Could be different thresholds for collapsing/explosive
@@ -86,20 +88,29 @@ public class CellStabilitySystem(Ecs ecs, BaseGame game) : System(ecs, game)
         }
     }
 
+    public void UpdateCellStabilityForMining(Vector2 drillPos, int drillingMs)
+    {
+        UpdateCellStabilityInRadius(drillPos, (float)drillingMs / 1000f * MiningDamagePerSecond, MiningStabilityRadius);
+    }
+
     public void UpdateCellStabilityForMovement(PositionComponent position, float distanceMoved)
     {
         if (game.Model.ActiveWorld != World.Asteroid) return;
 
         if (!game.StateManager.AsteroidWorld.IsInMiner) return;
 
+        UpdateCellStabilityInRadius(position.CenterPosition, distanceMoved * DamageMultiplier, MovementStabilityRadius);
 
+    }
+
+    private void UpdateCellStabilityInRadius(Vector2 position, float maxDamage, float radius)
+    {
         var cellsInRadius =
-            AsteroidGridHelpers.GetCellsInRadius(position.CenterPosition.X, position.CenterPosition.Y,
-                MaxUpdateDistance);
+            AsteroidGridHelpers.GetCellsInRadius(position.X, position.Y, radius);
         foreach (var (x, y, cellDistance) in cellsInRadius)
         {
-            var percentageOfDamageToApply = cellDistance / MaxUpdateDistance;
-            var damageToApply = percentageOfDamageToApply * distanceMoved * DamageMultiplier;
+            var distanceModifier = cellDistance / radius;
+            var damageToApply = maxDamage * distanceModifier;
             UpdateCellStability(x, y, stability => stability - damageToApply);
         }
     }
