@@ -13,8 +13,8 @@ public class CellStabilitySystem(Ecs ecs, BaseGame game) : System(ecs, game)
 {
     private const float MovementStabilityRadius = 3f;
     private const float MiningStabilityRadius = 2f;
-    private const float MinerMiningDamagePerSecond = 0.01f;
-    private const float PlayerMiningDamagePerSecond = 0.005f;
+    private const float MinerMiningDamagePerSecond = 1f;
+    private const float PlayerMiningDamagePerSecond = 0.5f;
     private const float DamageMultiplier = 0.1f;
 
     public const float CriticalStabilityThreshold = 0.5f; // Could be different thresholds for collapsing/explosive
