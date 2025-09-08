@@ -6,7 +6,6 @@ namespace AstroMiner.Definitions
 {
     public static class Tx
     {
-        public const string CloudBackground = "CloudBackground";
         public const string Cracks = "Cracks";
         public const string DirectionalLight = "DirectionalLight";
         public const string DogicaFont = "DogicaFont";
@@ -26,6 +25,13 @@ namespace AstroMiner.Definitions
         public const string Star = "Star";
         public const string Tileset = "Tileset";
         public const string White = "White";
+        public static class Backgrounds
+        {
+            public const string Oizus = "Backgrounds/Oizus";
+            public const string OizusClouds = "Backgrounds/OizusClouds";
+            public const string OizusClouds1 = "Backgrounds/OizusClouds1";
+            public const string OizusClouds2 = "Backgrounds/OizusClouds2";
+        }
         public static class Miner
         {
             public const string MinerNoTracks = "Miner/MinerNoTracks";
@@ -36,7 +42,6 @@ namespace AstroMiner.Definitions
 
         public static readonly List<string> AllTextures = new List<string>
         {
-            "CloudBackground",
             "Cracks",
             "DirectionalLight",
             "DogicaFont",
@@ -56,6 +61,10 @@ namespace AstroMiner.Definitions
             "Star",
             "Tileset",
             "White",
+            "Backgrounds/Oizus",
+            "Backgrounds/OizusClouds",
+            "Backgrounds/OizusClouds1",
+            "Backgrounds/OizusClouds2",
             "Miner/MinerNoTracks",
             "Miner/Tracks0",
             "Miner/Tracks1",

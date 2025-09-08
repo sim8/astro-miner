@@ -10,19 +10,20 @@ namespace AstroMiner.Utilities;
 public class ViewHelpers(BaseGame game, GraphicsDeviceManager graphics)
 {
     // Should only be used at very end of calc pipeline
-    private int ConvertToRenderedPxValue_CAUTION(double value)
+    public int ConvertToRenderedPxValue_CAUTION(double value)
     {
         // Round up to reduce visual artifacts
         return (int)Math.Ceiling(value);
     }
 
-    private Vector2 GetCameraPos()
+    public Vector2 GetCameraPos()
     {
         var playerCenterPos = game.StateManager.Ecs.ActiveControllableEntityCenterPosition;
         var cameraPosWithPortal = OverrideCameraPosIfUsingPortal(playerCenterPos);
         return ClampCameraPosForGridBounds(cameraPosWithPortal);
     }
 
+    // TODO clamp to destination
     private Vector2 OverrideCameraPosIfUsingPortal(Vector2 playerCenterPos)
     {
         if (game.Model.Ecs.ActiveControllableEntityId == null) return playerCenterPos;
@@ -99,6 +100,14 @@ public class ViewHelpers(BaseGame game, GraphicsDeviceManager graphics)
             ConvertToRenderedPxValue_CAUTION(width),
             ConvertToRenderedPxValue_CAUTION(height)
         );
+    }
+
+    public (float, float, float, float) GetViewportGridRect()
+    {
+        var cameraPos = GetCameraPos();
+        var (viewportGridWidth, viewportGridHeight) = GetViewportGridSize();
+
+        return (cameraPos.X - viewportGridWidth / 2, cameraPos.Y - viewportGridHeight / 2, viewportGridWidth, viewportGridHeight);
     }
 
     public (int, int) GetViewportSize()
