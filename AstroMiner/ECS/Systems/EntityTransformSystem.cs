@@ -97,7 +97,7 @@ public class EntityTransformSystem : System
         var minerEntityId = game.StateManager.Ecs.MinerEntityId.Value;
 
         var minerPosition = game.StateManager.Ecs.GetComponent<PositionComponent>(minerEntityId);
-        minerPosition.SetCenterPosition(new Vector2(34f, 6f));
+        minerPosition.SetCenterPosition(Coordinates.Grid.MinerShipStartPosCenter);
         minerPosition.IsOffAsteroid = false;
         minerPosition.World = World.ShipDownstairs;
         var minerDirection = game.StateManager.Ecs.GetComponent<DirectionComponent>(minerEntityId);
@@ -116,7 +116,7 @@ public class EntityTransformSystem : System
         var playerEntityId = game.StateManager.Ecs.PlayerEntityId.Value;
 
         var playerPosition = game.StateManager.Ecs.GetComponent<PositionComponent>(playerEntityId);
-        playerPosition.SetCenterPosition(new Vector2(34f, 7.5f));
+        playerPosition.SetCenterPosition(Coordinates.Grid.MinerShipStartPosCenter + new Vector2(0f, 1.5f));
         playerPosition.IsOffAsteroid = false;
         playerPosition.World = World.ShipDownstairs;
 

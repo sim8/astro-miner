@@ -1,3 +1,5 @@
+using Microsoft.Xna.Framework;
+
 namespace AstroMiner.Definitions;
 
 public static class Coordinates
@@ -13,7 +15,7 @@ public static class Coordinates
         public const int UnderRocksX = 1;
         public const int UnderRocksY = 12;
 
-        public static readonly (int x, int y) MinerHomeStartPosCenter = (5, 14);
+        public static readonly Vector2 MinerShipStartPosCenter = new Vector2(33.5f, 6f);
         public static readonly (int x, int y) PlayerHomeStartPos = (7, 17);
 
         public static readonly (int x, int y) HomeToRigRoomPortal = (12, 20);
