@@ -195,7 +195,7 @@ public static class Tilesets
     // Super magic code to work out which tile quadrant to render based on neighbors
     private static (int, int) GetQuadrantOffsetWithinTileset(BaseGame game, int col, int row, Corner corner)
     {
-        var yOffset = corner is Corner.TopLeft or Corner.TopRight ? 1 : 0;
+        var yOffset = corner is Corner.TopLeft or Corner.TopRight ? 0 : 1;
         var isVerticalNeighborTileset = CellIsTilesetType(game, GetVerticalNeighbor(col, row, corner));
         var isHorizontalNeighborTileset = CellIsTilesetType(game, GetHorizontalNeighbor(col, row, corner));
         var isDiagonalNeighborTileset = CellIsTilesetType(game, GetDiagonalNeighbor(col, row, corner));
