@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using AstroMiner.Definitions;
 using Microsoft.Xna.Framework;
@@ -21,6 +22,8 @@ public static class Tilesets
 
     private const int TextureGridWidth = 4;
     private const int WallTextureGridHeight = 8;
+
+    private const int WallTextureQuadrantHeightSIMPLE = 4;
 
     // Define coordinates for each
     private static readonly Dictionary<int, (int, int)> RampKeyToTextureOffset = new()
@@ -60,6 +63,18 @@ public static class Tilesets
         { WallType.Gold, 4 },
         { WallType.Nickel, 5 },
         { WallType.ExplosiveRock, 6 }
+    };
+
+    private static readonly Dictionary<WallType, int> WallTypeTextureIndexSIMPLE = new()
+    {
+        { WallType.Rock, 0 },
+        { WallType.LooseRock, 1 },
+        { WallType.SolidRock, 0 },
+        { WallType.Ruby, 0 },
+        { WallType.Diamond, 0 },
+        { WallType.Gold, 0 },
+        { WallType.Nickel, 0 },
+        { WallType.ExplosiveRock, 0 }
     };
 
 
@@ -239,8 +254,10 @@ public static class Tilesets
 
         var (quadrantXOffset, quadrantYOffset) = GetQuadrantOffsetWithinTileset(game, col, row, corner);
 
+        var textureOffsetY = WallTypeTextureIndexSIMPLE[game.StateManager.AsteroidWorld.Grid.GetWallType(col, row)] * WallTextureQuadrantHeightSIMPLE;
 
-        return (quadrantXOffset * QuadrantTextureSizePx, quadrantYOffset * QuadrantTextureSizePx * 2);
+
+        return (quadrantXOffset * QuadrantTextureSizePx, (textureOffsetY + quadrantYOffset * 2) * QuadrantTextureSizePx);
     }
 
     private static (int, int) GetFloorQuadrantTextureOffset(BaseGame game, int col, int row, Corner corner)
