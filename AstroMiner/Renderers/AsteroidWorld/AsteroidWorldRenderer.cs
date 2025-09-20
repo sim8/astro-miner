@@ -50,21 +50,17 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
                     if (Tilesets.CellIsTilesetType(Shared.Game, col, row))
                     {
                         var dualTilesetSourceRect =
-                            Tilesets.GetWallQuadrantSourceRect(Shared.Game, col, row, corner);
+                            Tilesets.GetWallQuadrantSourceRectSIMPLE(Shared.Game, col, row, corner);
 
-                        var tintColor = cellState.WallType == WallType.LooseRock
-                                ? Color.LightGreen
-                                : Color.White;
-
-                        spriteBatch.Draw(Shared.Textures[Tx.Tileset],
+                        spriteBatch.Draw(Shared.Textures[Tx.TilesetSimple],
                             Shared.ViewHelpers.GetVisibleRectForWallQuadrant(col, row, corner),
                             dualTilesetSourceRect,
-                            tintColor);
+                            Color.White);
 
                         // TEMP 
                         if (cellState.WallType == WallType.ExplosiveRock)
                         {
-                            spriteBatch.Draw(Shared.Textures[Tx.Tileset],
+                            spriteBatch.Draw(Shared.Textures[Tx.TilesetSimple],
                             Shared.ViewHelpers.GetVisibleRectForWallQuadrant(col, row, corner),
                             dualTilesetSourceRect,
                             Color.Red * (1f - cellState.Stability));
