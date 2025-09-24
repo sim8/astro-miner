@@ -9,7 +9,7 @@ public enum ItemType
     Ruby,
     Diamond,
     Gold,
-    Nickel,
+    Quartz,
     Dynamite,
     Drill,
     HealthJuice
@@ -37,7 +37,7 @@ public static class ItemTypes
             { ItemType.Ruby, new ItemTypeConfig("Ruby", 0, 0, 4) },
             { ItemType.Diamond, new ItemTypeConfig("Diamond", 1, 0, 16) },
             { ItemType.Gold, new ItemTypeConfig("Gold", 2, 0, 6) },
-            { ItemType.Nickel, new ItemTypeConfig("Nickel", 3, 0, 4) },
+            { ItemType.Quartz, new ItemTypeConfig("Quartz", 3, 0, 4) },
             { ItemType.Dynamite, new ItemTypeConfig("Dynamite", 4, 0, -1, 5) },
             { ItemType.Drill, new ItemTypeConfig("Drill", 5, 0, -1) },
             { ItemType.HealthJuice, new ItemTypeConfig("Health Juice", 6, 0, -1, 10) }

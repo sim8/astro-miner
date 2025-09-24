@@ -167,7 +167,7 @@ public static class GameConfig
                     return (0.49f - amountToWidenBy, 0.51f + amountToWidenBy);
                 }
             }),
-            new WallRule(WallType.Nickel, new RuleOptions
+            new WallRule(WallType.Quartz, new RuleOptions
             {
                 DistanceRange = (MantleRadius, 1f),
                 Noise1Range = (0f, 0.25f)

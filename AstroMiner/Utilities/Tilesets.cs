@@ -61,7 +61,7 @@ public static class Tilesets
         { WallType.Ruby, 2 },
         { WallType.Diamond, 3 },
         { WallType.Gold, 4 },
-        { WallType.Nickel, 5 },
+        { WallType.Quartz, 5 },
         { WallType.ExplosiveRock, 6 }
     };
 
@@ -69,12 +69,13 @@ public static class Tilesets
     {
         { WallType.Rock, 0 },
         { WallType.LooseRock, 1 },
-        { WallType.SolidRock, 0 },
-        { WallType.Ruby, 0 },
-        { WallType.Diamond, 0 },
-        { WallType.Gold, 0 },
-        { WallType.Nickel, 0 },
-        { WallType.ExplosiveRock, 0 }
+        { WallType.SolidRock, 2 },
+        { WallType.ExplosiveRock, 3 },
+        // ExplosiveRock glowing - 4,
+        { WallType.Gold, 5 },
+        { WallType.Quartz, 6 },
+        { WallType.Ruby, 7 },
+        { WallType.Diamond, 8 }
     };
 
 
