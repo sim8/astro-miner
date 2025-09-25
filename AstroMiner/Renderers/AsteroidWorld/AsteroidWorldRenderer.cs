@@ -50,7 +50,7 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
                     if (Tilesets.CellIsTilesetType(Shared.Game, col, row))
                     {
                         var dualTilesetSourceRect =
-                            Tilesets.GetWallQuadrantSourceRectSIMPLE(Shared.Game, col, row, corner);
+                            Tilesets.GetWallQuadrantSourceRect(Shared.Game, col, row, corner);
 
                         spriteBatch.Draw(Shared.Textures[Tx.TilesetSimple],
                             Shared.ViewHelpers.GetVisibleRectForWallQuadrant(col, row, corner),
