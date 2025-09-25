@@ -162,11 +162,6 @@ public class RadialLightSourceComponent : Component
     public float Opacity { get; set; } = 1f;
 }
 
-public class RenderLayerComponent : Component
-{
-    public EntityRenderLayer EntityRenderLayer { get; set; }
-}
-
 public class NpcComponent : Component
 {
     public Npc Npc { get; set; }

@@ -152,7 +152,6 @@ public class Ecs
         _game.Model.Ecs.ComponentsByEntityId.DirectionalLightSource.Remove(entityId);
         _game.Model.Ecs.ComponentsByEntityId.Texture.Remove(entityId);
         _game.Model.Ecs.ComponentsByEntityId.RadialLightSource.Remove(entityId);
-        _game.Model.Ecs.ComponentsByEntityId.RenderLayer.Remove(entityId);
         _game.Model.Ecs.ComponentsByEntityId.Explosion.Remove(entityId);
         _game.Model.Ecs.ComponentsByEntityId.DynamiteTag.Remove(entityId);
         _game.Model.Ecs.ComponentsByEntityId.PlayerTag.Remove(entityId);
@@ -247,8 +246,6 @@ public class Ecs
             return componentsByEntityId.Texture as Dictionary<int, T>;
         if (typeof(T) == typeof(RadialLightSourceComponent))
             return componentsByEntityId.RadialLightSource as Dictionary<int, T>;
-        if (typeof(T) == typeof(RenderLayerComponent))
-            return componentsByEntityId.RenderLayer as Dictionary<int, T>;
         if (typeof(T) == typeof(ExplosionComponent))
             return componentsByEntityId.Explosion as Dictionary<int, T>;
         if (typeof(T) == typeof(DynamiteTag))

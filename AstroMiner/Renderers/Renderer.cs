@@ -119,15 +119,10 @@ public class Renderer
         spriteBatch.End();
     }
 
-    private void RenderEntities(SpriteBatch spriteBatch, EntityRenderLayer targetLayer)
+    private void RenderEntities(SpriteBatch spriteBatch)
     {
         foreach (var entityId in _game.StateManager.Ecs.EntityIdsInActiveWorldSortedByDistance)
         {
-            // Check if entity has the target render layer
-            var renderLayerComponent = _game.StateManager.Ecs.GetComponent<RenderLayerComponent>(entityId);
-            var entityLayer = renderLayerComponent?.EntityRenderLayer ?? EntityRenderLayer.Default;
-            if (entityLayer != targetLayer) continue;
-
             // Render miner
             if (_game.StateManager.Ecs.HasComponent<MinerTag>(entityId))
                 _minerRenderer.RenderMiner(spriteBatch, entityId);
@@ -198,13 +193,9 @@ public class Renderer
             _scrollingBackgroundRenderer.RenderBackground(spriteBatch, scrollingBackgroundConfig);
         }
 
-        RenderEntities(spriteBatch, EntityRenderLayer.BehindWorld);
-
         ActiveWorldRenderer.RenderWorld(spriteBatch);
 
-        RenderEntities(spriteBatch, EntityRenderLayer.BehindEntities);
-
-        RenderEntities(spriteBatch, EntityRenderLayer.Default);
+        RenderEntities(spriteBatch);
     }
 
     private void RenderLightingToRenderTarget(SpriteBatch spriteBatch)
