@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace AstroMiner.Renderers;
@@ -11,7 +12,7 @@ public abstract class BaseWorldRenderer
         Shared = shared;
     }
 
-    public virtual void RenderWorld(SpriteBatch spriteBatch) { }
+    public virtual void RenderWorld(SpriteBatch spriteBatch, Action<int, int> renderEntitiesInYRange) { }
 
     public virtual void RenderWorldOverlay(SpriteBatch spriteBatch) { }
 

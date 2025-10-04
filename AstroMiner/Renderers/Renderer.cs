@@ -119,67 +119,78 @@ public class Renderer
         spriteBatch.End();
     }
 
-    private void RenderEntities(SpriteBatch spriteBatch)
+    private void RenderEntity(SpriteBatch spriteBatch, int entityId)
+    {
+        // Render miner
+        if (_game.StateManager.Ecs.HasComponent<MinerTag>(entityId))
+            _minerRenderer.RenderMiner(spriteBatch, entityId);
+
+        // Render dynamite
+        if (_game.StateManager.Ecs.HasComponent<DynamiteTag>(entityId))
+            _dynamiteRenderer.RenderDynamite(spriteBatch, entityId);
+
+        // Render explosions
+        if (_game.StateManager.Ecs.HasComponent<ExplosionTag>(entityId))
+            _explosionRenderer.RenderExplosion(spriteBatch, entityId);
+
+        // Render player or NPCs
+        if ((_game.StateManager.Ecs.HasComponent<PlayerTag>(entityId) &&
+             !_game.StateManager.AsteroidWorld.IsInMiner) ||
+            _game.StateManager.Ecs.HasComponent<NpcComponent>(entityId))
+            _playerRenderer.RenderPlayer(spriteBatch, entityId);
+
+        if (_game.StateManager.Ecs.HasComponent<TextureComponent>(entityId))
+        {
+            var textureComponent = _game.StateManager.Ecs.GetComponent<TextureComponent>(entityId);
+            var positionComponent = _game.StateManager.Ecs.GetComponent<PositionComponent>(entityId);
+
+            var textureWidth = positionComponent.WidthPx + textureComponent.LeftPaddingPx +
+                               textureComponent.RightPaddingPx;
+            var textureHeight = positionComponent.HeightPx + textureComponent.TopPaddingPx +
+                                textureComponent.BottomPaddingPx;
+            var texturePos = positionComponent.Position -
+                             new Vector2(ViewHelpers.ConvertTexturePxToGridUnits(textureComponent.LeftPaddingPx),
+                                 ViewHelpers.ConvertTexturePxToGridUnits(textureComponent.TopPaddingPx));
+            var destinationRectangle = _shared.ViewHelpers.GetVisibleRectForObject(texturePos,
+                textureWidth, textureHeight);
+            var combinedXOffset = textureComponent.TextureOffsetXPx + textureComponent.frameIndex * textureWidth;
+            var sourceRectangle = new Rectangle(combinedXOffset, textureComponent.TextureOffsetYPx, textureWidth, textureHeight);
+            spriteBatch.Draw(_shared.Textures[textureComponent.TextureName], destinationRectangle, sourceRectangle,
+                Color.White);
+        }
+
+        if (_game.Debug.showEntityBoundingBoxes)
+        {
+            const int borderWidth = 3;
+            Color borderColor = Color.Red;
+            var positionComponent = _game.StateManager.Ecs.GetComponent<PositionComponent>(entityId);
+            var destinationRectangle = _shared.ViewHelpers.GetVisibleRectForObject(positionComponent.Position,
+                positionComponent.WidthPx, positionComponent.HeightPx);
+
+            var topBorder = new Rectangle(destinationRectangle.X, destinationRectangle.Y, destinationRectangle.Width, borderWidth);
+            spriteBatch.Draw(_shared.Textures[Tx.White], topBorder, borderColor);
+
+            var bottomBorder = new Rectangle(destinationRectangle.X, destinationRectangle.Y + destinationRectangle.Height - borderWidth, destinationRectangle.Width, borderWidth);
+            spriteBatch.Draw(_shared.Textures[Tx.White], bottomBorder, borderColor);
+
+            var leftBorder = new Rectangle(destinationRectangle.X, destinationRectangle.Y, borderWidth, destinationRectangle.Height);
+            spriteBatch.Draw(_shared.Textures[Tx.White], leftBorder, borderColor);
+
+            var rightBorder = new Rectangle(destinationRectangle.X + destinationRectangle.Width - borderWidth, destinationRectangle.Y, borderWidth, destinationRectangle.Height);
+            spriteBatch.Draw(_shared.Textures[Tx.White], rightBorder, borderColor);
+        }
+    }
+
+    private void RenderEntitiesInYRange(SpriteBatch spriteBatch, int minY, int maxY)
     {
         foreach (var entityId in _game.StateManager.Ecs.EntityIdsInActiveWorldSortedByDistance)
         {
-            // Render miner
-            if (_game.StateManager.Ecs.HasComponent<MinerTag>(entityId))
-                _minerRenderer.RenderMiner(spriteBatch, entityId);
+            var positionComponent = _game.StateManager.Ecs.GetComponent<PositionComponent>(entityId);
+            var entityY = (int)positionComponent.FrontY;
 
-            // Render dynamite
-            if (_game.StateManager.Ecs.HasComponent<DynamiteTag>(entityId))
-                _dynamiteRenderer.RenderDynamite(spriteBatch, entityId);
-
-            // Render explosions
-            if (_game.StateManager.Ecs.HasComponent<ExplosionTag>(entityId))
-                _explosionRenderer.RenderExplosion(spriteBatch, entityId);
-
-            // Render player or NPCs
-            if ((_game.StateManager.Ecs.HasComponent<PlayerTag>(entityId) &&
-                 !_game.StateManager.AsteroidWorld.IsInMiner) ||
-                _game.StateManager.Ecs.HasComponent<NpcComponent>(entityId))
-                _playerRenderer.RenderPlayer(spriteBatch, entityId);
-
-            if (_game.StateManager.Ecs.HasComponent<TextureComponent>(entityId))
+            if (entityY >= minY && entityY <= maxY)
             {
-                var textureComponent = _game.StateManager.Ecs.GetComponent<TextureComponent>(entityId);
-                var positionComponent = _game.StateManager.Ecs.GetComponent<PositionComponent>(entityId);
-
-                var textureWidth = positionComponent.WidthPx + textureComponent.LeftPaddingPx +
-                                   textureComponent.RightPaddingPx;
-                var textureHeight = positionComponent.HeightPx + textureComponent.TopPaddingPx +
-                                    textureComponent.BottomPaddingPx;
-                var texturePos = positionComponent.Position -
-                                 new Vector2(ViewHelpers.ConvertTexturePxToGridUnits(textureComponent.LeftPaddingPx),
-                                     ViewHelpers.ConvertTexturePxToGridUnits(textureComponent.TopPaddingPx));
-                var destinationRectangle = _shared.ViewHelpers.GetVisibleRectForObject(texturePos,
-                    textureWidth, textureHeight);
-                var combinedXOffset = textureComponent.TextureOffsetXPx + textureComponent.frameIndex * textureWidth;
-                var sourceRectangle = new Rectangle(combinedXOffset, textureComponent.TextureOffsetYPx, textureWidth, textureHeight);
-                spriteBatch.Draw(_shared.Textures[textureComponent.TextureName], destinationRectangle, sourceRectangle,
-                    Color.White);
-            }
-
-            if (_game.Debug.showEntityBoundingBoxes)
-            {
-                const int borderWidth = 3;
-                Color borderColor = Color.Red;
-                var positionComponent = _game.StateManager.Ecs.GetComponent<PositionComponent>(entityId);
-                var destinationRectangle = _shared.ViewHelpers.GetVisibleRectForObject(positionComponent.Position,
-                    positionComponent.WidthPx, positionComponent.HeightPx);
-
-                var topBorder = new Rectangle(destinationRectangle.X, destinationRectangle.Y, destinationRectangle.Width, borderWidth);
-                spriteBatch.Draw(_shared.Textures[Tx.White], topBorder, borderColor);
-
-                var bottomBorder = new Rectangle(destinationRectangle.X, destinationRectangle.Y + destinationRectangle.Height - borderWidth, destinationRectangle.Width, borderWidth);
-                spriteBatch.Draw(_shared.Textures[Tx.White], bottomBorder, borderColor);
-
-                var leftBorder = new Rectangle(destinationRectangle.X, destinationRectangle.Y, borderWidth, destinationRectangle.Height);
-                spriteBatch.Draw(_shared.Textures[Tx.White], leftBorder, borderColor);
-
-                var rightBorder = new Rectangle(destinationRectangle.X + destinationRectangle.Width - borderWidth, destinationRectangle.Y, borderWidth, destinationRectangle.Height);
-                spriteBatch.Draw(_shared.Textures[Tx.White], rightBorder, borderColor);
+                RenderEntity(spriteBatch, entityId);
             }
         }
     }
@@ -193,9 +204,7 @@ public class Renderer
             _scrollingBackgroundRenderer.RenderBackground(spriteBatch, scrollingBackgroundConfig);
         }
 
-        ActiveWorldRenderer.RenderWorld(spriteBatch);
-
-        RenderEntities(spriteBatch);
+        ActiveWorldRenderer.RenderWorld(spriteBatch, (minY, maxY) => RenderEntitiesInYRange(spriteBatch, minY, maxY));
     }
 
     private void RenderLightingToRenderTarget(SpriteBatch spriteBatch)
