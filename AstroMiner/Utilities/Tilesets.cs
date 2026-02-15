@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using AstroMiner.Definitions;
 using Microsoft.Xna.Framework;
@@ -5,22 +6,17 @@ using Microsoft.Xna.Framework;
 namespace AstroMiner.Utilities;
 
 /// <summary>
-///     Based heavily on Dual Grid System https://x.com/OskSta/status/1448248658865049605
-///     High level steps of rendering:
-///     1. Iterate each cell (back to front) and each corner of the cell (back to front)
-///     2. Find the tile to render based on corner's 3 neighbors
-///     3. Render single floor + wall quadrant (corner of cell)
-///     - Only quadrant rendered as opposed to whole tile, as neighboring cell
-///     might be different type (but shares based rock design)
-///     - Each wall quadrant rendered two quadrants high, leaving room for overlaying
-///     texture at the top
+///     See Notes/Tileset.md
 /// </summary>
+/// 
 public static class Tilesets
 {
     private const int QuadrantTextureSizePx = GameConfig.CellTextureSizePx / 2;
 
     private const int TextureGridWidth = 4;
     private const int WallTextureGridHeight = 8;
+
+    private const int WallTextureQuadrantHeightSIMPLE = 4;
 
     // Define coordinates for each
     private static readonly Dictionary<int, (int, int)> RampKeyToTextureOffset = new()
@@ -58,8 +54,21 @@ public static class Tilesets
         { WallType.Ruby, 2 },
         { WallType.Diamond, 3 },
         { WallType.Gold, 4 },
-        { WallType.Nickel, 5 },
+        { WallType.Quartz, 5 },
         { WallType.ExplosiveRock, 6 }
+    };
+
+    private static readonly Dictionary<WallType, int> WallTypeTextureIndexSIMPLE = new()
+    {
+        { WallType.Rock, 0 },
+        { WallType.LooseRock, 1 },
+        { WallType.SolidRock, 2 },
+        { WallType.ExplosiveRock, 3 },
+        // ExplosiveRock glowing - 4,
+        { WallType.Gold, 5 },
+        { WallType.Quartz, 6 },
+        { WallType.Ruby, 7 },
+        { WallType.Diamond, 8 }
     };
 
 
@@ -72,27 +81,16 @@ public static class Tilesets
         { Corner.BottomRight, (0, 0) }
     };
 
+    public static bool CellIsTilesetType(BaseGame game, (int x, int y) cell)
+    {
+        var wallType = game.StateManager.AsteroidWorld.Grid.GetWallType(cell.x, cell.y);
+        return WallTypeTextureIndex.ContainsKey(wallType);
+    }
+
     public static bool CellIsTilesetType(BaseGame game, int x, int y)
     {
         var wallType = game.StateManager.AsteroidWorld.Grid.GetWallType(x, y);
         return WallTypeTextureIndex.ContainsKey(wallType);
-    }
-
-    // Find the tile to render based on corner's 3 neighbors
-    private static int GetWallQuadrantTileKey(BaseGame game, int x, int y, Corner corner)
-    {
-        var (topLeftXOffset, topLeftYOffset) = GetTopLeftOffsetFor2X2[corner];
-
-        var twoByTwoX = x + topLeftXOffset;
-        var twoByTwoY = y + topLeftYOffset;
-
-        var isTopLeftTileset = CellIsTilesetType(game, twoByTwoX, twoByTwoY);
-        var isTopRightTileset = CellIsTilesetType(game, twoByTwoX + 1, twoByTwoY);
-        var isBottomLeftTileset = CellIsTilesetType(game, twoByTwoX, twoByTwoY + 1);
-        var isBottomRightTileset = CellIsTilesetType(game, twoByTwoX + 1, twoByTwoY + 1);
-
-        return RampKeys.CreateKey(isTopLeftTileset, isTopRightTileset, isBottomLeftTileset,
-            isBottomRightTileset);
     }
 
     // Find the tile to render based on corner's 3 neighbors + return texture index within Tileset.png
@@ -124,41 +122,82 @@ public static class Tilesets
         ), textureOffset);
     }
 
-    // High level steps
-    // - get tile key (floor == empty on main tileset)
-    // - choose texture based on if any neighbors are lava
+    private static (int, int) GetVerticalNeighbor(int col, int row, Corner corner)
+    {
+        if (corner is Corner.TopLeft or Corner.TopRight)
+            return (col, row - 1);
+        return (col, row + 1); // BottomLeft or BottomRight
+    }
 
-    // Find px offset within main texture for a given quadrant
-    // TODO save this to CellState
+    private static (int, int) GetHorizontalNeighbor(int col, int row, Corner corner)
+    {
+        if (corner is Corner.TopLeft or Corner.BottomLeft)
+            return (col - 1, row);
+        return (col + 1, row); // TopRight or BottomRight
+    }
+
+    private static (int, int) GetDiagonalNeighbor(int col, int row, Corner corner)
+    {
+        return corner switch
+        {
+            Corner.TopLeft => (col - 1, row - 1),
+            Corner.TopRight => (col + 1, row - 1),
+            Corner.BottomLeft => (col - 1, row + 1),
+            _ => (col + 1, row + 1), // BottomRight
+        };
+    }
+
+    // Super magic code to work out which tile quadrant to render based on neighbors
+    private static (int, int) GetQuadrantOffsetWithinTileset(BaseGame game, int col, int row, Corner corner)
+    {
+        var yOffset = corner is Corner.TopLeft or Corner.TopRight ? 0 : 1;
+        var isVerticalNeighborTileset = CellIsTilesetType(game, GetVerticalNeighbor(col, row, corner));
+        var isHorizontalNeighborTileset = CellIsTilesetType(game, GetHorizontalNeighbor(col, row, corner));
+        var isDiagonalNeighborTileset = CellIsTilesetType(game, GetDiagonalNeighbor(col, row, corner));
+
+        var xOffset = 0;
+
+        if (corner is Corner.TopLeft or Corner.BottomLeft)
+        {
+            if (isHorizontalNeighborTileset && !isVerticalNeighborTileset)
+                xOffset = 2;
+            if (isVerticalNeighborTileset && !isHorizontalNeighborTileset)
+                xOffset = 4;
+            if (isVerticalNeighborTileset && isHorizontalNeighborTileset)
+                xOffset = isDiagonalNeighborTileset ? 8 : 6;
+        }
+        else
+        { // Corner.TopRight or Corner.BottomRight
+            xOffset = 3;
+            if (isHorizontalNeighborTileset && !isVerticalNeighborTileset)
+                xOffset = 1;
+            if (isVerticalNeighborTileset && !isHorizontalNeighborTileset)
+                xOffset = 5;
+            if (isVerticalNeighborTileset && isHorizontalNeighborTileset)
+                xOffset = isDiagonalNeighborTileset ? 7 : 9;
+        }
+
+        return (xOffset, yOffset);
+    }
+
     private static (int, int) GetWallQuadrantTextureOffset(BaseGame game, int col, int row, Corner corner)
     {
         // Walls tileset has one quadrant's space above each actual quadrant for overlaying texture.
         // Each quadrant is rendered at double height, overlaying the one behind it
-        // // TODO - change/centralize this logic? Will need doing for floor tilesets
 
-        // For the cell quadrant, work out which tile to use
-        var tileKey = GetWallQuadrantTileKey(game, col, row, corner);
 
-        // Get the grid x,y of that tile within the default dual tileset
-        var (textureGridX, textureGridY) = RampKeyToTextureOffset[tileKey];
 
         // Get grid index of cellType tileset within main texture
-        var wallType = game.StateManager.AsteroidWorld.Grid.GetWallType(col, row);
+        // var wallType = game.StateManager.AsteroidWorld.Grid.GetWallType(col, row);
 
-        var textureTilesetX = WallTypeTextureIndex[wallType] * TextureGridWidth;
+        // var textureTilesetX = WallTypeTextureIndex[wallType] * TextureGridWidth;
 
-        // Convert those to pixel x,y within the actual texture
-        // NOTE y pos accounts for texture overlay space. Logic will need to change for floor tilesets
-        var tileTexturePxX = (textureTilesetX + textureGridX) * GameConfig.CellTextureSizePx;
-        var tileTexturePxY = textureGridY * QuadrantTextureSizePx * 4; // Each tile in texture is 4 quadrants high
+        var (quadrantXOffset, quadrantYOffset) = GetQuadrantOffsetWithinTileset(game, col, row, corner);
 
-        var quadrantX = tileTexturePxX +
-                        (corner is Corner.TopLeft or Corner.BottomLeft ? QuadrantTextureSizePx : 0);
-        var quadrantY = tileTexturePxY +
-                        (corner is Corner.TopLeft or Corner.TopRight ? QuadrantTextureSizePx * 2 : 0);
+        var textureOffsetY = WallTypeTextureIndexSIMPLE[game.StateManager.AsteroidWorld.Grid.GetWallType(col, row)] * WallTextureQuadrantHeightSIMPLE;
 
 
-        return (quadrantX, quadrantY);
+        return (quadrantXOffset * QuadrantTextureSizePx, (textureOffsetY + quadrantYOffset * 2) * QuadrantTextureSizePx);
     }
 
     private static (int, int) GetFloorQuadrantTextureOffset(BaseGame game, int col, int row, Corner corner)
@@ -190,8 +229,6 @@ public static class Tilesets
     public static Rectangle GetWallQuadrantSourceRect(BaseGame game, int col, int row, Corner corner)
     {
         var (x, y) = GetWallQuadrantTextureOffset(game, col, row, corner);
-
-        // Each tile quadrant has one quadrant above it in texture for any overlaying visuals. Render at double height
         return new Rectangle(x, y, QuadrantTextureSizePx, QuadrantTextureSizePx * 2);
     }
 

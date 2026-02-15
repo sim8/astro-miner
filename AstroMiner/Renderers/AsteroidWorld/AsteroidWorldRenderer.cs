@@ -23,10 +23,11 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
         _fogOfWarRenderer = new FogOfWarRenderer(shared);
     }
 
-    public override void RenderWorld(SpriteBatch spriteBatch)
+    public override void RenderWorld(SpriteBatch spriteBatch, Action<int, int> renderEntitiesInYRange)
     {
+        // Render floor
         LoopVisibleCells(
-            1, // Account for textures with vertical overlap
+            0, // No padding needed for floor
             (col, row) =>
             {
                 var cellState = _gameStateManager.AsteroidWorld.Grid.GetCellState(col, row);
@@ -45,36 +46,50 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
                         Shared.ViewHelpers.GetVisibleRectForFloorQuadrant(col, row, corner),
                         floorQuadrantSourceRect,
                         Color.White);
-
-                    // Render wall
-                    if (Tilesets.CellIsTilesetType(Shared.Game, col, row))
-                    {
-                        var dualTilesetSourceRect =
-                            Tilesets.GetWallQuadrantSourceRect(Shared.Game, col, row, corner);
-
-                        var tintColor = cellState.WallType == WallType.LooseRock
-                                ? Color.LightGreen
-                                : Color.White;
-
-                        spriteBatch.Draw(Shared.Textures[Tx.Tileset],
-                            Shared.ViewHelpers.GetVisibleRectForWallQuadrant(col, row, corner),
-                            dualTilesetSourceRect,
-                            tintColor);
-
-                        // TEMP 
-                        if (cellState.WallType == WallType.ExplosiveRock)
-                        {
-                            spriteBatch.Draw(Shared.Textures[Tx.Tileset],
-                            Shared.ViewHelpers.GetVisibleRectForWallQuadrant(col, row, corner),
-                            dualTilesetSourceRect,
-                            Color.Red * (1f - cellState.Stability));
-                        }
-                    }
                 }
 
-                // Render after floor+wall rendering as they're done by quadrant
+                // Render after floor rendering as they're done by quadrant
                 RenderLavaCracks(spriteBatch, col, row);
             });
+
+        // Render walls and entities
+        LoopVisibleCells(
+        1, // Account for textures with vertical overlap
+        (col, row, isLastCellInRow) =>
+        {
+            var cellState = _gameStateManager.AsteroidWorld.Grid.GetCellState(col, row);
+
+            foreach (var corner in _cornersInRenderOrder)
+            {
+
+                // Render wall
+                if (Tilesets.CellIsTilesetType(Shared.Game, col, row))
+                {
+                    var dualTilesetSourceRect =
+                        Tilesets.GetWallQuadrantSourceRect(Shared.Game, col, row, corner);
+
+                    spriteBatch.Draw(Shared.Textures[Tx.TilesetSimple],
+                        Shared.ViewHelpers.GetVisibleRectForWallQuadrant(col, row, corner),
+                        dualTilesetSourceRect,
+                        Color.White);
+
+                    // TEMP 
+                    if (cellState.WallType == WallType.ExplosiveRock)
+                    {
+                        spriteBatch.Draw(Shared.Textures[Tx.TilesetSimple],
+                        Shared.ViewHelpers.GetVisibleRectForWallQuadrant(col, row, corner),
+                        dualTilesetSourceRect,
+                        Color.Red * (1f - cellState.Stability));
+                    }
+                }
+            }
+
+            // Render entities after completing each row
+            if (isLastCellInRow)
+            {
+                renderEntitiesInYRange(row, row);
+            }
+        });
 
         LoopVisibleCells(FogOfWarRenderer.FogGradientGridRadius,
             (col, row) => { _fogOfWarRenderer.RenderFogOfWar(spriteBatch, col, row); }
@@ -177,6 +192,18 @@ public class AsteroidWorldRenderer : BaseWorldRenderer
         for (var row = startRow; row < endRow; row++)
             for (var col = startCol; col < endCol; col++)
                 cellAction(col, row);
+    }
+
+    private void LoopVisibleCells(int padding, Action<int, int, bool> cellAction)
+    {
+        var (startCol, startRow, endCol, endRow) = Shared.ViewHelpers.GetVisibleGrid(padding);
+
+        for (var row = startRow; row < endRow; row++)
+            for (var col = startCol; col < endCol; col++)
+            {
+                var isLastCellInRow = col == endCol - 1;
+                cellAction(col, row, isLastCellInRow);
+            }
     }
 
     private void RenderGridDebugOverlay(SpriteBatch spriteBatch)

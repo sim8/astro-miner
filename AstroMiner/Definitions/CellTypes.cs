@@ -12,7 +12,7 @@ public enum WallType
     Diamond,
     Ruby,
     Gold,
-    Nickel,
+    Quartz,
     ExplosiveRock
 }
 
@@ -51,7 +51,7 @@ public static class WallTypes
             { WallType.Diamond, new WallTypeConfig(true, ItemType.Diamond, 1200) },
             { WallType.Ruby, new WallTypeConfig(true, ItemType.Ruby, 800) },
             { WallType.Gold, new WallTypeConfig(true, ItemType.Gold, 800) },
-            { WallType.Nickel, new WallTypeConfig(true, ItemType.Nickel) },
+            { WallType.Quartz, new WallTypeConfig(true, ItemType.Quartz) },
             { WallType.ExplosiveRock, new WallTypeConfig(true) }
         };
 

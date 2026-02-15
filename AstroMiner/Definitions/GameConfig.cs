@@ -157,11 +157,6 @@ public static class GameConfig
             // CRUST RULES
             //----------------------------------------------
 
-            new WallRule(WallType.ExplosiveRock, new RuleOptions // TEMP
-            {
-                DistanceRange = (MantleRadius, 1f),
-                Noise1Range = (0f, 0.28f)
-            }),
             new WallAndFloorRule(WallType.Empty, FloorType.Floor, new RuleOptions
             {
                 DistanceRange = (MantleRadius, 1f),
@@ -172,7 +167,7 @@ public static class GameConfig
                     return (0.49f - amountToWidenBy, 0.51f + amountToWidenBy);
                 }
             }),
-            new WallRule(WallType.Nickel, new RuleOptions
+            new WallRule(WallType.Quartz, new RuleOptions
             {
                 DistanceRange = (MantleRadius, 1f),
                 Noise1Range = (0f, 0.25f)

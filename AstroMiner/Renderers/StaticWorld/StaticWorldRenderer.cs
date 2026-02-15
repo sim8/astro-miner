@@ -10,7 +10,7 @@ public class StaticWorldRenderer(RendererShared shared) : BaseWorldRenderer(shar
 {
     private readonly GameStateManager _gameStateManager = shared.GameStateManager;
 
-    public override void RenderWorld(SpriteBatch spriteBatch)
+    public override void RenderWorld(SpriteBatch spriteBatch, Action<int, int> renderEntitiesInYRange)
     {
         if (StaticWorlds.StaticWorldConfigs.TryGetValue(shared.Game.Model.ActiveWorld, out var config))
         {
@@ -27,6 +27,9 @@ public class StaticWorldRenderer(RendererShared shared) : BaseWorldRenderer(shar
         }
 
         if (shared.Game.Debug.showGridDebug) RenderGridDebugOverlay(spriteBatch);
+
+        // Render all entities at the end for static worlds
+        renderEntitiesInYRange(int.MinValue, int.MaxValue);
     }
 
     public override void RenderWorldOverlay(SpriteBatch spriteBatch)

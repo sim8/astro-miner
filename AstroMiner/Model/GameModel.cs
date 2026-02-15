@@ -44,7 +44,6 @@ public class ComponentsByEntityId
     public Dictionary<int, DirectionalLightSourceComponent> DirectionalLightSource { get; set; }
     public Dictionary<int, TextureComponent> Texture { get; set; }
     public Dictionary<int, RadialLightSourceComponent> RadialLightSource { get; set; }
-    public Dictionary<int, RenderLayerComponent> RenderLayer { get; set; }
     public Dictionary<int, ExplosionComponent> Explosion { get; set; }
     public Dictionary<int, DynamiteTag> DynamiteTag { get; set; }
     public Dictionary<int, PlayerTag> PlayerTag { get; set; }
@@ -146,7 +145,6 @@ public static class GameModelHelpers
                     DirectionalLightSource = new Dictionary<int, DirectionalLightSourceComponent>(),
                     Texture = new Dictionary<int, TextureComponent>(),
                     RadialLightSource = new Dictionary<int, RadialLightSourceComponent>(),
-                    RenderLayer = new Dictionary<int, RenderLayerComponent>(),
                     Explosion = new Dictionary<int, ExplosionComponent>(),
                     DynamiteTag = new Dictionary<int, DynamiteTag>(),
                     PlayerTag = new Dictionary<int, PlayerTag>(),

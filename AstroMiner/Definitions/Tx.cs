@@ -24,6 +24,7 @@ namespace AstroMiner.Definitions
         public const string ShipShadowMap = "ShipShadowMap";
         public const string Star = "Star";
         public const string Tileset = "Tileset";
+        public const string TilesetSimple = "TilesetSimple";
         public const string White = "White";
         public static class Backgrounds
         {
@@ -60,6 +61,7 @@ namespace AstroMiner.Definitions
             "ShipShadowMap",
             "Star",
             "Tileset",
+            "TilesetSimple",
             "White",
             "Backgrounds/Oizus",
             "Backgrounds/OizusClouds",

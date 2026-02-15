@@ -32,7 +32,7 @@ public class ProceduralGenViewerRenderer(BaseGame game, ProceduralGenViewerState
         { WallType.SolidRock, new Color(60, 60, 60) },
         { WallType.LooseRock, new Color(180, 180, 180) },
         { WallType.Rock, new Color(120, 120, 120) },
-        { WallType.Nickel, Color.DarkGreen },
+        { WallType.Quartz, Color.DarkGreen },
         { WallType.Gold, Color.Yellow },
         { WallType.ExplosiveRock, Color.Purple }
     };
